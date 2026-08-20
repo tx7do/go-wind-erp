@@ -33,11 +33,11 @@ type PurchaseOrderServiceHTTPServer interface {
 
 func RegisterPurchaseOrderServiceHTTPServer(s *http.Server, srv PurchaseOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/purchase-orders", _PurchaseOrderService_List4_HTTP_Handler(srv))
-	r.GET("/app/v1/purchase-orders/{id}", _PurchaseOrderService_Get4_HTTP_Handler(srv))
+	r.GET("/app/v1/purchase-orders", _PurchaseOrderService_List6_HTTP_Handler(srv))
+	r.GET("/app/v1/purchase-orders/{id}", _PurchaseOrderService_Get6_HTTP_Handler(srv))
 }
 
-func _PurchaseOrderService_List4_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_List6_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _PurchaseOrderService_List4_HTTP_Handler(srv PurchaseOrderServiceHTTPServer
 	}
 }
 
-func _PurchaseOrderService_Get4_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_Get6_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPurchaseOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {

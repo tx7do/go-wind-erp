@@ -515,5 +515,30 @@
       "cancel": "Cancel",
       "complete": "Complete"
     }
+  },
+  "payable": {
+    "moduleName": "Payable",
+    "payableNumber": "Payable No.",
+    "poRef": "Source PO",
+    "supplierCode": "Supplier",
+    "amount": "Total",
+    "amountCents": "Total (cents)",
+    "paidAmount": "Paid",
+    "status": "Status",
+    "recordPayment": "Record Payment",
+    "paymentAmountCents": "Amount (cents)",
+    "paymentInvalid": "Enter a positive whole amount in cents",
+    "button": {
+      "create": "New Payable",
+      "pay": "Pay",
+      "cancel": "Cancel"
+    }
+  },
+  "payment": {
+    "moduleName": "Payment",
+    "paymentNumber": "Payment No.",
+    "payableId": "Payable ID",
+    "amount": "Amount",
+    "method": "Method"
   }
 }

@@ -1,0 +1,262 @@
+syntax = "proto3";
+
+package finance.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 应付单管理服务
+service PayableService {
+  // 查询应付单列表
+  rpc List (pagination.PagingRequest) returns (ListPayableResponse) {}
+
+  // 统计应付单数量
+  rpc Count (pagination.PagingRequest) returns (CountPayableResponse) {}
+
+  // 查询应付单详情
+  rpc Get (GetPayableRequest) returns (Payable) {}
+
+  // 创建应付单（手工建账；采购单审批通过时自动生成）
+  rpc Create (CreatePayableRequest) returns (google.protobuf.Empty) {}
+
+  // 删除应付单（仅 PENDING 且未付款）
+  rpc Delete (DeletePayableRequest) returns (google.protobuf.Empty) {}
+
+  // 取消应付单（仅 PENDING 且未付款）
+  rpc Cancel (CancelPayableRequest) returns (google.protobuf.Empty) {}
+}
+
+// 付款管理服务（append-only 台账：付款一经记录不可修改/删除，
+// 记错经反向付款冲正——与库存流水同约定）
+service PaymentService {
+  // 查询付款列表
+  rpc List (pagination.PagingRequest) returns (ListPaymentResponse) {}
+
+  // 统计付款数量
+  rpc Count (pagination.PagingRequest) returns (CountPaymentResponse) {}
+
+  // 查询付款详情
+  rpc Get (GetPaymentRequest) returns (Payment) {}
+
+  // 记录付款（原子累计到应付单，防超付）
+  rpc Create (CreatePaymentRequest) returns (google.protobuf.Empty) {}
+}
+
+// 应付单
+message Payable {
+  // 应付状态
+  enum Status {
+    PENDING = 0;   // 待付款
+    PARTIAL = 1;   // 部分付款
+    SETTLED = 2;   // 已结清
+    CANCELLED = 3; // 已取消
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "应付单ID"
+    }
+  ]; // 应付单ID
+
+  optional string payable_number = 2 [
+    json_name = "payableNumber",
+    (gnostic.openapi.v3.property) = {description: "应付单号（服务端生成）"}
+  ]; // 应付单号
+
+  optional string po_ref = 3 [
+    json_name = "poRef",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "来源采购单引用（如 \"purchase_order:123\"），手工建账可为空"
+    }
+  ]; // 来源采购单引用
+
+  optional string supplier_code = 4 [
+    json_name = "supplierCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "供应商编码"
+    }
+  ]; // 供应商编码
+
+  optional int64 amount = 5 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "应付总额（分）"}
+  ]; // 应付总额（分）
+
+  optional int64 paid_amount = 6 [
+    json_name = "paidAmount",
+    (gnostic.openapi.v3.property) = {description: "已付金额（分，付款驱动）"}
+  ]; // 已付金额（分）
+
+  optional Status status = 7 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "应付状态"
+    }
+  ]; // 应付状态
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 付款
+message Payment {
+  // 付款方式
+  enum Method {
+    BANK_TRANSFER = 0; // 银行转账
+    CASH = 1;          // 现金
+    CHECK = 2;         // 支票
+    OTHER = 3;         // 其他
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "付款ID"
+    }
+  ]; // 付款ID
+
+  optional string payment_number = 2 [
+    json_name = "paymentNumber",
+    (gnostic.openapi.v3.property) = {description: "付款单号（服务端生成）"}
+  ]; // 付款单号
+
+  optional uint32 payable_id = 3 [
+    json_name = "payableId",
+    (gnostic.openapi.v3.property) = {description: "所属应付单ID"}
+  ]; // 所属应付单ID
+
+  optional int64 amount = 4 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "付款金额（分）"}
+  ]; // 付款金额（分）
+
+  optional Method method = 5 [
+    json_name = "method",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "付款方式"
+    }
+  ]; // 付款方式
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "付款操作人用户ID（服务端推导）"}]; // 付款操作人
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "付款时间"}];// 付款时间
+}
+
+// ==============================
+// 应付单请求/回应
+// ==============================
+
+message ListPayableResponse {
+  repeated Payable items = 1;
+  uint64 total = 2;
+}
+
+message GetPayableRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器
+}
+
+message CreatePayableRequest {
+  Payable data = 1;
+}
+
+message DeletePayableRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CancelPayableRequest {
+  uint32 id = 1;
+}
+
+message CountPayableResponse {
+  uint64 count = 1;
+}
+
+// ==============================
+// 付款请求/回应
+// ==============================
+
+message ListPaymentResponse {
+  repeated Payment items = 1;
+  uint64 total = 2;
+}
+
+message GetPaymentRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器
+}
+
+message CreatePaymentRequest {
+  Payment data = 1;
+}
+
+message CountPaymentResponse {
+  uint64 count = 1;
+}

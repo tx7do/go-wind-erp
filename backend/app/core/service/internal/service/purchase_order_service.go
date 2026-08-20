@@ -13,6 +13,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data"
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
+	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 )
 
@@ -31,17 +32,20 @@ type PurchaseOrderService struct {
 
 	purchaseOrderRepo   *data.PurchaseOrderRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
+	payableRepo         *data.PayableRepo
 }
 
 func NewPurchaseOrderService(
 	ctx *bootstrap.Context,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
+	payableRepo *data.PayableRepo,
 ) *PurchaseOrderService {
 	svc := &PurchaseOrderService{
 		log:                 ctx.NewLoggerHelper("purchase_order/service/core-service"),
 		purchaseOrderRepo:   purchaseOrderRepo,
 		approvalRequestRepo: approvalRequestRepo,
+		payableRepo:         payableRepo,
 	}
 
 	return svc
@@ -224,6 +228,20 @@ func (s *PurchaseOrderService) transition(
 
 	if err := s.purchaseOrderRepo.TransitionStatus(ctx, id, old.GetStatus(), to); err != nil {
 		return nil, err
+	}
+
+	// 财务联动：采购单获批即生成全额应付单（手工建账之外的自动来源）。
+	// 生成失败不影响审批结果，仅记录（可手工补建）。
+	if to == procurementV1.PurchaseOrder_APPROVED {
+		if _, err := s.payableRepo.Create(ctx, &financeV1.CreatePayableRequest{
+			Data: &financeV1.Payable{
+				PoRef:        trans.Ptr(fmt.Sprintf(poApprovalBizRef, id)),
+				SupplierCode: trans.Ptr(old.GetSupplierCode()),
+				Amount:       trans.Ptr(old.GetTotalAmount()),
+			},
+		}); err != nil {
+			s.log.Errorf("create payable for purchase order %d failed: %s", id, err.Error())
+		}
 	}
 
 	if createApproval && to == procurementV1.PurchaseOrder_SUBMITTED {

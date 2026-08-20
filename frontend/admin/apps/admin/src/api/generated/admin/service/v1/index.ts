@@ -2581,6 +2581,457 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 应付单管理服务
+export interface PayableService {
+  // 查询应付单列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<financeservicev1_ListPayableResponse>;
+  // 查询应付单详情
+  Get(
+    request: financeservicev1_GetPayableRequest,
+  ): Promise<financeservicev1_Payable>;
+  // 创建应付单（手工建账）
+  Create(
+    request: financeservicev1_CreatePayableRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除应付单（仅 PENDING 且未付款）
+  Delete(
+    request: financeservicev1_DeletePayableRequest,
+  ): Promise<wellKnownEmpty>;
+  // 取消应付单（仅 PENDING 且未付款）
+  Cancel(
+    request: financeservicev1_CancelPayableRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPayableServiceClient(
+  transport: ClientTransport,
+): PayableService {
+  return {
+    List(request) {
+      const path = `admin/v1/payables`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PayableService',
+        method: 'List',
+      }) as Promise<financeservicev1_ListPayableResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/payables/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PayableService',
+        method: 'Get',
+      }) as Promise<financeservicev1_Payable>;
+    },
+    Create(request) {
+      const path = `admin/v1/payables`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PayableService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/payables/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PayableService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Cancel(request) {
+      const path = `admin/v1/payables:cancel`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PayableService',
+        method: 'Cancel',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type financeservicev1_ListPayableResponse = {
+  items: financeservicev1_Payable[] | undefined;
+  total: number | undefined;
+};
+
+// 应付单
+export type financeservicev1_Payable = {
+  amount?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  paidAmount?: number;
+  payableNumber?: string;
+  //
+  // Behaviors: OPTIONAL
+  poRef?: string;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: financeservicev1_Payable_Status;
+  //
+  // Behaviors: OPTIONAL
+  supplierCode?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 应付状态
+export type financeservicev1_Payable_Status =
+  | 'CANCELLED'
+  | 'PARTIAL'
+  | 'PENDING'
+  | 'SETTLED';
+export type financeservicev1_GetPayableRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type financeservicev1_CreatePayableRequest = {
+  data: financeservicev1_Payable | undefined;
+};
+
+export type financeservicev1_DeletePayableRequest = {
+  id?: number;
+};
+
+export type financeservicev1_CancelPayableRequest = {
+  id: number | undefined;
+};
+
+// 付款管理服务（append-only 台账）
+export interface PaymentService {
+  // 查询付款列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<financeservicev1_ListPaymentResponse>;
+  // 查询付款详情
+  Get(
+    request: financeservicev1_GetPaymentRequest,
+  ): Promise<financeservicev1_Payment>;
+  // 记录付款
+  Create(
+    request: financeservicev1_CreatePaymentRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPaymentServiceClient(
+  transport: ClientTransport,
+): PaymentService {
+  return {
+    List(request) {
+      const path = `admin/v1/payments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PaymentService',
+        method: 'List',
+      }) as Promise<financeservicev1_ListPaymentResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/payments/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PaymentService',
+        method: 'Get',
+      }) as Promise<financeservicev1_Payment>;
+    },
+    Create(request) {
+      const path = `admin/v1/payments`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PaymentService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type financeservicev1_ListPaymentResponse = {
+  items: financeservicev1_Payment[] | undefined;
+  total: number | undefined;
+};
+
+// 付款
+export type financeservicev1_Payment = {
+  amount?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  method?: financeservicev1_Payment_Method;
+  payableId?: number;
+  paymentNumber?: string;
+  remark?: string;
+  tenantId?: number;
+};
+
+// 付款方式
+export type financeservicev1_Payment_Method =
+  | 'BANK_TRANSFER'
+  | 'CASH'
+  | 'CHECK'
+  | 'OTHER';
+export type financeservicev1_GetPaymentRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type financeservicev1_CreatePaymentRequest = {
+  data: financeservicev1_Payment | undefined;
+};
+
 // 站内信消息管理服务
 export interface InternalMessageService {
   // 查询站内信消息列表
@@ -8995,6 +9446,8 @@ export class ApiClient {
   private _menuService?: MenuService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orgUnitService?: OrgUnitService;
+  private _payableService?: PayableService;
+  private _paymentService?: PaymentService;
   private _permissionAuditLogService?: PermissionAuditLogService;
   private _permissionGroupService?: PermissionGroupService;
   private _permissionService?: PermissionService;
@@ -9093,6 +9546,14 @@ export class ApiClient {
 
   get orgUnitService(): OrgUnitService {
     return this._orgUnitService ??= createOrgUnitServiceClient(this._transport);
+  }
+
+  get payableService(): PayableService {
+    return this._payableService ??= createPayableServiceClient(this._transport);
+  }
+
+  get paymentService(): PaymentService {
+    return this._paymentService ??= createPaymentServiceClient(this._transport);
   }
 
   get permissionAuditLogService(): PermissionAuditLogService {

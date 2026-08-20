@@ -2064,6 +2064,688 @@ class StorageServiceV1UploadFileResponse {
   }
 }
 
+/// 应付单服务（移动端只读：财务/管理层查询应付款进度）
+class PayableServiceClient {
+  final ClientTransport _transport;
+
+  PayableServiceClient(this._transport);
+
+  /// 查询应付单列表
+  Future<FinanceServiceV1ListPayableResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/payables';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PayableService',
+      method: 'List',
+    ), headers: headers);
+    return FinanceServiceV1ListPayableResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 查询应付单详情
+  Future<FinanceServiceV1Payable> get(FinanceServiceV1GetPayableRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/payables/${request.id}';
+    final queryParams = <String>[];
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PayableService',
+      method: 'Get',
+    ), headers: headers);
+    return FinanceServiceV1Payable.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+class FinanceServiceV1ListPayableResponse {
+  List<FinanceServiceV1Payable>? items;
+  int? total;
+
+  FinanceServiceV1ListPayableResponse({
+    this.items,
+    this.total,
+  });
+
+  factory FinanceServiceV1ListPayableResponse.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1ListPayableResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => FinanceServiceV1Payable.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1ListPayableResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1ListPayableResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  FinanceServiceV1ListPayableResponse copyWith({
+    List<FinanceServiceV1Payable>? items,
+    int? total,
+  }) {
+    return FinanceServiceV1ListPayableResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 应付单
+class FinanceServiceV1Payable {
+  int? amount;
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  int? paidAmount;
+  String? payableNumber;
+  ///
+  /// Behaviors: OPTIONAL
+  String? poRef;
+  String? remark;
+  ///
+  /// Behaviors: OPTIONAL
+  FinanceServiceV1Payable$Status? status;
+  ///
+  /// Behaviors: OPTIONAL
+  String? supplierCode;
+  int? tenantId;
+  String? updatedAt;
+  int? updatedBy;
+
+  FinanceServiceV1Payable({
+    this.amount,
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.id,
+    this.paidAmount,
+    this.payableNumber,
+    this.poRef,
+    this.remark,
+    this.status,
+    this.supplierCode,
+    this.tenantId,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory FinanceServiceV1Payable.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1Payable(
+      amount: json['amount'] != null ? int.parse(json['amount'].toString()) : null,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      id: json['id'] as int?,
+      paidAmount: json['paidAmount'] != null ? int.parse(json['paidAmount'].toString()) : null,
+      payableNumber: json['payableNumber'] as String?,
+      poRef: json['poRef'] as String?,
+      remark: json['remark'] as String?,
+      status: json['status'] != null ? FinanceServiceV1Payable$Status.fromString(json['status'] as String) : null,
+      supplierCode: json['supplierCode'] as String?,
+      tenantId: json['tenantId'] as int?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (amount != null) json['amount'] = amount.toString();
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (id != null) json['id'] = id;
+    if (paidAmount != null) json['paidAmount'] = paidAmount.toString();
+    if (payableNumber != null) json['payableNumber'] = payableNumber;
+    if (poRef != null) json['poRef'] = poRef;
+    if (remark != null) json['remark'] = remark;
+    if (status != null) json['status'] = status!.value;
+    if (supplierCode != null) json['supplierCode'] = supplierCode;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1Payable(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, paidAmount: $paidAmount, payableNumber: $payableNumber, poRef: $poRef, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1Payable &&
+      runtimeType == other.runtimeType
+      && amount == other.amount
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && id == other.id
+      && paidAmount == other.paidAmount
+      && payableNumber == other.payableNumber
+      && poRef == other.poRef
+      && remark == other.remark
+      && status == other.status
+      && supplierCode == other.supplierCode
+      && tenantId == other.tenantId
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    amount,
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    id,
+    paidAmount,
+    payableNumber,
+    poRef,
+    remark,
+    status,
+    supplierCode,
+    tenantId,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  FinanceServiceV1Payable copyWith({
+    int? amount,
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? id,
+    int? paidAmount,
+    String? payableNumber,
+    String? poRef,
+    String? remark,
+    FinanceServiceV1Payable$Status? status,
+    String? supplierCode,
+    int? tenantId,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return FinanceServiceV1Payable(
+      amount: amount ?? this.amount,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      id: id ?? this.id,
+      paidAmount: paidAmount ?? this.paidAmount,
+      payableNumber: payableNumber ?? this.payableNumber,
+      poRef: poRef ?? this.poRef,
+      remark: remark ?? this.remark,
+      status: status ?? this.status,
+      supplierCode: supplierCode ?? this.supplierCode,
+      tenantId: tenantId ?? this.tenantId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 应付状态
+enum FinanceServiceV1Payable$Status {
+  cancelled('CANCELLED'),
+  partial('PARTIAL'),
+  pending('PENDING'),
+  settled('SETTLED');
+
+  final String value;
+  const FinanceServiceV1Payable$Status(this.value);
+
+  static FinanceServiceV1Payable$Status fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown FinanceServiceV1Payable\$Status value: ' + v));
+  @override
+  String toString() => value;
+}
+
+class FinanceServiceV1GetPayableRequest {
+  int? id;
+  String? viewMask;
+
+  FinanceServiceV1GetPayableRequest({
+    this.id,
+    this.viewMask,
+  });
+
+  factory FinanceServiceV1GetPayableRequest.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1GetPayableRequest(
+      id: json['id'] as int?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1GetPayableRequest(id: $id, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1GetPayableRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    viewMask,
+  ]);
+
+  FinanceServiceV1GetPayableRequest copyWith({
+    int? id,
+    String? viewMask,
+  }) {
+    return FinanceServiceV1GetPayableRequest(
+      id: id ?? this.id,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+}
+
+/// 付款服务（移动端只读台账）
+class PaymentServiceClient {
+  final ClientTransport _transport;
+
+  PaymentServiceClient(this._transport);
+
+  /// 查询付款列表
+  Future<FinanceServiceV1ListPaymentResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/payments';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PaymentService',
+      method: 'List',
+    ), headers: headers);
+    return FinanceServiceV1ListPaymentResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 查询付款详情
+  Future<FinanceServiceV1Payment> get(FinanceServiceV1GetPaymentRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/payments/${request.id}';
+    final queryParams = <String>[];
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PaymentService',
+      method: 'Get',
+    ), headers: headers);
+    return FinanceServiceV1Payment.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+class FinanceServiceV1ListPaymentResponse {
+  List<FinanceServiceV1Payment>? items;
+  int? total;
+
+  FinanceServiceV1ListPaymentResponse({
+    this.items,
+    this.total,
+  });
+
+  factory FinanceServiceV1ListPaymentResponse.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1ListPaymentResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => FinanceServiceV1Payment.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1ListPaymentResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1ListPaymentResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  FinanceServiceV1ListPaymentResponse copyWith({
+    List<FinanceServiceV1Payment>? items,
+    int? total,
+  }) {
+    return FinanceServiceV1ListPaymentResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 付款
+class FinanceServiceV1Payment {
+  int? amount;
+  String? createdAt;
+  int? createdBy;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  ///
+  /// Behaviors: OPTIONAL
+  FinanceServiceV1Payment$Method? method;
+  int? payableId;
+  String? paymentNumber;
+  String? remark;
+  int? tenantId;
+
+  FinanceServiceV1Payment({
+    this.amount,
+    this.createdAt,
+    this.createdBy,
+    this.id,
+    this.method,
+    this.payableId,
+    this.paymentNumber,
+    this.remark,
+    this.tenantId,
+  });
+
+  factory FinanceServiceV1Payment.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1Payment(
+      amount: json['amount'] != null ? int.parse(json['amount'].toString()) : null,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      id: json['id'] as int?,
+      method: json['method'] != null ? FinanceServiceV1Payment$Method.fromString(json['method'] as String) : null,
+      payableId: json['payableId'] as int?,
+      paymentNumber: json['paymentNumber'] as String?,
+      remark: json['remark'] as String?,
+      tenantId: json['tenantId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (amount != null) json['amount'] = amount.toString();
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (id != null) json['id'] = id;
+    if (method != null) json['method'] = method!.value;
+    if (payableId != null) json['payableId'] = payableId;
+    if (paymentNumber != null) json['paymentNumber'] = paymentNumber;
+    if (remark != null) json['remark'] = remark;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1Payment(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, id: $id, method: $method, payableId: $payableId, paymentNumber: $paymentNumber, remark: $remark, tenantId: $tenantId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1Payment &&
+      runtimeType == other.runtimeType
+      && amount == other.amount
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && id == other.id
+      && method == other.method
+      && payableId == other.payableId
+      && paymentNumber == other.paymentNumber
+      && remark == other.remark
+      && tenantId == other.tenantId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    amount,
+    createdAt,
+    createdBy,
+    id,
+    method,
+    payableId,
+    paymentNumber,
+    remark,
+    tenantId,
+  ]);
+
+  FinanceServiceV1Payment copyWith({
+    int? amount,
+    String? createdAt,
+    int? createdBy,
+    int? id,
+    FinanceServiceV1Payment$Method? method,
+    int? payableId,
+    String? paymentNumber,
+    String? remark,
+    int? tenantId,
+  }) {
+    return FinanceServiceV1Payment(
+      amount: amount ?? this.amount,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      id: id ?? this.id,
+      method: method ?? this.method,
+      payableId: payableId ?? this.payableId,
+      paymentNumber: paymentNumber ?? this.paymentNumber,
+      remark: remark ?? this.remark,
+      tenantId: tenantId ?? this.tenantId,
+    );
+  }
+}
+
+/// 付款方式
+enum FinanceServiceV1Payment$Method {
+  bankTransfer('BANK_TRANSFER'),
+  cash('CASH'),
+  check('CHECK'),
+  other('OTHER');
+
+  final String value;
+  const FinanceServiceV1Payment$Method(this.value);
+
+  static FinanceServiceV1Payment$Method fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown FinanceServiceV1Payment\$Method value: ' + v));
+  @override
+  String toString() => value;
+}
+
+class FinanceServiceV1GetPaymentRequest {
+  int? id;
+  String? viewMask;
+
+  FinanceServiceV1GetPaymentRequest({
+    this.id,
+    this.viewMask,
+  });
+
+  factory FinanceServiceV1GetPaymentRequest.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1GetPaymentRequest(
+      id: json['id'] as int?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1GetPaymentRequest(id: $id, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1GetPaymentRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    viewMask,
+  ]);
+
+  FinanceServiceV1GetPaymentRequest copyWith({
+    int? id,
+    String? viewMask,
+  }) {
+    return FinanceServiceV1GetPaymentRequest(
+      id: id ?? this.id,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+}
+
 /// 仓库服务（移动端只读：扫码场景选择仓库）
 class WarehouseServiceClient {
   final ClientTransport _transport;
@@ -4858,6 +5540,8 @@ class ApiClient {
   AuthenticationServiceClient? _authenticationService;
   FileTransferServiceClient? _fileTransferService;
   InventoryServiceClient? _inventoryService;
+  PayableServiceClient? _payableService;
+  PaymentServiceClient? _paymentService;
   PurchaseOrderServiceClient? _purchaseOrderService;
   StockMovementServiceClient? _stockMovementService;
   UserProfileServiceClient? _userProfileService;
@@ -4883,6 +5567,16 @@ class ApiClient {
   InventoryServiceClient get inventoryService {
     _inventoryService ??= InventoryServiceClient(_transport);
     return _inventoryService!;
+  }
+
+  PayableServiceClient get payableService {
+    _payableService ??= PayableServiceClient(_transport);
+    return _payableService!;
+  }
+
+  PaymentServiceClient get paymentService {
+    _paymentService ??= PaymentServiceClient(_transport);
+    return _paymentService!;
   }
 
   PurchaseOrderServiceClient get purchaseOrderService {
@@ -4911,6 +5605,8 @@ class ApiClient {
     _authenticationService = null;
     _fileTransferService = null;
     _inventoryService = null;
+    _payableService = null;
+    _paymentService = null;
     _purchaseOrderService = null;
     _stockMovementService = null;
     _userProfileService = null;

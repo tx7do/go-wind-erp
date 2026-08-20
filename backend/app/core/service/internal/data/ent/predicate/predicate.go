@@ -72,6 +72,12 @@ type OperationAuditLog func(*sql.Selector)
 // OrgUnit is the predicate function for orgunit builders.
 type OrgUnit func(*sql.Selector)
 
+// Payable is the predicate function for payable builders.
+type Payable func(*sql.Selector)
+
+// Payment is the predicate function for payment builders.
+type Payment func(*sql.Selector)
+
 // Permission is the predicate function for permission builders.
 type Permission func(*sql.Selector)
 

@@ -27,6 +27,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/menu"
 	"go-wind-erp/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/orgunit"
+	"go-wind-erp/app/core/service/internal/data/ent/payable"
+	"go-wind-erp/app/core/service/internal/data/ent/payment"
 	"go-wind-erp/app/core/service/internal/data/ent/permission"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionauditlog"
@@ -729,6 +731,70 @@ func init() {
 	orgunitDescID := orgunitMixinFields0[0].Descriptor()
 	// orgunit.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	orgunit.IDValidator = orgunitDescID.Validators[0].(func(uint32) error)
+	payableMixin := schema.Payable{}.Mixin()
+	payable.Policy = privacy.NewPolicies(payableMixin[4], schema.Payable{})
+	payable.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := payable.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	payableMixinFields0 := payableMixin[0].Fields()
+	_ = payableMixinFields0
+	payableMixinFields4 := payableMixin[4].Fields()
+	_ = payableMixinFields4
+	payableFields := schema.Payable{}.Fields()
+	_ = payableFields
+	// payableDescTenantID is the schema descriptor for tenant_id field.
+	payableDescTenantID := payableMixinFields4[0].Descriptor()
+	// payable.DefaultTenantID holds the default value on creation for the tenant_id field.
+	payable.DefaultTenantID = payableDescTenantID.Default.(uint32)
+	// payableDescAmount is the schema descriptor for amount field.
+	payableDescAmount := payableFields[3].Descriptor()
+	// payable.DefaultAmount holds the default value on creation for the amount field.
+	payable.DefaultAmount = payableDescAmount.Default.(int64)
+	// payableDescPaidAmount is the schema descriptor for paid_amount field.
+	payableDescPaidAmount := payableFields[4].Descriptor()
+	// payable.DefaultPaidAmount holds the default value on creation for the paid_amount field.
+	payable.DefaultPaidAmount = payableDescPaidAmount.Default.(int64)
+	// payableDescID is the schema descriptor for id field.
+	payableDescID := payableMixinFields0[0].Descriptor()
+	// payable.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	payable.IDValidator = payableDescID.Validators[0].(func(uint32) error)
+	paymentMixin := schema.Payment{}.Mixin()
+	payment.Policy = privacy.NewPolicies(paymentMixin[4], schema.Payment{})
+	payment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := payment.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymentMixinFields0 := paymentMixin[0].Fields()
+	_ = paymentMixinFields0
+	paymentMixinFields4 := paymentMixin[4].Fields()
+	_ = paymentMixinFields4
+	paymentFields := schema.Payment{}.Fields()
+	_ = paymentFields
+	// paymentDescTenantID is the schema descriptor for tenant_id field.
+	paymentDescTenantID := paymentMixinFields4[0].Descriptor()
+	// payment.DefaultTenantID holds the default value on creation for the tenant_id field.
+	payment.DefaultTenantID = paymentDescTenantID.Default.(uint32)
+	// paymentDescPayableID is the schema descriptor for payable_id field.
+	paymentDescPayableID := paymentFields[1].Descriptor()
+	// payment.DefaultPayableID holds the default value on creation for the payable_id field.
+	payment.DefaultPayableID = paymentDescPayableID.Default.(uint32)
+	// paymentDescAmount is the schema descriptor for amount field.
+	paymentDescAmount := paymentFields[2].Descriptor()
+	// payment.DefaultAmount holds the default value on creation for the amount field.
+	payment.DefaultAmount = paymentDescAmount.Default.(int64)
+	// paymentDescID is the schema descriptor for id field.
+	paymentDescID := paymentMixinFields0[0].Descriptor()
+	// payment.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	payment.IDValidator = paymentDescID.Validators[0].(func(uint32) error)
 	permissionMixin := schema.Permission{}.Mixin()
 	permission.Policy = privacy.NewPolicies(permissionMixin[5], schema.Permission{})
 	permission.Hooks[0] = func(next ent.Mutator) ent.Mutator {

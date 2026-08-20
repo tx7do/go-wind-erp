@@ -2847,6 +2847,274 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/payables:
+        get:
+            tags:
+                - PayableService
+            description: 查询应付单列表
+            operationId: PayableService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.ListPayableResponse'
+        post:
+            tags:
+                - PayableService
+            description: 创建应付单（手工建账）
+            operationId: PayableService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/finance.service.v1.CreatePayableRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/payables/{id}:
+        get:
+            tags:
+                - PayableService
+            description: 查询应付单详情
+            operationId: PayableService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.Payable'
+        delete:
+            tags:
+                - PayableService
+            description: 删除应付单（仅 PENDING 且未付款）
+            operationId: PayableService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/payables:cancel:
+        post:
+            tags:
+                - PayableService
+            description: 取消应付单（仅 PENDING 且未付款）
+            operationId: PayableService_Cancel
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/finance.service.v1.CancelPayableRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/payments:
+        get:
+            tags:
+                - PaymentService
+            description: 查询付款列表
+            operationId: PaymentService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.ListPaymentResponse'
+        post:
+            tags:
+                - PaymentService
+            description: 记录付款
+            operationId: PaymentService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/finance.service.v1.CreatePaymentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/payments/{id}:
+        get:
+            tags:
+                - PaymentService
+            description: 查询付款详情
+            operationId: PaymentService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.Payment'
     /admin/v1/perm-codes:
         get:
             tags:
@@ -6514,6 +6782,145 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新语言 - 请求
+        finance.service.v1.CancelPayableRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        finance.service.v1.CreatePayableRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/finance.service.v1.Payable'
+        finance.service.v1.CreatePaymentRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/finance.service.v1.Payment'
+        finance.service.v1.ListPayableResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/finance.service.v1.Payable'
+                total:
+                    type: string
+        finance.service.v1.ListPaymentResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/finance.service.v1.Payment'
+                total:
+                    type: string
+        finance.service.v1.Payable:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 应付单ID
+                    format: uint32
+                payableNumber:
+                    type: string
+                    description: 应付单号（服务端生成）
+                poRef:
+                    type: string
+                    description: 来源采购单引用（如 "purchase_order:123"），手工建账可为空
+                supplierCode:
+                    type: string
+                    description: 供应商编码
+                amount:
+                    type: string
+                    description: 应付总额（分）
+                paidAmount:
+                    type: string
+                    description: 已付金额（分，付款驱动）
+                status:
+                    enum:
+                        - PENDING
+                        - PARTIAL
+                        - SETTLED
+                        - CANCELLED
+                    type: string
+                    description: 应付状态
+                    format: enum
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 应付单
+        finance.service.v1.Payment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 付款ID
+                    format: uint32
+                paymentNumber:
+                    type: string
+                    description: 付款单号（服务端生成）
+                payableId:
+                    type: integer
+                    description: 所属应付单ID
+                    format: uint32
+                amount:
+                    type: string
+                    description: 付款金额（分）
+                method:
+                    enum:
+                        - BANK_TRANSFER
+                        - CASH
+                        - CHECK
+                        - OTHER
+                    type: string
+                    description: 付款方式
+                    format: enum
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 付款操作人用户ID（服务端推导）
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 付款时间
+                    format: date-time
+            description: 付款
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -9327,6 +9734,10 @@ tags:
       description: 操作审计日志管理服务
     - name: OrgUnitService
       description: 组织单元服务
+    - name: PayableService
+      description: 应付单管理服务
+    - name: PaymentService
+      description: 付款管理服务（append-only 台账）
     - name: PermissionAuditLogService
       description: 权限变更审计日志服务
     - name: PermissionGroupService

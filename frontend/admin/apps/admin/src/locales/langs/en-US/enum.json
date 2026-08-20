@@ -272,5 +272,19 @@
       "Completed": "Completed",
       "Cancelled": "Cancelled"
     }
+  },
+  "finance": {
+    "payableStatus": {
+      "Pending": "Pending",
+      "Partial": "Partial",
+      "Settled": "Settled",
+      "Cancelled": "Cancelled"
+    },
+    "paymentMethod": {
+      "BankTransfer": "Bank Transfer",
+      "Cash": "Cash",
+      "Check": "Check",
+      "Other": "Other"
+    }
   }
 }

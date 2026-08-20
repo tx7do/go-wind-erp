@@ -19,6 +19,8 @@ export * from './dict';
 
 export * from './file';
 
+export * from './finance';
+
 export * from './file-transfer';
 
 export * from './internal-message';

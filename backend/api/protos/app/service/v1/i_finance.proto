@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "finance/service/v1/finance.proto";
+
+// 应付单服务（移动端只读：财务/管理层查询应付款进度）
+service PayableService {
+  // 查询应付单列表
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListPayableResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/payables"
+    };
+  }
+
+  // 查询应付单详情
+  rpc Get (finance.service.v1.GetPayableRequest) returns (finance.service.v1.Payable) {
+    option (google.api.http) = {
+      get: "/app/v1/payables/{id}"
+    };
+  }
+}
+
+// 付款服务（移动端只读台账）
+service PaymentService {
+  // 查询付款列表
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListPaymentResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/payments"
+    };
+  }
+
+  // 查询付款详情
+  rpc Get (finance.service.v1.GetPaymentRequest) returns (finance.service.v1.Payment) {
+    option (google.api.http) = {
+      get: "/app/v1/payments/{id}"
+    };
+  }
+}

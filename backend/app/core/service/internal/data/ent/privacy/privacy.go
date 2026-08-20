@@ -639,6 +639,54 @@ func (f OrgUnitMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrgUnitMutation", m)
 }
 
+// The PayableQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PayableQueryRuleFunc func(context.Context, *ent.PayableQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PayableQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PayableQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PayableQuery", q)
+}
+
+// The PayableMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PayableMutationRuleFunc func(context.Context, *ent.PayableMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PayableMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PayableMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PayableMutation", m)
+}
+
+// The PaymentQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PaymentQueryRuleFunc func(context.Context, *ent.PaymentQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PaymentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PaymentQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PaymentQuery", q)
+}
+
+// The PaymentMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PaymentMutationRuleFunc func(context.Context, *ent.PaymentMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PaymentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PaymentMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentMutation", m)
+}
+
 // The PermissionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PermissionQueryRuleFunc func(context.Context, *ent.PermissionQuery) error
@@ -1270,6 +1318,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.OrgUnitQuery:
 		return q.Filter(), nil
+	case *ent.PayableQuery:
+		return q.Filter(), nil
+	case *ent.PaymentQuery:
+		return q.Filter(), nil
 	case *ent.PermissionQuery:
 		return q.Filter(), nil
 	case *ent.PermissionApiQuery:
@@ -1366,6 +1418,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.OperationAuditLogMutation:
 		return m.Filter(), nil
 	case *ent.OrgUnitMutation:
+		return m.Filter(), nil
+	case *ent.PayableMutation:
+		return m.Filter(), nil
+	case *ent.PaymentMutation:
 		return m.Filter(), nil
 	case *ent.PermissionMutation:
 		return m.Filter(), nil

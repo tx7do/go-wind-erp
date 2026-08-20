@@ -40,19 +40,20 @@ type ApprovalRequestService struct {
 	approvalRequestRepo *data.ApprovalRequestRepo
 
 	// 采购联动：biz_type=purchase_order 的审批通过/驳回时回写采购单状态。
-	// 同进程直连 repo，无需跨服务调用。
-	purchaseOrderRepo *data.PurchaseOrderRepo
+	// 经 PurchaseOrderService 动作走单一通路（自审守卫、应付生成等
+	// 服务层逻辑全部生效），而非直连 repo 绕过。
+	purchaseOrderService *PurchaseOrderService
 }
 
 func NewApprovalRequestService(
 	ctx *bootstrap.Context,
 	approvalRequestRepo *data.ApprovalRequestRepo,
-	purchaseOrderRepo *data.PurchaseOrderRepo,
+	purchaseOrderService *PurchaseOrderService,
 ) *ApprovalRequestService {
 	svc := &ApprovalRequestService{
-		log:                 ctx.NewLoggerHelper("approval_request/service/core-service"),
-		approvalRequestRepo: approvalRequestRepo,
-		purchaseOrderRepo:   purchaseOrderRepo,
+		log:                  ctx.NewLoggerHelper("approval_request/service/core-service"),
+		approvalRequestRepo:  approvalRequestRepo,
+		purchaseOrderService: purchaseOrderService,
 	}
 
 	return svc
@@ -182,19 +183,22 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 		return
 	}
 
-	var poTo procurementV1.PurchaseOrder_Status
-	switch to {
-	case approvalV1.ApprovalRequest_APPROVED:
-		poTo = procurementV1.PurchaseOrder_APPROVED
-	case approvalV1.ApprovalRequest_REJECTED:
-		poTo = procurementV1.PurchaseOrder_REJECTED
-	default:
+	// 经 PO 服务动作同步：享受与直审完全相同的守卫（自审拦截、
+	// 原子迁移、获批生成应付单）。
+	if to == approvalV1.ApprovalRequest_APPROVED {
+		if _, err := s.purchaseOrderService.Approve(ctx, &procurementV1.ApprovePurchaseOrderRequest{
+			Id: uint32(poID),
+		}); err != nil {
+			s.log.Errorf("sync purchase order %d to APPROVED failed: %s", poID, err.Error())
+		}
 		return
 	}
-
-	if err := s.purchaseOrderRepo.TransitionStatus(ctx, uint32(poID),
-		procurementV1.PurchaseOrder_SUBMITTED, poTo); err != nil {
-		s.log.Errorf("sync purchase order %d to %v failed: %s", poID, poTo, err.Error())
+	if to == approvalV1.ApprovalRequest_REJECTED {
+		if _, err := s.purchaseOrderService.Reject(ctx, &procurementV1.RejectPurchaseOrderRequest{
+			Id: uint32(poID),
+		}); err != nil {
+			s.log.Errorf("sync purchase order %d to REJECTED failed: %s", poID, err.Error())
+		}
 	}
 }
 

@@ -272,5 +272,19 @@
       "Completed": "已完结",
       "Cancelled": "已取消"
     }
+  },
+  "finance": {
+    "payableStatus": {
+      "Pending": "待付款",
+      "Partial": "部分付款",
+      "Settled": "已结清",
+      "Cancelled": "已取消"
+    },
+    "paymentMethod": {
+      "BankTransfer": "银行转账",
+      "Cash": "现金",
+      "Check": "支票",
+      "Other": "其他"
+    }
   }
 }

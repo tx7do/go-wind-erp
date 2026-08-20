@@ -89,6 +89,9 @@ func NewRestServer(
 	approvalRequestService *service.ApprovalRequestService,
 
 	purchaseOrderService *service.PurchaseOrderService,
+
+	payableService *service.PayableService,
+	paymentService *service.PaymentService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -112,6 +115,9 @@ func NewRestServer(
 	appV1.RegisterApprovalRequestServiceHTTPServer(srv, approvalRequestService)
 
 	appV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
+
+	appV1.RegisterPayableServiceHTTPServer(srv, payableService)
+	appV1.RegisterPaymentServiceHTTPServer(srv, paymentService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

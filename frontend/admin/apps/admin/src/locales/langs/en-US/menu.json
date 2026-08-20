@@ -67,5 +67,10 @@
     "moduleName": "Procurement",
     "purchaseOrder": "Purchase Orders",
     "supplier": "Suppliers"
+  },
+  "finance": {
+    "moduleName": "Finance",
+    "payable": "Payables",
+    "payment": "Payments"
   }
 }

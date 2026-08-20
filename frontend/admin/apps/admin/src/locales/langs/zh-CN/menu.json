@@ -68,5 +68,10 @@
     "moduleName": "采购管理",
     "purchaseOrder": "采购单",
     "supplier": "供应商管理"
+  },
+  "finance": {
+    "moduleName": "财务管理",
+    "payable": "应付管理",
+    "payment": "付款流水"
   }
 }

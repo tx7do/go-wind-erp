@@ -62,6 +62,9 @@ managed:
       path: procurement/service/v1
       value: go-wind-erp/api/gen/go/procurement/service/v1;procurementpb
     - file_option: go_package
+      path: finance/service/v1
+      value: go-wind-erp/api/gen/go/finance/service/v1;financepb
+    - file_option: go_package
       path: app/service/v1
       value: go-wind-erp/api/gen/go/app/service/v1;apppb
 

@@ -33,6 +33,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/menu"
 	"go-wind-erp/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/orgunit"
+	"go-wind-erp/app/core/service/internal/data/ent/payable"
+	"go-wind-erp/app/core/service/internal/data/ent/payment"
 	"go-wind-erp/app/core/service/internal/data/ent/permission"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionauditlog"
@@ -112,6 +114,10 @@ type Client struct {
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
 	OrgUnit *OrgUnitClient
+	// Payable is the client for interacting with the Payable builders.
+	Payable *PayableClient
+	// Payment is the client for interacting with the Payment builders.
+	Payment *PaymentClient
 	// Permission is the client for interacting with the Permission builders.
 	Permission *PermissionClient
 	// PermissionApi is the client for interacting with the PermissionApi builders.
@@ -191,6 +197,8 @@ func (c *Client) init() {
 	c.Menu = NewMenuClient(c.config)
 	c.OperationAuditLog = NewOperationAuditLogClient(c.config)
 	c.OrgUnit = NewOrgUnitClient(c.config)
+	c.Payable = NewPayableClient(c.config)
+	c.Payment = NewPaymentClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
 	c.PermissionApi = NewPermissionApiClient(c.config)
 	c.PermissionAuditLog = NewPermissionAuditLogClient(c.config)
@@ -328,6 +336,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Menu:                     NewMenuClient(cfg),
 		OperationAuditLog:        NewOperationAuditLogClient(cfg),
 		OrgUnit:                  NewOrgUnitClient(cfg),
+		Payable:                  NewPayableClient(cfg),
+		Payment:                  NewPaymentClient(cfg),
 		Permission:               NewPermissionClient(cfg),
 		PermissionApi:            NewPermissionApiClient(cfg),
 		PermissionAuditLog:       NewPermissionAuditLogClient(cfg),
@@ -392,6 +402,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Menu:                     NewMenuClient(cfg),
 		OperationAuditLog:        NewOperationAuditLogClient(cfg),
 		OrgUnit:                  NewOrgUnitClient(cfg),
+		Payable:                  NewPayableClient(cfg),
+		Payment:                  NewPaymentClient(cfg),
 		Permission:               NewPermissionClient(cfg),
 		PermissionApi:            NewPermissionApiClient(cfg),
 		PermissionAuditLog:       NewPermissionAuditLogClient(cfg),
@@ -449,11 +461,11 @@ func (c *Client) Use(hooks ...Hook) {
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Inventory, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata, c.RolePermission,
-		c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
+		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata,
+		c.RolePermission, c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Use(hooks...)
 	}
@@ -468,11 +480,11 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Inventory, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata, c.RolePermission,
-		c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
+		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata,
+		c.RolePermission, c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -525,6 +537,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OperationAuditLog.mutate(ctx, m)
 	case *OrgUnitMutation:
 		return c.OrgUnit.mutate(ctx, m)
+	case *PayableMutation:
+		return c.Payable.mutate(ctx, m)
+	case *PaymentMutation:
+		return c.Payment.mutate(ctx, m)
 	case *PermissionMutation:
 		return c.Permission.mutate(ctx, m)
 	case *PermissionApiMutation:
@@ -3651,6 +3667,274 @@ func (c *OrgUnitClient) mutate(ctx context.Context, m *OrgUnitMutation) (Value, 
 	}
 }
 
+// PayableClient is a client for the Payable schema.
+type PayableClient struct {
+	config
+}
+
+// NewPayableClient returns a client for the Payable from the given config.
+func NewPayableClient(c config) *PayableClient {
+	return &PayableClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `payable.Hooks(f(g(h())))`.
+func (c *PayableClient) Use(hooks ...Hook) {
+	c.hooks.Payable = append(c.hooks.Payable, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `payable.Intercept(f(g(h())))`.
+func (c *PayableClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Payable = append(c.inters.Payable, interceptors...)
+}
+
+// Create returns a builder for creating a Payable entity.
+func (c *PayableClient) Create() *PayableCreate {
+	mutation := newPayableMutation(c.config, OpCreate)
+	return &PayableCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Payable entities.
+func (c *PayableClient) CreateBulk(builders ...*PayableCreate) *PayableCreateBulk {
+	return &PayableCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PayableClient) MapCreateBulk(slice any, setFunc func(*PayableCreate, int)) *PayableCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PayableCreateBulk{err: fmt.Errorf("calling to PayableClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PayableCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PayableCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Payable.
+func (c *PayableClient) Update() *PayableUpdate {
+	mutation := newPayableMutation(c.config, OpUpdate)
+	return &PayableUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PayableClient) UpdateOne(_m *Payable) *PayableUpdateOne {
+	mutation := newPayableMutation(c.config, OpUpdateOne, withPayable(_m))
+	return &PayableUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PayableClient) UpdateOneID(id uint32) *PayableUpdateOne {
+	mutation := newPayableMutation(c.config, OpUpdateOne, withPayableID(id))
+	return &PayableUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Payable.
+func (c *PayableClient) Delete() *PayableDelete {
+	mutation := newPayableMutation(c.config, OpDelete)
+	return &PayableDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PayableClient) DeleteOne(_m *Payable) *PayableDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PayableClient) DeleteOneID(id uint32) *PayableDeleteOne {
+	builder := c.Delete().Where(payable.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PayableDeleteOne{builder}
+}
+
+// Query returns a query builder for Payable.
+func (c *PayableClient) Query() *PayableQuery {
+	return &PayableQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePayable},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Payable entity by its id.
+func (c *PayableClient) Get(ctx context.Context, id uint32) (*Payable, error) {
+	return c.Query().Where(payable.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PayableClient) GetX(ctx context.Context, id uint32) *Payable {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PayableClient) Hooks() []Hook {
+	hooks := c.hooks.Payable
+	return append(hooks[:len(hooks):len(hooks)], payable.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PayableClient) Interceptors() []Interceptor {
+	return c.inters.Payable
+}
+
+func (c *PayableClient) mutate(ctx context.Context, m *PayableMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PayableCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PayableUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PayableUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PayableDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Payable mutation op: %q", m.Op())
+	}
+}
+
+// PaymentClient is a client for the Payment schema.
+type PaymentClient struct {
+	config
+}
+
+// NewPaymentClient returns a client for the Payment from the given config.
+func NewPaymentClient(c config) *PaymentClient {
+	return &PaymentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `payment.Hooks(f(g(h())))`.
+func (c *PaymentClient) Use(hooks ...Hook) {
+	c.hooks.Payment = append(c.hooks.Payment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `payment.Intercept(f(g(h())))`.
+func (c *PaymentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Payment = append(c.inters.Payment, interceptors...)
+}
+
+// Create returns a builder for creating a Payment entity.
+func (c *PaymentClient) Create() *PaymentCreate {
+	mutation := newPaymentMutation(c.config, OpCreate)
+	return &PaymentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Payment entities.
+func (c *PaymentClient) CreateBulk(builders ...*PaymentCreate) *PaymentCreateBulk {
+	return &PaymentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PaymentClient) MapCreateBulk(slice any, setFunc func(*PaymentCreate, int)) *PaymentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PaymentCreateBulk{err: fmt.Errorf("calling to PaymentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PaymentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PaymentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Payment.
+func (c *PaymentClient) Update() *PaymentUpdate {
+	mutation := newPaymentMutation(c.config, OpUpdate)
+	return &PaymentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentClient) UpdateOne(_m *Payment) *PaymentUpdateOne {
+	mutation := newPaymentMutation(c.config, OpUpdateOne, withPayment(_m))
+	return &PaymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentClient) UpdateOneID(id uint32) *PaymentUpdateOne {
+	mutation := newPaymentMutation(c.config, OpUpdateOne, withPaymentID(id))
+	return &PaymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Payment.
+func (c *PaymentClient) Delete() *PaymentDelete {
+	mutation := newPaymentMutation(c.config, OpDelete)
+	return &PaymentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentClient) DeleteOne(_m *Payment) *PaymentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PaymentClient) DeleteOneID(id uint32) *PaymentDeleteOne {
+	builder := c.Delete().Where(payment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentDeleteOne{builder}
+}
+
+// Query returns a query builder for Payment.
+func (c *PaymentClient) Query() *PaymentQuery {
+	return &PaymentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePayment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Payment entity by its id.
+func (c *PaymentClient) Get(ctx context.Context, id uint32) (*Payment, error) {
+	return c.Query().Where(payment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentClient) GetX(ctx context.Context, id uint32) *Payment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentClient) Hooks() []Hook {
+	hooks := c.hooks.Payment
+	return append(hooks[:len(hooks):len(hooks)], payment.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PaymentClient) Interceptors() []Interceptor {
+	return c.inters.Payment
+}
+
+func (c *PaymentClient) mutate(ctx context.Context, m *PaymentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PaymentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PaymentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PaymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PaymentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Payment mutation op: %q", m.Op())
+	}
+}
+
 // PermissionClient is a client for the Permission schema.
 type PermissionClient struct {
 	config
@@ -6771,21 +7055,22 @@ type (
 		DictType, File, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Inventory, Language, LoginAuditLog, LoginPolicy,
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, PurchaseOrder, PurchaseOrderItem, Role, RoleMetadata, RolePermission,
-		StockMovement, Supplier, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole, Warehouse []ent.Hook
+		OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
+		PolicyEvaluationLog, Position, PurchaseOrder, PurchaseOrderItem, Role,
+		RoleMetadata, RolePermission, StockMovement, Supplier, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Warehouse []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, ApprovalRequest, DataAccessAuditLog, DictEntry, DictEntryI18n,
 		DictType, File, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Inventory, Language, LoginAuditLog, LoginPolicy,
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, PurchaseOrder, PurchaseOrderItem, Role, RoleMetadata, RolePermission,
-		StockMovement, Supplier, Task, Tenant, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole, Warehouse []ent.Interceptor
+		OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
+		PolicyEvaluationLog, Position, PurchaseOrder, PurchaseOrderItem, Role,
+		RoleMetadata, RolePermission, StockMovement, Supplier, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole,
+		Warehouse []ent.Interceptor
 	}
 )

@@ -544,5 +544,30 @@
       "cancel": "取消",
       "complete": "完结"
     }
+  },
+  "payable": {
+    "moduleName": "应付单",
+    "payableNumber": "应付单号",
+    "poRef": "来源采购单",
+    "supplierCode": "供应商",
+    "amount": "应付总额（元）",
+    "amountCents": "应付总额（分）",
+    "paidAmount": "已付（元）",
+    "status": "状态",
+    "recordPayment": "记录付款",
+    "paymentAmountCents": "付款金额（分）",
+    "paymentInvalid": "请输入正整数付款金额（分）",
+    "button": {
+      "create": "手工建账",
+      "pay": "付款",
+      "cancel": "取消"
+    }
+  },
+  "payment": {
+    "moduleName": "付款",
+    "paymentNumber": "付款单号",
+    "payableId": "应付单ID",
+    "amount": "金额（元）",
+    "method": "付款方式"
   }
 }

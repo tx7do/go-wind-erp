@@ -28,6 +28,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/menu"
 	"go-wind-erp/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/orgunit"
+	"go-wind-erp/app/core/service/internal/data/ent/payable"
+	"go-wind-erp/app/core/service/internal/data/ent/payment"
 	"go-wind-erp/app/core/service/internal/data/ent/permission"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionauditlog"
@@ -139,6 +141,8 @@ func checkColumn(t, c string) error {
 			menu.Table:                     menu.ValidColumn,
 			operationauditlog.Table:        operationauditlog.ValidColumn,
 			orgunit.Table:                  orgunit.ValidColumn,
+			payable.Table:                  payable.ValidColumn,
+			payment.Table:                  payment.ValidColumn,
 			permission.Table:               permission.ValidColumn,
 			permissionapi.Table:            permissionapi.ValidColumn,
 			permissionauditlog.Table:       permissionauditlog.ValidColumn,

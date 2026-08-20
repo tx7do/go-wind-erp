@@ -56,6 +56,10 @@ type Tx struct {
 	OperationAuditLog *OperationAuditLogClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
 	OrgUnit *OrgUnitClient
+	// Payable is the client for interacting with the Payable builders.
+	Payable *PayableClient
+	// Payment is the client for interacting with the Payment builders.
+	Payment *PaymentClient
 	// Permission is the client for interacting with the Permission builders.
 	Permission *PermissionClient
 	// PermissionApi is the client for interacting with the PermissionApi builders.
@@ -255,6 +259,8 @@ func (tx *Tx) init() {
 	tx.Menu = NewMenuClient(tx.config)
 	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
+	tx.Payable = NewPayableClient(tx.config)
+	tx.Payment = NewPaymentClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)
 	tx.PermissionApi = NewPermissionApiClient(tx.config)
 	tx.PermissionAuditLog = NewPermissionAuditLogClient(tx.config)

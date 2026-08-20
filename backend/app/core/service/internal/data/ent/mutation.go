@@ -31,6 +31,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/menu"
 	"go-wind-erp/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/orgunit"
+	"go-wind-erp/app/core/service/internal/data/ent/payable"
+	"go-wind-erp/app/core/service/internal/data/ent/payment"
 	"go-wind-erp/app/core/service/internal/data/ent/permission"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionauditlog"
@@ -93,6 +95,8 @@ const (
 	TypeMenu                     = "Menu"
 	TypeOperationAuditLog        = "OperationAuditLog"
 	TypeOrgUnit                  = "OrgUnit"
+	TypePayable                  = "Payable"
+	TypePayment                  = "Payment"
 	TypePermission               = "Permission"
 	TypePermissionApi            = "PermissionApi"
 	TypePermissionAuditLog       = "PermissionAuditLog"
@@ -37293,6 +37297,2880 @@ func (m *OrgUnitMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown OrgUnit edge %s", name)
+}
+
+// PayableMutation represents an operation that mutates the Payable nodes in the graph.
+type PayableMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	created_by     *uint32
+	addcreated_by  *int32
+	updated_by     *uint32
+	addupdated_by  *int32
+	deleted_by     *uint32
+	adddeleted_by  *int32
+	remark         *string
+	tenant_id      *uint32
+	addtenant_id   *int32
+	payable_number *string
+	po_ref         *string
+	supplier_code  *string
+	amount         *int64
+	addamount      *int64
+	paid_amount    *int64
+	addpaid_amount *int64
+	status         *payable.Status
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*Payable, error)
+	predicates     []predicate.Payable
+}
+
+var _ ent.Mutation = (*PayableMutation)(nil)
+
+// payableOption allows management of the mutation configuration using functional options.
+type payableOption func(*PayableMutation)
+
+// newPayableMutation creates new mutation for the Payable entity.
+func newPayableMutation(c config, op Op, opts ...payableOption) *PayableMutation {
+	m := &PayableMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePayable,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPayableID sets the ID field of the mutation.
+func withPayableID(id uint32) payableOption {
+	return func(m *PayableMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Payable
+		)
+		m.oldValue = func(ctx context.Context) (*Payable, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Payable.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPayable sets the old Payable of the mutation.
+func withPayable(node *Payable) payableOption {
+	return func(m *PayableMutation) {
+		m.oldValue = func(context.Context) (*Payable, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PayableMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PayableMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Payable entities.
+func (m *PayableMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PayableMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PayableMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Payable.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PayableMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PayableMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PayableMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[payable.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PayableMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[payable.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PayableMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, payable.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PayableMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PayableMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PayableMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[payable.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PayableMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[payable.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PayableMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, payable.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PayableMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PayableMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PayableMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[payable.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PayableMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[payable.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PayableMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, payable.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *PayableMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *PayableMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *PayableMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *PayableMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *PayableMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[payable.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *PayableMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[payable.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *PayableMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, payable.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *PayableMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *PayableMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *PayableMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *PayableMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *PayableMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[payable.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *PayableMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[payable.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *PayableMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, payable.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *PayableMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *PayableMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *PayableMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *PayableMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *PayableMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[payable.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *PayableMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[payable.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *PayableMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, payable.FieldDeletedBy)
+}
+
+// SetRemark sets the "remark" field.
+func (m *PayableMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *PayableMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *PayableMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[payable.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *PayableMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[payable.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *PayableMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, payable.FieldRemark)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PayableMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PayableMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PayableMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PayableMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PayableMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[payable.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PayableMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[payable.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PayableMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, payable.FieldTenantID)
+}
+
+// SetPayableNumber sets the "payable_number" field.
+func (m *PayableMutation) SetPayableNumber(s string) {
+	m.payable_number = &s
+}
+
+// PayableNumber returns the value of the "payable_number" field in the mutation.
+func (m *PayableMutation) PayableNumber() (r string, exists bool) {
+	v := m.payable_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPayableNumber returns the old "payable_number" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldPayableNumber(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPayableNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPayableNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPayableNumber: %w", err)
+	}
+	return oldValue.PayableNumber, nil
+}
+
+// ClearPayableNumber clears the value of the "payable_number" field.
+func (m *PayableMutation) ClearPayableNumber() {
+	m.payable_number = nil
+	m.clearedFields[payable.FieldPayableNumber] = struct{}{}
+}
+
+// PayableNumberCleared returns if the "payable_number" field was cleared in this mutation.
+func (m *PayableMutation) PayableNumberCleared() bool {
+	_, ok := m.clearedFields[payable.FieldPayableNumber]
+	return ok
+}
+
+// ResetPayableNumber resets all changes to the "payable_number" field.
+func (m *PayableMutation) ResetPayableNumber() {
+	m.payable_number = nil
+	delete(m.clearedFields, payable.FieldPayableNumber)
+}
+
+// SetPoRef sets the "po_ref" field.
+func (m *PayableMutation) SetPoRef(s string) {
+	m.po_ref = &s
+}
+
+// PoRef returns the value of the "po_ref" field in the mutation.
+func (m *PayableMutation) PoRef() (r string, exists bool) {
+	v := m.po_ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPoRef returns the old "po_ref" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldPoRef(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPoRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPoRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPoRef: %w", err)
+	}
+	return oldValue.PoRef, nil
+}
+
+// ClearPoRef clears the value of the "po_ref" field.
+func (m *PayableMutation) ClearPoRef() {
+	m.po_ref = nil
+	m.clearedFields[payable.FieldPoRef] = struct{}{}
+}
+
+// PoRefCleared returns if the "po_ref" field was cleared in this mutation.
+func (m *PayableMutation) PoRefCleared() bool {
+	_, ok := m.clearedFields[payable.FieldPoRef]
+	return ok
+}
+
+// ResetPoRef resets all changes to the "po_ref" field.
+func (m *PayableMutation) ResetPoRef() {
+	m.po_ref = nil
+	delete(m.clearedFields, payable.FieldPoRef)
+}
+
+// SetSupplierCode sets the "supplier_code" field.
+func (m *PayableMutation) SetSupplierCode(s string) {
+	m.supplier_code = &s
+}
+
+// SupplierCode returns the value of the "supplier_code" field in the mutation.
+func (m *PayableMutation) SupplierCode() (r string, exists bool) {
+	v := m.supplier_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupplierCode returns the old "supplier_code" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldSupplierCode(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupplierCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupplierCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupplierCode: %w", err)
+	}
+	return oldValue.SupplierCode, nil
+}
+
+// ClearSupplierCode clears the value of the "supplier_code" field.
+func (m *PayableMutation) ClearSupplierCode() {
+	m.supplier_code = nil
+	m.clearedFields[payable.FieldSupplierCode] = struct{}{}
+}
+
+// SupplierCodeCleared returns if the "supplier_code" field was cleared in this mutation.
+func (m *PayableMutation) SupplierCodeCleared() bool {
+	_, ok := m.clearedFields[payable.FieldSupplierCode]
+	return ok
+}
+
+// ResetSupplierCode resets all changes to the "supplier_code" field.
+func (m *PayableMutation) ResetSupplierCode() {
+	m.supplier_code = nil
+	delete(m.clearedFields, payable.FieldSupplierCode)
+}
+
+// SetAmount sets the "amount" field.
+func (m *PayableMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *PayableMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldAmount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *PayableMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *PayableMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (m *PayableMutation) ClearAmount() {
+	m.amount = nil
+	m.addamount = nil
+	m.clearedFields[payable.FieldAmount] = struct{}{}
+}
+
+// AmountCleared returns if the "amount" field was cleared in this mutation.
+func (m *PayableMutation) AmountCleared() bool {
+	_, ok := m.clearedFields[payable.FieldAmount]
+	return ok
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *PayableMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+	delete(m.clearedFields, payable.FieldAmount)
+}
+
+// SetPaidAmount sets the "paid_amount" field.
+func (m *PayableMutation) SetPaidAmount(i int64) {
+	m.paid_amount = &i
+	m.addpaid_amount = nil
+}
+
+// PaidAmount returns the value of the "paid_amount" field in the mutation.
+func (m *PayableMutation) PaidAmount() (r int64, exists bool) {
+	v := m.paid_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaidAmount returns the old "paid_amount" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldPaidAmount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPaidAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPaidAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaidAmount: %w", err)
+	}
+	return oldValue.PaidAmount, nil
+}
+
+// AddPaidAmount adds i to the "paid_amount" field.
+func (m *PayableMutation) AddPaidAmount(i int64) {
+	if m.addpaid_amount != nil {
+		*m.addpaid_amount += i
+	} else {
+		m.addpaid_amount = &i
+	}
+}
+
+// AddedPaidAmount returns the value that was added to the "paid_amount" field in this mutation.
+func (m *PayableMutation) AddedPaidAmount() (r int64, exists bool) {
+	v := m.addpaid_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPaidAmount clears the value of the "paid_amount" field.
+func (m *PayableMutation) ClearPaidAmount() {
+	m.paid_amount = nil
+	m.addpaid_amount = nil
+	m.clearedFields[payable.FieldPaidAmount] = struct{}{}
+}
+
+// PaidAmountCleared returns if the "paid_amount" field was cleared in this mutation.
+func (m *PayableMutation) PaidAmountCleared() bool {
+	_, ok := m.clearedFields[payable.FieldPaidAmount]
+	return ok
+}
+
+// ResetPaidAmount resets all changes to the "paid_amount" field.
+func (m *PayableMutation) ResetPaidAmount() {
+	m.paid_amount = nil
+	m.addpaid_amount = nil
+	delete(m.clearedFields, payable.FieldPaidAmount)
+}
+
+// SetStatus sets the "status" field.
+func (m *PayableMutation) SetStatus(pa payable.Status) {
+	m.status = &pa
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PayableMutation) Status() (r payable.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Payable entity.
+// If the Payable object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PayableMutation) OldStatus(ctx context.Context) (v *payable.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *PayableMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[payable.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PayableMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[payable.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PayableMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, payable.FieldStatus)
+}
+
+// Where appends a list predicates to the PayableMutation builder.
+func (m *PayableMutation) Where(ps ...predicate.Payable) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PayableMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PayableMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Payable, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PayableMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PayableMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Payable).
+func (m *PayableMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PayableMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, payable.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, payable.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, payable.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, payable.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, payable.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, payable.FieldDeletedBy)
+	}
+	if m.remark != nil {
+		fields = append(fields, payable.FieldRemark)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, payable.FieldTenantID)
+	}
+	if m.payable_number != nil {
+		fields = append(fields, payable.FieldPayableNumber)
+	}
+	if m.po_ref != nil {
+		fields = append(fields, payable.FieldPoRef)
+	}
+	if m.supplier_code != nil {
+		fields = append(fields, payable.FieldSupplierCode)
+	}
+	if m.amount != nil {
+		fields = append(fields, payable.FieldAmount)
+	}
+	if m.paid_amount != nil {
+		fields = append(fields, payable.FieldPaidAmount)
+	}
+	if m.status != nil {
+		fields = append(fields, payable.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PayableMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case payable.FieldCreatedAt:
+		return m.CreatedAt()
+	case payable.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case payable.FieldDeletedAt:
+		return m.DeletedAt()
+	case payable.FieldCreatedBy:
+		return m.CreatedBy()
+	case payable.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case payable.FieldDeletedBy:
+		return m.DeletedBy()
+	case payable.FieldRemark:
+		return m.Remark()
+	case payable.FieldTenantID:
+		return m.TenantID()
+	case payable.FieldPayableNumber:
+		return m.PayableNumber()
+	case payable.FieldPoRef:
+		return m.PoRef()
+	case payable.FieldSupplierCode:
+		return m.SupplierCode()
+	case payable.FieldAmount:
+		return m.Amount()
+	case payable.FieldPaidAmount:
+		return m.PaidAmount()
+	case payable.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PayableMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case payable.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case payable.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case payable.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case payable.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case payable.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case payable.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case payable.FieldRemark:
+		return m.OldRemark(ctx)
+	case payable.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case payable.FieldPayableNumber:
+		return m.OldPayableNumber(ctx)
+	case payable.FieldPoRef:
+		return m.OldPoRef(ctx)
+	case payable.FieldSupplierCode:
+		return m.OldSupplierCode(ctx)
+	case payable.FieldAmount:
+		return m.OldAmount(ctx)
+	case payable.FieldPaidAmount:
+		return m.OldPaidAmount(ctx)
+	case payable.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown Payable field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PayableMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case payable.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case payable.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case payable.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case payable.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case payable.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case payable.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case payable.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	case payable.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case payable.FieldPayableNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPayableNumber(v)
+		return nil
+	case payable.FieldPoRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPoRef(v)
+		return nil
+	case payable.FieldSupplierCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupplierCode(v)
+		return nil
+	case payable.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case payable.FieldPaidAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaidAmount(v)
+		return nil
+	case payable.FieldStatus:
+		v, ok := value.(payable.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Payable field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PayableMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, payable.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, payable.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, payable.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, payable.FieldTenantID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, payable.FieldAmount)
+	}
+	if m.addpaid_amount != nil {
+		fields = append(fields, payable.FieldPaidAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PayableMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case payable.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case payable.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case payable.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case payable.FieldTenantID:
+		return m.AddedTenantID()
+	case payable.FieldAmount:
+		return m.AddedAmount()
+	case payable.FieldPaidAmount:
+		return m.AddedPaidAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PayableMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case payable.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case payable.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case payable.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case payable.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case payable.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	case payable.FieldPaidAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPaidAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Payable numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PayableMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(payable.FieldCreatedAt) {
+		fields = append(fields, payable.FieldCreatedAt)
+	}
+	if m.FieldCleared(payable.FieldUpdatedAt) {
+		fields = append(fields, payable.FieldUpdatedAt)
+	}
+	if m.FieldCleared(payable.FieldDeletedAt) {
+		fields = append(fields, payable.FieldDeletedAt)
+	}
+	if m.FieldCleared(payable.FieldCreatedBy) {
+		fields = append(fields, payable.FieldCreatedBy)
+	}
+	if m.FieldCleared(payable.FieldUpdatedBy) {
+		fields = append(fields, payable.FieldUpdatedBy)
+	}
+	if m.FieldCleared(payable.FieldDeletedBy) {
+		fields = append(fields, payable.FieldDeletedBy)
+	}
+	if m.FieldCleared(payable.FieldRemark) {
+		fields = append(fields, payable.FieldRemark)
+	}
+	if m.FieldCleared(payable.FieldTenantID) {
+		fields = append(fields, payable.FieldTenantID)
+	}
+	if m.FieldCleared(payable.FieldPayableNumber) {
+		fields = append(fields, payable.FieldPayableNumber)
+	}
+	if m.FieldCleared(payable.FieldPoRef) {
+		fields = append(fields, payable.FieldPoRef)
+	}
+	if m.FieldCleared(payable.FieldSupplierCode) {
+		fields = append(fields, payable.FieldSupplierCode)
+	}
+	if m.FieldCleared(payable.FieldAmount) {
+		fields = append(fields, payable.FieldAmount)
+	}
+	if m.FieldCleared(payable.FieldPaidAmount) {
+		fields = append(fields, payable.FieldPaidAmount)
+	}
+	if m.FieldCleared(payable.FieldStatus) {
+		fields = append(fields, payable.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PayableMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PayableMutation) ClearField(name string) error {
+	switch name {
+	case payable.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case payable.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case payable.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case payable.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case payable.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case payable.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case payable.FieldRemark:
+		m.ClearRemark()
+		return nil
+	case payable.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case payable.FieldPayableNumber:
+		m.ClearPayableNumber()
+		return nil
+	case payable.FieldPoRef:
+		m.ClearPoRef()
+		return nil
+	case payable.FieldSupplierCode:
+		m.ClearSupplierCode()
+		return nil
+	case payable.FieldAmount:
+		m.ClearAmount()
+		return nil
+	case payable.FieldPaidAmount:
+		m.ClearPaidAmount()
+		return nil
+	case payable.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Payable nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PayableMutation) ResetField(name string) error {
+	switch name {
+	case payable.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case payable.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case payable.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case payable.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case payable.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case payable.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case payable.FieldRemark:
+		m.ResetRemark()
+		return nil
+	case payable.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case payable.FieldPayableNumber:
+		m.ResetPayableNumber()
+		return nil
+	case payable.FieldPoRef:
+		m.ResetPoRef()
+		return nil
+	case payable.FieldSupplierCode:
+		m.ResetSupplierCode()
+		return nil
+	case payable.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case payable.FieldPaidAmount:
+		m.ResetPaidAmount()
+		return nil
+	case payable.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Payable field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PayableMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PayableMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PayableMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PayableMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PayableMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PayableMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PayableMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Payable unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PayableMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Payable edge %s", name)
+}
+
+// PaymentMutation represents an operation that mutates the Payment nodes in the graph.
+type PaymentMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	created_by     *uint32
+	addcreated_by  *int32
+	updated_by     *uint32
+	addupdated_by  *int32
+	deleted_by     *uint32
+	adddeleted_by  *int32
+	remark         *string
+	tenant_id      *uint32
+	addtenant_id   *int32
+	payment_number *string
+	payable_id     *uint32
+	addpayable_id  *int32
+	amount         *int64
+	addamount      *int64
+	method         *payment.Method
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*Payment, error)
+	predicates     []predicate.Payment
+}
+
+var _ ent.Mutation = (*PaymentMutation)(nil)
+
+// paymentOption allows management of the mutation configuration using functional options.
+type paymentOption func(*PaymentMutation)
+
+// newPaymentMutation creates new mutation for the Payment entity.
+func newPaymentMutation(c config, op Op, opts ...paymentOption) *PaymentMutation {
+	m := &PaymentMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePayment,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPaymentID sets the ID field of the mutation.
+func withPaymentID(id uint32) paymentOption {
+	return func(m *PaymentMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Payment
+		)
+		m.oldValue = func(ctx context.Context) (*Payment, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Payment.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPayment sets the old Payment of the mutation.
+func withPayment(node *Payment) paymentOption {
+	return func(m *PaymentMutation) {
+		m.oldValue = func(context.Context) (*Payment, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PaymentMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PaymentMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Payment entities.
+func (m *PaymentMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PaymentMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PaymentMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Payment.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PaymentMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PaymentMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PaymentMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[payment.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PaymentMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[payment.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PaymentMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, payment.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PaymentMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PaymentMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PaymentMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[payment.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PaymentMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[payment.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PaymentMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, payment.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PaymentMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PaymentMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PaymentMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[payment.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PaymentMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[payment.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PaymentMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, payment.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *PaymentMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *PaymentMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *PaymentMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *PaymentMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *PaymentMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[payment.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *PaymentMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[payment.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *PaymentMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, payment.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *PaymentMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *PaymentMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *PaymentMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *PaymentMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *PaymentMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[payment.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *PaymentMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[payment.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *PaymentMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, payment.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *PaymentMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *PaymentMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *PaymentMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *PaymentMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *PaymentMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[payment.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *PaymentMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[payment.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *PaymentMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, payment.FieldDeletedBy)
+}
+
+// SetRemark sets the "remark" field.
+func (m *PaymentMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *PaymentMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *PaymentMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[payment.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *PaymentMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[payment.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *PaymentMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, payment.FieldRemark)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PaymentMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PaymentMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PaymentMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PaymentMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PaymentMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[payment.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PaymentMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[payment.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PaymentMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, payment.FieldTenantID)
+}
+
+// SetPaymentNumber sets the "payment_number" field.
+func (m *PaymentMutation) SetPaymentNumber(s string) {
+	m.payment_number = &s
+}
+
+// PaymentNumber returns the value of the "payment_number" field in the mutation.
+func (m *PaymentMutation) PaymentNumber() (r string, exists bool) {
+	v := m.payment_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaymentNumber returns the old "payment_number" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldPaymentNumber(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPaymentNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPaymentNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaymentNumber: %w", err)
+	}
+	return oldValue.PaymentNumber, nil
+}
+
+// ClearPaymentNumber clears the value of the "payment_number" field.
+func (m *PaymentMutation) ClearPaymentNumber() {
+	m.payment_number = nil
+	m.clearedFields[payment.FieldPaymentNumber] = struct{}{}
+}
+
+// PaymentNumberCleared returns if the "payment_number" field was cleared in this mutation.
+func (m *PaymentMutation) PaymentNumberCleared() bool {
+	_, ok := m.clearedFields[payment.FieldPaymentNumber]
+	return ok
+}
+
+// ResetPaymentNumber resets all changes to the "payment_number" field.
+func (m *PaymentMutation) ResetPaymentNumber() {
+	m.payment_number = nil
+	delete(m.clearedFields, payment.FieldPaymentNumber)
+}
+
+// SetPayableID sets the "payable_id" field.
+func (m *PaymentMutation) SetPayableID(u uint32) {
+	m.payable_id = &u
+	m.addpayable_id = nil
+}
+
+// PayableID returns the value of the "payable_id" field in the mutation.
+func (m *PaymentMutation) PayableID() (r uint32, exists bool) {
+	v := m.payable_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPayableID returns the old "payable_id" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldPayableID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPayableID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPayableID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPayableID: %w", err)
+	}
+	return oldValue.PayableID, nil
+}
+
+// AddPayableID adds u to the "payable_id" field.
+func (m *PaymentMutation) AddPayableID(u int32) {
+	if m.addpayable_id != nil {
+		*m.addpayable_id += u
+	} else {
+		m.addpayable_id = &u
+	}
+}
+
+// AddedPayableID returns the value that was added to the "payable_id" field in this mutation.
+func (m *PaymentMutation) AddedPayableID() (r int32, exists bool) {
+	v := m.addpayable_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPayableID clears the value of the "payable_id" field.
+func (m *PaymentMutation) ClearPayableID() {
+	m.payable_id = nil
+	m.addpayable_id = nil
+	m.clearedFields[payment.FieldPayableID] = struct{}{}
+}
+
+// PayableIDCleared returns if the "payable_id" field was cleared in this mutation.
+func (m *PaymentMutation) PayableIDCleared() bool {
+	_, ok := m.clearedFields[payment.FieldPayableID]
+	return ok
+}
+
+// ResetPayableID resets all changes to the "payable_id" field.
+func (m *PaymentMutation) ResetPayableID() {
+	m.payable_id = nil
+	m.addpayable_id = nil
+	delete(m.clearedFields, payment.FieldPayableID)
+}
+
+// SetAmount sets the "amount" field.
+func (m *PaymentMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *PaymentMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldAmount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *PaymentMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *PaymentMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAmount clears the value of the "amount" field.
+func (m *PaymentMutation) ClearAmount() {
+	m.amount = nil
+	m.addamount = nil
+	m.clearedFields[payment.FieldAmount] = struct{}{}
+}
+
+// AmountCleared returns if the "amount" field was cleared in this mutation.
+func (m *PaymentMutation) AmountCleared() bool {
+	_, ok := m.clearedFields[payment.FieldAmount]
+	return ok
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *PaymentMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+	delete(m.clearedFields, payment.FieldAmount)
+}
+
+// SetMethod sets the "method" field.
+func (m *PaymentMutation) SetMethod(pa payment.Method) {
+	m.method = &pa
+}
+
+// Method returns the value of the "method" field in the mutation.
+func (m *PaymentMutation) Method() (r payment.Method, exists bool) {
+	v := m.method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMethod returns the old "method" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldMethod(ctx context.Context) (v *payment.Method, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMethod: %w", err)
+	}
+	return oldValue.Method, nil
+}
+
+// ClearMethod clears the value of the "method" field.
+func (m *PaymentMutation) ClearMethod() {
+	m.method = nil
+	m.clearedFields[payment.FieldMethod] = struct{}{}
+}
+
+// MethodCleared returns if the "method" field was cleared in this mutation.
+func (m *PaymentMutation) MethodCleared() bool {
+	_, ok := m.clearedFields[payment.FieldMethod]
+	return ok
+}
+
+// ResetMethod resets all changes to the "method" field.
+func (m *PaymentMutation) ResetMethod() {
+	m.method = nil
+	delete(m.clearedFields, payment.FieldMethod)
+}
+
+// Where appends a list predicates to the PaymentMutation builder.
+func (m *PaymentMutation) Where(ps ...predicate.Payment) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PaymentMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PaymentMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Payment, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PaymentMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PaymentMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Payment).
+func (m *PaymentMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PaymentMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, payment.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, payment.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, payment.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, payment.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, payment.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, payment.FieldDeletedBy)
+	}
+	if m.remark != nil {
+		fields = append(fields, payment.FieldRemark)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, payment.FieldTenantID)
+	}
+	if m.payment_number != nil {
+		fields = append(fields, payment.FieldPaymentNumber)
+	}
+	if m.payable_id != nil {
+		fields = append(fields, payment.FieldPayableID)
+	}
+	if m.amount != nil {
+		fields = append(fields, payment.FieldAmount)
+	}
+	if m.method != nil {
+		fields = append(fields, payment.FieldMethod)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PaymentMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case payment.FieldCreatedAt:
+		return m.CreatedAt()
+	case payment.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case payment.FieldDeletedAt:
+		return m.DeletedAt()
+	case payment.FieldCreatedBy:
+		return m.CreatedBy()
+	case payment.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case payment.FieldDeletedBy:
+		return m.DeletedBy()
+	case payment.FieldRemark:
+		return m.Remark()
+	case payment.FieldTenantID:
+		return m.TenantID()
+	case payment.FieldPaymentNumber:
+		return m.PaymentNumber()
+	case payment.FieldPayableID:
+		return m.PayableID()
+	case payment.FieldAmount:
+		return m.Amount()
+	case payment.FieldMethod:
+		return m.Method()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PaymentMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case payment.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case payment.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case payment.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case payment.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case payment.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case payment.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case payment.FieldRemark:
+		return m.OldRemark(ctx)
+	case payment.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case payment.FieldPaymentNumber:
+		return m.OldPaymentNumber(ctx)
+	case payment.FieldPayableID:
+		return m.OldPayableID(ctx)
+	case payment.FieldAmount:
+		return m.OldAmount(ctx)
+	case payment.FieldMethod:
+		return m.OldMethod(ctx)
+	}
+	return nil, fmt.Errorf("unknown Payment field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PaymentMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case payment.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case payment.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case payment.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case payment.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case payment.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case payment.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case payment.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	case payment.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case payment.FieldPaymentNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaymentNumber(v)
+		return nil
+	case payment.FieldPayableID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPayableID(v)
+		return nil
+	case payment.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case payment.FieldMethod:
+		v, ok := value.(payment.Method)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMethod(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Payment field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PaymentMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, payment.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, payment.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, payment.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, payment.FieldTenantID)
+	}
+	if m.addpayable_id != nil {
+		fields = append(fields, payment.FieldPayableID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, payment.FieldAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PaymentMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case payment.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case payment.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case payment.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case payment.FieldTenantID:
+		return m.AddedTenantID()
+	case payment.FieldPayableID:
+		return m.AddedPayableID()
+	case payment.FieldAmount:
+		return m.AddedAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PaymentMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case payment.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case payment.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case payment.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case payment.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case payment.FieldPayableID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPayableID(v)
+		return nil
+	case payment.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Payment numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PaymentMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(payment.FieldCreatedAt) {
+		fields = append(fields, payment.FieldCreatedAt)
+	}
+	if m.FieldCleared(payment.FieldUpdatedAt) {
+		fields = append(fields, payment.FieldUpdatedAt)
+	}
+	if m.FieldCleared(payment.FieldDeletedAt) {
+		fields = append(fields, payment.FieldDeletedAt)
+	}
+	if m.FieldCleared(payment.FieldCreatedBy) {
+		fields = append(fields, payment.FieldCreatedBy)
+	}
+	if m.FieldCleared(payment.FieldUpdatedBy) {
+		fields = append(fields, payment.FieldUpdatedBy)
+	}
+	if m.FieldCleared(payment.FieldDeletedBy) {
+		fields = append(fields, payment.FieldDeletedBy)
+	}
+	if m.FieldCleared(payment.FieldRemark) {
+		fields = append(fields, payment.FieldRemark)
+	}
+	if m.FieldCleared(payment.FieldTenantID) {
+		fields = append(fields, payment.FieldTenantID)
+	}
+	if m.FieldCleared(payment.FieldPaymentNumber) {
+		fields = append(fields, payment.FieldPaymentNumber)
+	}
+	if m.FieldCleared(payment.FieldPayableID) {
+		fields = append(fields, payment.FieldPayableID)
+	}
+	if m.FieldCleared(payment.FieldAmount) {
+		fields = append(fields, payment.FieldAmount)
+	}
+	if m.FieldCleared(payment.FieldMethod) {
+		fields = append(fields, payment.FieldMethod)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PaymentMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PaymentMutation) ClearField(name string) error {
+	switch name {
+	case payment.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case payment.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case payment.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case payment.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case payment.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case payment.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case payment.FieldRemark:
+		m.ClearRemark()
+		return nil
+	case payment.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case payment.FieldPaymentNumber:
+		m.ClearPaymentNumber()
+		return nil
+	case payment.FieldPayableID:
+		m.ClearPayableID()
+		return nil
+	case payment.FieldAmount:
+		m.ClearAmount()
+		return nil
+	case payment.FieldMethod:
+		m.ClearMethod()
+		return nil
+	}
+	return fmt.Errorf("unknown Payment nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PaymentMutation) ResetField(name string) error {
+	switch name {
+	case payment.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case payment.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case payment.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case payment.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case payment.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case payment.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case payment.FieldRemark:
+		m.ResetRemark()
+		return nil
+	case payment.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case payment.FieldPaymentNumber:
+		m.ResetPaymentNumber()
+		return nil
+	case payment.FieldPayableID:
+		m.ResetPayableID()
+		return nil
+	case payment.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case payment.FieldMethod:
+		m.ResetMethod()
+		return nil
+	}
+	return fmt.Errorf("unknown Payment field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PaymentMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PaymentMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PaymentMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PaymentMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PaymentMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PaymentMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PaymentMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Payment unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PaymentMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Payment edge %s", name)
 }
 
 // PermissionMutation represents an operation that mutates the Permission nodes in the graph.

@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "finance/service/v1/finance.proto";
+
+// 应付单管理服务
+service PayableService {
+  // 查询应付单列表
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListPayableResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/payables"
+    };
+  }
+
+  // 查询应付单详情
+  rpc Get (finance.service.v1.GetPayableRequest) returns (finance.service.v1.Payable) {
+    option (google.api.http) = {
+      get: "/admin/v1/payables/{id}"
+    };
+  }
+
+  // 创建应付单（手工建账）
+  rpc Create (finance.service.v1.CreatePayableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/payables"
+      body: "*"
+    };
+  }
+
+  // 删除应付单（仅 PENDING 且未付款）
+  rpc Delete (finance.service.v1.DeletePayableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/payables/{id}"
+    };
+  }
+
+  // 取消应付单（仅 PENDING 且未付款）
+  rpc Cancel (finance.service.v1.CancelPayableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/payables:cancel"
+      body: "*"
+    };
+  }
+}
+
+// 付款管理服务（append-only 台账）
+service PaymentService {
+  // 查询付款列表
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListPaymentResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/payments"
+    };
+  }
+
+  // 查询付款详情
+  rpc Get (finance.service.v1.GetPaymentRequest) returns (finance.service.v1.Payment) {
+    option (google.api.http) = {
+      get: "/admin/v1/payments/{id}"
+    };
+  }
+
+  // 记录付款
+  rpc Create (finance.service.v1.CreatePaymentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/payments"
+      body: "*"
+    };
+  }
+}

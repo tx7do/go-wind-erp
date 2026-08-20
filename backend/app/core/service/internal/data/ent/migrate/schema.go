@@ -1634,6 +1634,78 @@ var (
 			},
 		},
 	}
+	// FinPayablesColumns holds the columns for the "fin_payables" table.
+	FinPayablesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "payable_number", Type: field.TypeString, Nullable: true, Comment: "应付单号（服务端生成）"},
+		{Name: "po_ref", Type: field.TypeString, Nullable: true, Comment: "来源采购单引用"},
+		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "应付总额（分）", Default: 0},
+		{Name: "paid_amount", Type: field.TypeInt64, Nullable: true, Comment: "已付金额（分，付款驱动）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "应付状态", Enums: []string{"PENDING", "PARTIAL", "SETTLED", "CANCELLED"}, Default: "PENDING"},
+	}
+	// FinPayablesTable holds the schema information for the "fin_payables" table.
+	FinPayablesTable = &schema.Table{
+		Name:       "fin_payables",
+		Comment:    "应付单表",
+		Columns:    FinPayablesColumns,
+		PrimaryKey: []*schema.Column{FinPayablesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_payable_tenant_number",
+				Unique:  true,
+				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[9]},
+			},
+			{
+				Name:    "idx_fin_payable_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[14], FinPayablesColumns[1]},
+			},
+			{
+				Name:    "idx_fin_payable_tenant_supplier",
+				Unique:  false,
+				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[11]},
+			},
+		},
+	}
+	// FinPaymentsColumns holds the columns for the "fin_payments" table.
+	FinPaymentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "payment_number", Type: field.TypeString, Nullable: true, Comment: "付款单号（服务端生成）"},
+		{Name: "payable_id", Type: field.TypeUint32, Nullable: true, Comment: "所属应付单ID", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "付款金额（分）", Default: 0},
+		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "付款方式", Enums: []string{"BANK_TRANSFER", "CASH", "CHECK", "OTHER"}, Default: "BANK_TRANSFER"},
+	}
+	// FinPaymentsTable holds the schema information for the "fin_payments" table.
+	FinPaymentsTable = &schema.Table{
+		Name:       "fin_payments",
+		Comment:    "付款表（append-only 台账）",
+		Columns:    FinPaymentsColumns,
+		PrimaryKey: []*schema.Column{FinPaymentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_payment_tenant_payable_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FinPaymentsColumns[8], FinPaymentsColumns[10], FinPaymentsColumns[1]},
+			},
+		},
+	}
 	// SysPermissionsColumns holds the columns for the "sys_permissions" table.
 	SysPermissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3063,6 +3135,8 @@ var (
 		SysMenusTable,
 		SysOperationAuditLogsTable,
 		SysOrgUnitsTable,
+		FinPayablesTable,
+		FinPaymentsTable,
 		SysPermissionsTable,
 		SysPermissionApisTable,
 		SysPermissionAuditLogsTable,
@@ -3201,6 +3275,16 @@ func init() {
 	SysOrgUnitsTable.ForeignKeys[0].RefTable = SysOrgUnitsTable
 	SysOrgUnitsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FinPayablesTable.Annotation = &entsql.Annotation{
+		Table:     "fin_payables",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FinPaymentsTable.Annotation = &entsql.Annotation{
+		Table:     "fin_payments",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
