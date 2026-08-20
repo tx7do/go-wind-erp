@@ -182,6 +182,32 @@ func (s *ApprovalRequestService) syncBusiness(
 		s.syncPurchaseOrder(ctx, old, to)
 	case paymentApprovalBizType:
 		s.syncPayment(ctx, old, to)
+	case replenishmentBizType:
+		s.syncReplenishment(ctx, old, to)
+	}
+}
+
+// syncReplenishment 对 biz_type=replenishment 的审批，通过后自动创建
+// 草稿采购单（供应商史缺失时不建单，仅记录——建议单仍留痕）。
+// biz_ref 形如 "replenishment:{warehouse}:{sku}"。
+func (s *ApprovalRequestService) syncReplenishment(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	if to != approvalV1.ApprovalRequest_APPROVED {
+		return
+	}
+
+	raw := strings.TrimPrefix(old.GetBizRef(), "replenishment:")
+	parts := strings.SplitN(raw, ":", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		s.log.Errorf("parse replenishment ref failed: %s", old.GetBizRef())
+		return
+	}
+
+	if err := s.purchaseOrderService.CreateReplenishmentDraft(ctx, parts[0], parts[1]); err != nil {
+		s.log.Errorf("create replenishment draft for %s failed: %s", old.GetBizRef(), err.Error())
 	}
 }
 

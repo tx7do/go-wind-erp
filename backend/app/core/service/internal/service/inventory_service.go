@@ -58,7 +58,7 @@ func (s *InventoryService) Count(ctx context.Context, req *paginationV1.PagingRe
 func (s *InventoryService) GetOverview(ctx context.Context, req *inventoryV1.GetInventoryOverviewRequest) (*inventoryV1.InventoryOverview, error) {
 	threshold := req.GetLowStockThreshold()
 	if threshold <= 0 {
-		threshold = 10
+		threshold = defaultLowStockThreshold
 	}
 	lowStockLimit := req.GetLowStockLimit()
 	if lowStockLimit <= 0 {

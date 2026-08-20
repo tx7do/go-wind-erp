@@ -23,6 +23,9 @@ type StockMovementService struct {
 	stockMovementRepo *data.StockMovementRepo
 	inventoryRepo     *data.InventoryRepo
 	purchaseOrderRepo *data.PurchaseOrderRepo
+	approvalRequestRepo *data.ApprovalRequestRepo
+
+	saga *procurementSagaSeam
 }
 
 func NewStockMovementService(
@@ -30,12 +33,20 @@ func NewStockMovementService(
 	stockMovementRepo *data.StockMovementRepo,
 	inventoryRepo *data.InventoryRepo,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
+	approvalRequestRepo *data.ApprovalRequestRepo,
 ) *StockMovementService {
 	svc := &StockMovementService{
 		log:      ctx.NewLoggerHelper("stock_movement/service/core-service"),
 		stockMovementRepo: stockMovementRepo,
 	inventoryRepo:     inventoryRepo,
 	purchaseOrderRepo: purchaseOrderRepo,
+	approvalRequestRepo: approvalRequestRepo,
+
+	saga: &procurementSagaSeam{
+		inventoryRepo:       inventoryRepo,
+		purchaseOrderRepo:    purchaseOrderRepo,
+		approvalRequestRepo:  approvalRequestRepo,
+	},
 	}
 
 	return svc
@@ -117,7 +128,7 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 
 	// SAGA：出库后联动采购（低库存补货评估）。
 	if delta < 0 {
-		if nerr := defaultSagaSeam.notifyProcurement(ctx, stockEvent{
+		if nerr := s.saga.notifyProcurement(ctx, stockEvent{
 			warehouseCode: warehouseCode,
 			skuCode:       skuCode,
 			delta:         delta,

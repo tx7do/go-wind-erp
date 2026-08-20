@@ -348,6 +348,61 @@ func (r *PurchaseOrderRepo) ApplyReceipt(
 	return received, ordered, nil
 }
 
+// HasInFlightReplenishment 该 SKU 是否有在途补货：存在未收满的明细，
+// 且其采购单处于 SUBMITTED/APPROVED。
+func (r *PurchaseOrderRepo) HasInFlightReplenishment(ctx context.Context, skuCode string) (bool, error) {
+	var ids []uint32
+	if err := r.entClient.Client().PurchaseOrderItem.Query().
+		Where(purchaseorderitem.SkuCodeEQ(skuCode)).
+		Where(purchaseorderitem.PoIDNotNil()).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s < %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		GroupBy(purchaseorderitem.FieldPoID).
+		Scan(ctx, &ids); err != nil {
+		r.log.Errorf("query in-flight items failed: %s", err.Error())
+		return false, procurementV1.ErrorInternalServerError("query in-flight items failed")
+	}
+	if len(ids) == 0 {
+		return false, nil
+	}
+
+	return r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.IDIn(ids...)).
+		Where(purchaseorder.StatusIn(purchaseorder.StatusSubmitted, purchaseorder.StatusApproved)).
+		Exist(ctx)
+}
+
+// LastSupplierForSku 该 SKU 最近一次采购的供应商（无历史返回空串）。
+func (r *PurchaseOrderRepo) LastSupplierForSku(ctx context.Context, skuCode string) (string, error) {
+	var ids []uint32
+	if err := r.entClient.Client().PurchaseOrderItem.Query().
+		Where(purchaseorderitem.SkuCodeEQ(skuCode)).
+		Where(purchaseorderitem.PoIDNotNil()).
+		GroupBy(purchaseorderitem.FieldPoID).
+		Scan(ctx, &ids); err != nil {
+		return "", procurementV1.ErrorInternalServerError("query sku po history failed")
+	}
+	if len(ids) == 0 {
+		return "", nil
+	}
+
+	last, err := r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.IDIn(ids...)).
+		Order(ent.Desc(purchaseorder.FieldCreatedAt)).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", nil
+		}
+		return "", procurementV1.ErrorInternalServerError("query last po failed")
+	}
+	return *last.SupplierCode, nil
+}
+
 // Delete 删除采购单及其明细。
 func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.DeletePurchaseOrderRequest) error {
 	if req == nil {

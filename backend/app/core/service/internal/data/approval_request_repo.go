@@ -175,6 +175,15 @@ func (r *ApprovalRequestRepo) Create(ctx context.Context, req *approvalV1.Create
 	return r.mapper.ToDTO(t), nil
 }
 
+// HasPendingByBizRef 是否存在指定 biz_ref 的待审批单（补货建议幂等检查）。
+func (r *ApprovalRequestRepo) HasPendingByBizRef(ctx context.Context, bizRef string) (bool, error) {
+	return r.entClient.Client().ApprovalRequest.Query().
+		Where(approvalrequest.BizRefEQ(bizRef)).
+		Where(approvalrequest.StatusEQ(approvalrequest.StatusPending)).
+		Exist(ctx)
+}
+
+
 // TransitionStatus 原子状态迁移：仅当当前状态为 from 时才更新为 to，
 // 同时盖章审批人与审批意见。0 行受影响说明已被并发变更，返回 Conflict。
 func (r *ApprovalRequestRepo) TransitionStatus(
