@@ -6905,6 +6905,14 @@ components:
                     type: string
                     description: 付款方式
                     format: enum
+                status:
+                    enum:
+                        - PENDING
+                        - APPLIED
+                        - REJECTED
+                    type: string
+                    description: 付款状态
+                    format: enum
                 remark:
                     type: string
                     description: 备注
@@ -8247,12 +8255,16 @@ components:
                     type: string
                     description: 流水类型
                     format: enum
+                poId:
+                    type: integer
+                    description: 关联采购单ID（入库收货时回写采购单收货量）
+                    format: uint32
                 quantityBefore:
                     type: string
-                    description: 操作前数量
+                    description: 操作前数量（服务端计算）
                 quantityAfter:
                     type: string
-                    description: 操作后数量
+                    description: 操作后数量（服务端计算）
                 remark:
                     type: string
                     description: 备注

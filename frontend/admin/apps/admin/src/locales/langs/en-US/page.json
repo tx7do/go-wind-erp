@@ -539,6 +539,7 @@
     "paymentNumber": "Payment No.",
     "payableId": "Payable ID",
     "amount": "Amount",
-    "method": "Method"
+    "method": "Method",
+    "status": "Status"
   }
 }

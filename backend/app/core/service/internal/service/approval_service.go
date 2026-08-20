@@ -43,17 +43,22 @@ type ApprovalRequestService struct {
 	// 经 PurchaseOrderService 动作走单一通路（自审守卫、应付生成等
 	// 服务层逻辑全部生效），而非直连 repo 绕过。
 	purchaseOrderService *PurchaseOrderService
+
+	// 付款联动：biz_type=payment 的审批通过/拒绝时驱动付款入账。
+	paymentService *PaymentService
 }
 
 func NewApprovalRequestService(
 	ctx *bootstrap.Context,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	purchaseOrderService *PurchaseOrderService,
+	paymentService *PaymentService,
 ) *ApprovalRequestService {
 	svc := &ApprovalRequestService{
 		log:                  ctx.NewLoggerHelper("approval_request/service/core-service"),
 		approvalRequestRepo:  approvalRequestRepo,
 		purchaseOrderService: purchaseOrderService,
+		paymentService:       paymentService,
 	}
 
 	return svc
@@ -159,11 +164,51 @@ func (s *ApprovalRequestService) transition(
 		return nil, err
 	}
 
-	// 采购联动：审批结果回写采购单。回写失败不回滚审批（审批已是事实），
-	// 仅记录，采购单可经管理端动作对齐。
-	s.syncPurchaseOrder(ctx, old, to)
+	// 业务联动：审批结果按 biz_type 分发回写（采购单/付款）。回写失败
+	// 不回滚审批（审批已是事实），仅记录，业务侧可经管理端动作对齐。
+	s.syncBusiness(ctx, old, to)
 
 	return &emptypb.Empty{}, nil
+}
+
+// syncBusiness 按 biz_type 分发审批结果联动。
+func (s *ApprovalRequestService) syncBusiness(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	switch old.GetBizType() {
+	case poApprovalBizType:
+		s.syncPurchaseOrder(ctx, old, to)
+	case paymentApprovalBizType:
+		s.syncPayment(ctx, old, to)
+	}
+}
+
+// syncPayment 对 biz_type=payment 的审批，驱动付款入账/拒绝。
+// biz_ref 形如 "payment:{id}"。
+func (s *ApprovalRequestService) syncPayment(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	raw := strings.TrimPrefix(old.GetBizRef(), "payment:")
+	paymentID, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		s.log.Errorf("parse payment ref failed: %s", old.GetBizRef())
+		return
+	}
+
+	switch to {
+	case approvalV1.ApprovalRequest_APPROVED:
+		if err := s.paymentService.ApplyApproved(ctx, uint32(paymentID)); err != nil {
+			s.log.Errorf("apply payment %d failed: %s", paymentID, err.Error())
+		}
+	case approvalV1.ApprovalRequest_REJECTED:
+		if err := s.paymentService.RejectApplied(ctx, uint32(paymentID)); err != nil {
+			s.log.Errorf("reject payment %d failed: %s", paymentID, err.Error())
+		}
+	}
 }
 
 // syncPurchaseOrder 对 biz_type=purchase_order 的审批，将其结果同步到

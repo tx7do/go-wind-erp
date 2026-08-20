@@ -133,6 +133,56 @@ func (Payment_Method) EnumDescriptor() ([]byte, []int) {
 	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{1, 0}
 }
 
+// 付款状态（付款须经审批：PENDING→APPLIED 生效入账 / REJECTED 拒绝）
+type Payment_Status int32
+
+const (
+	Payment_PENDING  Payment_Status = 0 // 待审批
+	Payment_APPLIED  Payment_Status = 1 // 已入账（应付单已累计）
+	Payment_REJECTED Payment_Status = 2 // 已拒绝
+)
+
+// Enum value maps for Payment_Status.
+var (
+	Payment_Status_name = map[int32]string{
+		0: "PENDING",
+		1: "APPLIED",
+		2: "REJECTED",
+	}
+	Payment_Status_value = map[string]int32{
+		"PENDING":  0,
+		"APPLIED":  1,
+		"REJECTED": 2,
+	}
+)
+
+func (x Payment_Status) Enum() *Payment_Status {
+	p := new(Payment_Status)
+	*p = x
+	return p
+}
+
+func (x Payment_Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Payment_Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_finance_service_v1_finance_proto_enumTypes[2].Descriptor()
+}
+
+func (Payment_Status) Type() protoreflect.EnumType {
+	return &file_finance_service_v1_finance_proto_enumTypes[2]
+}
+
+func (x Payment_Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Payment_Status.Descriptor instead.
+func (Payment_Status) EnumDescriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{1, 1}
+}
+
 // 应付单
 type Payable struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -298,6 +348,7 @@ type Payment struct {
 	PayableId     *uint32                `protobuf:"varint,3,opt,name=payable_id,json=payableId,proto3,oneof" json:"payable_id,omitempty"`                 // 所属应付单ID
 	Amount        *int64                 `protobuf:"varint,4,opt,name=amount,proto3,oneof" json:"amount,omitempty"`                                        // 付款金额（分）
 	Method        *Payment_Method        `protobuf:"varint,5,opt,name=method,proto3,enum=finance.service.v1.Payment_Method,oneof" json:"method,omitempty"` // 付款方式
+	Status        *Payment_Status        `protobuf:"varint,9,opt,name=status,proto3,enum=finance.service.v1.Payment_Status,oneof" json:"status,omitempty"` // 付款状态
 	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                        // 备注
 	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                   // 租户ID
 	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`               // 付款操作人
@@ -369,6 +420,13 @@ func (x *Payment) GetMethod() Payment_Method {
 		return *x.Method
 	}
 	return Payment_BANK_TRANSFER
+}
+
+func (x *Payment) GetStatus() Payment_Status {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return Payment_PENDING
 }
 
 func (x *Payment) GetRemark() string {
@@ -987,30 +1045,36 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xa8\x06\n" +
+	"\v_deleted_at\"\xbd\a\n" +
 	"\aPayment\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b付款IDH\x00R\x02id\x88\x01\x01\x12S\n" +
 	"\x0epayment_number\x18\x02 \x01(\tB'\xbaG$\x92\x02!付款单号（服务端生成）H\x01R\rpaymentNumber\x88\x01\x01\x12;\n" +
 	"\n" +
 	"payable_id\x18\x03 \x01(\rB\x17\xbaG\x14\x92\x02\x11所属应付单IDH\x02R\tpayableId\x88\x01\x01\x128\n" +
 	"\x06amount\x18\x04 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15付款金额（分）H\x03R\x06amount\x88\x01\x01\x12V\n" +
-	"\x06method\x18\x05 \x01(\x0e2\".finance.service.v1.Payment.MethodB\x15\xe0A\x01\xbaG\x0f\x92\x02\f付款方式H\x04R\x06method\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x05R\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\x06R\btenantId\x88\x01\x01\x12V\n" +
+	"\x06method\x18\x05 \x01(\x0e2\".finance.service.v1.Payment.MethodB\x15\xe0A\x01\xbaG\x0f\x92\x02\f付款方式H\x04R\x06method\x88\x01\x01\x12V\n" +
+	"\x06status\x18\t \x01(\x0e2\".finance.service.v1.Payment.StatusB\x15\xe0A\x01\xbaG\x0f\x92\x02\f付款状态H\x05R\x06status\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x06R\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\aR\btenantId\x88\x01\x01\x12V\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB2\xbaG/\x92\x02,付款操作人用户ID（服务端推导）H\aR\tcreatedBy\x88\x01\x01\x12S\n" +
+	"created_by\x18d \x01(\rB2\xbaG/\x92\x02,付款操作人用户ID（服务端推导）H\bR\tcreatedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f付款时间H\bR\tcreatedAt\x88\x01\x01\";\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f付款时间H\tR\tcreatedAt\x88\x01\x01\";\n" +
 	"\x06Method\x12\x11\n" +
 	"\rBANK_TRANSFER\x10\x00\x12\b\n" +
 	"\x04CASH\x10\x01\x12\t\n" +
 	"\x05CHECK\x10\x02\x12\t\n" +
-	"\x05OTHER\x10\x03B\x05\n" +
+	"\x05OTHER\x10\x03\"0\n" +
+	"\x06Status\x12\v\n" +
+	"\aPENDING\x10\x00\x12\v\n" +
+	"\aAPPLIED\x10\x01\x12\f\n" +
+	"\bREJECTED\x10\x02B\x05\n" +
 	"\x03_idB\x11\n" +
 	"\x0f_payment_numberB\r\n" +
 	"\v_payable_idB\t\n" +
 	"\a_amountB\t\n" +
 	"\a_methodB\t\n" +
+	"\a_statusB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
@@ -1079,66 +1143,68 @@ func file_finance_service_v1_finance_proto_rawDescGZIP() []byte {
 	return file_finance_service_v1_finance_proto_rawDescData
 }
 
-var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_finance_service_v1_finance_proto_goTypes = []any{
 	(Payable_Status)(0),           // 0: finance.service.v1.Payable.Status
 	(Payment_Method)(0),           // 1: finance.service.v1.Payment.Method
-	(*Payable)(nil),               // 2: finance.service.v1.Payable
-	(*Payment)(nil),               // 3: finance.service.v1.Payment
-	(*ListPayableResponse)(nil),   // 4: finance.service.v1.ListPayableResponse
-	(*GetPayableRequest)(nil),     // 5: finance.service.v1.GetPayableRequest
-	(*CreatePayableRequest)(nil),  // 6: finance.service.v1.CreatePayableRequest
-	(*DeletePayableRequest)(nil),  // 7: finance.service.v1.DeletePayableRequest
-	(*CancelPayableRequest)(nil),  // 8: finance.service.v1.CancelPayableRequest
-	(*CountPayableResponse)(nil),  // 9: finance.service.v1.CountPayableResponse
-	(*ListPaymentResponse)(nil),   // 10: finance.service.v1.ListPaymentResponse
-	(*GetPaymentRequest)(nil),     // 11: finance.service.v1.GetPaymentRequest
-	(*CreatePaymentRequest)(nil),  // 12: finance.service.v1.CreatePaymentRequest
-	(*CountPaymentResponse)(nil),  // 13: finance.service.v1.CountPaymentResponse
-	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 15: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 16: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 17: google.protobuf.Empty
+	(Payment_Status)(0),           // 2: finance.service.v1.Payment.Status
+	(*Payable)(nil),               // 3: finance.service.v1.Payable
+	(*Payment)(nil),               // 4: finance.service.v1.Payment
+	(*ListPayableResponse)(nil),   // 5: finance.service.v1.ListPayableResponse
+	(*GetPayableRequest)(nil),     // 6: finance.service.v1.GetPayableRequest
+	(*CreatePayableRequest)(nil),  // 7: finance.service.v1.CreatePayableRequest
+	(*DeletePayableRequest)(nil),  // 8: finance.service.v1.DeletePayableRequest
+	(*CancelPayableRequest)(nil),  // 9: finance.service.v1.CancelPayableRequest
+	(*CountPayableResponse)(nil),  // 10: finance.service.v1.CountPayableResponse
+	(*ListPaymentResponse)(nil),   // 11: finance.service.v1.ListPaymentResponse
+	(*GetPaymentRequest)(nil),     // 12: finance.service.v1.GetPaymentRequest
+	(*CreatePaymentRequest)(nil),  // 13: finance.service.v1.CreatePaymentRequest
+	(*CountPaymentResponse)(nil),  // 14: finance.service.v1.CountPaymentResponse
+	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil), // 16: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),      // 17: pagination.PagingRequest
+	(*emptypb.Empty)(nil),         // 18: google.protobuf.Empty
 }
 var file_finance_service_v1_finance_proto_depIdxs = []int32{
 	0,  // 0: finance.service.v1.Payable.status:type_name -> finance.service.v1.Payable.Status
-	14, // 1: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
-	14, // 2: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
-	14, // 3: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
+	15, // 1: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
+	15, // 2: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 3: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
-	14, // 5: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
-	2,  // 6: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
-	15, // 7: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 8: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
-	3,  // 9: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
-	15, // 10: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
-	3,  // 11: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
-	16, // 12: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	16, // 13: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
-	5,  // 14: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	6,  // 15: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
-	7,  // 16: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
-	8,  // 17: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
-	16, // 18: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	16, // 19: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
-	11, // 20: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	12, // 21: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	4,  // 22: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	9,  // 23: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
-	2,  // 24: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	17, // 25: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	17, // 26: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	17, // 27: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	10, // 28: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	13, // 29: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
-	3,  // 30: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	17, // 31: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	22, // [22:32] is the sub-list for method output_type
-	12, // [12:22] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	2,  // 5: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
+	15, // 6: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 7: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
+	16, // 8: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	3,  // 9: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
+	4,  // 10: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
+	16, // 11: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	4,  // 12: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
+	17, // 13: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	17, // 14: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
+	6,  // 15: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	7,  // 16: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
+	8,  // 17: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
+	9,  // 18: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
+	17, // 19: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	17, // 20: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
+	12, // 21: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	13, // 22: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
+	5,  // 23: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	10, // 24: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
+	3,  // 25: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	18, // 26: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	18, // 27: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	18, // 28: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	11, // 29: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	14, // 30: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
+	4,  // 31: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	18, // 32: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	23, // [23:33] is the sub-list for method output_type
+	13, // [13:23] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_finance_service_v1_finance_proto_init() }
@@ -1162,7 +1228,7 @@ func file_finance_service_v1_finance_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_finance_service_v1_finance_proto_rawDesc), len(file_finance_service_v1_finance_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   2,

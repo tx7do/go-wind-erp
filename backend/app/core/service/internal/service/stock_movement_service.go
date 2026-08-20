@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -20,15 +21,21 @@ type StockMovementService struct {
 	log *log.Helper
 
 	stockMovementRepo *data.StockMovementRepo
+	inventoryRepo     *data.InventoryRepo
+	purchaseOrderRepo *data.PurchaseOrderRepo
 }
 
 func NewStockMovementService(
 	ctx *bootstrap.Context,
 	stockMovementRepo *data.StockMovementRepo,
+	inventoryRepo *data.InventoryRepo,
+	purchaseOrderRepo *data.PurchaseOrderRepo,
 ) *StockMovementService {
 	svc := &StockMovementService{
 		log:      ctx.NewLoggerHelper("stock_movement/service/core-service"),
 		stockMovementRepo: stockMovementRepo,
+	inventoryRepo:     inventoryRepo,
+	purchaseOrderRepo: purchaseOrderRepo,
 	}
 
 	return svc
@@ -55,39 +62,75 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 金额溢出校验：delta 与 quantity_before/quantity_after 的加法关系必须自洽，
-	// 且 quantity_before + delta 必须等于 quantity_after，不得溢出 int64。
-	qb := req.Data.GetQuantityBefore()
-	d := req.Data.GetDelta()
-	qa := req.Data.GetQuantityAfter()
+	warehouseCode := req.Data.GetWarehouseCode()
+	skuCode := req.Data.GetSkuCode()
+	if warehouseCode == "" || skuCode == "" {
+		return nil, inventoryV1.ErrorBadRequest("warehouse_code and sku_code are required")
+	}
 
-	// 零变更是无意义流水，拒绝（避免污染台账）。
-	if d == 0 {
+	delta := req.Data.GetDelta()
+	if delta == 0 {
 		return nil, inventoryV1.ErrorBadRequest("delta must not be zero")
 	}
 
-	sum, overflow := addChecked(qb, d)
-	if overflow {
-		return nil, inventoryV1.ErrorBadRequest("quantity arithmetic overflow")
-	}
-	if sum != qa {
-		return nil, inventoryV1.ErrorBadRequest("quantity_before + delta != quantity_after")
+	movementType := req.Data.GetMovementType()
+	if movementType == inventoryV1.StockMovement_TRANSFER {
+		return nil, inventoryV1.ErrorBadRequest("transfer movement is not supported yet")
 	}
 
-	if _, err := s.stockMovementRepo.Create(ctx, req); err != nil {
+	poID := req.Data.GetPoId()
+	if poID != 0 && movementType != inventoryV1.StockMovement_INBOUND {
+		return nil, inventoryV1.ErrorBadRequest("po_id is only valid for inbound movements")
+	}
+
+	// 入库允许库存行不存在（自动建行）；出库/调整要求已存在。
+	if movementType == inventoryV1.StockMovement_INBOUND {
+		if err := s.inventoryRepo.EnsureForInbound(ctx, warehouseCode, skuCode); err != nil {
+			return nil, err
+		}
+	}
+
+	inv, err := s.inventoryRepo.FindByWarehouseSku(ctx, warehouseCode, skuCode)
+	if err != nil {
 		return nil, err
 	}
 
-	// SAGA 桩：持久化成功后才发出库类补偿通知（避免"建单失败却发了事件"）；
-	// 通知失败仅记录——当前为 no-op 桩，接真实实现时需评估补偿策略。
-	if d < 0 {
-		if err := defaultSagaSeam.notifyProcurement(ctx, stockEvent{
-			warehouseCode: req.Data.GetWarehouseCode(),
-			skuCode:       req.Data.GetSkuCode(),
-			delta:         d,
-		}); err != nil {
-			s.log.Errorf("saga notify procurement failed: %s", err.Error())
+	qb := inv.GetQuantity()
+	qa, overflow := addChecked(qb, delta)
+	if overflow {
+		return nil, inventoryV1.ErrorBadRequest("quantity arithmetic overflow")
+	}
+
+	// 原子回写（防负库存 + 防并发）；随后以服务端计算的 qb/qa 落流水。
+	if _, err := s.inventoryRepo.ApplyDelta(ctx, inv.GetId(), delta); err != nil {
+		return nil, err
+	}
+
+	// 收货联动：超收由 ApplyReceipt 的条件更新守卫；失败不回滚库存
+	// （入库已生效），记录并返回，由调用方决定是否冲正。
+	if poID != 0 {
+		if _, _, rerr := s.purchaseOrderRepo.ApplyReceipt(ctx, poID, skuCode, delta); rerr != nil {
+			s.log.Errorf("apply receipt for po %d failed after inventory applied: %s", poID, rerr.Error())
+			return nil, rerr
 		}
+	}
+
+	// SAGA：出库后联动采购（低库存补货评估）。
+	if delta < 0 {
+		if nerr := defaultSagaSeam.notifyProcurement(ctx, stockEvent{
+			warehouseCode: warehouseCode,
+			skuCode:       skuCode,
+			delta:         delta,
+		}); nerr != nil {
+			s.log.Errorf("saga notify procurement failed: %s", nerr.Error())
+		}
+	}
+
+	movement := req.Data
+	movement.QuantityBefore = trans.Ptr(qb)
+	movement.QuantityAfter = trans.Ptr(qa)
+	if _, err := s.stockMovementRepo.Create(ctx, &inventoryV1.CreateStockMovementRequest{Data: movement}); err != nil {
+		return nil, err
 	}
 
 	return &emptypb.Empty{}, nil

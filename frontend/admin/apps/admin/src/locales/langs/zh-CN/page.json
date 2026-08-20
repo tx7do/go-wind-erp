@@ -568,6 +568,7 @@
     "paymentNumber": "付款单号",
     "payableId": "应付单ID",
     "amount": "金额（元）",
-    "method": "付款方式"
+    "method": "付款方式",
+    "status": "状态"
   }
 }

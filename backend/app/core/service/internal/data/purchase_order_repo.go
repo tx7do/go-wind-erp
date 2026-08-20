@@ -282,6 +282,72 @@ func (r *PurchaseOrderRepo) TransitionStatus(
 	return nil
 }
 
+// ApplyReceipt 收货回写：对匹配明细原子累计 received_quantity（条件
+// received + qty <= ordered 防超收），随后若全部明细收齐且单据为
+// APPROVED 则自动完结。返回 (本次收货后累计, 订单量)。
+func (r *PurchaseOrderRepo) ApplyReceipt(
+	ctx context.Context,
+	poID uint32,
+	skuCode string,
+	qty int64,
+) (received int64, ordered int64, err error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	item, err := r.entClient.Client().PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID), purchaseorderitem.SkuCodeEQ(skuCode)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, 0, procurementV1.ErrorNotFound("purchase order item not found for sku")
+		}
+		return 0, 0, procurementV1.ErrorInternalServerError("query purchase order item failed")
+	}
+
+	ordered = *item.Quantity
+	builder := r.entClient.Client().PurchaseOrderItem.Update().
+		Where(purchaseorderitem.IDEQ(item.ID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s + %d <= %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), qty, s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		AddReceivedQuantity(qty)
+	if hasTenant {
+		builder.Where(purchaseorderitem.TenantIDEQ(tid))
+	}
+
+	n, serr := builder.Save(ctx)
+	if serr != nil {
+		r.log.Errorf("apply receipt failed: %s", serr.Error())
+		return 0, 0, procurementV1.ErrorInternalServerError("apply receipt failed")
+	}
+	if n == 0 {
+		return 0, 0, procurementV1.ErrorConflict("receipt exceeds ordered quantity")
+	}
+
+	received = *item.ReceivedQuantity + qty
+
+	// 全部明细收齐且单据在途 → 自动完结（冲突/失败仅记录）。
+	remaining, cerr := r.entClient.Client().PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s < %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		Count(ctx)
+	if cerr == nil && remaining == 0 {
+		if terr := r.TransitionStatus(ctx, poID,
+			procurementV1.PurchaseOrder_APPROVED, procurementV1.PurchaseOrder_COMPLETED); terr != nil {
+			r.log.Warnf("auto-complete purchase order %d failed: %s", poID, terr.Error())
+		}
+	}
+
+	return received, ordered, nil
+}
+
 // Delete 删除采购单及其明细。
 func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.DeletePurchaseOrderRequest) error {
 	if req == nil {

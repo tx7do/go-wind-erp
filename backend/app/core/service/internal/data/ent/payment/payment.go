@@ -38,6 +38,8 @@ const (
 	FieldAmount = "amount"
 	// FieldMethod holds the string denoting the method field in the database.
 	FieldMethod = "method"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// Table holds the table name of the payment in the database.
 	Table = "fin_payments"
 )
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldPayableID,
 	FieldAmount,
 	FieldMethod,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -112,6 +115,33 @@ func MethodValidator(m Method) error {
 		return nil
 	default:
 		return fmt.Errorf("payment: invalid enum value for method field: %q", m)
+	}
+}
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusPending is the default value of the Status enum.
+const DefaultStatus = StatusPending
+
+// Status values.
+const (
+	StatusPending  Status = "PENDING"
+	StatusApplied  Status = "APPLIED"
+	StatusRejected Status = "REJECTED"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusPending, StatusApplied, StatusRejected:
+		return nil
+	default:
+		return fmt.Errorf("payment: invalid enum value for status field: %q", s)
 	}
 }
 
@@ -181,4 +211,9 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByMethod orders the results by the method field.
 func ByMethod(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMethod, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }

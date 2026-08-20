@@ -38833,6 +38833,7 @@ type PaymentMutation struct {
 	amount         *int64
 	addamount      *int64
 	method         *payment.Method
+	status         *payment.Status
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*Payment, error)
@@ -39657,6 +39658,55 @@ func (m *PaymentMutation) ResetMethod() {
 	delete(m.clearedFields, payment.FieldMethod)
 }
 
+// SetStatus sets the "status" field.
+func (m *PaymentMutation) SetStatus(pa payment.Status) {
+	m.status = &pa
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PaymentMutation) Status() (r payment.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Payment entity.
+// If the Payment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentMutation) OldStatus(ctx context.Context) (v *payment.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *PaymentMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[payment.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PaymentMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[payment.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PaymentMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, payment.FieldStatus)
+}
+
 // Where appends a list predicates to the PaymentMutation builder.
 func (m *PaymentMutation) Where(ps ...predicate.Payment) {
 	m.predicates = append(m.predicates, ps...)
@@ -39691,7 +39741,7 @@ func (m *PaymentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, payment.FieldCreatedAt)
 	}
@@ -39728,6 +39778,9 @@ func (m *PaymentMutation) Fields() []string {
 	if m.method != nil {
 		fields = append(fields, payment.FieldMethod)
 	}
+	if m.status != nil {
+		fields = append(fields, payment.FieldStatus)
+	}
 	return fields
 }
 
@@ -39760,6 +39813,8 @@ func (m *PaymentMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case payment.FieldMethod:
 		return m.Method()
+	case payment.FieldStatus:
+		return m.Status()
 	}
 	return nil, false
 }
@@ -39793,6 +39848,8 @@ func (m *PaymentMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldAmount(ctx)
 	case payment.FieldMethod:
 		return m.OldMethod(ctx)
+	case payment.FieldStatus:
+		return m.OldStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown Payment field %s", name)
 }
@@ -39885,6 +39942,13 @@ func (m *PaymentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMethod(v)
+		return nil
+	case payment.FieldStatus:
+		v, ok := value.(payment.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Payment field %s", name)
@@ -40027,6 +40091,9 @@ func (m *PaymentMutation) ClearedFields() []string {
 	if m.FieldCleared(payment.FieldMethod) {
 		fields = append(fields, payment.FieldMethod)
 	}
+	if m.FieldCleared(payment.FieldStatus) {
+		fields = append(fields, payment.FieldStatus)
+	}
 	return fields
 }
 
@@ -40077,6 +40144,9 @@ func (m *PaymentMutation) ClearField(name string) error {
 	case payment.FieldMethod:
 		m.ClearMethod()
 		return nil
+	case payment.FieldStatus:
+		m.ClearStatus()
+		return nil
 	}
 	return fmt.Errorf("unknown Payment nullable field %s", name)
 }
@@ -40120,6 +40190,9 @@ func (m *PaymentMutation) ResetField(name string) error {
 		return nil
 	case payment.FieldMethod:
 		m.ResetMethod()
+		return nil
+	case payment.FieldStatus:
+		m.ResetStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown Payment field %s", name)

@@ -9,6 +9,7 @@ import type {
   financeservicev1_Payable_Status,
   financeservicev1_Payment,
   financeservicev1_Payment_Method,
+  financeservicev1_Payment_Status,
 } from '#/api/generated/admin/service/v1';
 
 import { computed } from 'vue';
@@ -178,6 +179,39 @@ export function payableStatusToColor(status: financeservicev1_Payable_Status) {
     }
     case 'CANCELLED': {
       return 'gray';
+    }
+    default: {
+      return 'gray';
+    }
+  }
+}
+
+export const paymentStatusList = computed(() => [
+  { value: 'PENDING', label: t('enum.finance.paymentStatus.Pending') },
+  { value: 'APPLIED', label: t('enum.finance.paymentStatus.Applied') },
+  { value: 'REJECTED', label: t('enum.finance.paymentStatus.Rejected') },
+]);
+
+export function paymentStatusToName(
+  status?: financeservicev1_Payment_Status,
+) {
+  const values = paymentStatusList.value;
+  const matchedItem = values.find((item) => item.value === status);
+  return matchedItem ? matchedItem.label : '';
+}
+
+export function paymentStatusToColor(
+  status?: financeservicev1_Payment_Status,
+) {
+  switch (status) {
+    case 'PENDING': {
+      return 'orange';
+    }
+    case 'APPLIED': {
+      return 'green';
+    }
+    case 'REJECTED': {
+      return 'red';
     }
     default: {
       return 'gray';

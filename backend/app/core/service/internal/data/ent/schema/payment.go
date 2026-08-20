@@ -58,6 +58,17 @@ func (Payment) Fields() []ent.Field {
 			Default("BANK_TRANSFER").
 			Optional().
 			Nillable(),
+
+		field.Enum("status").
+			Comment("付款状态").
+			NamedValues(
+				"Pending", "PENDING",
+				"Applied", "APPLIED",
+				"Rejected", "REJECTED",
+			).
+			Default("PENDING").
+			Optional().
+			Nillable(),
 	}
 }
 

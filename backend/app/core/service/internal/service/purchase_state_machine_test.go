@@ -21,6 +21,7 @@ func TestPurchaseOrderTransition_Authorized(t *testing.T) {
 		{procurementV1.PurchaseOrder_APPROVED, procurementV1.PurchaseOrder_COMPLETED},
 		{procurementV1.PurchaseOrder_APPROVED, procurementV1.PurchaseOrder_CANCELLED},
 		{procurementV1.PurchaseOrder_REJECTED, procurementV1.PurchaseOrder_CANCELLED},
+		{procurementV1.PurchaseOrder_REJECTED, procurementV1.PurchaseOrder_SUBMITTED},
 	}
 	for _, c := range authorized {
 		if !validatePurchaseOrderTransition(c.from, c.to) {
@@ -29,7 +30,7 @@ func TestPurchaseOrderTransition_Authorized(t *testing.T) {
 	}
 }
 
-// TestPurchaseOrderTransition_Unauthorized full-matrix: only the 8 legal
+// TestPurchaseOrderTransition_Unauthorized full-matrix: only the 9 legal
 // edges pass; everything else (incl. terminal exits and cross-jumps like
 // DRAFT→APPROVED bypassing submission) is rejected.
 func TestPurchaseOrderTransition_Unauthorized(t *testing.T) {
@@ -54,6 +55,7 @@ func TestPurchaseOrderTransition_Unauthorized(t *testing.T) {
 		},
 		procurementV1.PurchaseOrder_REJECTED: {
 			procurementV1.PurchaseOrder_CANCELLED: true,
+			procurementV1.PurchaseOrder_SUBMITTED: true,
 		},
 	}
 	for _, from := range statuses {

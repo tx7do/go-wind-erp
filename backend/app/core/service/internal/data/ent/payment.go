@@ -41,7 +41,9 @@ type Payment struct {
 	// 付款金额（分）
 	Amount *int64 `json:"amount,omitempty"`
 	// 付款方式
-	Method       *payment.Method `json:"method,omitempty"`
+	Method *payment.Method `json:"method,omitempty"`
+	// 付款状态
+	Status       *payment.Status `json:"status,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -52,7 +54,7 @@ func (*Payment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case payment.FieldID, payment.FieldCreatedBy, payment.FieldUpdatedBy, payment.FieldDeletedBy, payment.FieldTenantID, payment.FieldPayableID, payment.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case payment.FieldRemark, payment.FieldPaymentNumber, payment.FieldMethod:
+		case payment.FieldRemark, payment.FieldPaymentNumber, payment.FieldMethod, payment.FieldStatus:
 			values[i] = new(sql.NullString)
 		case payment.FieldCreatedAt, payment.FieldUpdatedAt, payment.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -161,6 +163,13 @@ func (_m *Payment) assignValues(columns []string, values []any) error {
 				_m.Method = new(payment.Method)
 				*_m.Method = payment.Method(value.String)
 			}
+		case payment.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				_m.Status = new(payment.Status)
+				*_m.Status = payment.Status(value.String)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -254,6 +263,11 @@ func (_m *Payment) String() string {
 	builder.WriteString(", ")
 	if v := _m.Method; v != nil {
 		builder.WriteString("method=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Status; v != nil {
+		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

@@ -285,6 +285,11 @@
       "Cash": "Cash",
       "Check": "Check",
       "Other": "Other"
+    },
+    "paymentStatus": {
+      "Pending": "Pending",
+      "Applied": "Applied",
+      "Rejected": "Rejected"
     }
   }
 }

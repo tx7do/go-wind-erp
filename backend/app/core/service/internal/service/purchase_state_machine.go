@@ -5,10 +5,10 @@ import (
 )
 
 // purchaseOrderStatusTransition defines the allowed transitions for the
-// purchase order state machine. DRAFT/SUBMITTED/APPROVED are live states;
-// REJECTED/COMPLETED/CANCELLED are terminal for flow purposes (REJECTED may
-// only go to CANCELLED for cleanup). Same-state transitions are rejected
-// (re-submitting a submitted order is a no-op that must fail loudly).
+// purchase order state machine. DRAFT/SUBMITTED/APPROVED/REJECTED are live
+// states (REJECTED supports revise-and-resubmit); COMPLETED/CANCELLED are
+// terminal. Same-state transitions are rejected (re-submitting a submitted
+// order is a no-op that must fail loudly).
 var purchaseOrderStatusTransition = map[procurementV1.PurchaseOrder_Status][]procurementV1.PurchaseOrder_Status{
 	procurementV1.PurchaseOrder_DRAFT: {
 		procurementV1.PurchaseOrder_SUBMITTED,
@@ -25,6 +25,8 @@ var purchaseOrderStatusTransition = map[procurementV1.PurchaseOrder_Status][]pro
 	},
 	procurementV1.PurchaseOrder_REJECTED: {
 		procurementV1.PurchaseOrder_CANCELLED,
+		// 驳回后可修改重提（改单走 Update，重提走 Submit）
+		procurementV1.PurchaseOrder_SUBMITTED,
 	},
 }
 

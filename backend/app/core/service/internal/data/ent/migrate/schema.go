@@ -1691,6 +1691,7 @@ var (
 		{Name: "payable_id", Type: field.TypeUint32, Nullable: true, Comment: "所属应付单ID", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "付款金额（分）", Default: 0},
 		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "付款方式", Enums: []string{"BANK_TRANSFER", "CASH", "CHECK", "OTHER"}, Default: "BANK_TRANSFER"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "付款状态", Enums: []string{"PENDING", "APPLIED", "REJECTED"}, Default: "PENDING"},
 	}
 	// FinPaymentsTable holds the schema information for the "fin_payments" table.
 	FinPaymentsTable = &schema.Table{

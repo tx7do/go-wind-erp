@@ -190,6 +190,20 @@ func (_c *PaymentCreate) SetNillableMethod(v *payment.Method) *PaymentCreate {
 	return _c
 }
 
+// SetStatus sets the "status" field.
+func (_c *PaymentCreate) SetStatus(v payment.Status) *PaymentCreate {
+	_c.mutation.SetStatus(v)
+	return _c
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_c *PaymentCreate) SetNillableStatus(v *payment.Status) *PaymentCreate {
+	if v != nil {
+		_c.SetStatus(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PaymentCreate) SetID(v uint32) *PaymentCreate {
 	_c.mutation.SetID(v)
@@ -249,6 +263,10 @@ func (_c *PaymentCreate) defaults() error {
 		v := payment.DefaultMethod
 		_c.mutation.SetMethod(v)
 	}
+	if _, ok := _c.mutation.Status(); !ok {
+		v := payment.DefaultStatus
+		_c.mutation.SetStatus(v)
+	}
 	return nil
 }
 
@@ -257,6 +275,11 @@ func (_c *PaymentCreate) check() error {
 	if v, ok := _c.mutation.Method(); ok {
 		if err := payment.MethodValidator(v); err != nil {
 			return &ValidationError{Name: "method", err: fmt.Errorf(`ent: validator failed for field "Payment.method": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.Status(); ok {
+		if err := payment.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Payment.status": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.ID(); ok {
@@ -344,6 +367,10 @@ func (_c *PaymentCreate) createSpec() (*Payment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Method(); ok {
 		_spec.SetField(payment.FieldMethod, field.TypeEnum, value)
 		_node.Method = &value
+	}
+	if value, ok := _c.mutation.Status(); ok {
+		_spec.SetField(payment.FieldStatus, field.TypeEnum, value)
+		_node.Status = &value
 	}
 	return _node, _spec
 }
@@ -604,6 +631,24 @@ func (u *PaymentUpsert) UpdateMethod() *PaymentUpsert {
 // ClearMethod clears the value of the "method" field.
 func (u *PaymentUpsert) ClearMethod() *PaymentUpsert {
 	u.SetNull(payment.FieldMethod)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *PaymentUpsert) SetStatus(v payment.Status) *PaymentUpsert {
+	u.Set(payment.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PaymentUpsert) UpdateStatus() *PaymentUpsert {
+	u.SetExcluded(payment.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PaymentUpsert) ClearStatus() *PaymentUpsert {
+	u.SetNull(payment.FieldStatus)
 	return u
 }
 
@@ -903,6 +948,27 @@ func (u *PaymentUpsertOne) UpdateMethod() *PaymentUpsertOne {
 func (u *PaymentUpsertOne) ClearMethod() *PaymentUpsertOne {
 	return u.Update(func(s *PaymentUpsert) {
 		s.ClearMethod()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *PaymentUpsertOne) SetStatus(v payment.Status) *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PaymentUpsertOne) UpdateStatus() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PaymentUpsertOne) ClearStatus() *PaymentUpsertOne {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearStatus()
 	})
 }
 
@@ -1368,6 +1434,27 @@ func (u *PaymentUpsertBulk) UpdateMethod() *PaymentUpsertBulk {
 func (u *PaymentUpsertBulk) ClearMethod() *PaymentUpsertBulk {
 	return u.Update(func(s *PaymentUpsert) {
 		s.ClearMethod()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *PaymentUpsertBulk) SetStatus(v payment.Status) *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *PaymentUpsertBulk) UpdateStatus() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PaymentUpsertBulk) ClearStatus() *PaymentUpsertBulk {
+	return u.Update(func(s *PaymentUpsert) {
+		s.ClearStatus()
 	})
 }
 

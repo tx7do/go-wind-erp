@@ -321,6 +321,10 @@ func (m *Payment) validate(all bool) error {
 		// no validation rules for Method
 	}
 
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
 	if m.Remark != nil {
 		// no validation rules for Remark
 	}

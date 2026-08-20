@@ -420,8 +420,9 @@ type StockMovement struct {
 	SkuCode        *string                     `protobuf:"bytes,3,opt,name=sku_code,json=skuCode,proto3,oneof" json:"sku_code,omitempty"`                                                                      // 涉及SKU编码
 	Delta          *int64                      `protobuf:"varint,4,opt,name=delta,proto3,oneof" json:"delta,omitempty"`                                                                                        // 数量变化量
 	MovementType   *StockMovement_MovementType `protobuf:"varint,5,opt,name=movement_type,json=movementType,proto3,enum=inventory.service.v1.StockMovement_MovementType,oneof" json:"movement_type,omitempty"` // 流水类型
-	QuantityBefore *int64                      `protobuf:"varint,6,opt,name=quantity_before,json=quantityBefore,proto3,oneof" json:"quantity_before,omitempty"`                                                // 操作前数量
-	QuantityAfter  *int64                      `protobuf:"varint,7,opt,name=quantity_after,json=quantityAfter,proto3,oneof" json:"quantity_after,omitempty"`                                                   // 操作后数量
+	PoId           *uint32                     `protobuf:"varint,8,opt,name=po_id,json=poId,proto3,oneof" json:"po_id,omitempty"`                                                                              // 关联采购单ID
+	QuantityBefore *int64                      `protobuf:"varint,6,opt,name=quantity_before,json=quantityBefore,proto3,oneof" json:"quantity_before,omitempty"`                                                // 操作前数量（服务端计算，忽略客户端传值）
+	QuantityAfter  *int64                      `protobuf:"varint,7,opt,name=quantity_after,json=quantityAfter,proto3,oneof" json:"quantity_after,omitempty"`                                                   // 操作后数量（服务端计算，忽略客户端传值）
 	Remark         *string                     `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                                                                      // 备注
 	TenantId       *uint32                     `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                                                                 // 租户ID，0代表系统全局
 	CreatedBy      *uint32                     `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                             // 创建者用户ID
@@ -495,6 +496,13 @@ func (x *StockMovement) GetMovementType() StockMovement_MovementType {
 		return *x.MovementType
 	}
 	return StockMovement_INBOUND
+}
+
+func (x *StockMovement) GetPoId() uint32 {
+	if x != nil && x.PoId != nil {
+		return *x.PoId
+	}
+	return 0
 }
 
 func (x *StockMovement) GetQuantityBefore() int64 {
@@ -1753,26 +1761,28 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xa7\t\n" +
+	"\v_deleted_at\"\xb8\n" +
+	"\n" +
 	"\rStockMovement\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b流水IDH\x00R\x02id\x88\x01\x01\x12G\n" +
 	"\x0ewarehouse_code\x18\x02 \x01(\tB\x1b\xe0A\x01\xbaG\x15\x92\x02\x12涉及仓库编码H\x01R\rwarehouseCode\x88\x01\x01\x128\n" +
 	"\bsku_code\x18\x03 \x01(\tB\x18\xe0A\x01\xbaG\x12\x92\x02\x0f涉及SKU编码H\x02R\askuCode\x88\x01\x01\x12K\n" +
 	"\x05delta\x18\x04 \x01(\x03B0\xe0A\x01\xbaG*\x92\x02'数量变化量，正为入、负为出H\x03R\x05delta\x88\x01\x01\x12q\n" +
-	"\rmovement_type\x18\x05 \x01(\x0e20.inventory.service.v1.StockMovement.MovementTypeB\x15\xe0A\x01\xbaG\x0f\x92\x02\f流水类型H\x04R\fmovementType\x88\x01\x01\x12F\n" +
-	"\x0fquantity_before\x18\x06 \x01(\x03B\x18\xe0A\x01\xbaG\x12\x92\x02\x0f操作前数量H\x05R\x0equantityBefore\x88\x01\x01\x12D\n" +
-	"\x0equantity_after\x18\a \x01(\x03B\x18\xe0A\x01\xbaG\x12\x92\x02\x0f操作后数量H\x06R\rquantityAfter\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\aR\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\bR\btenantId\x88\x01\x01\x12;\n" +
+	"\rmovement_type\x18\x05 \x01(\x0e20.inventory.service.v1.StockMovement.MovementTypeB\x15\xe0A\x01\xbaG\x0f\x92\x02\f流水类型H\x04R\fmovementType\x88\x01\x01\x12a\n" +
+	"\x05po_id\x18\b \x01(\rBG\xe0A\x01\xbaGA\x92\x02>关联采购单ID（入库收货时回写采购单收货量）H\x05R\x04poId\x88\x01\x01\x12X\n" +
+	"\x0fquantity_before\x18\x06 \x01(\x03B*\xbaG'\x92\x02$操作前数量（服务端计算）H\x06R\x0equantityBefore\x88\x01\x01\x12V\n" +
+	"\x0equantity_after\x18\a \x01(\x03B*\xbaG'\x92\x02$操作后数量（服务端计算）H\aR\rquantityAfter\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\tR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
+	"R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
-	"R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\fR\tdeletedAt\x88\x01\x01\"G\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\rR\tdeletedAt\x88\x01\x01\"G\n" +
 	"\fMovementType\x12\v\n" +
 	"\aINBOUND\x10\x00\x12\f\n" +
 	"\bOUTBOUND\x10\x01\x12\f\n" +
@@ -1783,7 +1793,8 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\x0f_warehouse_codeB\v\n" +
 	"\t_sku_codeB\b\n" +
 	"\x06_deltaB\x10\n" +
-	"\x0e_movement_typeB\x12\n" +
+	"\x0e_movement_typeB\b\n" +
+	"\x06_po_idB\x12\n" +
 	"\x10_quantity_beforeB\x11\n" +
 	"\x0f_quantity_afterB\t\n" +
 	"\a_remarkB\f\n" +

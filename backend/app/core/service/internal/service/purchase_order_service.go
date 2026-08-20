@@ -96,8 +96,10 @@ func (s *PurchaseOrderService) Update(ctx context.Context, req *procurementV1.Up
 	if err != nil {
 		return nil, err
 	}
-	if old.GetStatus() != procurementV1.PurchaseOrder_DRAFT {
-		return nil, procurementV1.ErrorConflict("only draft purchase orders can be updated")
+	// DRAFT 可改；REJECTED 支持驳回后修改重提。
+	if old.GetStatus() != procurementV1.PurchaseOrder_DRAFT &&
+		old.GetStatus() != procurementV1.PurchaseOrder_REJECTED {
+		return nil, procurementV1.ErrorConflict("only draft or rejected purchase orders can be updated")
 	}
 
 	if err := computeOrderAmounts(req.Data); err != nil {

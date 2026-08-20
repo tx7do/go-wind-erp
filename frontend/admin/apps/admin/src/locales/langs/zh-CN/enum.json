@@ -285,6 +285,11 @@
       "Cash": "现金",
       "Check": "支票",
       "Other": "其他"
+    },
+    "paymentStatus": {
+      "Pending": "待审批",
+      "Applied": "已入账",
+      "Rejected": "已拒绝"
     }
   }
 }

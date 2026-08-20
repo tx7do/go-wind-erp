@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -189,6 +190,92 @@ func (r *InventoryRepo) ListLowStock(ctx context.Context, threshold int64, limit
 		items = append(items, r.mapper.ToDTO(row))
 	}
 	return items, nil
+}
+
+// FindByWarehouseSku 按仓库+SKU 查库存行（读路径走租户策略）。
+func (r *InventoryRepo) FindByWarehouseSku(
+	ctx context.Context,
+	warehouseCode, skuCode string,
+) (*inventoryV1.Inventory, error) {
+	row, err := r.entClient.Client().Inventory.Query().
+		Where(inventory.WarehouseCodeEQ(warehouseCode), inventory.SkuCodeEQ(skuCode)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, inventoryV1.ErrorNotFound("inventory not found")
+		}
+		return nil, inventoryV1.ErrorInternalServerError("query inventory failed")
+	}
+	return r.mapper.ToDTO(row), nil
+}
+
+// EnsureForInbound 入库前确保库存行存在（不存在则以 0 创建；已存在则无动作）。
+func (r *InventoryRepo) EnsureForInbound(
+	ctx context.Context,
+	warehouseCode, skuCode string,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	exist, err := r.entClient.Client().Inventory.Query().
+		Where(inventory.WarehouseCodeEQ(warehouseCode), inventory.SkuCodeEQ(skuCode)).
+		Exist(ctx)
+	if err != nil {
+		return inventoryV1.ErrorInternalServerError("query inventory failed")
+	}
+	if exist {
+		return nil
+	}
+	builder := r.entClient.Client().Inventory.Create().
+		SetNillableWarehouseCode(&warehouseCode).
+		SetNillableSkuCode(&skuCode).
+		SetQuantity(0).
+		SetStatus(inventory.StatusAvailable)
+	if hasTenant {
+		builder.SetTenantID(tid)
+	}
+	_, err = builder.Save(ctx)
+	if err != nil {
+		return inventoryV1.ErrorInternalServerError("ensure inventory failed")
+	}
+	return nil
+}
+
+// ApplyDelta 原子回写库存数量：quantity = quantity + delta，条件
+// quantity + delta >= 0 防负库存（对当前值求值，并发安全）。
+// 返回回写后的数量；0 行受影响 → 负库存或行不存在。
+func (r *InventoryRepo) ApplyDelta(
+	ctx context.Context,
+	id uint32,
+	delta int64,
+) (int64, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	builder := r.entClient.Client().Inventory.Update().
+		Where(inventory.IDEQ(id)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s + %d >= 0", s.C(inventory.FieldQuantity), delta,
+			)))
+		}).
+		AddQuantity(delta)
+	if hasTenant {
+		builder.Where(inventory.TenantIDEQ(tid))
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("apply inventory delta failed: %s", err.Error())
+		return 0, inventoryV1.ErrorInternalServerError("apply inventory delta failed")
+	}
+	if n == 0 {
+		return 0, inventoryV1.ErrorConflict("insufficient stock or inventory changed concurrently")
+	}
+
+	after, err := r.entClient.Client().Inventory.Query().
+		Where(inventory.IDEQ(id)).
+		Only(ctx)
+	if err != nil {
+		return 0, inventoryV1.ErrorInternalServerError("reload inventory failed")
+	}
+	return *after.Quantity, nil
 }
 
 // TransitionStatus 原子状态迁移：仅当当前状态为 from 时才更新为 to。

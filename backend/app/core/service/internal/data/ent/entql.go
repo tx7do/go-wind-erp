@@ -762,6 +762,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			payment.FieldPayableID:     {Type: field.TypeUint32, Column: payment.FieldPayableID},
 			payment.FieldAmount:        {Type: field.TypeInt64, Column: payment.FieldAmount},
 			payment.FieldMethod:        {Type: field.TypeEnum, Column: payment.FieldMethod},
+			payment.FieldStatus:        {Type: field.TypeEnum, Column: payment.FieldStatus},
 		},
 	}
 	graph.Nodes[24] = &sqlgraph.Node{
@@ -4555,6 +4556,11 @@ func (f *PaymentFilter) WhereAmount(p entql.Int64P) {
 // WhereMethod applies the entql string predicate on the method field.
 func (f *PaymentFilter) WhereMethod(p entql.StringP) {
 	f.Where(p.Field(payment.FieldMethod))
+}
+
+// WhereStatus applies the entql string predicate on the status field.
+func (f *PaymentFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(payment.FieldStatus))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -553,6 +553,10 @@ func (m *StockMovement) validate(all bool) error {
 		// no validation rules for MovementType
 	}
 
+	if m.PoId != nil {
+		// no validation rules for PoId
+	}
+
 	if m.QuantityBefore != nil {
 		// no validation rules for QuantityBefore
 	}

@@ -9,6 +9,8 @@ import {
   fetchListPayments,
   PaginationQuery,
   paymentMethodToName,
+  paymentStatusToColor,
+  paymentStatusToName,
   type financeservicev1_Payment as Payment,
 } from '#/api';
 import { $t } from '#/locales';
@@ -72,6 +74,11 @@ const gridOptions: VxeGridProps<Payment> = {
       formatter: ({ cellValue }) => paymentMethodToName(cellValue),
     },
     {
+      title: $t('page.payment.status'),
+      field: 'status',
+      slots: { default: 'status' },
+    },
+    {
       title: $t('ui.table.createdAt'),
       field: 'createdAt',
       formatter: 'formatDateTime',
@@ -86,6 +93,12 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('menu.finance.payment')" />
+    <Grid :table-title="$t('menu.finance.payment')">
+      <template #status="{ row }">
+        <a-tag :color="paymentStatusToColor(row.status)">
+          {{ paymentStatusToName(row.status) }}
+        </a-tag>
+      </template>
+    </Grid>
   </Page>
 </template>

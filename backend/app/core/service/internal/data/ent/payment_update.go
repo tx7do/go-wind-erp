@@ -264,6 +264,26 @@ func (_u *PaymentUpdate) ClearMethod() *PaymentUpdate {
 	return _u
 }
 
+// SetStatus sets the "status" field.
+func (_u *PaymentUpdate) SetStatus(v payment.Status) *PaymentUpdate {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PaymentUpdate) SetNillableStatus(v *payment.Status) *PaymentUpdate {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *PaymentUpdate) ClearStatus() *PaymentUpdate {
+	_u.mutation.ClearStatus()
+	return _u
+}
+
 // Mutation returns the PaymentMutation object of the builder.
 func (_u *PaymentUpdate) Mutation() *PaymentMutation {
 	return _u.mutation
@@ -301,6 +321,11 @@ func (_u *PaymentUpdate) check() error {
 	if v, ok := _u.mutation.Method(); ok {
 		if err := payment.MethodValidator(v); err != nil {
 			return &ValidationError{Name: "method", err: fmt.Errorf(`ent: validator failed for field "Payment.method": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := payment.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Payment.status": %w`, err)}
 		}
 	}
 	return nil
@@ -404,6 +429,12 @@ func (_u *PaymentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.MethodCleared() {
 		_spec.ClearField(payment.FieldMethod, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(payment.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(payment.FieldStatus, field.TypeEnum)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -662,6 +693,26 @@ func (_u *PaymentUpdateOne) ClearMethod() *PaymentUpdateOne {
 	return _u
 }
 
+// SetStatus sets the "status" field.
+func (_u *PaymentUpdateOne) SetStatus(v payment.Status) *PaymentUpdateOne {
+	_u.mutation.SetStatus(v)
+	return _u
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (_u *PaymentUpdateOne) SetNillableStatus(v *payment.Status) *PaymentUpdateOne {
+	if v != nil {
+		_u.SetStatus(*v)
+	}
+	return _u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (_u *PaymentUpdateOne) ClearStatus() *PaymentUpdateOne {
+	_u.mutation.ClearStatus()
+	return _u
+}
+
 // Mutation returns the PaymentMutation object of the builder.
 func (_u *PaymentUpdateOne) Mutation() *PaymentMutation {
 	return _u.mutation
@@ -712,6 +763,11 @@ func (_u *PaymentUpdateOne) check() error {
 	if v, ok := _u.mutation.Method(); ok {
 		if err := payment.MethodValidator(v); err != nil {
 			return &ValidationError{Name: "method", err: fmt.Errorf(`ent: validator failed for field "Payment.method": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := payment.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Payment.status": %w`, err)}
 		}
 	}
 	return nil
@@ -832,6 +888,12 @@ func (_u *PaymentUpdateOne) sqlSave(ctx context.Context) (_node *Payment, err er
 	}
 	if _u.mutation.MethodCleared() {
 		_spec.ClearField(payment.FieldMethod, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Status(); ok {
+		_spec.SetField(payment.FieldStatus, field.TypeEnum, value)
+	}
+	if _u.mutation.StatusCleared() {
+		_spec.ClearField(payment.FieldStatus, field.TypeEnum)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Payment{config: _u.config}

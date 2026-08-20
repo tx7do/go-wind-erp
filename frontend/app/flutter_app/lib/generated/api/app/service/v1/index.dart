@@ -2575,6 +2575,9 @@ class FinanceServiceV1Payment {
   int? payableId;
   String? paymentNumber;
   String? remark;
+  ///
+  /// Behaviors: OPTIONAL
+  FinanceServiceV1Payment$Status? status;
   int? tenantId;
 
   FinanceServiceV1Payment({
@@ -2586,6 +2589,7 @@ class FinanceServiceV1Payment {
     this.payableId,
     this.paymentNumber,
     this.remark,
+    this.status,
     this.tenantId,
   });
 
@@ -2599,6 +2603,7 @@ class FinanceServiceV1Payment {
       payableId: json['payableId'] as int?,
       paymentNumber: json['paymentNumber'] as String?,
       remark: json['remark'] as String?,
+      status: json['status'] != null ? FinanceServiceV1Payment$Status.fromString(json['status'] as String) : null,
       tenantId: json['tenantId'] as int?,
     );
   }
@@ -2613,13 +2618,14 @@ class FinanceServiceV1Payment {
     if (payableId != null) json['payableId'] = payableId;
     if (paymentNumber != null) json['paymentNumber'] = paymentNumber;
     if (remark != null) json['remark'] = remark;
+    if (status != null) json['status'] = status!.value;
     if (tenantId != null) json['tenantId'] = tenantId;
     return json;
   }
 
   @override
   String toString() {
-    return 'FinanceServiceV1Payment(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, id: $id, method: $method, payableId: $payableId, paymentNumber: $paymentNumber, remark: $remark, tenantId: $tenantId)';
+    return 'FinanceServiceV1Payment(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, id: $id, method: $method, payableId: $payableId, paymentNumber: $paymentNumber, remark: $remark, status: $status, tenantId: $tenantId)';
   }
 
   @override
@@ -2635,6 +2641,7 @@ class FinanceServiceV1Payment {
       && payableId == other.payableId
       && paymentNumber == other.paymentNumber
       && remark == other.remark
+      && status == other.status
       && tenantId == other.tenantId
     ;
 
@@ -2648,6 +2655,7 @@ class FinanceServiceV1Payment {
     payableId,
     paymentNumber,
     remark,
+    status,
     tenantId,
   ]);
 
@@ -2660,6 +2668,7 @@ class FinanceServiceV1Payment {
     int? payableId,
     String? paymentNumber,
     String? remark,
+    FinanceServiceV1Payment$Status? status,
     int? tenantId,
   }) {
     return FinanceServiceV1Payment(
@@ -2671,6 +2680,7 @@ class FinanceServiceV1Payment {
       payableId: payableId ?? this.payableId,
       paymentNumber: paymentNumber ?? this.paymentNumber,
       remark: remark ?? this.remark,
+      status: status ?? this.status,
       tenantId: tenantId ?? this.tenantId,
     );
   }
@@ -2688,6 +2698,21 @@ enum FinanceServiceV1Payment$Method {
 
   static FinanceServiceV1Payment$Method fromString(String v) =>
     values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown FinanceServiceV1Payment\$Method value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// 付款状态（付款须经审批：PENDING→APPLIED 生效入账 / REJECTED 拒绝）
+enum FinanceServiceV1Payment$Status {
+  applied('APPLIED'),
+  pending('PENDING'),
+  rejected('REJECTED');
+
+  final String value;
+  const FinanceServiceV1Payment$Status(this.value);
+
+  static FinanceServiceV1Payment$Status fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown FinanceServiceV1Payment\$Status value: ' + v));
   @override
   String toString() => value;
 }
@@ -3751,9 +3776,8 @@ class InventoryServiceV1StockMovement {
   InventoryServiceV1StockMovement$MovementType? movementType;
   ///
   /// Behaviors: OPTIONAL
+  int? poId;
   int? quantityAfter;
-  ///
-  /// Behaviors: OPTIONAL
   int? quantityBefore;
   String? remark;
   ///
@@ -3772,6 +3796,7 @@ class InventoryServiceV1StockMovement {
     this.delta,
     this.id,
     this.movementType,
+    this.poId,
     this.quantityAfter,
     this.quantityBefore,
     this.remark,
@@ -3789,6 +3814,7 @@ class InventoryServiceV1StockMovement {
       delta: json['delta'] != null ? int.parse(json['delta'].toString()) : null,
       id: json['id'] as int?,
       movementType: json['movementType'] != null ? InventoryServiceV1StockMovement$MovementType.fromString(json['movementType'] as String) : null,
+      poId: json['poId'] as int?,
       quantityAfter: json['quantityAfter'] != null ? int.parse(json['quantityAfter'].toString()) : null,
       quantityBefore: json['quantityBefore'] != null ? int.parse(json['quantityBefore'].toString()) : null,
       remark: json['remark'] as String?,
@@ -3807,6 +3833,7 @@ class InventoryServiceV1StockMovement {
     if (delta != null) json['delta'] = delta.toString();
     if (id != null) json['id'] = id;
     if (movementType != null) json['movementType'] = movementType!.value;
+    if (poId != null) json['poId'] = poId;
     if (quantityAfter != null) json['quantityAfter'] = quantityAfter.toString();
     if (quantityBefore != null) json['quantityBefore'] = quantityBefore.toString();
     if (remark != null) json['remark'] = remark;
@@ -3818,7 +3845,7 @@ class InventoryServiceV1StockMovement {
 
   @override
   String toString() {
-    return 'InventoryServiceV1StockMovement(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, delta: $delta, id: $id, movementType: $movementType, quantityAfter: $quantityAfter, quantityBefore: $quantityBefore, remark: $remark, skuCode: $skuCode, tenantId: $tenantId, warehouseCode: $warehouseCode)';
+    return 'InventoryServiceV1StockMovement(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, delta: $delta, id: $id, movementType: $movementType, poId: $poId, quantityAfter: $quantityAfter, quantityBefore: $quantityBefore, remark: $remark, skuCode: $skuCode, tenantId: $tenantId, warehouseCode: $warehouseCode)';
   }
 
   @override
@@ -3833,6 +3860,7 @@ class InventoryServiceV1StockMovement {
       && delta == other.delta
       && id == other.id
       && movementType == other.movementType
+      && poId == other.poId
       && quantityAfter == other.quantityAfter
       && quantityBefore == other.quantityBefore
       && remark == other.remark
@@ -3850,6 +3878,7 @@ class InventoryServiceV1StockMovement {
     delta,
     id,
     movementType,
+    poId,
     quantityAfter,
     quantityBefore,
     remark,
@@ -3866,6 +3895,7 @@ class InventoryServiceV1StockMovement {
     int? delta,
     int? id,
     InventoryServiceV1StockMovement$MovementType? movementType,
+    int? poId,
     int? quantityAfter,
     int? quantityBefore,
     String? remark,
@@ -3881,6 +3911,7 @@ class InventoryServiceV1StockMovement {
       delta: delta ?? this.delta,
       id: id ?? this.id,
       movementType: movementType ?? this.movementType,
+      poId: poId ?? this.poId,
       quantityAfter: quantityAfter ?? this.quantityAfter,
       quantityBefore: quantityBefore ?? this.quantityBefore,
       remark: remark ?? this.remark,

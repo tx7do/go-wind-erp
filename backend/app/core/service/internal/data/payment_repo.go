@@ -29,6 +29,7 @@ type PaymentRepo struct {
 
 	mapper          *mapper.CopierMapper[financeV1.Payment, ent.Payment]
 	methodConverter *mapper.EnumTypeConverter[financeV1.Payment_Method, payment.Method]
+	statusConverter *mapper.EnumTypeConverter[financeV1.Payment_Status, payment.Status]
 
 	repository *entCrud.Repository[
 		ent.PaymentQuery, ent.PaymentSelect,
@@ -54,6 +55,7 @@ func NewPaymentRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Cl
 func (r *PaymentRepo) init() {
 	r.mapper = mapper.NewCopierMapper[financeV1.Payment, ent.Payment]()
 	r.methodConverter = mapper.NewEnumTypeConverter[financeV1.Payment_Method, payment.Method](financeV1.Payment_Method_name, financeV1.Payment_Method_value)
+	r.statusConverter = mapper.NewEnumTypeConverter[financeV1.Payment_Status, payment.Status](financeV1.Payment_Status_name, financeV1.Payment_Status_value)
 
 	r.repository = entCrud.NewRepository[
 		ent.PaymentQuery, ent.PaymentSelect,
@@ -68,6 +70,8 @@ func (r *PaymentRepo) init() {
 	r.mapper.AppendConverters(copierutil.NewTimeTimestamppbConverterPair())
 
 	r.mapper.AppendConverters(r.methodConverter.NewConverterPair())
+
+	r.mapper.AppendConverters(r.statusConverter.NewConverterPair())
 }
 
 func (r *PaymentRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
@@ -128,6 +132,37 @@ func (r *PaymentRepo) Get(ctx context.Context, req *financeV1.GetPaymentRequest)
 	return dto, err
 }
 
+// TransitionStatus 原子状态迁移（PENDING→APPLIED/REJECTED）。
+func (r *PaymentRepo) TransitionStatus(
+	ctx context.Context,
+	id uint32,
+	from, to financeV1.Payment_Status,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := r.entClient.Client().Payment.Update().
+		Where(payment.IDEQ(id)).
+		Where(payment.StatusEQ(*r.statusConverter.ToEntity(trans.Ptr(from)))).
+		SetStatus(*r.statusConverter.ToEntity(trans.Ptr(to)))
+	if hasTenant {
+		builder.Where(payment.TenantIDEQ(tid))
+	}
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("transition payment status failed: %s", err.Error())
+		return financeV1.ErrorInternalServerError("transition payment status failed")
+	}
+	if n == 0 {
+		return financeV1.ErrorConflict("payment status changed concurrently")
+	}
+	return nil
+}
+
 // Create 落付款流水（应付单的 paid_amount/status 由 ApplyPayment 负责）。
 func (r *PaymentRepo) Create(ctx context.Context, req *financeV1.CreatePaymentRequest) (*financeV1.Payment, error) {
 	if req == nil || req.Data == nil {
@@ -142,6 +177,7 @@ func (r *PaymentRepo) Create(ctx context.Context, req *financeV1.CreatePaymentRe
 		SetNillablePayableID(req.Data.PayableId).
 		SetNillableAmount(req.Data.Amount).
 		SetNillableMethod(r.methodConverter.ToEntity(req.Data.Method)).
+		SetStatus(payment.StatusPending).
 		SetNillableRemark(req.Data.Remark).
 		SetCreatedAt(time.Now())
 	if hasTenant {

@@ -3014,6 +3014,9 @@ export type financeservicev1_Payment = {
   payableId?: number;
   paymentNumber?: string;
   remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: financeservicev1_Payment_Status;
   tenantId?: number;
 };
 
@@ -3023,6 +3026,11 @@ export type financeservicev1_Payment_Method =
   | 'CASH'
   | 'CHECK'
   | 'OTHER';
+// 付款状态（付款须经审批：PENDING→APPLIED 生效入账 / REJECTED 拒绝）
+export type financeservicev1_Payment_Status =
+  | 'APPLIED'
+  | 'PENDING'
+  | 'REJECTED';
 export type financeservicev1_GetPaymentRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
@@ -4516,9 +4524,8 @@ export type inventoryservicev1_StockMovement = {
   movementType?: inventoryservicev1_StockMovement_MovementType;
   //
   // Behaviors: OPTIONAL
+  poId?: number;
   quantityAfter?: number;
-  //
-  // Behaviors: OPTIONAL
   quantityBefore?: number;
   remark?: string;
   //
