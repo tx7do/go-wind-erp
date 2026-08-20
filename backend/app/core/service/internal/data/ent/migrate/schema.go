@@ -2116,6 +2116,73 @@ var (
 			},
 		},
 	}
+	// PurPurchaseOrdersColumns holds the columns for the "pur_purchase_orders" table.
+	PurPurchaseOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "po_number", Type: field.TypeString, Nullable: true, Comment: "采购单号（服务端生成）"},
+		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "采购单状态", Enums: []string{"DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "COMPLETED", "CANCELLED"}, Default: "DRAFT"},
+		{Name: "total_amount", Type: field.TypeInt64, Nullable: true, Comment: "采购总额（分，服务端按明细计算）", Default: 0},
+	}
+	// PurPurchaseOrdersTable holds the schema information for the "pur_purchase_orders" table.
+	PurPurchaseOrdersTable = &schema.Table{
+		Name:       "pur_purchase_orders",
+		Comment:    "采购单表",
+		Columns:    PurPurchaseOrdersColumns,
+		PrimaryKey: []*schema.Column{PurPurchaseOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_pur_po_tenant_po_number",
+				Unique:  true,
+				Columns: []*schema.Column{PurPurchaseOrdersColumns[8], PurPurchaseOrdersColumns[9]},
+			},
+			{
+				Name:    "idx_pur_po_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{PurPurchaseOrdersColumns[8], PurPurchaseOrdersColumns[11], PurPurchaseOrdersColumns[1]},
+			},
+			{
+				Name:    "idx_pur_po_tenant_creator_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{PurPurchaseOrdersColumns[8], PurPurchaseOrdersColumns[4], PurPurchaseOrdersColumns[1]},
+			},
+		},
+	}
+	// PurPurchaseOrderItemsColumns holds the columns for the "pur_purchase_order_items" table.
+	PurPurchaseOrderItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "po_id", Type: field.TypeUint32, Nullable: true, Comment: "所属采购单ID", Default: 0},
+		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
+		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "采购数量", Default: 0},
+		{Name: "unit_price", Type: field.TypeInt64, Nullable: true, Comment: "单价（分）", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "明细金额（分，服务端计算）", Default: 0},
+		{Name: "received_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已收货数量", Default: 0},
+	}
+	// PurPurchaseOrderItemsTable holds the schema information for the "pur_purchase_order_items" table.
+	PurPurchaseOrderItemsTable = &schema.Table{
+		Name:       "pur_purchase_order_items",
+		Comment:    "采购单明细表",
+		Columns:    PurPurchaseOrderItemsColumns,
+		PrimaryKey: []*schema.Column{PurPurchaseOrderItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_pur_po_item_tenant_po",
+				Unique:  false,
+				Columns: []*schema.Column{PurPurchaseOrderItemsColumns[3], PurPurchaseOrderItemsColumns[4]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2352,6 +2419,37 @@ var (
 				Name:    "idx_inv_stock_movement_tenant_warehouse_sku",
 				Unique:  false,
 				Columns: []*schema.Column{InvStockMovementsColumns[8], InvStockMovementsColumns[9], InvStockMovementsColumns[10]},
+			},
+		},
+	}
+	// PurSuppliersColumns holds the columns for the "pur_suppliers" table.
+	PurSuppliersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "供应商名称"},
+		{Name: "contact", Type: field.TypeString, Nullable: true, Comment: "联系人"},
+		{Name: "phone", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
+		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用供应商", Default: false},
+	}
+	// PurSuppliersTable holds the schema information for the "pur_suppliers" table.
+	PurSuppliersTable = &schema.Table{
+		Name:       "pur_suppliers",
+		Comment:    "供应商表",
+		Columns:    PurSuppliersColumns,
+		PrimaryKey: []*schema.Column{PurSuppliersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_pur_supplier_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{PurSuppliersColumns[8], PurSuppliersColumns[9]},
 			},
 		},
 	}
@@ -2973,10 +3071,13 @@ var (
 		SysPermissionPoliciesTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
+		PurPurchaseOrdersTable,
+		PurPurchaseOrderItemsTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
 		InvStockMovementsTable,
+		PurSuppliersTable,
 		SysTasksTable,
 		SysTenantsTable,
 		SysUsersTable,
@@ -3144,6 +3245,16 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	PurPurchaseOrdersTable.Annotation = &entsql.Annotation{
+		Table:     "pur_purchase_orders",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PurPurchaseOrderItemsTable.Annotation = &entsql.Annotation{
+		Table:     "pur_purchase_order_items",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_roles",
 		Charset:   "utf8mb4",
@@ -3161,6 +3272,11 @@ func init() {
 	}
 	InvStockMovementsTable.Annotation = &entsql.Annotation{
 		Table:     "inv_stock_movements",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PurSuppliersTable.Annotation = &entsql.Annotation{
+		Table:     "pur_suppliers",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

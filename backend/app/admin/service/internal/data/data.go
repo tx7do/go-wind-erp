@@ -20,6 +20,7 @@ import (
 	auditV1 "go-wind-erp/api/gen/go/audit/service/v1"
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
+	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
@@ -359,4 +360,22 @@ func NewApprovalRequestServiceClient(ctx *bootstrap.Context, r registry.Discover
 	}
 
 	return approvalV1.NewApprovalRequestServiceClient(cli)
+}
+
+func NewSupplierServiceClient(ctx *bootstrap.Context, r registry.Discovery) procurementV1.SupplierServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return procurementV1.NewSupplierServiceClient(cli)
+}
+
+func NewPurchaseOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) procurementV1.PurchaseOrderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return procurementV1.NewPurchaseOrderServiceClient(cli)
 }

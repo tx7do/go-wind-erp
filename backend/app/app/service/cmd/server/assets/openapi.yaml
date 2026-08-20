@@ -528,6 +528,109 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/purchase-orders:
+        get:
+            tags:
+                - PurchaseOrderService
+            description: 查询采购单列表
+            operationId: PurchaseOrderService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.ListPurchaseOrderResponse'
+    /app/v1/purchase-orders/{id}:
+        get:
+            tags:
+                - PurchaseOrderService
+            description: 查询采购单详情（含明细）
+            operationId: PurchaseOrderService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
     /app/v1/refresh-token:
         post:
             tags:
@@ -1490,6 +1593,106 @@ components:
                     description: 删除时间
                     format: date-time
             description: 仓库
+        procurement.service.v1.ListPurchaseOrderResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+                total:
+                    type: string
+        procurement.service.v1.PurchaseOrder:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 采购单ID
+                    format: uint32
+                poNumber:
+                    type: string
+                    description: 采购单号（服务端生成）
+                supplierCode:
+                    type: string
+                    description: 供应商编码
+                status:
+                    enum:
+                        - DRAFT
+                        - SUBMITTED
+                        - APPROVED
+                        - REJECTED
+                        - COMPLETED
+                        - CANCELLED
+                    type: string
+                    description: 采购单状态
+                    format: enum
+                totalAmount:
+                    type: string
+                    description: 采购总额（分，服务端按明细计算）
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/procurement.service.v1.PurchaseOrderItem'
+                    description: 采购明细（Get 返回；List 不含）
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者（发起人）用户ID，服务端推导
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 采购单
+        procurement.service.v1.PurchaseOrderItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 明细ID
+                    format: uint32
+                poId:
+                    type: integer
+                    description: 所属采购单ID
+                    format: uint32
+                skuCode:
+                    type: string
+                    description: SKU编码
+                quantity:
+                    type: string
+                    description: 采购数量
+                unitPrice:
+                    type: string
+                    description: 单价（分）
+                amount:
+                    type: string
+                    description: 明细金额（分，服务端计算）
+                receivedQuantity:
+                    type: string
+                    description: 已收货数量
+            description: 采购单明细
         storage.service.v1.DownloadFileResponse:
             type: object
             properties:
@@ -1612,6 +1815,10 @@ tags:
       description: 文件传输服务
     - name: InventoryService
       description: 库存服务（移动端只读：按仓库/SKU 查询库存）
+    - name: PurchaseOrderService
+      description: |-
+        采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
+         发起与维护在 PC 端完成）
     - name: StockMovementService
       description: 库存流水服务（移动端：扫码记录出入库流水）
     - name: UserProfileService

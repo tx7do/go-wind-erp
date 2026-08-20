@@ -87,6 +87,8 @@ func NewRestServer(
 	stockMovementService *service.StockMovementService,
 
 	approvalRequestService *service.ApprovalRequestService,
+
+	purchaseOrderService *service.PurchaseOrderService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -108,6 +110,8 @@ func NewRestServer(
 	appV1.RegisterStockMovementServiceHTTPServer(srv, stockMovementService)
 
 	appV1.RegisterApprovalRequestServiceHTTPServer(srv, approvalRequestService)
+
+	appV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

@@ -96,6 +96,12 @@ type PolicyEvaluationLog func(*sql.Selector)
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
 
+// PurchaseOrder is the predicate function for purchaseorder builders.
+type PurchaseOrder func(*sql.Selector)
+
+// PurchaseOrderItem is the predicate function for purchaseorderitem builders.
+type PurchaseOrderItem func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
@@ -107,6 +113,9 @@ type RolePermission func(*sql.Selector)
 
 // StockMovement is the predicate function for stockmovement builders.
 type StockMovement func(*sql.Selector)
+
+// Supplier is the predicate function for supplier builders.
+type Supplier func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

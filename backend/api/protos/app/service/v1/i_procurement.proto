@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "procurement/service/v1/procurement.proto";
+
+// 采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
+// 发起与维护在 PC 端完成）
+service PurchaseOrderService {
+  // 查询采购单列表
+  rpc List (pagination.PagingRequest) returns (procurement.service.v1.ListPurchaseOrderResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/purchase-orders"
+    };
+  }
+
+  // 查询采购单详情（含明细）
+  rpc Get (procurement.service.v1.GetPurchaseOrderRequest) returns (procurement.service.v1.PurchaseOrder) {
+    option (google.api.http) = {
+      get: "/app/v1/purchase-orders/{id}"
+    };
+  }
+}

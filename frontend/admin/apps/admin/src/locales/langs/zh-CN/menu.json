@@ -63,5 +63,10 @@
   "approval": {
     "moduleName": "审批中心",
     "request": "审批管理"
+  },
+  "procurement": {
+    "moduleName": "采购管理",
+    "purchaseOrder": "采购单",
+    "supplier": "供应商管理"
   }
 }

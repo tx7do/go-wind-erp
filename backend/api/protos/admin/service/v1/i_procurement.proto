@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "procurement/service/v1/procurement.proto";
+
+// 供应商管理服务
+service SupplierService {
+  // 查询供应商列表
+  rpc List (pagination.PagingRequest) returns (procurement.service.v1.ListSupplierResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/suppliers"
+    };
+  }
+
+  // 查询供应商详情
+  rpc Get (procurement.service.v1.GetSupplierRequest) returns (procurement.service.v1.Supplier) {
+    option (google.api.http) = {
+      get: "/admin/v1/suppliers/{id}"
+    };
+  }
+
+  // 创建供应商
+  rpc Create (procurement.service.v1.CreateSupplierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/suppliers"
+      body: "*"
+    };
+  }
+
+  // 更新供应商
+  rpc Update (procurement.service.v1.UpdateSupplierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/suppliers/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除供应商
+  rpc Delete (procurement.service.v1.DeleteSupplierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/suppliers/{id}"
+    };
+  }
+}
+
+// 采购单管理服务
+service PurchaseOrderService {
+  // 查询采购单列表
+  rpc List (pagination.PagingRequest) returns (procurement.service.v1.ListPurchaseOrderResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/purchase-orders"
+    };
+  }
+
+  // 查询采购单详情（含明细）
+  rpc Get (procurement.service.v1.GetPurchaseOrderRequest) returns (procurement.service.v1.PurchaseOrder) {
+    option (google.api.http) = {
+      get: "/admin/v1/purchase-orders/{id}"
+    };
+  }
+
+  // 创建采购单
+  rpc Create (procurement.service.v1.CreatePurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders"
+      body: "*"
+    };
+  }
+
+  // 更新采购单
+  rpc Update (procurement.service.v1.UpdatePurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/purchase-orders/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除采购单
+  rpc Delete (procurement.service.v1.DeletePurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/purchase-orders/{id}"
+    };
+  }
+
+  // 提交采购单
+  rpc Submit (procurement.service.v1.SubmitPurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders:submit"
+      body: "*"
+    };
+  }
+
+  // 通过采购单
+  rpc Approve (procurement.service.v1.ApprovePurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders:approve"
+      body: "*"
+    };
+  }
+
+  // 驳回采购单
+  rpc Reject (procurement.service.v1.RejectPurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders:reject"
+      body: "*"
+    };
+  }
+
+  // 取消采购单
+  rpc Cancel (procurement.service.v1.CancelPurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders:cancel"
+      body: "*"
+    };
+  }
+
+  // 完结采购单
+  rpc Complete (procurement.service.v1.CompletePurchaseOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/purchase-orders:complete"
+      body: "*"
+    };
+  }
+}

@@ -1,0 +1,394 @@
+syntax = "proto3";
+
+package procurement.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 供应商管理服务
+service SupplierService {
+  // 查询供应商列表
+  rpc List (pagination.PagingRequest) returns (ListSupplierResponse) {}
+
+  // 统计供应商数量
+  rpc Count (pagination.PagingRequest) returns (CountSupplierResponse) {}
+
+  // 查询供应商详情
+  rpc Get (GetSupplierRequest) returns (Supplier) {}
+
+  // 创建供应商
+  rpc Create (CreateSupplierRequest) returns (google.protobuf.Empty) {}
+
+  // 更新供应商
+  rpc Update (UpdateSupplierRequest) returns (google.protobuf.Empty) {}
+
+  // 删除供应商
+  rpc Delete (DeleteSupplierRequest) returns (google.protobuf.Empty) {}
+}
+
+// 采购单管理服务
+service PurchaseOrderService {
+  // 查询采购单列表（不含明细，明细经 Get 获取）
+  rpc List (pagination.PagingRequest) returns (ListPurchaseOrderResponse) {}
+
+  // 统计采购单数量
+  rpc Count (pagination.PagingRequest) returns (CountPurchaseOrderResponse) {}
+
+  // 查询采购单详情（含明细）
+  rpc Get (GetPurchaseOrderRequest) returns (PurchaseOrder) {}
+
+  // 创建采购单（DRAFT，仅表头+明细框架；总额服务端按明细计算）
+  rpc Create (CreatePurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 更新采购单（仅 DRAFT 可改，明细整体替换，总额重算）
+  rpc Update (UpdatePurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 删除采购单（仅 DRAFT/CANCELLED 可删）
+  rpc Delete (DeletePurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 提交采购单（DRAFT→SUBMITTED，并自动生成关联审批请求）
+  rpc Submit (SubmitPurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 通过采购单（SUBMITTED→APPROVED；审批中心通过时也会自动同步）
+  rpc Approve (ApprovePurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 驳回采购单（SUBMITTED→REJECTED）
+  rpc Reject (RejectPurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 取消采购单（非终态→CANCELLED，仅发起人）
+  rpc Cancel (CancelPurchaseOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 完结采购单（APPROVED→COMPLETED，到货完结）
+  rpc Complete (CompletePurchaseOrderRequest) returns (google.protobuf.Empty) {}
+}
+
+// 供应商
+message Supplier {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "供应商ID"
+    }
+  ]; // 供应商ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "供应商编码，租户范围内唯一"
+    }
+  ]; // 供应商编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "供应商名称"
+    }
+  ]; // 供应商名称
+
+  optional string contact = 4 [
+    json_name = "contact",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "联系人"
+    }
+  ]; // 联系人
+
+  optional string phone = 5 [
+    json_name = "phone",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "联系电话"
+    }
+  ]; // 联系电话
+
+  optional bool enable = 10 [
+    json_name = "enable",
+    (gnostic.openapi.v3.property) = {
+      description: "启用/禁用供应商"
+    }
+  ]; // 启用/禁用供应商
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 采购单
+message PurchaseOrder {
+  // 采购单状态
+  enum Status {
+    DRAFT = 0;      // 草稿
+    SUBMITTED = 1;  // 已提交（待审批）
+    APPROVED = 2;   // 已通过
+    REJECTED = 3;   // 已驳回
+    COMPLETED = 4;  // 已完结
+    CANCELLED = 5;  // 已取消
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "采购单ID"
+    }
+  ]; // 采购单ID
+
+  optional string po_number = 2 [
+    json_name = "poNumber",
+    (gnostic.openapi.v3.property) = {description: "采购单号（服务端生成）"}
+  ]; // 采购单号
+
+  optional string supplier_code = 3 [
+    json_name = "supplierCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "供应商编码"
+    }
+  ]; // 供应商编码
+
+  optional Status status = 4 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "采购单状态"
+    }
+  ]; // 采购单状态
+
+  optional int64 total_amount = 5 [
+    json_name = "totalAmount",
+    (gnostic.openapi.v3.property) = {description: "采购总额（分，服务端按明细计算）"}
+  ]; // 采购总额（分）
+
+  repeated PurchaseOrderItem items = 6 [
+    json_name = "items",
+    (gnostic.openapi.v3.property) = {description: "采购明细（Get 返回；List 不含）"}
+  ]; // 采购明细
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者（发起人）用户ID，服务端推导"}]; // 创建者
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 采购单明细
+message PurchaseOrderItem {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "明细ID"
+    }
+  ]; // 明细ID
+
+  optional uint32 po_id = 2 [
+    json_name = "poId",
+    (gnostic.openapi.v3.property) = {description: "所属采购单ID"}
+  ]; // 所属采购单ID
+
+  optional string sku_code = 3 [
+    json_name = "skuCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "SKU编码"
+    }
+  ]; // SKU编码
+
+  optional int64 quantity = 4 [
+    json_name = "quantity",
+    (gnostic.openapi.v3.property) = {description: "采购数量"}
+  ]; // 采购数量
+
+  optional int64 unit_price = 5 [
+    json_name = "unitPrice",
+    (gnostic.openapi.v3.property) = {description: "单价（分）"}
+  ]; // 单价（分）
+
+  optional int64 amount = 6 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "明细金额（分，服务端计算）"}
+  ]; // 明细金额（分）
+
+  optional int64 received_quantity = 7 [
+    json_name = "receivedQuantity",
+    (gnostic.openapi.v3.property) = {description: "已收货数量"}
+  ]; // 已收货数量
+}
+
+// ==============================
+// 供应商请求/回应
+// ==============================
+
+message ListSupplierResponse {
+  repeated Supplier items = 1;
+  uint64 total = 2;
+}
+
+message GetSupplierRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器
+}
+
+message CreateSupplierRequest {
+  Supplier data = 1;
+}
+
+message UpdateSupplierRequest {
+  uint32 id = 1;
+
+  Supplier data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表",
+          example: {yaml : "id,realname,username"}
+        },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 资源不存在则新增
+}
+
+message DeleteSupplierRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CountSupplierResponse {
+  uint64 count = 1;
+}
+
+// ==============================
+// 采购单请求/回应
+// ==============================
+
+message ListPurchaseOrderResponse {
+  repeated PurchaseOrder items = 1;
+  uint64 total = 2;
+}
+
+message GetPurchaseOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器
+}
+
+message CreatePurchaseOrderRequest {
+  PurchaseOrder data = 1;
+}
+
+message UpdatePurchaseOrderRequest {
+  uint32 id = 1;
+
+  PurchaseOrder data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表"
+        },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 资源不存在则新增
+}
+
+message DeletePurchaseOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message SubmitPurchaseOrderRequest {
+  uint32 id = 1;
+}
+
+message ApprovePurchaseOrderRequest {
+  uint32 id = 1;
+}
+
+message RejectPurchaseOrderRequest {
+  uint32 id = 1;
+}
+
+message CancelPurchaseOrderRequest {
+  uint32 id = 1;
+}
+
+message CompletePurchaseOrderRequest {
+  uint32 id = 1;
+}
+
+message CountPurchaseOrderResponse {
+  uint64 count = 1;
+}

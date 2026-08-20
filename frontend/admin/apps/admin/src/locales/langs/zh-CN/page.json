@@ -509,5 +509,40 @@
       "reject": "驳回",
       "cancelRequest": "撤销"
     }
+  },
+  "supplier": {
+    "moduleName": "供应商",
+    "code": "供应商编码",
+    "name": "供应商名称",
+    "contact": "联系人",
+    "phone": "联系电话",
+    "enable": "启用状态",
+    "button": {
+      "create": "创建供应商"
+    }
+  },
+  "purchaseOrder": {
+    "moduleName": "采购单",
+    "poNumber": "采购单号",
+    "supplierCode": "供应商",
+    "status": "状态",
+    "totalAmount": "总额（元）",
+    "items": "采购明细",
+    "skuCode": "SKU",
+    "quantity": "数量",
+    "unitPrice": "单价（元）",
+    "unitPriceCents": "单价（分）",
+    "amount": "金额（元）",
+    "addItem": "添加明细",
+    "itemsRequired": "至少需要一条明细",
+    "itemInvalid": "请完整填写 SKU 与正整数数量",
+    "button": {
+      "create": "创建采购单",
+      "submit": "提交审批",
+      "approve": "通过",
+      "reject": "驳回",
+      "cancel": "取消",
+      "complete": "完结"
+    }
   }
 }

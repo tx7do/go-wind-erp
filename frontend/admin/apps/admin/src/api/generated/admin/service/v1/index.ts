@@ -6830,6 +6830,603 @@ export type identityservicev1_DeletePositionRequest = {
   id?: number;
 };
 
+// 供应商管理服务
+export interface SupplierService {
+  // 查询供应商列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<procurementservicev1_ListSupplierResponse>;
+  // 查询供应商详情
+  Get(
+    request: procurementservicev1_GetSupplierRequest,
+  ): Promise<procurementservicev1_Supplier>;
+  // 创建供应商
+  Create(
+    request: procurementservicev1_CreateSupplierRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新供应商
+  Update(
+    request: procurementservicev1_UpdateSupplierRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除供应商
+  Delete(
+    request: procurementservicev1_DeleteSupplierRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createSupplierServiceClient(
+  transport: ClientTransport,
+): SupplierService {
+  return {
+    List(request) {
+      const path = `admin/v1/suppliers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SupplierService',
+        method: 'List',
+      }) as Promise<procurementservicev1_ListSupplierResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/suppliers/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SupplierService',
+        method: 'Get',
+      }) as Promise<procurementservicev1_Supplier>;
+    },
+    Create(request) {
+      const path = `admin/v1/suppliers`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SupplierService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/suppliers/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SupplierService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/suppliers/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SupplierService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type procurementservicev1_ListSupplierResponse = {
+  items: procurementservicev1_Supplier[] | undefined;
+  total: number | undefined;
+};
+
+// 供应商
+export type procurementservicev1_Supplier = {
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  //
+  // Behaviors: OPTIONAL
+  contact?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  enable?: boolean;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  //
+  // Behaviors: OPTIONAL
+  phone?: string;
+  remark?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+export type procurementservicev1_GetSupplierRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type procurementservicev1_CreateSupplierRequest = {
+  data: procurementservicev1_Supplier | undefined;
+};
+
+export type procurementservicev1_UpdateSupplierRequest = {
+  allowMissing?: boolean;
+  data: procurementservicev1_Supplier | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type procurementservicev1_DeleteSupplierRequest = {
+  id?: number;
+};
+
+// 采购单管理服务
+export interface PurchaseOrderService {
+  // 查询采购单列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<procurementservicev1_ListPurchaseOrderResponse>;
+  // 查询采购单详情（含明细）
+  Get(
+    request: procurementservicev1_GetPurchaseOrderRequest,
+  ): Promise<procurementservicev1_PurchaseOrder>;
+  // 创建采购单
+  Create(
+    request: procurementservicev1_CreatePurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新采购单
+  Update(
+    request: procurementservicev1_UpdatePurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除采购单
+  Delete(
+    request: procurementservicev1_DeletePurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 提交采购单
+  Submit(
+    request: procurementservicev1_SubmitPurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 通过采购单
+  Approve(
+    request: procurementservicev1_ApprovePurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 驳回采购单
+  Reject(
+    request: procurementservicev1_RejectPurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 取消采购单
+  Cancel(
+    request: procurementservicev1_CancelPurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 完结采购单
+  Complete(
+    request: procurementservicev1_CompletePurchaseOrderRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPurchaseOrderServiceClient(
+  transport: ClientTransport,
+): PurchaseOrderService {
+  return {
+    List(request) {
+      const path = `admin/v1/purchase-orders`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PurchaseOrderService',
+        method: 'List',
+      }) as Promise<procurementservicev1_ListPurchaseOrderResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/purchase-orders/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PurchaseOrderService',
+        method: 'Get',
+      }) as Promise<procurementservicev1_PurchaseOrder>;
+    },
+    Create(request) {
+      const path = `admin/v1/purchase-orders`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/purchase-orders/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PurchaseOrderService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/purchase-orders/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PurchaseOrderService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Submit(request) {
+      const path = `admin/v1/purchase-orders:submit`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Submit',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Approve(request) {
+      const path = `admin/v1/purchase-orders:approve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Approve',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Reject(request) {
+      const path = `admin/v1/purchase-orders:reject`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Reject',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Cancel(request) {
+      const path = `admin/v1/purchase-orders:cancel`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Cancel',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Complete(request) {
+      const path = `admin/v1/purchase-orders:complete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PurchaseOrderService',
+        method: 'Complete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type procurementservicev1_ListPurchaseOrderResponse = {
+  items: procurementservicev1_PurchaseOrder[] | undefined;
+  total: number | undefined;
+};
+
+// 采购单
+export type procurementservicev1_PurchaseOrder = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  items: procurementservicev1_PurchaseOrderItem[] | undefined;
+  poNumber?: string;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: procurementservicev1_PurchaseOrder_Status;
+  //
+  // Behaviors: OPTIONAL
+  supplierCode?: string;
+  tenantId?: number;
+  totalAmount?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 采购单状态
+export type procurementservicev1_PurchaseOrder_Status =
+  | 'APPROVED'
+  | 'CANCELLED'
+  | 'COMPLETED'
+  | 'DRAFT'
+  | 'REJECTED'
+  | 'SUBMITTED';
+// 采购单明细
+export type procurementservicev1_PurchaseOrderItem = {
+  amount?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  poId?: number;
+  quantity?: number;
+  receivedQuantity?: number;
+  //
+  // Behaviors: OPTIONAL
+  skuCode?: string;
+  unitPrice?: number;
+};
+
+export type procurementservicev1_GetPurchaseOrderRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type procurementservicev1_CreatePurchaseOrderRequest = {
+  data: procurementservicev1_PurchaseOrder | undefined;
+};
+
+export type procurementservicev1_UpdatePurchaseOrderRequest = {
+  allowMissing?: boolean;
+  data: procurementservicev1_PurchaseOrder | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type procurementservicev1_DeletePurchaseOrderRequest = {
+  id?: number;
+};
+
+export type procurementservicev1_SubmitPurchaseOrderRequest = {
+  id: number | undefined;
+};
+
+export type procurementservicev1_ApprovePurchaseOrderRequest = {
+  id: number | undefined;
+};
+
+export type procurementservicev1_RejectPurchaseOrderRequest = {
+  id: number | undefined;
+};
+
+export type procurementservicev1_CancelPurchaseOrderRequest = {
+  id: number | undefined;
+};
+
+export type procurementservicev1_CompletePurchaseOrderRequest = {
+  id: number | undefined;
+};
+
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -8403,8 +9000,10 @@ export class ApiClient {
   private _permissionService?: PermissionService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
+  private _purchaseOrderService?: PurchaseOrderService;
   private _roleService?: RoleService;
   private _stockMovementService?: StockMovementService;
+  private _supplierService?: SupplierService;
   private _taskService?: TaskService;
   private _tenantService?: TenantService;
   private readonly _transport: ClientTransport;
@@ -8516,12 +9115,20 @@ export class ApiClient {
     return this._positionService ??= createPositionServiceClient(this._transport);
   }
 
+  get purchaseOrderService(): PurchaseOrderService {
+    return this._purchaseOrderService ??= createPurchaseOrderServiceClient(this._transport);
+  }
+
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
   }
 
   get stockMovementService(): StockMovementService {
     return this._stockMovementService ??= createStockMovementServiceClient(this._transport);
+  }
+
+  get supplierService(): SupplierService {
+    return this._supplierService ??= createSupplierServiceClient(this._transport);
   }
 
   get taskService(): TaskService {

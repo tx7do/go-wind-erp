@@ -36,10 +36,13 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmovement"
+	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
 	"go-wind-erp/app/core/service/internal/data/ent/user"
@@ -144,10 +147,13 @@ func checkColumn(t, c string) error {
 			permissionpolicy.Table:         permissionpolicy.ValidColumn,
 			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
 			position.Table:                 position.ValidColumn,
+			purchaseorder.Table:            purchaseorder.ValidColumn,
+			purchaseorderitem.Table:        purchaseorderitem.ValidColumn,
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,
 			stockmovement.Table:            stockmovement.ValidColumn,
+			supplier.Table:                 supplier.ValidColumn,
 			task.Table:                     task.ValidColumn,
 			tenant.Table:                   tenant.ValidColumn,
 			user.Table:                     user.ValidColumn,

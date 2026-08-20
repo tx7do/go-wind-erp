@@ -50,7 +50,9 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	stockMovementService := service.NewStockMovementService(context, stockMovementServiceClient)
 	approvalRequestServiceClient := data.NewApprovalRequestServiceClient(context, discovery)
 	approvalRequestService := service.NewApprovalRequestService(context, approvalRequestServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, inventoryService, stockMovementService, approvalRequestService)
+	purchaseOrderServiceClient := data.NewPurchaseOrderServiceClient(context, discovery)
+	purchaseOrderService := service.NewPurchaseOrderService(context, purchaseOrderServiceClient)
+	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, inventoryService, stockMovementService, approvalRequestService, purchaseOrderService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

@@ -480,5 +480,40 @@
       "reject": "Reject",
       "cancelRequest": "Cancel"
     }
+  },
+  "supplier": {
+    "moduleName": "Supplier",
+    "code": "Supplier Code",
+    "name": "Supplier Name",
+    "contact": "Contact",
+    "phone": "Phone",
+    "enable": "Enabled",
+    "button": {
+      "create": "Create Supplier"
+    }
+  },
+  "purchaseOrder": {
+    "moduleName": "Purchase Order",
+    "poNumber": "PO Number",
+    "supplierCode": "Supplier",
+    "status": "Status",
+    "totalAmount": "Total",
+    "items": "Items",
+    "skuCode": "SKU",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "unitPriceCents": "Unit Price (cents)",
+    "amount": "Amount",
+    "addItem": "Add Item",
+    "itemsRequired": "At least one item is required",
+    "itemInvalid": "Fill SKU and a positive quantity",
+    "button": {
+      "create": "New Purchase Order",
+      "submit": "Submit",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "complete": "Complete"
+    }
   }
 }

@@ -37,6 +37,8 @@ export * from './org-unit';
 
 export * from './permission';
 
+export * from './procurement';
+
 export * from './permission-audit-log';
 
 export * from './permission-group';

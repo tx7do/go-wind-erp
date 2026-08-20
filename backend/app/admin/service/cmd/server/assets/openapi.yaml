@@ -3569,6 +3569,242 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/purchase-orders:
+        get:
+            tags:
+                - PurchaseOrderService
+            description: 查询采购单列表
+            operationId: PurchaseOrderService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.ListPurchaseOrderResponse'
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 创建采购单
+            operationId: PurchaseOrderService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.CreatePurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders/{id}:
+        get:
+            tags:
+                - PurchaseOrderService
+            description: 查询采购单详情（含明细）
+            operationId: PurchaseOrderService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+        put:
+            tags:
+                - PurchaseOrderService
+            description: 更新采购单
+            operationId: PurchaseOrderService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.UpdatePurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - PurchaseOrderService
+            description: 删除采购单
+            operationId: PurchaseOrderService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders:approve:
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 通过采购单
+            operationId: PurchaseOrderService_Approve
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.ApprovePurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders:cancel:
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 取消采购单
+            operationId: PurchaseOrderService_Cancel
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.CancelPurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders:complete:
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 完结采购单
+            operationId: PurchaseOrderService_Complete
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.CompletePurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders:reject:
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 驳回采购单
+            operationId: PurchaseOrderService_Reject
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.RejectPurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/purchase-orders:submit:
+        post:
+            tags:
+                - PurchaseOrderService
+            description: 提交采购单
+            operationId: PurchaseOrderService_Submit
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.SubmitPurchaseOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/refresh-token:
         post:
             tags:
@@ -3897,6 +4133,162 @@ paths:
                 - StockMovementService
             description: 删除库存流水
             operationId: StockMovementService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/suppliers:
+        get:
+            tags:
+                - SupplierService
+            description: 查询供应商列表
+            operationId: SupplierService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.ListSupplierResponse'
+        post:
+            tags:
+                - SupplierService
+            description: 创建供应商
+            operationId: SupplierService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.CreateSupplierRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/suppliers/{id}:
+        get:
+            tags:
+                - SupplierService
+            description: 查询供应商详情
+            operationId: SupplierService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/procurement.service.v1.Supplier'
+        put:
+            tags:
+                - SupplierService
+            description: 更新供应商
+            operationId: SupplierService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/procurement.service.v1.UpdateSupplierRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - SupplierService
+            description: 删除供应商
+            operationId: SupplierService_Delete
             parameters:
                 - name: id
                   in: path
@@ -8262,6 +8654,240 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新角色 - 请求
+        procurement.service.v1.ApprovePurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        procurement.service.v1.CancelPurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        procurement.service.v1.CompletePurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        procurement.service.v1.CreatePurchaseOrderRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+        procurement.service.v1.CreateSupplierRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/procurement.service.v1.Supplier'
+        procurement.service.v1.ListPurchaseOrderResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+                total:
+                    type: string
+        procurement.service.v1.ListSupplierResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/procurement.service.v1.Supplier'
+                total:
+                    type: string
+        procurement.service.v1.PurchaseOrder:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 采购单ID
+                    format: uint32
+                poNumber:
+                    type: string
+                    description: 采购单号（服务端生成）
+                supplierCode:
+                    type: string
+                    description: 供应商编码
+                status:
+                    enum:
+                        - DRAFT
+                        - SUBMITTED
+                        - APPROVED
+                        - REJECTED
+                        - COMPLETED
+                        - CANCELLED
+                    type: string
+                    description: 采购单状态
+                    format: enum
+                totalAmount:
+                    type: string
+                    description: 采购总额（分，服务端按明细计算）
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/procurement.service.v1.PurchaseOrderItem'
+                    description: 采购明细（Get 返回；List 不含）
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者（发起人）用户ID，服务端推导
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 采购单
+        procurement.service.v1.PurchaseOrderItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 明细ID
+                    format: uint32
+                poId:
+                    type: integer
+                    description: 所属采购单ID
+                    format: uint32
+                skuCode:
+                    type: string
+                    description: SKU编码
+                quantity:
+                    type: string
+                    description: 采购数量
+                unitPrice:
+                    type: string
+                    description: 单价（分）
+                amount:
+                    type: string
+                    description: 明细金额（分，服务端计算）
+                receivedQuantity:
+                    type: string
+                    description: 已收货数量
+            description: 采购单明细
+        procurement.service.v1.RejectPurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        procurement.service.v1.SubmitPurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+        procurement.service.v1.Supplier:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 供应商ID
+                    format: uint32
+                code:
+                    type: string
+                    description: 供应商编码，租户范围内唯一
+                name:
+                    type: string
+                    description: 供应商名称
+                contact:
+                    type: string
+                    description: 联系人
+                phone:
+                    type: string
+                    description: 联系电话
+                enable:
+                    type: boolean
+                    description: 启用/禁用供应商
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 供应商
+        procurement.service.v1.UpdatePurchaseOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+        procurement.service.v1.UpdateSupplierRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/procurement.service.v1.Supplier'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
         storage.service.v1.CreateFileRequest:
             type: object
             properties:
@@ -8711,10 +9337,14 @@ tags:
       description: 策略评估日志服务
     - name: PositionService
       description: 职位管理服务
+    - name: PurchaseOrderService
+      description: 采购单管理服务
     - name: RoleService
       description: 角色管理服务
     - name: StockMovementService
       description: 库存流水管理服务
+    - name: SupplierService
+      description: 供应商管理服务
     - name: TaskService
       description: 调度任务管理服务
     - name: TenantService

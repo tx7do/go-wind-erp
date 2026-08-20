@@ -29,3 +29,18 @@ func addOverflow(a, b int64) bool {
 	}
 	return false
 }
+
+// mulChecked performs a checked int64 multiplication, returning the result
+// and whether the operation overflowed. Purchase line amounts are
+// quantity × unit-price in cents; an overflow here would corrupt the order
+// total, so it must be detected and rejected rather than silently wrapped.
+func mulChecked(a, b int64) (result int64, overflow bool) {
+	if a == 0 || b == 0 {
+		return 0, false
+	}
+	r := a * b
+	if r/b != a {
+		return 0, true
+	}
+	return r, false
+}

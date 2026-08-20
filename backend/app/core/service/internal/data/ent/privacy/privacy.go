@@ -831,6 +831,54 @@ func (f PositionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PositionMutation", m)
 }
 
+// The PurchaseOrderQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PurchaseOrderQueryRuleFunc func(context.Context, *ent.PurchaseOrderQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PurchaseOrderQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PurchaseOrderQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PurchaseOrderQuery", q)
+}
+
+// The PurchaseOrderMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PurchaseOrderMutationRuleFunc func(context.Context, *ent.PurchaseOrderMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PurchaseOrderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PurchaseOrderMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PurchaseOrderMutation", m)
+}
+
+// The PurchaseOrderItemQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PurchaseOrderItemQueryRuleFunc func(context.Context, *ent.PurchaseOrderItemQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PurchaseOrderItemQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PurchaseOrderItemQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PurchaseOrderItemQuery", q)
+}
+
+// The PurchaseOrderItemMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PurchaseOrderItemMutationRuleFunc func(context.Context, *ent.PurchaseOrderItemMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PurchaseOrderItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PurchaseOrderItemMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PurchaseOrderItemMutation", m)
+}
+
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleQueryRuleFunc func(context.Context, *ent.RoleQuery) error
@@ -925,6 +973,30 @@ func (f StockMovementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockMovementMutation", m)
+}
+
+// The SupplierQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SupplierQueryRuleFunc func(context.Context, *ent.SupplierQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SupplierQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SupplierQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SupplierQuery", q)
+}
+
+// The SupplierMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SupplierMutationRuleFunc func(context.Context, *ent.SupplierMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SupplierMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SupplierMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SupplierMutation", m)
 }
 
 // The TaskQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1214,6 +1286,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PositionQuery:
 		return q.Filter(), nil
+	case *ent.PurchaseOrderQuery:
+		return q.Filter(), nil
+	case *ent.PurchaseOrderItemQuery:
+		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
 	case *ent.RoleMetadataQuery:
@@ -1221,6 +1297,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
 	case *ent.StockMovementQuery:
+		return q.Filter(), nil
+	case *ent.SupplierQuery:
 		return q.Filter(), nil
 	case *ent.TaskQuery:
 		return q.Filter(), nil
@@ -1305,6 +1383,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.PositionMutation:
 		return m.Filter(), nil
+	case *ent.PurchaseOrderMutation:
+		return m.Filter(), nil
+	case *ent.PurchaseOrderItemMutation:
+		return m.Filter(), nil
 	case *ent.RoleMutation:
 		return m.Filter(), nil
 	case *ent.RoleMetadataMutation:
@@ -1312,6 +1394,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RolePermissionMutation:
 		return m.Filter(), nil
 	case *ent.StockMovementMutation:
+		return m.Filter(), nil
+	case *ent.SupplierMutation:
 		return m.Filter(), nil
 	case *ent.TaskMutation:
 		return m.Filter(), nil

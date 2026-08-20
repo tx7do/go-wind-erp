@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -12,6 +14,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data"
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
+	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 )
 
 // approvalViewerUserID 从 viewer context 提取调用者用户 ID（与 data 层
@@ -35,15 +38,21 @@ type ApprovalRequestService struct {
 	log *log.Helper
 
 	approvalRequestRepo *data.ApprovalRequestRepo
+
+	// 采购联动：biz_type=purchase_order 的审批通过/驳回时回写采购单状态。
+	// 同进程直连 repo，无需跨服务调用。
+	purchaseOrderRepo *data.PurchaseOrderRepo
 }
 
 func NewApprovalRequestService(
 	ctx *bootstrap.Context,
 	approvalRequestRepo *data.ApprovalRequestRepo,
+	purchaseOrderRepo *data.PurchaseOrderRepo,
 ) *ApprovalRequestService {
 	svc := &ApprovalRequestService{
 		log:                 ctx.NewLoggerHelper("approval_request/service/core-service"),
 		approvalRequestRepo: approvalRequestRepo,
+		purchaseOrderRepo:   purchaseOrderRepo,
 	}
 
 	return svc
@@ -149,7 +158,44 @@ func (s *ApprovalRequestService) transition(
 		return nil, err
 	}
 
+	// 采购联动：审批结果回写采购单。回写失败不回滚审批（审批已是事实），
+	// 仅记录，采购单可经管理端动作对齐。
+	s.syncPurchaseOrder(ctx, old, to)
+
 	return &emptypb.Empty{}, nil
+}
+
+// syncPurchaseOrder 对 biz_type=purchase_order 的审批，将其结果同步到
+// 采购单（SUBMITTED→APPROVED/REJECTED）。biz_ref 形如 "purchase_order:{id}"。
+func (s *ApprovalRequestService) syncPurchaseOrder(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	if old.GetBizType() != "purchase_order" {
+		return
+	}
+	raw := strings.TrimPrefix(old.GetBizRef(), "purchase_order:")
+	poID, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		s.log.Errorf("parse purchase order ref failed: %s", old.GetBizRef())
+		return
+	}
+
+	var poTo procurementV1.PurchaseOrder_Status
+	switch to {
+	case approvalV1.ApprovalRequest_APPROVED:
+		poTo = procurementV1.PurchaseOrder_APPROVED
+	case approvalV1.ApprovalRequest_REJECTED:
+		poTo = procurementV1.PurchaseOrder_REJECTED
+	default:
+		return
+	}
+
+	if err := s.purchaseOrderRepo.TransitionStatus(ctx, uint32(poID),
+		procurementV1.PurchaseOrder_SUBMITTED, poTo); err != nil {
+		s.log.Errorf("sync purchase order %d to %v failed: %s", poID, poTo, err.Error())
+	}
 }
 
 // Approve 通过审批（仅 PENDING）。

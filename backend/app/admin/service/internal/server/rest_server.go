@@ -110,6 +110,9 @@ func NewRestServer(
 
 	approvalRequestService *service.ApprovalRequestService,
 
+	supplierService *service.SupplierService,
+	purchaseOrderService *service.PurchaseOrderService,
+
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
 
@@ -160,6 +163,9 @@ func NewRestServer(
 	adminV1.RegisterStockMovementServiceHTTPServer(srv, stockMovementService)
 
 	adminV1.RegisterApprovalRequestServiceHTTPServer(srv, approvalRequestService)
+
+	adminV1.RegisterSupplierServiceHTTPServer(srv, supplierService)
+	adminV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

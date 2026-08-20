@@ -1,0 +1,391 @@
+package data
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"entgo.io/ent/dialect/sql"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	entCrud "github.com/tx7do/go-crud/entgo"
+
+	"github.com/tx7do/go-utils/copierutil"
+	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
+
+	"go-wind-erp/app/core/service/internal/data/ent"
+	"go-wind-erp/app/core/service/internal/data/ent/predicate"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
+
+	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+)
+
+type PurchaseOrderRepo struct {
+	entClient *entCrud.EntClient[*ent.Client]
+	log       *log.Helper
+
+	mapper          *mapper.CopierMapper[procurementV1.PurchaseOrder, ent.PurchaseOrder]
+	statusConverter *mapper.EnumTypeConverter[procurementV1.PurchaseOrder_Status, purchaseorder.Status]
+
+	repository *entCrud.Repository[
+		ent.PurchaseOrderQuery, ent.PurchaseOrderSelect,
+		ent.PurchaseOrderCreate, ent.PurchaseOrderCreateBulk,
+		ent.PurchaseOrderUpdate, ent.PurchaseOrderUpdateOne,
+		ent.PurchaseOrderDelete,
+		predicate.PurchaseOrder,
+		procurementV1.PurchaseOrder, ent.PurchaseOrder,
+	]
+}
+
+func NewPurchaseOrderRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *PurchaseOrderRepo {
+	repo := &PurchaseOrderRepo{
+		log:       ctx.NewLoggerHelper("purchase_order/repo/core-service"),
+		entClient: entClient,
+	}
+
+	repo.init()
+
+	return repo
+}
+
+func (r *PurchaseOrderRepo) init() {
+	r.mapper = mapper.NewCopierMapper[procurementV1.PurchaseOrder, ent.PurchaseOrder]()
+	r.statusConverter = mapper.NewEnumTypeConverter[procurementV1.PurchaseOrder_Status, purchaseorder.Status](procurementV1.PurchaseOrder_Status_name, procurementV1.PurchaseOrder_Status_value)
+
+	r.repository = entCrud.NewRepository[
+		ent.PurchaseOrderQuery, ent.PurchaseOrderSelect,
+		ent.PurchaseOrderCreate, ent.PurchaseOrderCreateBulk,
+		ent.PurchaseOrderUpdate, ent.PurchaseOrderUpdateOne,
+		ent.PurchaseOrderDelete,
+		predicate.PurchaseOrder,
+		procurementV1.PurchaseOrder, ent.PurchaseOrder,
+	](r.mapper)
+
+	r.mapper.AppendConverters(copierutil.NewTimeStringConverterPair())
+	r.mapper.AppendConverters(copierutil.NewTimeTimestamppbConverterPair())
+
+	r.mapper.AppendConverters(r.statusConverter.NewConverterPair())
+}
+
+func (r *PurchaseOrderRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
+	builder := r.entClient.Client().PurchaseOrder.Query()
+	if len(whereCond) != 0 {
+		builder.Modify(whereCond...)
+	}
+
+	count, err := builder.Count(ctx)
+	if err != nil {
+		r.log.Errorf("query count failed: %s", err.Error())
+		return 0, procurementV1.ErrorInternalServerError("query count failed")
+	}
+
+	return count, nil
+}
+
+// List 不携带明细（列表性能）；明细经 Get 获取。
+func (r *PurchaseOrderRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*procurementV1.ListPurchaseOrderResponse, error) {
+	if req == nil {
+		return nil, procurementV1.ErrorBadRequest("invalid parameter")
+	}
+
+	builder := r.entClient.Client().PurchaseOrder.Query()
+
+	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
+	if err != nil {
+		return nil, err
+	}
+	if ret == nil {
+		return &procurementV1.ListPurchaseOrderResponse{Total: 0, Items: nil}, nil
+	}
+
+	return &procurementV1.ListPurchaseOrderResponse{
+		Total: ret.Total,
+		Items: ret.Items,
+	}, nil
+}
+
+// Get 携带明细组装。
+func (r *PurchaseOrderRepo) Get(ctx context.Context, req *procurementV1.GetPurchaseOrderRequest) (*procurementV1.PurchaseOrder, error) {
+	if req == nil {
+		return nil, procurementV1.ErrorBadRequest("invalid parameter")
+	}
+
+	builder := r.entClient.Client().PurchaseOrder.Query()
+
+	var whereCond []func(s *sql.Selector)
+	switch req.QueryBy.(type) {
+	default:
+	case *procurementV1.GetPurchaseOrderRequest_Id:
+		whereCond = append(whereCond, purchaseorder.IDEQ(req.GetId()))
+	}
+
+	dto, err := r.repository.Get(ctx, builder, req.GetViewMask(), whereCond...)
+	if err != nil {
+		return nil, err
+	}
+	if dto == nil {
+		return dto, nil
+	}
+
+	dto.Items = r.listItemDTOs(ctx, req.GetId())
+	return dto, nil
+}
+
+// Create 落库采购单与明细（金额/总额由服务层预计算）。po_number 服务端生成。
+func (r *PurchaseOrderRepo) Create(ctx context.Context, req *procurementV1.CreatePurchaseOrderRequest) (*procurementV1.PurchaseOrder, error) {
+	if req == nil || req.Data == nil {
+		return nil, procurementV1.ErrorBadRequest("invalid parameter")
+	}
+
+	poNumber := "PO" + fmt.Sprintf("%d", time.Now().UnixMilli())
+
+	builder := r.entClient.Client().PurchaseOrder.Create().
+		SetNillableTenantID(req.Data.TenantId).
+		SetPoNumber(poNumber).
+		SetNillableSupplierCode(req.Data.SupplierCode).
+		SetStatus(purchaseorder.StatusDraft).
+		SetNillableTotalAmount(req.Data.TotalAmount).
+		SetNillableRemark(req.Data.Remark).
+		SetNillableCreatedBy(req.Data.CreatedBy).
+		SetCreatedAt(time.Now())
+
+	if req.Data.Id != nil {
+		builder.SetID(req.GetData().GetId())
+	}
+
+	t, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("insert purchase_order failed: %s", err.Error())
+		return nil, procurementV1.ErrorInternalServerError("insert purchase_order failed")
+	}
+
+	if err := r.replaceItems(ctx, t.TenantID, t.ID, req.Data.Items); err != nil {
+		return nil, err
+	}
+
+	dto := r.mapper.ToDTO(t)
+	dto.Items = r.listItemDTOs(ctx, t.ID)
+	return dto, nil
+}
+
+// Update 更新表头；当请求携带明细时整体替换（仅 DRAFT 允许，由服务层守卫）。
+func (r *PurchaseOrderRepo) Update(ctx context.Context, req *procurementV1.UpdatePurchaseOrderRequest) (*procurementV1.PurchaseOrder, error) {
+	if req == nil || req.Data == nil {
+		return nil, procurementV1.ErrorBadRequest("invalid parameter")
+	}
+
+	if req.GetAllowMissing() {
+		exist, err := r.IsExist(ctx, req.GetId())
+		if err != nil {
+			return nil, err
+		}
+		if !exist {
+			createReq := &procurementV1.CreatePurchaseOrderRequest{Data: req.Data}
+			createReq.Data.CreatedBy = createReq.Data.UpdatedBy
+			createReq.Data.UpdatedBy = nil
+			return r.Create(ctx, createReq)
+		}
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+	builder := r.entClient.Client().Debug().PurchaseOrder.UpdateOneID(req.GetId())
+	builder.Where(purchaseorder.IDEQ(req.GetId()))
+	if hasTenant {
+		builder.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
+		func(dto *procurementV1.PurchaseOrder) {
+			builder.
+				SetNillableSupplierCode(req.Data.SupplierCode).
+				SetNillableTotalAmount(req.Data.TotalAmount).
+				SetNillableRemark(req.Data.Remark).
+				SetUpdatedAt(time.Now())
+
+			if hasUser {
+				builder.SetUpdatedBy(callerUserID)
+			}
+		},
+		func(s *sql.Selector) {
+			s.Where(sql.EQ(purchaseorder.FieldID, req.GetId()))
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.Data.Items) > 0 {
+		poID := req.GetId()
+		tid, _ := maybeTenantFromViewer(ctx)
+		var tenantPtr *uint32
+		if tid > 0 {
+			tenantPtr = trans.Ptr(tid)
+		} else if req.Data.TenantId != nil {
+			tenantPtr = req.Data.TenantId
+		}
+		if err := r.replaceItems(ctx, tenantPtr, poID, req.Data.Items); err != nil {
+			return nil, err
+		}
+		if result != nil {
+			result.Items = r.listItemDTOs(ctx, poID)
+		}
+	}
+
+	return result, nil
+}
+
+func (r *PurchaseOrderRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+	exist, err := r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.IDEQ(id)).
+		Exist(ctx)
+	if err != nil {
+		r.log.Errorf("query exist failed: %s", err.Error())
+		return false, procurementV1.ErrorInternalServerError("query exist failed")
+	}
+	return exist, nil
+}
+
+// TransitionStatus 原子状态迁移：仅当当前状态为 from 时才更新为 to。
+// 0 行受影响说明已被并发变更，返回 Conflict（与审批/库存同模式）。
+func (r *PurchaseOrderRepo) TransitionStatus(
+	ctx context.Context,
+	id uint32,
+	from, to procurementV1.PurchaseOrder_Status,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := r.entClient.Client().PurchaseOrder.Update().
+		Where(purchaseorder.IDEQ(id)).
+		Where(purchaseorder.StatusEQ(*r.statusConverter.ToEntity(trans.Ptr(from)))).
+		SetStatus(*r.statusConverter.ToEntity(trans.Ptr(to))).
+		SetUpdatedAt(time.Now())
+	if hasTenant {
+		builder.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("transition purchase order status failed: %s", err.Error())
+		return procurementV1.ErrorInternalServerError("transition purchase order status failed")
+	}
+	if n == 0 {
+		return procurementV1.ErrorConflict("purchase order status changed concurrently")
+	}
+	return nil
+}
+
+// Delete 删除采购单及其明细。
+func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.DeletePurchaseOrderRequest) error {
+	if req == nil {
+		return procurementV1.ErrorBadRequest("invalid parameter")
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	delBuilder := r.entClient.Client().PurchaseOrder.Delete()
+	delBuilder.Where(purchaseorder.IDEQ(req.GetId()))
+	if hasTenant {
+		delBuilder.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	if _, err := delBuilder.Exec(ctx); err != nil {
+		if ent.IsNotFound(err) {
+			return procurementV1.ErrorNotFound("purchase_order not found")
+		}
+
+		r.log.Errorf("delete one data failed: %s", err.Error())
+
+		return procurementV1.ErrorInternalServerError("delete failed")
+	}
+
+	itemDel := r.entClient.Client().PurchaseOrderItem.Delete().
+		Where(purchaseorderitem.PoIDEQ(req.GetId()))
+	if hasTenant {
+		itemDel.Where(purchaseorderitem.TenantIDEQ(tid))
+	}
+	if _, err := itemDel.Exec(ctx); err != nil {
+		r.log.Errorf("delete purchase order items failed: %s", err.Error())
+	}
+
+	return nil
+}
+
+// replaceItems 整体替换明细（删旧插新）。金额字段由服务层预计算后传入。
+func (r *PurchaseOrderRepo) replaceItems(
+	ctx context.Context,
+	tenantID *uint32,
+	poID uint32,
+	items []*procurementV1.PurchaseOrderItem,
+) error {
+	if poID == 0 {
+		return nil
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if hasTenant {
+		tenantID = trans.Ptr(tid)
+	}
+
+	if _, err := r.entClient.Client().PurchaseOrderItem.Delete().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Exec(ctx); err != nil {
+		r.log.Errorf("clear purchase order items failed: %s", err.Error())
+		return procurementV1.ErrorInternalServerError("clear purchase order items failed")
+	}
+
+	if len(items) == 0 {
+		return nil
+	}
+
+	for _, item := range items {
+		if item == nil {
+			continue
+		}
+		builder := r.entClient.Client().PurchaseOrderItem.Create().
+			SetPoID(poID).
+			SetNillableSkuCode(item.SkuCode).
+			SetNillableQuantity(item.Quantity).
+			SetNillableUnitPrice(item.UnitPrice).
+			SetNillableAmount(item.Amount).
+			SetNillableReceivedQuantity(item.ReceivedQuantity).
+			SetNillableTenantID(tenantID)
+		if _, err := builder.Save(ctx); err != nil {
+			r.log.Errorf("insert purchase order item failed: %s", err.Error())
+			return procurementV1.ErrorInternalServerError("insert purchase order item failed")
+		}
+	}
+
+	return nil
+}
+
+// listItemDTOs 查询并映射某采购单的明细。
+func (r *PurchaseOrderRepo) listItemDTOs(ctx context.Context, poID uint32) []*procurementV1.PurchaseOrderItem {
+	rows, err := r.entClient.Client().PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Order(ent.Asc(purchaseorder.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query purchase order items failed: %s", err.Error())
+		return nil
+	}
+
+	items := make([]*procurementV1.PurchaseOrderItem, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, &procurementV1.PurchaseOrderItem{
+			Id:               trans.Ptr(row.ID),
+			PoId:             row.PoID,
+			SkuCode:          row.SkuCode,
+			Quantity:         row.Quantity,
+			UnitPrice:        row.UnitPrice,
+			Amount:           row.Amount,
+			ReceivedQuantity: row.ReceivedQuantity,
+		})
+	}
+	return items
+}

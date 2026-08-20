@@ -41,10 +41,13 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
+	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmovement"
+	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
 	"go-wind-erp/app/core/service/internal/data/ent/user"
@@ -125,6 +128,10 @@ type Client struct {
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// PurchaseOrder is the client for interacting with the PurchaseOrder builders.
+	PurchaseOrder *PurchaseOrderClient
+	// PurchaseOrderItem is the client for interacting with the PurchaseOrderItem builders.
+	PurchaseOrderItem *PurchaseOrderItemClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -133,6 +140,8 @@ type Client struct {
 	RolePermission *RolePermissionClient
 	// StockMovement is the client for interacting with the StockMovement builders.
 	StockMovement *StockMovementClient
+	// Supplier is the client for interacting with the Supplier builders.
+	Supplier *SupplierClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -190,10 +199,13 @@ func (c *Client) init() {
 	c.PermissionPolicy = NewPermissionPolicyClient(c.config)
 	c.PolicyEvaluationLog = NewPolicyEvaluationLogClient(c.config)
 	c.Position = NewPositionClient(c.config)
+	c.PurchaseOrder = NewPurchaseOrderClient(c.config)
+	c.PurchaseOrderItem = NewPurchaseOrderItemClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
 	c.StockMovement = NewStockMovementClient(c.config)
+	c.Supplier = NewSupplierClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -324,10 +336,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PermissionPolicy:         NewPermissionPolicyClient(cfg),
 		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
 		Position:                 NewPositionClient(cfg),
+		PurchaseOrder:            NewPurchaseOrderClient(cfg),
+		PurchaseOrderItem:        NewPurchaseOrderItemClient(cfg),
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
 		StockMovement:            NewStockMovementClient(cfg),
+		Supplier:                 NewSupplierClient(cfg),
 		Task:                     NewTaskClient(cfg),
 		Tenant:                   NewTenantClient(cfg),
 		User:                     NewUserClient(cfg),
@@ -385,10 +400,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PermissionPolicy:         NewPermissionPolicyClient(cfg),
 		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
 		Position:                 NewPositionClient(cfg),
+		PurchaseOrder:            NewPurchaseOrderClient(cfg),
+		PurchaseOrderItem:        NewPurchaseOrderItemClient(cfg),
 		Role:                     NewRoleClient(cfg),
 		RoleMetadata:             NewRoleMetadataClient(cfg),
 		RolePermission:           NewRolePermissionClient(cfg),
 		StockMovement:            NewStockMovementClient(cfg),
+		Supplier:                 NewSupplierClient(cfg),
 		Task:                     NewTaskClient(cfg),
 		Tenant:                   NewTenantClient(cfg),
 		User:                     NewUserClient(cfg),
@@ -433,9 +451,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Role, c.RoleMetadata, c.RolePermission, c.StockMovement, c.Task, c.Tenant,
-		c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
-		c.Warehouse,
+		c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata, c.RolePermission,
+		c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Use(hooks...)
 	}
@@ -452,9 +470,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Role, c.RoleMetadata, c.RolePermission, c.StockMovement, c.Task, c.Tenant,
-		c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
-		c.Warehouse,
+		c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata, c.RolePermission,
+		c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -523,6 +541,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PolicyEvaluationLog.mutate(ctx, m)
 	case *PositionMutation:
 		return c.Position.mutate(ctx, m)
+	case *PurchaseOrderMutation:
+		return c.PurchaseOrder.mutate(ctx, m)
+	case *PurchaseOrderItemMutation:
+		return c.PurchaseOrderItem.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *RoleMetadataMutation:
@@ -531,6 +553,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RolePermission.mutate(ctx, m)
 	case *StockMovementMutation:
 		return c.StockMovement.mutate(ctx, m)
+	case *SupplierMutation:
+		return c.Supplier.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TenantMutation:
@@ -4731,6 +4755,274 @@ func (c *PositionClient) mutate(ctx context.Context, m *PositionMutation) (Value
 	}
 }
 
+// PurchaseOrderClient is a client for the PurchaseOrder schema.
+type PurchaseOrderClient struct {
+	config
+}
+
+// NewPurchaseOrderClient returns a client for the PurchaseOrder from the given config.
+func NewPurchaseOrderClient(c config) *PurchaseOrderClient {
+	return &PurchaseOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `purchaseorder.Hooks(f(g(h())))`.
+func (c *PurchaseOrderClient) Use(hooks ...Hook) {
+	c.hooks.PurchaseOrder = append(c.hooks.PurchaseOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `purchaseorder.Intercept(f(g(h())))`.
+func (c *PurchaseOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PurchaseOrder = append(c.inters.PurchaseOrder, interceptors...)
+}
+
+// Create returns a builder for creating a PurchaseOrder entity.
+func (c *PurchaseOrderClient) Create() *PurchaseOrderCreate {
+	mutation := newPurchaseOrderMutation(c.config, OpCreate)
+	return &PurchaseOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PurchaseOrder entities.
+func (c *PurchaseOrderClient) CreateBulk(builders ...*PurchaseOrderCreate) *PurchaseOrderCreateBulk {
+	return &PurchaseOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PurchaseOrderClient) MapCreateBulk(slice any, setFunc func(*PurchaseOrderCreate, int)) *PurchaseOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PurchaseOrderCreateBulk{err: fmt.Errorf("calling to PurchaseOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PurchaseOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PurchaseOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PurchaseOrder.
+func (c *PurchaseOrderClient) Update() *PurchaseOrderUpdate {
+	mutation := newPurchaseOrderMutation(c.config, OpUpdate)
+	return &PurchaseOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PurchaseOrderClient) UpdateOne(_m *PurchaseOrder) *PurchaseOrderUpdateOne {
+	mutation := newPurchaseOrderMutation(c.config, OpUpdateOne, withPurchaseOrder(_m))
+	return &PurchaseOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PurchaseOrderClient) UpdateOneID(id uint32) *PurchaseOrderUpdateOne {
+	mutation := newPurchaseOrderMutation(c.config, OpUpdateOne, withPurchaseOrderID(id))
+	return &PurchaseOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PurchaseOrder.
+func (c *PurchaseOrderClient) Delete() *PurchaseOrderDelete {
+	mutation := newPurchaseOrderMutation(c.config, OpDelete)
+	return &PurchaseOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PurchaseOrderClient) DeleteOne(_m *PurchaseOrder) *PurchaseOrderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PurchaseOrderClient) DeleteOneID(id uint32) *PurchaseOrderDeleteOne {
+	builder := c.Delete().Where(purchaseorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PurchaseOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for PurchaseOrder.
+func (c *PurchaseOrderClient) Query() *PurchaseOrderQuery {
+	return &PurchaseOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePurchaseOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PurchaseOrder entity by its id.
+func (c *PurchaseOrderClient) Get(ctx context.Context, id uint32) (*PurchaseOrder, error) {
+	return c.Query().Where(purchaseorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PurchaseOrderClient) GetX(ctx context.Context, id uint32) *PurchaseOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PurchaseOrderClient) Hooks() []Hook {
+	hooks := c.hooks.PurchaseOrder
+	return append(hooks[:len(hooks):len(hooks)], purchaseorder.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PurchaseOrderClient) Interceptors() []Interceptor {
+	return c.inters.PurchaseOrder
+}
+
+func (c *PurchaseOrderClient) mutate(ctx context.Context, m *PurchaseOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PurchaseOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PurchaseOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PurchaseOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PurchaseOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PurchaseOrder mutation op: %q", m.Op())
+	}
+}
+
+// PurchaseOrderItemClient is a client for the PurchaseOrderItem schema.
+type PurchaseOrderItemClient struct {
+	config
+}
+
+// NewPurchaseOrderItemClient returns a client for the PurchaseOrderItem from the given config.
+func NewPurchaseOrderItemClient(c config) *PurchaseOrderItemClient {
+	return &PurchaseOrderItemClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `purchaseorderitem.Hooks(f(g(h())))`.
+func (c *PurchaseOrderItemClient) Use(hooks ...Hook) {
+	c.hooks.PurchaseOrderItem = append(c.hooks.PurchaseOrderItem, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `purchaseorderitem.Intercept(f(g(h())))`.
+func (c *PurchaseOrderItemClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PurchaseOrderItem = append(c.inters.PurchaseOrderItem, interceptors...)
+}
+
+// Create returns a builder for creating a PurchaseOrderItem entity.
+func (c *PurchaseOrderItemClient) Create() *PurchaseOrderItemCreate {
+	mutation := newPurchaseOrderItemMutation(c.config, OpCreate)
+	return &PurchaseOrderItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PurchaseOrderItem entities.
+func (c *PurchaseOrderItemClient) CreateBulk(builders ...*PurchaseOrderItemCreate) *PurchaseOrderItemCreateBulk {
+	return &PurchaseOrderItemCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PurchaseOrderItemClient) MapCreateBulk(slice any, setFunc func(*PurchaseOrderItemCreate, int)) *PurchaseOrderItemCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PurchaseOrderItemCreateBulk{err: fmt.Errorf("calling to PurchaseOrderItemClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PurchaseOrderItemCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PurchaseOrderItemCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PurchaseOrderItem.
+func (c *PurchaseOrderItemClient) Update() *PurchaseOrderItemUpdate {
+	mutation := newPurchaseOrderItemMutation(c.config, OpUpdate)
+	return &PurchaseOrderItemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PurchaseOrderItemClient) UpdateOne(_m *PurchaseOrderItem) *PurchaseOrderItemUpdateOne {
+	mutation := newPurchaseOrderItemMutation(c.config, OpUpdateOne, withPurchaseOrderItem(_m))
+	return &PurchaseOrderItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PurchaseOrderItemClient) UpdateOneID(id uint32) *PurchaseOrderItemUpdateOne {
+	mutation := newPurchaseOrderItemMutation(c.config, OpUpdateOne, withPurchaseOrderItemID(id))
+	return &PurchaseOrderItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PurchaseOrderItem.
+func (c *PurchaseOrderItemClient) Delete() *PurchaseOrderItemDelete {
+	mutation := newPurchaseOrderItemMutation(c.config, OpDelete)
+	return &PurchaseOrderItemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PurchaseOrderItemClient) DeleteOne(_m *PurchaseOrderItem) *PurchaseOrderItemDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PurchaseOrderItemClient) DeleteOneID(id uint32) *PurchaseOrderItemDeleteOne {
+	builder := c.Delete().Where(purchaseorderitem.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PurchaseOrderItemDeleteOne{builder}
+}
+
+// Query returns a query builder for PurchaseOrderItem.
+func (c *PurchaseOrderItemClient) Query() *PurchaseOrderItemQuery {
+	return &PurchaseOrderItemQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePurchaseOrderItem},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PurchaseOrderItem entity by its id.
+func (c *PurchaseOrderItemClient) Get(ctx context.Context, id uint32) (*PurchaseOrderItem, error) {
+	return c.Query().Where(purchaseorderitem.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PurchaseOrderItemClient) GetX(ctx context.Context, id uint32) *PurchaseOrderItem {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PurchaseOrderItemClient) Hooks() []Hook {
+	hooks := c.hooks.PurchaseOrderItem
+	return append(hooks[:len(hooks):len(hooks)], purchaseorderitem.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PurchaseOrderItemClient) Interceptors() []Interceptor {
+	return c.inters.PurchaseOrderItem
+}
+
+func (c *PurchaseOrderItemClient) mutate(ctx context.Context, m *PurchaseOrderItemMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PurchaseOrderItemCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PurchaseOrderItemUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PurchaseOrderItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PurchaseOrderItemDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PurchaseOrderItem mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -5264,6 +5556,140 @@ func (c *StockMovementClient) mutate(ctx context.Context, m *StockMovementMutati
 		return (&StockMovementDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown StockMovement mutation op: %q", m.Op())
+	}
+}
+
+// SupplierClient is a client for the Supplier schema.
+type SupplierClient struct {
+	config
+}
+
+// NewSupplierClient returns a client for the Supplier from the given config.
+func NewSupplierClient(c config) *SupplierClient {
+	return &SupplierClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `supplier.Hooks(f(g(h())))`.
+func (c *SupplierClient) Use(hooks ...Hook) {
+	c.hooks.Supplier = append(c.hooks.Supplier, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `supplier.Intercept(f(g(h())))`.
+func (c *SupplierClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Supplier = append(c.inters.Supplier, interceptors...)
+}
+
+// Create returns a builder for creating a Supplier entity.
+func (c *SupplierClient) Create() *SupplierCreate {
+	mutation := newSupplierMutation(c.config, OpCreate)
+	return &SupplierCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Supplier entities.
+func (c *SupplierClient) CreateBulk(builders ...*SupplierCreate) *SupplierCreateBulk {
+	return &SupplierCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SupplierClient) MapCreateBulk(slice any, setFunc func(*SupplierCreate, int)) *SupplierCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SupplierCreateBulk{err: fmt.Errorf("calling to SupplierClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SupplierCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SupplierCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Supplier.
+func (c *SupplierClient) Update() *SupplierUpdate {
+	mutation := newSupplierMutation(c.config, OpUpdate)
+	return &SupplierUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SupplierClient) UpdateOne(_m *Supplier) *SupplierUpdateOne {
+	mutation := newSupplierMutation(c.config, OpUpdateOne, withSupplier(_m))
+	return &SupplierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SupplierClient) UpdateOneID(id uint32) *SupplierUpdateOne {
+	mutation := newSupplierMutation(c.config, OpUpdateOne, withSupplierID(id))
+	return &SupplierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Supplier.
+func (c *SupplierClient) Delete() *SupplierDelete {
+	mutation := newSupplierMutation(c.config, OpDelete)
+	return &SupplierDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SupplierClient) DeleteOne(_m *Supplier) *SupplierDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SupplierClient) DeleteOneID(id uint32) *SupplierDeleteOne {
+	builder := c.Delete().Where(supplier.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SupplierDeleteOne{builder}
+}
+
+// Query returns a query builder for Supplier.
+func (c *SupplierClient) Query() *SupplierQuery {
+	return &SupplierQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSupplier},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Supplier entity by its id.
+func (c *SupplierClient) Get(ctx context.Context, id uint32) (*Supplier, error) {
+	return c.Query().Where(supplier.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SupplierClient) GetX(ctx context.Context, id uint32) *Supplier {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SupplierClient) Hooks() []Hook {
+	hooks := c.hooks.Supplier
+	return append(hooks[:len(hooks):len(hooks)], supplier.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SupplierClient) Interceptors() []Interceptor {
+	return c.inters.Supplier
+}
+
+func (c *SupplierClient) mutate(ctx context.Context, m *SupplierMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SupplierCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SupplierUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SupplierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SupplierDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Supplier mutation op: %q", m.Op())
 	}
 }
 
@@ -6347,8 +6773,9 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Role, RoleMetadata, RolePermission, StockMovement, Task, Tenant,
-		User, UserCredential, UserOrgUnit, UserPosition, UserRole, Warehouse []ent.Hook
+		Position, PurchaseOrder, PurchaseOrderItem, Role, RoleMetadata, RolePermission,
+		StockMovement, Supplier, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole, Warehouse []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, ApprovalRequest, DataAccessAuditLog, DictEntry, DictEntryI18n,
@@ -6357,8 +6784,8 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		OperationAuditLog, OrgUnit, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
-		Position, Role, RoleMetadata, RolePermission, StockMovement, Task, Tenant,
-		User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Warehouse []ent.Interceptor
+		Position, PurchaseOrder, PurchaseOrderItem, Role, RoleMetadata, RolePermission,
+		StockMovement, Supplier, Task, Tenant, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole, Warehouse []ent.Interceptor
 	}
 )

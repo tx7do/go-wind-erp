@@ -262,5 +262,15 @@
       "Rejected": "已驳回",
       "Cancelled": "已撤销"
     }
+  },
+  "procurement": {
+    "status": {
+      "Draft": "草稿",
+      "Submitted": "待审批",
+      "Approved": "已通过",
+      "Rejected": "已驳回",
+      "Completed": "已完结",
+      "Cancelled": "已取消"
+    }
   }
 }

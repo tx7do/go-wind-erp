@@ -3327,6 +3327,465 @@ class InventoryServiceV1CreateStockMovementRequest {
   }
 }
 
+/// 采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
+/// 发起与维护在 PC 端完成）
+class PurchaseOrderServiceClient {
+  final ClientTransport _transport;
+
+  PurchaseOrderServiceClient(this._transport);
+
+  /// 查询采购单列表
+  Future<ProcurementServiceV1ListPurchaseOrderResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/purchase-orders';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PurchaseOrderService',
+      method: 'List',
+    ), headers: headers);
+    return ProcurementServiceV1ListPurchaseOrderResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 查询采购单详情（含明细）
+  Future<ProcurementServiceV1PurchaseOrder> get(ProcurementServiceV1GetPurchaseOrderRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/purchase-orders/${request.id}';
+    final queryParams = <String>[];
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PurchaseOrderService',
+      method: 'Get',
+    ), headers: headers);
+    return ProcurementServiceV1PurchaseOrder.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+class ProcurementServiceV1ListPurchaseOrderResponse {
+  List<ProcurementServiceV1PurchaseOrder>? items;
+  int? total;
+
+  ProcurementServiceV1ListPurchaseOrderResponse({
+    this.items,
+    this.total,
+  });
+
+  factory ProcurementServiceV1ListPurchaseOrderResponse.fromJson(Map<String, dynamic> json) {
+    return ProcurementServiceV1ListPurchaseOrderResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => ProcurementServiceV1PurchaseOrder.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ProcurementServiceV1ListPurchaseOrderResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ProcurementServiceV1ListPurchaseOrderResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  ProcurementServiceV1ListPurchaseOrderResponse copyWith({
+    List<ProcurementServiceV1PurchaseOrder>? items,
+    int? total,
+  }) {
+    return ProcurementServiceV1ListPurchaseOrderResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 采购单
+class ProcurementServiceV1PurchaseOrder {
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  List<ProcurementServiceV1PurchaseOrderItem>? items;
+  String? poNumber;
+  String? remark;
+  ///
+  /// Behaviors: OPTIONAL
+  ProcurementServiceV1PurchaseOrder$Status? status;
+  ///
+  /// Behaviors: OPTIONAL
+  String? supplierCode;
+  int? tenantId;
+  int? totalAmount;
+  String? updatedAt;
+  int? updatedBy;
+
+  ProcurementServiceV1PurchaseOrder({
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.id,
+    this.items,
+    this.poNumber,
+    this.remark,
+    this.status,
+    this.supplierCode,
+    this.tenantId,
+    this.totalAmount,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory ProcurementServiceV1PurchaseOrder.fromJson(Map<String, dynamic> json) {
+    return ProcurementServiceV1PurchaseOrder(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      id: json['id'] as int?,
+      items: (json['items'] as List<dynamic>?)?.map((e) => ProcurementServiceV1PurchaseOrderItem.fromJson(e as Map<String, dynamic>)).toList(),
+      poNumber: json['poNumber'] as String?,
+      remark: json['remark'] as String?,
+      status: json['status'] != null ? ProcurementServiceV1PurchaseOrder$Status.fromString(json['status'] as String) : null,
+      supplierCode: json['supplierCode'] as String?,
+      tenantId: json['tenantId'] as int?,
+      totalAmount: json['totalAmount'] != null ? int.parse(json['totalAmount'].toString()) : null,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (id != null) json['id'] = id;
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (poNumber != null) json['poNumber'] = poNumber;
+    if (remark != null) json['remark'] = remark;
+    if (status != null) json['status'] = status!.value;
+    if (supplierCode != null) json['supplierCode'] = supplierCode;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (totalAmount != null) json['totalAmount'] = totalAmount.toString();
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ProcurementServiceV1PurchaseOrder(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, items: $items, poNumber: $poNumber, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, totalAmount: $totalAmount, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ProcurementServiceV1PurchaseOrder &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && id == other.id
+      && items == other.items
+      && poNumber == other.poNumber
+      && remark == other.remark
+      && status == other.status
+      && supplierCode == other.supplierCode
+      && tenantId == other.tenantId
+      && totalAmount == other.totalAmount
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    id,
+    items,
+    poNumber,
+    remark,
+    status,
+    supplierCode,
+    tenantId,
+    totalAmount,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  ProcurementServiceV1PurchaseOrder copyWith({
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? id,
+    List<ProcurementServiceV1PurchaseOrderItem>? items,
+    String? poNumber,
+    String? remark,
+    ProcurementServiceV1PurchaseOrder$Status? status,
+    String? supplierCode,
+    int? tenantId,
+    int? totalAmount,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return ProcurementServiceV1PurchaseOrder(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      id: id ?? this.id,
+      items: items ?? this.items,
+      poNumber: poNumber ?? this.poNumber,
+      remark: remark ?? this.remark,
+      status: status ?? this.status,
+      supplierCode: supplierCode ?? this.supplierCode,
+      tenantId: tenantId ?? this.tenantId,
+      totalAmount: totalAmount ?? this.totalAmount,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 采购单状态
+enum ProcurementServiceV1PurchaseOrder$Status {
+  approved('APPROVED'),
+  cancelled('CANCELLED'),
+  completed('COMPLETED'),
+  draft('DRAFT'),
+  rejected('REJECTED'),
+  submitted('SUBMITTED');
+
+  final String value;
+  const ProcurementServiceV1PurchaseOrder$Status(this.value);
+
+  static ProcurementServiceV1PurchaseOrder$Status fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ProcurementServiceV1PurchaseOrder\$Status value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// 采购单明细
+class ProcurementServiceV1PurchaseOrderItem {
+  int? amount;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  int? poId;
+  int? quantity;
+  int? receivedQuantity;
+  ///
+  /// Behaviors: OPTIONAL
+  String? skuCode;
+  int? unitPrice;
+
+  ProcurementServiceV1PurchaseOrderItem({
+    this.amount,
+    this.id,
+    this.poId,
+    this.quantity,
+    this.receivedQuantity,
+    this.skuCode,
+    this.unitPrice,
+  });
+
+  factory ProcurementServiceV1PurchaseOrderItem.fromJson(Map<String, dynamic> json) {
+    return ProcurementServiceV1PurchaseOrderItem(
+      amount: json['amount'] != null ? int.parse(json['amount'].toString()) : null,
+      id: json['id'] as int?,
+      poId: json['poId'] as int?,
+      quantity: json['quantity'] != null ? int.parse(json['quantity'].toString()) : null,
+      receivedQuantity: json['receivedQuantity'] != null ? int.parse(json['receivedQuantity'].toString()) : null,
+      skuCode: json['skuCode'] as String?,
+      unitPrice: json['unitPrice'] != null ? int.parse(json['unitPrice'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (amount != null) json['amount'] = amount.toString();
+    if (id != null) json['id'] = id;
+    if (poId != null) json['poId'] = poId;
+    if (quantity != null) json['quantity'] = quantity.toString();
+    if (receivedQuantity != null) json['receivedQuantity'] = receivedQuantity.toString();
+    if (skuCode != null) json['skuCode'] = skuCode;
+    if (unitPrice != null) json['unitPrice'] = unitPrice.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ProcurementServiceV1PurchaseOrderItem(amount: $amount, id: $id, poId: $poId, quantity: $quantity, receivedQuantity: $receivedQuantity, skuCode: $skuCode, unitPrice: $unitPrice)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ProcurementServiceV1PurchaseOrderItem &&
+      runtimeType == other.runtimeType
+      && amount == other.amount
+      && id == other.id
+      && poId == other.poId
+      && quantity == other.quantity
+      && receivedQuantity == other.receivedQuantity
+      && skuCode == other.skuCode
+      && unitPrice == other.unitPrice
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    amount,
+    id,
+    poId,
+    quantity,
+    receivedQuantity,
+    skuCode,
+    unitPrice,
+  ]);
+
+  ProcurementServiceV1PurchaseOrderItem copyWith({
+    int? amount,
+    int? id,
+    int? poId,
+    int? quantity,
+    int? receivedQuantity,
+    String? skuCode,
+    int? unitPrice,
+  }) {
+    return ProcurementServiceV1PurchaseOrderItem(
+      amount: amount ?? this.amount,
+      id: id ?? this.id,
+      poId: poId ?? this.poId,
+      quantity: quantity ?? this.quantity,
+      receivedQuantity: receivedQuantity ?? this.receivedQuantity,
+      skuCode: skuCode ?? this.skuCode,
+      unitPrice: unitPrice ?? this.unitPrice,
+    );
+  }
+}
+
+class ProcurementServiceV1GetPurchaseOrderRequest {
+  int? id;
+  String? viewMask;
+
+  ProcurementServiceV1GetPurchaseOrderRequest({
+    this.id,
+    this.viewMask,
+  });
+
+  factory ProcurementServiceV1GetPurchaseOrderRequest.fromJson(Map<String, dynamic> json) {
+    return ProcurementServiceV1GetPurchaseOrderRequest(
+      id: json['id'] as int?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ProcurementServiceV1GetPurchaseOrderRequest(id: $id, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ProcurementServiceV1GetPurchaseOrderRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    viewMask,
+  ]);
+
+  ProcurementServiceV1GetPurchaseOrderRequest copyWith({
+    int? id,
+    String? viewMask,
+  }) {
+    return ProcurementServiceV1GetPurchaseOrderRequest(
+      id: id ?? this.id,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+}
+
 /// 用户个人资料服务
 class UserProfileServiceClient {
   final ClientTransport _transport;
@@ -4399,6 +4858,7 @@ class ApiClient {
   AuthenticationServiceClient? _authenticationService;
   FileTransferServiceClient? _fileTransferService;
   InventoryServiceClient? _inventoryService;
+  PurchaseOrderServiceClient? _purchaseOrderService;
   StockMovementServiceClient? _stockMovementService;
   UserProfileServiceClient? _userProfileService;
   WarehouseServiceClient? _warehouseService;
@@ -4425,6 +4885,11 @@ class ApiClient {
     return _inventoryService!;
   }
 
+  PurchaseOrderServiceClient get purchaseOrderService {
+    _purchaseOrderService ??= PurchaseOrderServiceClient(_transport);
+    return _purchaseOrderService!;
+  }
+
   StockMovementServiceClient get stockMovementService {
     _stockMovementService ??= StockMovementServiceClient(_transport);
     return _stockMovementService!;
@@ -4446,6 +4911,7 @@ class ApiClient {
     _authenticationService = null;
     _fileTransferService = null;
     _inventoryService = null;
+    _purchaseOrderService = null;
     _stockMovementService = null;
     _userProfileService = null;
     _warehouseService = null;

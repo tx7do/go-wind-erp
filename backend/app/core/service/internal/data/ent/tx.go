@@ -72,6 +72,10 @@ type Tx struct {
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// PurchaseOrder is the client for interacting with the PurchaseOrder builders.
+	PurchaseOrder *PurchaseOrderClient
+	// PurchaseOrderItem is the client for interacting with the PurchaseOrderItem builders.
+	PurchaseOrderItem *PurchaseOrderItemClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -80,6 +84,8 @@ type Tx struct {
 	RolePermission *RolePermissionClient
 	// StockMovement is the client for interacting with the StockMovement builders.
 	StockMovement *StockMovementClient
+	// Supplier is the client for interacting with the Supplier builders.
+	Supplier *SupplierClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -257,10 +263,13 @@ func (tx *Tx) init() {
 	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
+	tx.PurchaseOrder = NewPurchaseOrderClient(tx.config)
+	tx.PurchaseOrderItem = NewPurchaseOrderItemClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.StockMovement = NewStockMovementClient(tx.config)
+	tx.Supplier = NewSupplierClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)

@@ -59,6 +59,9 @@ managed:
       path: approval/service/v1
       value: go-wind-erp/api/gen/go/approval/service/v1;approvalpb
     - file_option: go_package
+      path: procurement/service/v1
+      value: go-wind-erp/api/gen/go/procurement/service/v1;procurementpb
+    - file_option: go_package
       path: app/service/v1
       value: go-wind-erp/api/gen/go/app/service/v1;apppb
 

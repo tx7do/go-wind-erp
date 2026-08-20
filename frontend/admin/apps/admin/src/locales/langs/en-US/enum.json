@@ -262,5 +262,15 @@
       "Rejected": "Rejected",
       "Cancelled": "Cancelled"
     }
+  },
+  "procurement": {
+    "status": {
+      "Draft": "Draft",
+      "Submitted": "Submitted",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    }
   }
 }
