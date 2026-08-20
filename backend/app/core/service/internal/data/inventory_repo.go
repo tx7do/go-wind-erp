@@ -13,6 +13,7 @@ import (
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-erp/app/core/service/internal/data/ent"
 	"go-wind-erp/app/core/service/internal/data/ent/inventory"
@@ -137,11 +138,16 @@ func (r *InventoryRepo) Get(ctx context.Context, req *inventoryV1.GetInventoryRe
 	return dto, err
 }
 
-// SumQuantity 库存总量（所有记录 quantity 之和）。空表时 Sum 无结果行，兜底为 0。
+// SumQuantity 库存总量（所有记录 quantity 之和）。
+// 无 GROUP BY 的 SUM 在空集（或全 NULL 列）时返回一行 NULL 而非零行，
+// 直接扫 []int64 会被 database/sql 拒绝导致空库看板 500；用 COALESCE
+// 在 SQL 层保证非 NULL（ent ScanSlice 不支持 []NullInt64 结构体切片）。
 func (r *InventoryRepo) SumQuantity(ctx context.Context) (int64, error) {
 	var totals []int64
 	if err := r.entClient.Client().Inventory.Query().
-		Aggregate(ent.Sum(inventory.FieldQuantity)).
+		Modify(func(se *sql.Selector) {
+			se.Select("COALESCE(" + sql.Sum(se.C(inventory.FieldQuantity)) + ", 0)")
+		}).
 		Scan(ctx, &totals); err != nil {
 		r.log.Errorf("sum quantity failed: %s", err.Error())
 		return 0, inventoryV1.ErrorInternalServerError("sum quantity failed")
@@ -153,9 +159,11 @@ func (r *InventoryRepo) SumQuantity(ctx context.Context) (int64, error) {
 }
 
 // CountDistinctSku 在库 SKU 数（按 sku_code 去重计数）。
+// sku_code 可空，NULL 组会使 []string 扫描失败，先过滤空值。
 func (r *InventoryRepo) CountDistinctSku(ctx context.Context) (int, error) {
 	var distinctSkus []string
 	if err := r.entClient.Client().Inventory.Query().
+		Where(inventory.SkuCodeNotNil()).
 		GroupBy(inventory.FieldSkuCode).
 		Scan(ctx, &distinctSkus); err != nil {
 		r.log.Errorf("count distinct sku failed: %s", err.Error())
@@ -181,6 +189,39 @@ func (r *InventoryRepo) ListLowStock(ctx context.Context, threshold int64, limit
 		items = append(items, r.mapper.ToDTO(row))
 	}
 	return items, nil
+}
+
+// TransitionStatus 原子状态迁移：仅当当前状态为 from 时才更新为 to。
+// 0 行受影响说明已被并发变更，返回 Conflict（与审批域同模式）。
+func (r *InventoryRepo) TransitionStatus(
+	ctx context.Context,
+	id uint32,
+	from, to inventoryV1.Inventory_Status,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := r.entClient.Client().Inventory.Update().
+		Where(inventory.IDEQ(id)).
+		Where(inventory.StatusEQ(*r.statusConverter.ToEntity(trans.Ptr(from)))).
+		SetStatus(*r.statusConverter.ToEntity(trans.Ptr(to))).
+		SetUpdatedAt(time.Now())
+	if hasTenant {
+		builder.Where(inventory.TenantIDEQ(tid))
+	}
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("transition inventory status failed: %s", err.Error())
+		return inventoryV1.ErrorInternalServerError("transition inventory status failed")
+	}
+	if n == 0 {
+		return inventoryV1.ErrorConflict("inventory status changed concurrently")
+	}
+	return nil
 }
 
 func (r *InventoryRepo) Create(ctx context.Context, req *inventoryV1.CreateInventoryRequest) (*inventoryV1.Inventory, error) {

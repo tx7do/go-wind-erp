@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -107,8 +108,10 @@ func (s *InventoryService) Create(ctx context.Context, req *inventoryV1.CreateIn
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 新建库存记录的初始状态必须由状态机校验：AVAILABLE 是唯一合法的初始态。
-	if req.Data.Status != nil && !validateStatusTransition(inventoryV1.Inventory_AVAILABLE, req.Data.GetStatus()) {
+	// AVAILABLE 是唯一合法的初始态（nil 缺省即 AVAILABLE）。不能用
+	// validateStatusTransition 判断：AVAILABLE→LOCKED/QUARANTINED 本就是
+	// 合法出边，那样校验形同虚设。
+	if req.Data.GetStatus() != inventoryV1.Inventory_AVAILABLE {
 		return nil, inventoryV1.ErrorBadRequest("invalid initial inventory status")
 	}
 
@@ -124,17 +127,39 @@ func (s *InventoryService) Update(ctx context.Context, req *inventoryV1.UpdateIn
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 状态变更必须经状态机校验：先取当前状态，再校验 from→to 的转换是否被允许。
+	// 状态变更走原子条件迁移（仅 from 状态可迁），避免读-验-写的并发竞态；
+	// 其余字段仍走常规 Update。业务拒绝用 409 Conflict（403+FORBIDDEN 会被
+	// 移动端统一拦截器判为会话失效触发登出）。
 	if req.Data.Status != nil {
 		old, err := s.inventoryRepo.Get(ctx, &inventoryV1.GetInventoryRequest{
 			QueryBy: &inventoryV1.GetInventoryRequest_Id{Id: req.GetId()},
 		})
 		if err != nil {
+			// allow_missing + 记录不存在 → 转创建路径，同样受初始态约束。
+			if req.GetAllowMissing() && isNotFoundError(err) {
+				if req.Data.GetStatus() != inventoryV1.Inventory_AVAILABLE {
+					return nil, inventoryV1.ErrorBadRequest("invalid initial inventory status")
+				}
+				req.Data.Status = nil
+				if _, err := s.inventoryRepo.Update(ctx, req); err != nil {
+					return nil, err
+				}
+				return &emptypb.Empty{}, nil
+			}
 			return nil, err
 		}
+
 		if !validateStatusTransition(old.GetStatus(), req.Data.GetStatus()) {
-			return nil, inventoryV1.ErrorForbidden("unauthorized inventory status transition")
+			return nil, inventoryV1.ErrorConflict("inventory status transition not allowed")
 		}
+
+		if err := s.inventoryRepo.TransitionStatus(ctx, req.GetId(), old.GetStatus(), req.Data.GetStatus()); err != nil {
+			return nil, err
+		}
+
+		// 状态已迁移完成；剩余字段更新中剔除状态，避免二次写入引入竞态。
+		req.Data.Status = nil
+		req.UpdateMask.Paths = removeMaskPath(req.UpdateMask.GetPaths(), "status")
 	}
 
 	if _, err := s.inventoryRepo.Update(ctx, req); err != nil {
@@ -142,6 +167,28 @@ func (s *InventoryService) Update(ctx context.Context, req *inventoryV1.UpdateIn
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// isNotFoundError 判断错误是否为资源不存在（ent NotFound 或 proto 404）。
+func isNotFoundError(err error) bool {
+	if err == nil {
+		return false
+	}
+	if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "NOT_FOUND") {
+		return true
+	}
+	return false
+}
+
+// removeMaskPath 从 FieldMask 路径中剔除指定字段。
+func removeMaskPath(paths []string, target string) []string {
+	out := make([]string, 0, len(paths))
+	for _, p := range paths {
+		if p != target {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 func (s *InventoryService) Delete(ctx context.Context, req *inventoryV1.DeleteInventoryRequest) (*emptypb.Empty, error) {

@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"database/sql"
+	sqllib "database/sql"
 	"sync"
 	"testing"
 
@@ -41,7 +41,7 @@ func TestInventoryQuantityAtomicity(t *testing.T) {
 	if err != nil {
 		t.Fatalf("sqlite connector: %v", err)
 	}
-	db := sql.OpenDB(connector)
+	db := sqllib.OpenDB(connector)
 	// A single connection is required so the in-memory DB is shared across
 	// all transactions in this test process.
 	db.SetMaxOpenConns(1)
@@ -147,4 +147,39 @@ func addCheckedInt64(a, b int64) (int64, bool) {
 		return 0, true
 	}
 	return r, false
+}
+
+// TestSumQuantityEmptyTableLocked regressions the audit finding: a bare
+// SELECT SUM over an empty set returns one NULL row (not zero rows); the
+// []int64 scan would error. The repo now scans NullInt64 — verify the same
+// query shape survives an empty table via the fixed scan type.
+func TestSumQuantityEmptyTableLocked(t *testing.T) {
+	connector, err := sqlite.NewConnector("file::memory:?cache=shared&_fk=1")
+	if err != nil {
+		t.Fatalf("sqlite connector: %v", err)
+	}
+	db := sqllib.OpenDB(connector)
+	db.SetMaxOpenConns(1)
+	drv := entsql.OpenDB(dialect.SQLite, db)
+	client := ent.NewClient(ent.Driver(drv))
+	defer client.Close()
+
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	if err := client.Schema.Create(ctx); err != nil {
+		t.Fatalf("migrate: %v", err)
+	}
+
+	// No rows inserted — bare SUM returns one NULL row; the COALESCE-wrapped
+	// query must return exactly one row with value 0 and scan into []int64.
+	var totals []int64
+	if err := client.Inventory.Query().
+		Modify(func(se *entsql.Selector) {
+			se.Select("COALESCE(" + entsql.Sum(se.C(inventory.FieldQuantity)) + ", 0)")
+		}).
+		Scan(ctx, &totals); err != nil {
+		t.Fatalf("sum on empty table must not error, got: %v", err)
+	}
+	if len(totals) != 1 || totals[0] != 0 {
+		t.Fatalf("expected [0] on empty table, got %v", totals)
+	}
 }

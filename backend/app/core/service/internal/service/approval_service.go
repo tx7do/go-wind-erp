@@ -101,6 +101,17 @@ func (s *ApprovalRequestService) Delete(ctx context.Context, req *approvalV1.Del
 		return nil, approvalV1.ErrorBadRequest("invalid request")
 	}
 
+	// 仅已撤销的请求可删除：终态审批记录是审计凭据，不可事后抹除。
+	old, err := s.approvalRequestRepo.Get(ctx, &approvalV1.GetApprovalRequestRequest{
+		QueryBy: &approvalV1.GetApprovalRequestRequest_Id{Id: req.GetId()},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if old.GetStatus() != approvalV1.ApprovalRequest_CANCELLED {
+		return nil, approvalV1.ErrorConflict("only cancelled approval requests can be deleted")
+	}
+
 	if err := s.approvalRequestRepo.Delete(ctx, req); err != nil {
 		return nil, err
 	}
@@ -125,6 +136,13 @@ func (s *ApprovalRequestService) transition(
 
 	if !validateApprovalTransition(old.GetStatus(), to) {
 		return nil, approvalV1.ErrorConflict("approval request is not pending")
+	}
+
+	// 职责分离：申请人不得审批自己的请求（撤销走 Cancel，不受此限）。
+	if to == approvalV1.ApprovalRequest_APPROVED || to == approvalV1.ApprovalRequest_REJECTED {
+		if caller, ok := approvalViewerUserID(ctx); ok && caller == old.GetApplicantId() {
+			return nil, approvalV1.ErrorConflict("applicant cannot approve or reject their own request")
+		}
 	}
 
 	if _, err := s.approvalRequestRepo.TransitionStatus(ctx, id, old.GetStatus(), to, comment); err != nil {

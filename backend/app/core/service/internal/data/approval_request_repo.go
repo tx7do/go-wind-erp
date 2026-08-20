@@ -227,6 +227,7 @@ func (r *ApprovalRequestRepo) CancelAsApplicant(ctx context.Context, id uint32, 
 		Where(approvalrequest.StatusEQ(approvalrequest.StatusPending)).
 		Where(approvalrequest.ApplicantIDEQ(applicantID)).
 		SetStatus(approvalrequest.StatusCancelled).
+		SetUpdatedBy(applicantID).
 		SetUpdatedAt(time.Now())
 	if hasTenant {
 		builder.Where(approvalrequest.TenantIDEQ(tid))

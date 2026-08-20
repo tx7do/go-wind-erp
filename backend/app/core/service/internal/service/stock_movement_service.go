@@ -61,6 +61,11 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 	d := req.Data.GetDelta()
 	qa := req.Data.GetQuantityAfter()
 
+	// 零变更是无意义流水，拒绝（避免污染台账）。
+	if d == 0 {
+		return nil, inventoryV1.ErrorBadRequest("delta must not be zero")
+	}
+
 	sum, overflow := addChecked(qb, d)
 	if overflow {
 		return nil, inventoryV1.ErrorBadRequest("quantity arithmetic overflow")
@@ -69,17 +74,20 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 		return nil, inventoryV1.ErrorBadRequest("quantity_before + delta != quantity_after")
 	}
 
-	// SAGA 桩：出库类流水（delta<0）会通知采购侧的补偿流；当前为 no-op。
+	if _, err := s.stockMovementRepo.Create(ctx, req); err != nil {
+		return nil, err
+	}
+
+	// SAGA 桩：持久化成功后才发出库类补偿通知（避免"建单失败却发了事件"）；
+	// 通知失败仅记录——当前为 no-op 桩，接真实实现时需评估补偿策略。
 	if d < 0 {
-		_ = defaultSagaSeam.notifyProcurement(ctx, stockEvent{
+		if err := defaultSagaSeam.notifyProcurement(ctx, stockEvent{
 			warehouseCode: req.Data.GetWarehouseCode(),
 			skuCode:       req.Data.GetSkuCode(),
 			delta:         d,
-		})
-	}
-
-	if _, err := s.stockMovementRepo.Create(ctx, req); err != nil {
-		return nil, err
+		}); err != nil {
+			s.log.Errorf("saga notify procurement failed: %s", err.Error())
+		}
 	}
 
 	return &emptypb.Empty{}, nil

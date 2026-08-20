@@ -54,6 +54,9 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
+	// 主键由数据库分配，忽略客户端传入的 Id（避免自选主键撞库）。
+	req.Data.Id = nil
+
 	_, err = s.stockMovementServiceClient.Create(ctx, req)
 	return &emptypb.Empty{}, err
 }
