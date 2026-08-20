@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "approval/service/v1/approval.proto";
+
+// 审批中心服务（移动端：待办列表 + 通过/驳回/撤销；不暴露创建/删除）
+service ApprovalRequestService {
+  // 查询审批请求列表
+  rpc List (pagination.PagingRequest) returns (approval.service.v1.ListApprovalRequestResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/approvals"
+    };
+  }
+
+  // 查询审批请求详情
+  rpc Get (approval.service.v1.GetApprovalRequestRequest) returns (approval.service.v1.ApprovalRequest) {
+    option (google.api.http) = {
+      get: "/app/v1/approvals/{id}"
+    };
+  }
+
+  // 通过审批
+  rpc Approve (approval.service.v1.ApproveApprovalRequestRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/approvals:approve"
+      body: "*"
+    };
+  }
+
+  // 驳回审批
+  rpc Reject (approval.service.v1.RejectApprovalRequestRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/approvals:reject"
+      body: "*"
+    };
+  }
+
+  // 撤销审批（仅申请人本人）
+  rpc Cancel (approval.service.v1.CancelApprovalRequestRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/approvals:cancel"
+      body: "*"
+    };
+  }
+}

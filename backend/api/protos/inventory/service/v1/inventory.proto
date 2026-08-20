@@ -1,0 +1,499 @@
+syntax = "proto3";
+
+package inventory.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 仓库管理服务
+service WarehouseService {
+  // 查询仓库列表
+  rpc List (pagination.PagingRequest) returns (ListWarehouseResponse) {}
+
+  // 统计仓库数量
+  rpc Count (pagination.PagingRequest) returns (CountWarehouseResponse) {}
+
+  // 查询仓库详情
+  rpc Get (GetWarehouseRequest) returns (Warehouse) {}
+
+  // 创建仓库
+  rpc Create (CreateWarehouseRequest) returns (google.protobuf.Empty) {}
+
+  // 更新仓库
+  rpc Update (UpdateWarehouseRequest) returns (google.protobuf.Empty) {}
+
+  // 删除仓库
+  rpc Delete (DeleteWarehouseRequest) returns (google.protobuf.Empty) {}
+}
+
+// 库存管理服务
+service InventoryService {
+  // 查询库存列表
+  rpc List (pagination.PagingRequest) returns (ListInventoryResponse) {}
+
+  // 统计库存数量
+  rpc Count (pagination.PagingRequest) returns (CountInventoryResponse) {}
+
+  // 查询库存详情
+  rpc Get (GetInventoryRequest) returns (Inventory) {}
+
+  // 库存经营总览（看板聚合：仓库数/SKU数/库存总量/流水数/低库存清单）
+  rpc GetOverview (GetInventoryOverviewRequest) returns (InventoryOverview) {}
+
+  // 创建库存
+  rpc Create (CreateInventoryRequest) returns (google.protobuf.Empty) {}
+
+  // 更新库存
+  rpc Update (UpdateInventoryRequest) returns (google.protobuf.Empty) {}
+
+  // 删除库存
+  rpc Delete (DeleteInventoryRequest) returns (google.protobuf.Empty) {}
+}
+
+// 库存流水管理服务
+service StockMovementService {
+  // 查询库存流水列表
+  rpc List (pagination.PagingRequest) returns (ListStockMovementResponse) {}
+
+  // 统计库存流水数量
+  rpc Count (pagination.PagingRequest) returns (CountStockMovementResponse) {}
+
+  // 查询库存流水详情
+  rpc Get (GetStockMovementRequest) returns (StockMovement) {}
+
+  // 创建库存流水
+  rpc Create (CreateStockMovementRequest) returns (google.protobuf.Empty) {}
+
+  // 删除库存流水
+  rpc Delete (DeleteStockMovementRequest) returns (google.protobuf.Empty) {}
+}
+
+// 仓库
+message Warehouse {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库ID"
+    }
+  ]; // 仓库ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库编码，租户范围内唯一"
+    }
+  ]; // 仓库编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库名称"
+    }
+  ]; // 仓库名称
+
+  optional string location = 4 [
+    json_name = "location",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "仓库地址"
+    }
+  ]; // 仓库地址
+
+  optional bool enable = 10 [
+    json_name = "enable",
+    (gnostic.openapi.v3.property) = {
+      description: "启用/禁用仓库"
+    }
+  ]; // 启用/禁用仓库
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 库存
+message Inventory {
+  // 库存状态
+  enum Status {
+    AVAILABLE = 0;   // 可用
+    LOCKED = 1;      // 锁定
+    QUARANTINED = 2; // 隔离
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "库存ID"
+    }
+  ]; // 库存ID
+
+  optional string warehouse_code = 2 [
+    json_name = "warehouseCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "所属仓库编码"
+    }
+  ]; // 所属仓库编码
+
+  optional string sku_code = 3 [
+    json_name = "skuCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "SKU编码"
+        }
+  ]; // SKU编码
+
+  optional int64 quantity = 4 [
+    json_name = "quantity",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "库存数量"
+        }
+  ]; // 库存数量
+
+  optional Status status = 5 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "库存状态"
+        }
+  ]; // 库存状态
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 库存流水
+message StockMovement {
+  // 流水类型
+  enum MovementType {
+    INBOUND = 0;   // 入库
+    OUTBOUND = 1;  // 出库
+    TRANSFER = 2;  // 调拨
+    ADJUSTMENT = 3;// 调整
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "流水ID"
+    }
+  ]; // 流水ID
+
+  optional string warehouse_code = 2 [
+    json_name = "warehouseCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "涉及仓库编码"
+        }
+  ]; // 涉及仓库编码
+
+  optional string sku_code = 3 [
+    json_name = "skuCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "涉及SKU编码"
+        }
+  ]; // 涉及SKU编码
+
+  optional int64 delta = 4 [
+    json_name = "delta",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "数量变化量，正为入、负为出"
+        }
+  ]; // 数量变化量
+
+  optional MovementType movement_type = 5 [
+    json_name = "movementType",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "流水类型"
+        }
+  ]; // 流水类型
+
+  optional int64 quantity_before = 6 [
+    json_name = "quantityBefore",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "操作前数量"
+        }
+  ]; // 操作前数量
+
+  optional int64 quantity_after = 7 [
+    json_name = "quantityAfter",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "操作后数量"
+        }
+  ]; // 操作后数量
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询仓库列表 - 回应
+message ListWarehouseResponse {
+  repeated Warehouse items = 1;
+  uint64 total = 2;
+}
+
+// 查询仓库详情 - 请求
+message GetWarehouseRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建仓库 - 请求
+message CreateWarehouseRequest {
+  Warehouse data = 1;
+}
+
+// 更新仓库 - 请求
+message UpdateWarehouseRequest {
+  uint32 id = 1;
+
+  Warehouse data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表",
+          example: {yaml : "id,realname,username"}
+        },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除仓库 - 请求
+message DeleteWarehouseRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CountWarehouseResponse {
+  uint64 count = 1;
+}
+
+// 查询库存列表 - 回应
+message ListInventoryResponse {
+  repeated Inventory items = 1;
+  uint64 total = 2;
+}
+
+// 查询库存详情 - 请求
+message GetInventoryRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建库存 - 请求
+message CreateInventoryRequest {
+  Inventory data = 1;
+}
+
+// 更新库存 - 请求
+message UpdateInventoryRequest {
+  uint32 id = 1;
+
+  Inventory data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表",
+          example: {yaml : "id,realname,username"}
+        },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除库存 - 请求
+message DeleteInventoryRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CountInventoryResponse {
+  uint64 count = 1;
+}
+
+// 库存经营总览 - 请求
+message GetInventoryOverviewRequest {
+  optional int64 low_stock_threshold = 1 [
+    json_name = "lowStockThreshold",
+    (gnostic.openapi.v3.property) = {
+      description: "低库存阈值，库存数量低于该值视为低库存（默认 10）"
+    }
+  ]; // 低库存阈值
+
+  optional int32 low_stock_limit = 2 [
+    json_name = "lowStockLimit",
+    (gnostic.openapi.v3.property) = {
+      description: "低库存清单返回条数上限（默认 10）"
+    }
+  ]; // 低库存清单条数上限
+}
+
+// 库存经营总览 - 回应
+message InventoryOverview {
+  uint64 warehouse_count = 1 [
+    json_name = "warehouseCount",
+    (gnostic.openapi.v3.property) = {description: "仓库数量"}
+  ]; // 仓库数量
+
+  uint64 sku_count = 2 [
+    json_name = "skuCount",
+    (gnostic.openapi.v3.property) = {description: "在库 SKU 数（去重）"}
+  ]; // 在库 SKU 数
+
+  int64 total_quantity = 3 [
+    json_name = "totalQuantity",
+    (gnostic.openapi.v3.property) = {description: "库存总量（所有 SKU 数量之和）"}
+  ]; // 库存总量
+
+  uint64 movement_count = 4 [
+    json_name = "movementCount",
+    (gnostic.openapi.v3.property) = {description: "库存流水总条数"}
+  ]; // 流水总条数
+
+  repeated Inventory low_stock_items = 5 [
+    json_name = "lowStockItems",
+    (gnostic.openapi.v3.property) = {description: "低库存清单（按数量升序）"}
+  ]; // 低库存清单
+}
+
+// 查询库存流水列表 - 回应
+message ListStockMovementResponse {
+  repeated StockMovement items = 1;
+  uint64 total = 2;
+}
+
+// 查询库存流水详情 - 请求
+message GetStockMovementRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建库存流水 - 请求
+message CreateStockMovementRequest {
+  StockMovement data = 1;
+}
+
+// 删除库存流水 - 请求
+message DeleteStockMovementRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CountStockMovementResponse {
+  uint64 count = 1;
+}

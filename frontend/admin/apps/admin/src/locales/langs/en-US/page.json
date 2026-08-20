@@ -1,0 +1,484 @@
+{
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "codeLogin": "Verification Code Login",
+    "qrcodeLogin": "QR Code Login",
+    "forgetPassword": "Forgot Password"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "inventoryOverview": "Inventory Overview",
+    "warehouseCount": "Warehouses",
+    "skuCount": "SKUs in Stock",
+    "totalQuantity": "Total Quantity",
+    "movementCount": "Movements",
+    "lowStockTitle": "Low Stock",
+    "lowStockEmpty": "No low-stock items"
+  },
+  "user": {
+    "moduleName": "User",
+    "form": {
+      "username": "Username",
+      "nickname": "Nickname",
+      "realname": "Real Name",
+      "email": "Email",
+      "mobile": "Mobile",
+      "tenant": "Tenant",
+      "role": "Role",
+      "orgUnit": "Organization",
+      "position": "Position",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "status": "Status"
+    },
+    "table": {
+      "seq": "No.",
+      "username": "Username",
+      "nickname": "Nickname",
+      "realname": "Name",
+      "password": "Password",
+      "avatar": "Avatar",
+      "email": "Email",
+      "mobile": "Mobile",
+      "telephone": "Landline",
+      "gender": "Gender",
+      "address": "Address",
+      "region": "Region",
+      "description": "Description",
+      "lastLoginAt": "Last Login Time",
+      "lastLoginIp": "Last Login IP",
+      "roleId": "Role",
+      "tenantId": "Tenant",
+      "orgUnitId": "Organization",
+      "positionId": "Position",
+      "workId": "Employee ID",
+      "status": "Status"
+    },
+    "button": {
+      "create": "Create Account",
+      "editPassword": "Change Password",
+      "banAccount": "Disable Account",
+      "updateUserInfo": "Update Profile",
+      "updatePassword": "Update Password"
+    },
+    "profile": {
+      "tab": {
+        "basicSettings": "Basic Settings",
+        "securitySettings": "Security Settings",
+        "editPassword": "Change Password",
+        "accountBind": "Account Bindings",
+        "notification": "Notifications"
+      }
+    },
+    "detail": {
+      "title": "Profile of User {userId}",
+      "tab": {
+        "basicInfo": "Basic Info",
+        "permission": "Permissions",
+        "apiAuditLog": "API Logs",
+        "internalMessage": "Inbox"
+      },
+      "desc": {
+        "username": "Username",
+        "realname": "Real Name",
+        "nickname": "Nickname",
+        "gender": "Gender",
+        "mobile": "Mobile",
+        "email": "Email",
+        "region": "Region",
+        "address": "Address",
+        "roleNames": "Roles",
+        "tenantName": "Tenant",
+        "orgUnitName": "Organization",
+        "positionName": "Position",
+        "lastLoginAt": "Last Login Time",
+        "lastLoginIp": "Last Login IP"
+      }
+    }
+  },
+  "role": {
+    "moduleName": "Role",
+    "name": "Role Name",
+    "code": "Role Code",
+    "description": "Role Description",
+    "isProtected": "Built-in Role",
+    "apis": "Assign APIs",
+    "permissions": "Assign Permissions",
+    "tenantName": "Tenant",
+    "button": {
+      "create": "Create Role"
+    }
+  },
+  "permission": {
+    "moduleName": "Permission",
+    "name": "Permission Name",
+    "code": "Permission Code",
+    "path": "Tree Path",
+    "groupId": "Group",
+    "groupName": "Group Name",
+    "menuIds": "Assign Menus",
+    "apiIds": "Assign APIs",
+    "description": "Permission Description",
+    "button": {
+      "create": "Create Permission",
+      "syncPermissions": "Sync Permissions"
+    }
+  },
+  "permissionGroup": {
+    "moduleName": "Permission Group",
+    "name": "Group Name",
+    "module": "Business Module",
+    "parentId": "Parent Group",
+    "button": {
+      "create": "Create Group"
+    }
+  },
+  "dict": {
+    "moduleName": "Dictionary",
+    "dictType": "Dictionary Type",
+    "dictEntry": "Dictionary Entry",
+    "dictTypeList": "Dictionary Type List",
+    "dictEntryList": "Dictionary Entry List",
+    "typeCode": "Code",
+    "typeName": "Type Name",
+    "entryLabel": "Label",
+    "entryValue": "Value",
+    "numericValue": "Numeric Value",
+    "typeId": "Dictionary Type",
+    "languageCode": "Language Code",
+    "languageName": "Language Name",
+    "button": {
+      "create": "Add"
+    }
+  },
+  "menu": {
+    "moduleName": "Menu",
+    "name": "Title",
+    "type": "Type",
+    "icon": "Icon",
+    "path": "Route Path",
+    "component": "Component Path",
+    "show": "Show",
+    "isExt": "External Link",
+    "keepAlive": "Keep Alive",
+    "affixTab": "Affix Tab",
+    "hideInMenu": "Hide in Menu",
+    "hideChildrenInMenu": "Hide Children",
+    "hideInTab": "Hide in Tab",
+    "hideInBreadcrumb": "Hide in Breadcrumb",
+    "parentId": "Parent Menu",
+    "authority": "Authority",
+    "order": "Order",
+    "title": "Menu Title",
+    "advancedSettings": "Advanced Settings",
+    "tips": {
+      "authority": "Separate permissions with commas, e.g. sys:user:add,sys:user:edit"
+    },
+    "button": {
+      "create": "Create Menu"
+    }
+  },
+  "orgUnit": {
+    "moduleName": "Organizations",
+    "name": "Organization Name",
+    "code": "Unique Code",
+    "parentId": "Parent Organization",
+    "type": "Organization Type",
+    "isLegalEntity": "Legal Entity",
+    "businessScope": "Core Business Scope",
+    "registrationNumber": "Registration Number",
+    "taxId": "Tax ID",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "timezone": "Time Zone",
+    "country": "Region Code",
+    "leaderId": "Leader ID",
+    "leaderName": "Leader Name",
+    "contactUserId": "Contact User ID",
+    "contactUserName": "Contact User Name",
+    "description": "Description",
+    "button": {
+      "create": "Create Organization"
+    }
+  },
+  "position": {
+    "moduleName": "Position",
+    "name": "Position Name",
+    "parentId": "Parent Position",
+    "orgUnit": "Organization",
+    "orgUnitId": "Organization ID",
+    "orgUnitName": "Organization Name",
+    "description": "Description",
+    "type": "Position Type",
+    "code": "Unique Code",
+    "headcount": "Headcount",
+    "button": {
+      "create": "Create Position"
+    }
+  },
+  "tenant": {
+    "moduleName": "Tenant",
+    "name": "Tenant Name",
+    "code": "Tenant Code",
+    "type": "Tenant Type",
+    "auditStatus": "Audit Status",
+    "adminSetting": "Admin Account Settings",
+    "lastLoginAt": "Last Login Time",
+    "lastLoginIp": "Last Login IP",
+    "logoUrl": "Logo URL",
+    "industry": "Industry",
+    "subscriptionPlan": "Subscription Plan",
+    "expiredAt": "Expires At",
+    "memberCount": "Member Count",
+    "subscriptionAt": "Subscribed At",
+    "unsubscribeAt": "Unsubscribed At",
+    "adminUserName": "Admin Username",
+    "adminPassword": "Initial Password",
+    "adminPasswordConfirm": "Confirm Password",
+    "adminMobile": "Mobile",
+    "adminEmail": "Email",
+    "button": {
+      "create": "Create Tenant"
+    },
+    "notification": {
+      "tenant_code_exists": "Tenant code already exists, please change and try again.",
+      "user_username_exists": "Admin username already exists, please change and try again."
+    }
+  },
+  "file": {
+    "moduleName": "File",
+    "fileName": "Original File Name",
+    "saveFileName": "Stored File Name",
+    "bucketName": "Bucket Name",
+    "fileDirectory": "Directory",
+    "provider": "OSS Provider",
+    "fileGuid": "GUID",
+    "extension": "File Extension",
+    "size": "Size",
+    "createdBy": "Uploaded By",
+    "createdAt": "Uploaded At",
+    "button": {
+      "create": "Create File",
+      "upload": "Upload File",
+      "download": "Download File"
+    }
+  },
+  "task": {
+    "moduleName": "Task",
+    "type": "Schedule Type",
+    "typeName": "Schedule Method",
+    "taskPayload": "Task Payload",
+    "taskOptions": "Task Options",
+    "taskOptionsMaxRetry": "Max Retries",
+    "taskOptionsTimeout": "Timeout",
+    "taskOptionsDeadline": "Deadline",
+    "taskOptionsProcessIn": "Delay",
+    "taskOptionsProcessAt": "Run At",
+    "cronSpec": "Cron Expression",
+    "enable": "Enabled",
+    "button": {
+      "create": "Create Task",
+      "start": "Start Task",
+      "restart": "Restart Task",
+      "stop": "Stop Task",
+      "startAll": "Start All",
+      "restartAll": "Restart All",
+      "stopAll": "Stop All"
+    },
+    "text": {
+      "do_you_want_start_all_task": "Are you sure you want to start all tasks?",
+      "do_you_want_restart_all_task": "Are you sure you want to restart all tasks?",
+      "do_you_want_stop_all_task": "Are you sure you want to stop all tasks?",
+      "do_you_want_start_task": "Are you sure you want to start this task?",
+      "do_you_want_restart_task": "Are you sure you want to restart this task?",
+      "do_you_want_stop_task": "Are you sure you want to stop this task?"
+    }
+  },
+  "internalMessage": {
+    "moduleName": "Messages",
+    "title": "Subject",
+    "content": "Content",
+    "type": "Type",
+    "status": "Status",
+    "categoryName": "Category",
+    "senderName": "Sender",
+    "categoryId": "Category",
+    "readAt": "Read At",
+    "button": {
+      "create": "Publish Message"
+    },
+    "drawer": {
+      "create": "Publish Message",
+      "update": "Edit Message"
+    }
+  },
+  "internalMessageCategory": {
+    "moduleName": "Message Categories",
+    "name": "Category Name",
+    "code": "Category Code",
+    "parentId": "Parent",
+    "button": {
+      "create": "Create Category"
+    }
+  },
+  "privateMessage": {
+    "moduleName": "Private Messages",
+    "subject": "Subject",
+    "button": {
+      "create": "Create Private Message"
+    }
+  },
+  "loginAuditLog": {
+    "moduleName": "Login Audit Logs",
+    "username": "Username",
+    "status": "Status",
+    "actionType": "Action",
+    "geoLocation": "Geo Location",
+    "platform": "Platform",
+    "ipAddress": "IP Address",
+    "failureReason": "Failure Reason",
+    "riskScore": "Risk Score",
+    "riskLevel": "Risk Level",
+    "riskFactors": "Risk Factors",
+    "createdAt": "Log Time"
+  },
+  "apiAuditLog": {
+    "moduleName": "API Audit Logs",
+    "username": "Operator",
+    "success": "Status",
+    "geoLocation": "Geo Location",
+    "platform": "Platform",
+    "ipAddress": "IP Address",
+    "createdAt": "Log Time",
+    "path": "Request Path",
+    "httpMethod": "HTTP Method",
+    "latencyMs": "Latency (ms)"
+  },
+  "dataAccessAuditLog": {
+    "moduleName": "Data Access Logs",
+    "createdAt": "Log Time",
+    "username": "Operator",
+    "requestId": "Request ID",
+    "ipAddress": "IP Address",
+    "geoLocation": "Geo Location",
+    "latencyMs": "Latency (ms)",
+    "success": "Status",
+    "sensitiveLevel": "Sensitivity Level",
+    "dataSource": "Data Source Type",
+    "tableName": "Table Name",
+    "dataId": "Data ID",
+    "accessType": "Access Type",
+    "sqlDigest": "SQL Digest",
+    "sqlText": "SQL Text",
+    "affectedRows": "Affected Rows",
+    "dataMasked": "Masked",
+    "maskingRules": "Masking Rules",
+    "businessPurpose": "Business Purpose",
+    "dataCategory": "Data Category",
+    "dbUser": "DB User"
+  },
+  "operationAuditLog": {
+    "moduleName": "Operation Logs",
+    "createdAt": "Log Time",
+    "username": "Operator",
+    "resourceType": "Resource Type",
+    "resourceId": "Resource ID",
+    "action": "Action",
+    "beforeData": "Before Data",
+    "afterData": "After Data",
+    "sensitiveLevel": "Sensitivity Level",
+    "requestId": "Request ID",
+    "success": "Status",
+    "ipAddress": "IP Address",
+    "geoLocation": "Geo Location"
+  },
+  "permissionAuditLog": {
+    "moduleName": "Permission Change Logs",
+    "createdAt": "Log Time",
+    "username": "Operator",
+    "requestId": "Request ID",
+    "ipAddress": "IP Address",
+    "geoLocation": "Geo Location",
+    "operatorId": "Operator ID",
+    "operatorName": "Operator Username",
+    "targetType": "Target Type",
+    "targetId": "Target ID",
+    "targetName": "Target Name",
+    "action": "Action",
+    "reason": "Reason"
+  },
+  "api": {
+    "moduleName": "API Resources",
+    "path": "Path",
+    "method": "Method",
+    "module": "Module",
+    "moduleDescription": "Module Description",
+    "operation": "Operation",
+    "button": {
+      "create": "Create API",
+      "sync": "Sync APIs"
+    }
+  },
+  "loginPolicy": {
+    "moduleName": "Login Policy",
+    "targetId": "Target User ID",
+    "type": "Restriction Type",
+    "method": "Restriction Method",
+    "value": "Restriction Value",
+    "reason": "Reason",
+    "button": {
+      "create": "Create Restriction"
+    }
+  },
+  "warehouse": {
+    "moduleName": "Warehouse",
+    "code": "Warehouse Code",
+    "name": "Warehouse Name",
+    "location": "Location",
+    "enable": "Enabled Status",
+    "button": {
+      "create": "Create Warehouse"
+    }
+  },
+  "inventory": {
+    "moduleName": "Inventory",
+    "warehouseCode": "Warehouse Code",
+    "skuCode": "SKU Code",
+    "quantity": "Quantity",
+    "status": "Status",
+    "button": {
+      "create": "Create Inventory"
+    }
+  },
+  "stockMovement": {
+    "moduleName": "Stock Movement",
+    "warehouseCode": "Warehouse Code",
+    "skuCode": "SKU Code",
+    "delta": "Delta",
+    "movementType": "Movement Type",
+    "quantityBefore": "Quantity Before",
+    "quantityAfter": "Quantity After",
+    "button": {
+      "create": "Create Movement"
+    }
+  },
+  "approval": {
+    "moduleName": "Approval",
+    "title": "Title",
+    "bizType": "Business Type",
+    "bizRef": "Business Reference",
+    "summary": "Summary",
+    "status": "Status",
+    "comment": "Comment",
+    "commentHint": "Approval comment (optional)",
+    "button": {
+      "create": "New Request",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancelRequest": "Cancel"
+    }
+  }
+}

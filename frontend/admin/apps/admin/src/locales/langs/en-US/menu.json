@@ -1,0 +1,66 @@
+{
+  "dashboard": {
+    "index": "Data Center",
+    "dashboard": "Dashboard",
+    "analysis": "Analytics",
+    "workbench": "Workbench",
+    "about": "About"
+  },
+  "profile": {
+    "moduleName": "Profile",
+    "profile": "Profile",
+    "settings": "Settings",
+    "security": "Security",
+    "customize": "Customize",
+    "notification": "Notifications",
+    "internalMessage": "Inbox"
+  },
+  "permission": {
+    "moduleName": "Access Control",
+    "role": "Roles",
+    "permission": "Permissions",
+    "menu": "Menu Management",
+    "api": "API Management"
+  },
+  "opm": {
+    "moduleName": "Org & People",
+    "orgUnit": "Organizations",
+    "position": "Positions",
+    "user": "Users",
+    "userDetail": "User Details"
+  },
+  "tenant": {
+    "moduleName": "Tenants",
+    "member": "Tenant List"
+  },
+  "system": {
+    "moduleName": "System",
+    "dict": "Data Dictionary",
+    "task": "Task Scheduler",
+    "file": "File Management",
+    "loginPolicy": "Login Policy"
+  },
+  "log": {
+    "moduleName": "Audit Logs",
+    "loginAuditLog": "Login Logs",
+    "apiAuditLog": "API Logs",
+    "dataAccessAuditLog": "Data Access Logs",
+    "operationAuditLog": "Operation Logs",
+    "permissionAuditLog": "Permission Logs"
+  },
+  "internalMessage": {
+    "moduleName": "Internal Messages",
+    "internalMessage": "Messages",
+    "internalMessageCategory": "Message Categories"
+  },
+  "wms": {
+    "moduleName": "Warehouse Management",
+    "warehouse": "Warehouses",
+    "inventory": "Inventory",
+    "stockMovement": "Stock Movements"
+  },
+  "approval": {
+    "moduleName": "Approval Center",
+    "request": "Approval Requests"
+  }
+}

@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "inventory/service/v1/inventory.proto";
+
+// 仓库服务（移动端只读：扫码场景选择仓库）
+service WarehouseService {
+  // 查询仓库列表
+  rpc List (pagination.PagingRequest) returns (inventory.service.v1.ListWarehouseResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/warehouses"
+    };
+  }
+
+  // 查询仓库详情
+  rpc Get (inventory.service.v1.GetWarehouseRequest) returns (inventory.service.v1.Warehouse) {
+    option (google.api.http) = {
+      get: "/app/v1/warehouses/{id}"
+    };
+  }
+}
+
+// 库存服务（移动端只读：按仓库/SKU 查询库存）
+service InventoryService {
+  // 查询库存列表
+  rpc List (pagination.PagingRequest) returns (inventory.service.v1.ListInventoryResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/inventories"
+    };
+  }
+
+  // 查询库存详情
+  rpc Get (inventory.service.v1.GetInventoryRequest) returns (inventory.service.v1.Inventory) {
+    option (google.api.http) = {
+      get: "/app/v1/inventories/{id}"
+    };
+  }
+
+  // 库存经营总览（看板聚合）
+  rpc GetOverview (inventory.service.v1.GetInventoryOverviewRequest) returns (inventory.service.v1.InventoryOverview) {
+    option (google.api.http) = {
+      get: "/app/v1/inventories:overview"
+    };
+  }
+}
+
+// 库存流水服务（移动端：扫码记录出入库流水）
+service StockMovementService {
+  // 查询库存流水列表
+  rpc List (pagination.PagingRequest) returns (inventory.service.v1.ListStockMovementResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/stock-movements"
+    };
+  }
+
+  // 查询库存流水详情
+  rpc Get (inventory.service.v1.GetStockMovementRequest) returns (inventory.service.v1.StockMovement) {
+    option (google.api.http) = {
+      get: "/app/v1/stock-movements/{id}"
+    };
+  }
+
+  // 创建库存流水（扫码入库/出库）
+  rpc Create (inventory.service.v1.CreateStockMovementRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/stock-movements"
+      body: "*"
+    };
+  }
+}

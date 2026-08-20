@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+package approval.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 审批请求管理服务
+service ApprovalRequestService {
+  // 查询审批请求列表
+  rpc List (pagination.PagingRequest) returns (ListApprovalRequestResponse) {}
+
+  // 统计审批请求数量
+  rpc Count (pagination.PagingRequest) returns (CountApprovalRequestResponse) {}
+
+  // 查询审批请求详情
+  rpc Get (GetApprovalRequestRequest) returns (ApprovalRequest) {}
+
+  // 创建审批请求（applicant 由服务端从登录态推导，状态强制为 PENDING）
+  rpc Create (CreateApprovalRequestRequest) returns (google.protobuf.Empty) {}
+
+  // 删除审批请求
+  rpc Delete (DeleteApprovalRequestRequest) returns (google.protobuf.Empty) {}
+
+  // 通过审批（仅 PENDING 可通过；approver 由服务端从登录态推导）
+  rpc Approve (ApproveApprovalRequestRequest) returns (google.protobuf.Empty) {}
+
+  // 驳回审批（仅 PENDING 可驳回；approver 由服务端从登录态推导）
+  rpc Reject (RejectApprovalRequestRequest) returns (google.protobuf.Empty) {}
+
+  // 撤销审批（仅 PENDING 且仅申请人本人可撤销）
+  rpc Cancel (CancelApprovalRequestRequest) returns (google.protobuf.Empty) {}
+}
+
+// 审批请求
+message ApprovalRequest {
+  // 审批状态
+  enum Status {
+    PENDING = 0;    // 待审批
+    APPROVED = 1;   // 已通过
+    REJECTED = 2;   // 已驳回
+    CANCELLED = 3;  // 已撤销
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "审批请求ID"
+    }
+  ]; // 审批请求ID
+
+  optional string title = 2 [
+    json_name = "title",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "审批标题"
+    }
+  ]; // 审批标题
+
+  optional string biz_type = 3 [
+    json_name = "bizType",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "业务类型，如 stock_adjustment、purchase_order 等"
+    }
+  ]; // 业务类型
+
+  optional string biz_ref = 4 [
+    json_name = "bizRef",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "业务单据引用（如 \"stock_movement:123\"）"
+    }
+  ]; // 业务单据引用
+
+  optional string summary = 5 [
+    json_name = "summary",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "事由摘要"
+    }
+  ]; // 事由摘要
+
+  optional Status status = 6 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "审批状态"
+    }
+  ]; // 审批状态
+
+  optional uint32 applicant_id = 7 [
+    json_name = "applicantId",
+    (gnostic.openapi.v3.property) = {description: "申请人用户ID（服务端推导）"}
+  ]; // 申请人
+
+  optional uint32 approver_id = 8 [
+    json_name = "approverId",
+    (gnostic.openapi.v3.property) = {description: "审批人用户ID（审批动作时服务端推导）"}
+  ]; // 审批人
+
+  optional string comment = 9 [
+    json_name = "comment",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "审批意见（通过/驳回时填写）"
+    }
+  ]; // 审批意见
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询审批请求列表 - 回应
+message ListApprovalRequestResponse {
+  repeated ApprovalRequest items = 1;
+  uint64 total = 2;
+}
+
+// 查询审批请求详情 - 请求
+message GetApprovalRequestRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器
+}
+
+// 创建审批请求 - 请求
+message CreateApprovalRequestRequest {
+  ApprovalRequest data = 1;
+}
+
+// 删除审批请求 - 请求
+message DeleteApprovalRequestRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+// 通过审批 - 请求
+message ApproveApprovalRequestRequest {
+  uint32 id = 1;
+
+  optional string comment = 2 [
+    json_name = "comment",
+    (gnostic.openapi.v3.property) = {description: "审批意见"}
+  ]; // 审批意见
+}
+
+// 驳回审批 - 请求
+message RejectApprovalRequestRequest {
+  uint32 id = 1;
+
+  optional string comment = 2 [
+    json_name = "comment",
+    (gnostic.openapi.v3.property) = {description: "驳回理由"}
+  ]; // 驳回理由
+}
+
+// 撤销审批 - 请求
+message CancelApprovalRequestRequest {
+  uint32 id = 1;
+}
+
+message CountApprovalRequestResponse {
+  uint64 count = 1;
+}
