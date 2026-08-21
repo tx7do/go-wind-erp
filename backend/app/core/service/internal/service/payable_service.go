@@ -50,6 +50,15 @@ func (s *PayableService) Get(ctx context.Context, req *financeV1.GetPayableReque
 	return s.payableRepo.Get(ctx, req)
 }
 
+// AgingReport 应付账龄报表。
+func (s *PayableService) AgingReport(ctx context.Context, _ *emptypb.Empty) (*financeV1.AgingReportResponse, error) {
+	buckets, err := s.payableRepo.AgingReport(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &financeV1.AgingReportResponse{Buckets: buckets}, nil
+}
+
 // Create 手工建账：校验供应商与金额（正数，分）。
 func (s *PayableService) Create(ctx context.Context, req *financeV1.CreatePayableRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {

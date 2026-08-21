@@ -268,25 +268,26 @@ func (s *PurchaseOrderService) transition(
 // CreateReplenishmentDraft 补货建议获批后自动创建草稿采购单：
 // 供应商取该 SKU 最近采购来源（无历史则不建单，返回错误由调用方记录）；
 // 数量补到阈值的 2 倍（至少一个阈值批次）。草稿仍需采购员完善后提交。
+// 返回创建的采购单（含单号，供调用方通知使用）。
 func (s *PurchaseOrderService) CreateReplenishmentDraft(
 	ctx context.Context,
 	warehouseCode, skuCode string,
-) error {
+) (*procurementV1.PurchaseOrder, error) {
 	supplier, err := s.purchaseOrderRepo.LastSupplierForSku(ctx, skuCode)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if supplier == "" {
-		return fmt.Errorf("no supplier history for sku %s", skuCode)
+		return nil, fmt.Errorf("no supplier history for sku %s", skuCode)
 	}
 
 	inv, err := s.inventoryRepo.FindByWarehouseSku(ctx, warehouseCode, skuCode)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	qty := suggestReplenishQty(inv.GetQuantity(), defaultLowStockThreshold)
 
-	_, err = s.purchaseOrderRepo.Create(ctx, &procurementV1.CreatePurchaseOrderRequest{
+	po, err := s.purchaseOrderRepo.Create(ctx, &procurementV1.CreatePurchaseOrderRequest{
 		Data: &procurementV1.PurchaseOrder{
 			SupplierCode: trans.Ptr(supplier),
 			Remark:       trans.Ptr(fmt.Sprintf("低库存自动补货草稿（%s/%s），请完善后提交", warehouseCode, skuCode)),
@@ -295,7 +296,10 @@ func (s *PurchaseOrderService) CreateReplenishmentDraft(
 			},
 		},
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return po, nil
 }
 
 // computeOrderAmounts 校验明细并计算金额：明细 amount = 数量×单价（乘法

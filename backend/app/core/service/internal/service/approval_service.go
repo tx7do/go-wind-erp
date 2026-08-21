@@ -204,8 +204,8 @@ func (s *ApprovalRequestService) syncBusiness(
 }
 
 // syncReplenishment 对 biz_type=replenishment 的审批，通过后自动创建
-// 草稿采购单（供应商史缺失时不建单，仅记录——建议单仍留痕）。
-// biz_ref 形如 "replenishment:{warehouse}:{sku}"。
+// 草稿采购单（供应商史缺失时不建单，仅记录——建议单仍留痕）并通知
+// 申请人草稿已就绪。biz_ref 形如 "replenishment:{warehouse}:{sku}"。
 func (s *ApprovalRequestService) syncReplenishment(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
@@ -222,8 +222,15 @@ func (s *ApprovalRequestService) syncReplenishment(
 		return
 	}
 
-	if err := s.purchaseOrderService.CreateReplenishmentDraft(ctx, parts[0], parts[1]); err != nil {
+	po, err := s.purchaseOrderService.CreateReplenishmentDraft(ctx, parts[0], parts[1])
+	if err != nil {
 		s.log.Errorf("create replenishment draft for %s failed: %s", old.GetBizRef(), err.Error())
+		return
+	}
+
+	// 下游事件通知：草稿采购单已创建，待完善提交（失败仅记录，不阻塞）。
+	if nerr := s.notifier.notifyReplenishmentDraft(ctx, old, po.GetPoNumber()); nerr != nil {
+		s.log.Errorf("notify replenishment draft for %s failed: %s", old.GetBizRef(), nerr.Error())
 	}
 }
 

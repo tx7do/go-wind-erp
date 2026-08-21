@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-基于 [go-kratos v2](https://github.com/go-kratos/kratos) 微服务框架的多租户 Headless 内容中台，采用 **Protobuf-first（契约驱动）** 工作流。
+基于 [go-kratos v2](https://github.com/go-kratos/kratos) 微服务框架的企业级 ERP 后端，采用 **Protobuf-first（契约驱动）** 工作流。
 
 **核心技术栈**：
 - **框架**: go-kratos v2.9.2（HTTP + gRPC + SSE）

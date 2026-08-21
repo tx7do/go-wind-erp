@@ -99,6 +99,16 @@ func (s *InventoryService) GetOverview(ctx context.Context, req *inventoryV1.Get
 	}, nil
 }
 
+// GetMovementTrend 近 30 日每日库存流水条数（看板折线图用）。读取走
+// TenantPrivacy 策略自动按调用者租户隔离，同 GetOverview。
+func (s *InventoryService) GetMovementTrend(ctx context.Context, req *inventoryV1.GetMovementTrendRequest) (*inventoryV1.MovementTrendResponse, error) {
+	points, err := s.stockMovementRepo.MovementTrend(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &inventoryV1.MovementTrendResponse{Points: points}, nil
+}
+
 func (s *InventoryService) Get(ctx context.Context, req *inventoryV1.GetInventoryRequest) (*inventoryV1.Inventory, error) {
 	return s.inventoryRepo.Get(ctx, req)
 }

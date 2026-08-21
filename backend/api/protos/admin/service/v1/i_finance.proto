@@ -46,6 +46,13 @@ service PayableService {
       body: "*"
     };
   }
+
+  // 应付账龄报表
+  rpc AgingReport (google.protobuf.Empty) returns (finance.service.v1.AgingReportResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/payables:aging-report"
+    };
+  }
 }
 
 // 付款管理服务（append-only 台账）

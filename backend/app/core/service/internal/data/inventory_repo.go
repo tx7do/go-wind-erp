@@ -51,6 +51,34 @@ func NewInventoryRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.
 	return repo
 }
 
+// BeginTx 开启一个 DB 事务，供需跨多表原子执行的场景（如调拨双腿）使用。
+// 配合 FinishTx 在 defer 中按 err 决定提交/回滚。
+func (r *InventoryRepo) BeginTx(ctx context.Context) (tx *ent.Tx, err error) {
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return nil, inventoryV1.ErrorInternalServerError("start transaction failed")
+	}
+	return tx, nil
+}
+
+// FinishTx 根据调用方的命名返回值 err 决定回滚或提交。
+// 必须在 defer 中调用：defer func() { r.FinishTx(tx, err) }()
+func (r *InventoryRepo) FinishTx(tx *ent.Tx, err error) {
+	if tx == nil {
+		return
+	}
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+		}
+		return
+	}
+	if commitErr := tx.Commit(); commitErr != nil {
+		r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+	}
+}
+
 func (r *InventoryRepo) init() {
 	r.mapper = mapper.NewCopierMapper[inventoryV1.Inventory, ent.Inventory]()
 	r.statusConverter = mapper.NewEnumTypeConverter[inventoryV1.Inventory_Status, inventory.Status](inventoryV1.Inventory_Status_name, inventoryV1.Inventory_Status_value)
@@ -209,6 +237,25 @@ func (r *InventoryRepo) FindByWarehouseSku(
 	return r.mapper.ToDTO(row), nil
 }
 
+// FindByWarehouseSkuTx 与 FindByWarehouseSku 同语义的事务变体，接受显式
+// *ent.Tx，使调用方可在单个 DB 事务内运行（如调拨双腿）。
+func (r *InventoryRepo) FindByWarehouseSkuTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	warehouseCode, skuCode string,
+) (*inventoryV1.Inventory, error) {
+	row, err := tx.Inventory.Query().
+		Where(inventory.WarehouseCodeEQ(warehouseCode), inventory.SkuCodeEQ(skuCode)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, inventoryV1.ErrorNotFound("inventory not found")
+		}
+		return nil, inventoryV1.ErrorInternalServerError("query inventory failed")
+	}
+	return r.mapper.ToDTO(row), nil
+}
+
 // EnsureForInbound 入库前确保库存行存在（不存在则以 0 创建；已存在则无动作）。
 func (r *InventoryRepo) EnsureForInbound(
 	ctx context.Context,
@@ -225,6 +272,37 @@ func (r *InventoryRepo) EnsureForInbound(
 		return nil
 	}
 	builder := r.entClient.Client().Inventory.Create().
+		SetNillableWarehouseCode(&warehouseCode).
+		SetNillableSkuCode(&skuCode).
+		SetQuantity(0).
+		SetStatus(inventory.StatusAvailable)
+	if hasTenant {
+		builder.SetTenantID(tid)
+	}
+	_, err = builder.Save(ctx)
+	if err != nil {
+		return inventoryV1.ErrorInternalServerError("ensure inventory failed")
+	}
+	return nil
+}
+
+// EnsureForInboundTx 与 EnsureForInbound 同语义的事务变体（见 FindByWarehouseSkuTx）。
+func (r *InventoryRepo) EnsureForInboundTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	warehouseCode, skuCode string,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	exist, err := tx.Inventory.Query().
+		Where(inventory.WarehouseCodeEQ(warehouseCode), inventory.SkuCodeEQ(skuCode)).
+		Exist(ctx)
+	if err != nil {
+		return inventoryV1.ErrorInternalServerError("query inventory failed")
+	}
+	if exist {
+		return nil
+	}
+	builder := tx.Inventory.Create().
 		SetNillableWarehouseCode(&warehouseCode).
 		SetNillableSkuCode(&skuCode).
 		SetQuantity(0).
@@ -270,6 +348,44 @@ func (r *InventoryRepo) ApplyDelta(
 	}
 
 	after, err := r.entClient.Client().Inventory.Query().
+		Where(inventory.IDEQ(id)).
+		Only(ctx)
+	if err != nil {
+		return 0, inventoryV1.ErrorInternalServerError("reload inventory failed")
+	}
+	return *after.Quantity, nil
+}
+
+// ApplyDeltaTx 与 ApplyDelta 同语义的事务变体（见 FindByWarehouseSkuTx）。
+func (r *InventoryRepo) ApplyDeltaTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	id uint32,
+	delta int64,
+) (int64, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	builder := tx.Inventory.Update().
+		Where(inventory.IDEQ(id)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s + %d >= 0", s.C(inventory.FieldQuantity), delta,
+			)))
+		}).
+		AddQuantity(delta)
+	if hasTenant {
+		builder.Where(inventory.TenantIDEQ(tid))
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("apply inventory delta failed: %s", err.Error())
+		return 0, inventoryV1.ErrorInternalServerError("apply inventory delta failed")
+	}
+	if n == 0 {
+		return 0, inventoryV1.ErrorConflict("insufficient stock or inventory changed concurrently")
+	}
+
+	after, err := tx.Inventory.Query().
 		Where(inventory.IDEQ(id)).
 		Only(ctx)
 	if err != nil {

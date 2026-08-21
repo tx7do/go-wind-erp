@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PayableService_List_FullMethodName   = "/admin.service.v1.PayableService/List"
-	PayableService_Get_FullMethodName    = "/admin.service.v1.PayableService/Get"
-	PayableService_Create_FullMethodName = "/admin.service.v1.PayableService/Create"
-	PayableService_Delete_FullMethodName = "/admin.service.v1.PayableService/Delete"
-	PayableService_Cancel_FullMethodName = "/admin.service.v1.PayableService/Cancel"
+	PayableService_List_FullMethodName        = "/admin.service.v1.PayableService/List"
+	PayableService_Get_FullMethodName         = "/admin.service.v1.PayableService/Get"
+	PayableService_Create_FullMethodName      = "/admin.service.v1.PayableService/Create"
+	PayableService_Delete_FullMethodName      = "/admin.service.v1.PayableService/Delete"
+	PayableService_Cancel_FullMethodName      = "/admin.service.v1.PayableService/Cancel"
+	PayableService_AgingReport_FullMethodName = "/admin.service.v1.PayableService/AgingReport"
 )
 
 // PayableServiceClient is the client API for PayableService service.
@@ -45,6 +46,8 @@ type PayableServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeletePayableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 取消应付单（仅 PENDING 且未付款）
 	Cancel(ctx context.Context, in *v11.CancelPayableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 应付账龄报表
+	AgingReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.AgingReportResponse, error)
 }
 
 type payableServiceClient struct {
@@ -105,6 +108,16 @@ func (c *payableServiceClient) Cancel(ctx context.Context, in *v11.CancelPayable
 	return out, nil
 }
 
+func (c *payableServiceClient) AgingReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.AgingReportResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.AgingReportResponse)
+	err := c.cc.Invoke(ctx, PayableService_AgingReport_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PayableServiceServer is the server API for PayableService service.
 // All implementations must embed UnimplementedPayableServiceServer
 // for forward compatibility.
@@ -121,6 +134,8 @@ type PayableServiceServer interface {
 	Delete(context.Context, *v11.DeletePayableRequest) (*emptypb.Empty, error)
 	// 取消应付单（仅 PENDING 且未付款）
 	Cancel(context.Context, *v11.CancelPayableRequest) (*emptypb.Empty, error)
+	// 应付账龄报表
+	AgingReport(context.Context, *emptypb.Empty) (*v11.AgingReportResponse, error)
 	mustEmbedUnimplementedPayableServiceServer()
 }
 
@@ -145,6 +160,9 @@ func (UnimplementedPayableServiceServer) Delete(context.Context, *v11.DeletePaya
 }
 func (UnimplementedPayableServiceServer) Cancel(context.Context, *v11.CancelPayableRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Cancel not implemented")
+}
+func (UnimplementedPayableServiceServer) AgingReport(context.Context, *emptypb.Empty) (*v11.AgingReportResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgingReport not implemented")
 }
 func (UnimplementedPayableServiceServer) mustEmbedUnimplementedPayableServiceServer() {}
 func (UnimplementedPayableServiceServer) testEmbeddedByValue()                        {}
@@ -257,6 +275,24 @@ func _PayableService_Cancel_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PayableService_AgingReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PayableServiceServer).AgingReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PayableService_AgingReport_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PayableServiceServer).AgingReport(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PayableService_ServiceDesc is the grpc.ServiceDesc for PayableService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +319,10 @@ var PayableService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Cancel",
 			Handler:    _PayableService_Cancel_Handler,
+		},
+		{
+			MethodName: "AgingReport",
+			Handler:    _PayableService_AgingReport_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

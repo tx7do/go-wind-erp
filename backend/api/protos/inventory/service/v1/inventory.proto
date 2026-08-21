@@ -48,6 +48,9 @@ service InventoryService {
   // 库存经营总览（看板聚合：仓库数/SKU数/库存总量/流水数/低库存清单）
   rpc GetOverview (GetInventoryOverviewRequest) returns (InventoryOverview) {}
 
+  // 库存流水趋势（近 30 日每日流水条数，用于看板折线图）
+  rpc GetMovementTrend (GetMovementTrendRequest) returns (MovementTrendResponse) {}
+
   // 创建库存
   rpc Create (CreateInventoryRequest) returns (google.protobuf.Empty) {}
 
@@ -462,6 +465,20 @@ message InventoryOverview {
     json_name = "lowStockItems",
     (gnostic.openapi.v3.property) = {description: "低库存清单（按数量升序）"}
   ]; // 低库存清单
+}
+
+// 库存流水趋势 - 请求
+message GetMovementTrendRequest {}
+
+// 库存流水趋势 - 单日数据点
+message MovementTrendPoint {
+  string date = 1 [json_name = "date", (gnostic.openapi.v3.property) = {description: "日期（YYYY-MM-DD）"}]; // 日期
+  int64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "当日流水条数"}]; // 当日流水条数
+}
+
+// 库存流水趋势 - 回应
+message MovementTrendResponse {
+  repeated MovementTrendPoint points = 1 [json_name = "points", (gnostic.openapi.v3.property) = {description: "近 30 日每日流水条数（无流水的日期补 0）"}]; // 每日流水条数
 }
 
 // 查询库存流水列表 - 回应

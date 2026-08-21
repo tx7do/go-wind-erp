@@ -32,6 +32,9 @@ service PayableService {
 
   // 取消应付单（仅 PENDING 且未付款）
   rpc Cancel (CancelPayableRequest) returns (google.protobuf.Empty) {}
+
+  // 应付账龄报表：按到期日分桶统计未结清应付的金额与笔数
+  rpc AgingReport (google.protobuf.Empty) returns (AgingReportResponse) {}
 }
 
 // 付款管理服务（append-only 台账：付款一经记录不可修改/删除，
@@ -279,4 +282,16 @@ message CreatePaymentRequest {
 
 message CountPaymentResponse {
   uint64 count = 1;
+}
+
+// 账龄分桶统计
+message AgingBucket {
+  optional string bucket = 1 [json_name = "bucket", (gnostic.openapi.v3.property) = {description: "分桶标签"}];
+  optional int64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "该桶应付单笔数"}];
+  optional int64 total_amount = 3 [json_name = "totalAmount", (gnostic.openapi.v3.property) = {description: "该桶应付总额（分）"}];
+}
+
+// 账龄报表回应
+message AgingReportResponse {
+  repeated AgingBucket buckets = 1 [json_name = "buckets"];
 }

@@ -71,6 +71,13 @@ service InventoryService {
     };
   }
 
+  // 库存流水趋势
+  rpc GetMovementTrend (inventory.service.v1.GetMovementTrendRequest) returns (inventory.service.v1.MovementTrendResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/inventories:movement-trend"
+    };
+  }
+
   // 创建库存
   rpc Create (inventory.service.v1.CreateInventoryRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {

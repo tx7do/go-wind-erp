@@ -101,5 +101,3 @@ make build
 cd `{项目根目录}/backend/app/{服务名}/service`
 make run
 ```
-
-## Docker部署

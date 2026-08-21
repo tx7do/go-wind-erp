@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationPayableServiceAgingReport = "/admin.service.v1.PayableService/AgingReport"
 const OperationPayableServiceCancel = "/admin.service.v1.PayableService/Cancel"
 const OperationPayableServiceCreate = "/admin.service.v1.PayableService/Create"
 const OperationPayableServiceDelete = "/admin.service.v1.PayableService/Delete"
@@ -29,6 +30,8 @@ const OperationPayableServiceGet = "/admin.service.v1.PayableService/Get"
 const OperationPayableServiceList = "/admin.service.v1.PayableService/List"
 
 type PayableServiceHTTPServer interface {
+	// AgingReport 应付账龄报表
+	AgingReport(context.Context, *emptypb.Empty) (*v11.AgingReportResponse, error)
 	// Cancel 取消应付单（仅 PENDING 且未付款）
 	Cancel(context.Context, *v11.CancelPayableRequest) (*emptypb.Empty, error)
 	// Create 创建应付单（手工建账）
@@ -48,6 +51,7 @@ func RegisterPayableServiceHTTPServer(s *http.Server, srv PayableServiceHTTPServ
 	r.POST("/admin/v1/payables", _PayableService_Create5_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/payables/{id}", _PayableService_Delete5_HTTP_Handler(srv))
 	r.POST("/admin/v1/payables:cancel", _PayableService_Cancel1_HTTP_Handler(srv))
+	r.GET("/admin/v1/payables:aging-report", _PayableService_AgingReport0_HTTP_Handler(srv))
 }
 
 func _PayableService_List7_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
@@ -157,7 +161,28 @@ func _PayableService_Cancel1_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx
 	}
 }
 
+func _PayableService_AgingReport0_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPayableServiceAgingReport)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AgingReport(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.AgingReportResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PayableServiceHTTPClient interface {
+	// AgingReport 应付账龄报表
+	AgingReport(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.AgingReportResponse, err error)
 	// Cancel 取消应付单（仅 PENDING 且未付款）
 	Cancel(ctx context.Context, req *v11.CancelPayableRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Create 创建应付单（手工建账）
@@ -176,6 +201,20 @@ type PayableServiceHTTPClientImpl struct {
 
 func NewPayableServiceHTTPClient(client *http.Client) PayableServiceHTTPClient {
 	return &PayableServiceHTTPClientImpl{client}
+}
+
+// AgingReport 应付账龄报表
+func (c *PayableServiceHTTPClientImpl) AgingReport(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.AgingReportResponse, error) {
+	var out v11.AgingReportResponse
+	pattern := "/admin/v1/payables:aging-report"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPayableServiceAgingReport))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Cancel 取消应付单（仅 PENDING 且未付款）

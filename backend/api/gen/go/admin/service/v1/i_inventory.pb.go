@@ -34,11 +34,12 @@ const file_admin_service_v1_i_inventory_proto_rawDesc = "" +
 	"\x03Get\x12).inventory.service.v1.GetWarehouseRequest\x1a\x1f.inventory.service.v1.Warehouse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/warehouses/{id}\x12o\n" +
 	"\x06Create\x12,.inventory.service.v1.CreateWarehouseRequest\x1a\x16.google.protobuf.Empty\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/admin/v1/warehouses\x12t\n" +
 	"\x06Update\x12,.inventory.service.v1.UpdateWarehouseRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/admin/v1/warehouses/{id}\x12q\n" +
-	"\x06Delete\x12,.inventory.service.v1.DeleteWarehouseRequest\x1a\x16.google.protobuf.Empty\"!\x82\xd3\xe4\x93\x02\x1b*\x19/admin/v1/warehouses/{id}2\xe9\x05\n" +
+	"\x06Delete\x12,.inventory.service.v1.DeleteWarehouseRequest\x1a\x16.google.protobuf.Empty\"!\x82\xd3\xe4\x93\x02\x1b*\x19/admin/v1/warehouses/{id}2\x88\a\n" +
 	"\x10InventoryService\x12m\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a+.inventory.service.v1.ListInventoryResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/inventories\x12u\n" +
 	"\x03Get\x12).inventory.service.v1.GetInventoryRequest\x1a\x1f.inventory.service.v1.Inventory\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/admin/v1/inventories/{id}\x12\x91\x01\n" +
-	"\vGetOverview\x121.inventory.service.v1.GetInventoryOverviewRequest\x1a'.inventory.service.v1.InventoryOverview\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/inventories:overview\x12p\n" +
+	"\vGetOverview\x121.inventory.service.v1.GetInventoryOverviewRequest\x1a'.inventory.service.v1.InventoryOverview\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/inventories:overview\x12\x9c\x01\n" +
+	"\x10GetMovementTrend\x12-.inventory.service.v1.GetMovementTrendRequest\x1a+.inventory.service.v1.MovementTrendResponse\",\x82\xd3\xe4\x93\x02&\x12$/admin/v1/inventories:movement-trend\x12p\n" +
 	"\x06Create\x12,.inventory.service.v1.CreateInventoryRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/inventories\x12u\n" +
 	"\x06Update\x12,.inventory.service.v1.UpdateInventoryRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/admin/v1/inventories/{id}\x12r\n" +
 	"\x06Delete\x12,.inventory.service.v1.DeleteInventoryRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/inventories/{id}2\x8b\x06\n" +
@@ -59,22 +60,24 @@ var file_admin_service_v1_i_inventory_proto_goTypes = []any{
 	(*v11.DeleteWarehouseRequest)(nil),      // 4: inventory.service.v1.DeleteWarehouseRequest
 	(*v11.GetInventoryRequest)(nil),         // 5: inventory.service.v1.GetInventoryRequest
 	(*v11.GetInventoryOverviewRequest)(nil), // 6: inventory.service.v1.GetInventoryOverviewRequest
-	(*v11.CreateInventoryRequest)(nil),      // 7: inventory.service.v1.CreateInventoryRequest
-	(*v11.UpdateInventoryRequest)(nil),      // 8: inventory.service.v1.UpdateInventoryRequest
-	(*v11.DeleteInventoryRequest)(nil),      // 9: inventory.service.v1.DeleteInventoryRequest
-	(*v11.GetStockMovementRequest)(nil),     // 10: inventory.service.v1.GetStockMovementRequest
-	(*v11.CreateStockMovementRequest)(nil),  // 11: inventory.service.v1.CreateStockMovementRequest
-	(*v11.ReverseStockMovementRequest)(nil), // 12: inventory.service.v1.ReverseStockMovementRequest
-	(*v11.TransferStockRequest)(nil),        // 13: inventory.service.v1.TransferStockRequest
-	(*v11.DeleteStockMovementRequest)(nil),  // 14: inventory.service.v1.DeleteStockMovementRequest
-	(*v11.ListWarehouseResponse)(nil),       // 15: inventory.service.v1.ListWarehouseResponse
-	(*v11.Warehouse)(nil),                   // 16: inventory.service.v1.Warehouse
-	(*emptypb.Empty)(nil),                   // 17: google.protobuf.Empty
-	(*v11.ListInventoryResponse)(nil),       // 18: inventory.service.v1.ListInventoryResponse
-	(*v11.Inventory)(nil),                   // 19: inventory.service.v1.Inventory
-	(*v11.InventoryOverview)(nil),           // 20: inventory.service.v1.InventoryOverview
-	(*v11.ListStockMovementResponse)(nil),   // 21: inventory.service.v1.ListStockMovementResponse
-	(*v11.StockMovement)(nil),               // 22: inventory.service.v1.StockMovement
+	(*v11.GetMovementTrendRequest)(nil),     // 7: inventory.service.v1.GetMovementTrendRequest
+	(*v11.CreateInventoryRequest)(nil),      // 8: inventory.service.v1.CreateInventoryRequest
+	(*v11.UpdateInventoryRequest)(nil),      // 9: inventory.service.v1.UpdateInventoryRequest
+	(*v11.DeleteInventoryRequest)(nil),      // 10: inventory.service.v1.DeleteInventoryRequest
+	(*v11.GetStockMovementRequest)(nil),     // 11: inventory.service.v1.GetStockMovementRequest
+	(*v11.CreateStockMovementRequest)(nil),  // 12: inventory.service.v1.CreateStockMovementRequest
+	(*v11.ReverseStockMovementRequest)(nil), // 13: inventory.service.v1.ReverseStockMovementRequest
+	(*v11.TransferStockRequest)(nil),        // 14: inventory.service.v1.TransferStockRequest
+	(*v11.DeleteStockMovementRequest)(nil),  // 15: inventory.service.v1.DeleteStockMovementRequest
+	(*v11.ListWarehouseResponse)(nil),       // 16: inventory.service.v1.ListWarehouseResponse
+	(*v11.Warehouse)(nil),                   // 17: inventory.service.v1.Warehouse
+	(*emptypb.Empty)(nil),                   // 18: google.protobuf.Empty
+	(*v11.ListInventoryResponse)(nil),       // 19: inventory.service.v1.ListInventoryResponse
+	(*v11.Inventory)(nil),                   // 20: inventory.service.v1.Inventory
+	(*v11.InventoryOverview)(nil),           // 21: inventory.service.v1.InventoryOverview
+	(*v11.MovementTrendResponse)(nil),       // 22: inventory.service.v1.MovementTrendResponse
+	(*v11.ListStockMovementResponse)(nil),   // 23: inventory.service.v1.ListStockMovementResponse
+	(*v11.StockMovement)(nil),               // 24: inventory.service.v1.StockMovement
 }
 var file_admin_service_v1_i_inventory_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.WarehouseService.List:input_type -> pagination.PagingRequest
@@ -85,34 +88,36 @@ var file_admin_service_v1_i_inventory_proto_depIdxs = []int32{
 	0,  // 5: admin.service.v1.InventoryService.List:input_type -> pagination.PagingRequest
 	5,  // 6: admin.service.v1.InventoryService.Get:input_type -> inventory.service.v1.GetInventoryRequest
 	6,  // 7: admin.service.v1.InventoryService.GetOverview:input_type -> inventory.service.v1.GetInventoryOverviewRequest
-	7,  // 8: admin.service.v1.InventoryService.Create:input_type -> inventory.service.v1.CreateInventoryRequest
-	8,  // 9: admin.service.v1.InventoryService.Update:input_type -> inventory.service.v1.UpdateInventoryRequest
-	9,  // 10: admin.service.v1.InventoryService.Delete:input_type -> inventory.service.v1.DeleteInventoryRequest
-	0,  // 11: admin.service.v1.StockMovementService.List:input_type -> pagination.PagingRequest
-	10, // 12: admin.service.v1.StockMovementService.Get:input_type -> inventory.service.v1.GetStockMovementRequest
-	11, // 13: admin.service.v1.StockMovementService.Create:input_type -> inventory.service.v1.CreateStockMovementRequest
-	12, // 14: admin.service.v1.StockMovementService.Reverse:input_type -> inventory.service.v1.ReverseStockMovementRequest
-	13, // 15: admin.service.v1.StockMovementService.Transfer:input_type -> inventory.service.v1.TransferStockRequest
-	14, // 16: admin.service.v1.StockMovementService.Delete:input_type -> inventory.service.v1.DeleteStockMovementRequest
-	15, // 17: admin.service.v1.WarehouseService.List:output_type -> inventory.service.v1.ListWarehouseResponse
-	16, // 18: admin.service.v1.WarehouseService.Get:output_type -> inventory.service.v1.Warehouse
-	17, // 19: admin.service.v1.WarehouseService.Create:output_type -> google.protobuf.Empty
-	17, // 20: admin.service.v1.WarehouseService.Update:output_type -> google.protobuf.Empty
-	17, // 21: admin.service.v1.WarehouseService.Delete:output_type -> google.protobuf.Empty
-	18, // 22: admin.service.v1.InventoryService.List:output_type -> inventory.service.v1.ListInventoryResponse
-	19, // 23: admin.service.v1.InventoryService.Get:output_type -> inventory.service.v1.Inventory
-	20, // 24: admin.service.v1.InventoryService.GetOverview:output_type -> inventory.service.v1.InventoryOverview
-	17, // 25: admin.service.v1.InventoryService.Create:output_type -> google.protobuf.Empty
-	17, // 26: admin.service.v1.InventoryService.Update:output_type -> google.protobuf.Empty
-	17, // 27: admin.service.v1.InventoryService.Delete:output_type -> google.protobuf.Empty
-	21, // 28: admin.service.v1.StockMovementService.List:output_type -> inventory.service.v1.ListStockMovementResponse
-	22, // 29: admin.service.v1.StockMovementService.Get:output_type -> inventory.service.v1.StockMovement
-	17, // 30: admin.service.v1.StockMovementService.Create:output_type -> google.protobuf.Empty
-	17, // 31: admin.service.v1.StockMovementService.Reverse:output_type -> google.protobuf.Empty
-	17, // 32: admin.service.v1.StockMovementService.Transfer:output_type -> google.protobuf.Empty
-	17, // 33: admin.service.v1.StockMovementService.Delete:output_type -> google.protobuf.Empty
-	17, // [17:34] is the sub-list for method output_type
-	0,  // [0:17] is the sub-list for method input_type
+	7,  // 8: admin.service.v1.InventoryService.GetMovementTrend:input_type -> inventory.service.v1.GetMovementTrendRequest
+	8,  // 9: admin.service.v1.InventoryService.Create:input_type -> inventory.service.v1.CreateInventoryRequest
+	9,  // 10: admin.service.v1.InventoryService.Update:input_type -> inventory.service.v1.UpdateInventoryRequest
+	10, // 11: admin.service.v1.InventoryService.Delete:input_type -> inventory.service.v1.DeleteInventoryRequest
+	0,  // 12: admin.service.v1.StockMovementService.List:input_type -> pagination.PagingRequest
+	11, // 13: admin.service.v1.StockMovementService.Get:input_type -> inventory.service.v1.GetStockMovementRequest
+	12, // 14: admin.service.v1.StockMovementService.Create:input_type -> inventory.service.v1.CreateStockMovementRequest
+	13, // 15: admin.service.v1.StockMovementService.Reverse:input_type -> inventory.service.v1.ReverseStockMovementRequest
+	14, // 16: admin.service.v1.StockMovementService.Transfer:input_type -> inventory.service.v1.TransferStockRequest
+	15, // 17: admin.service.v1.StockMovementService.Delete:input_type -> inventory.service.v1.DeleteStockMovementRequest
+	16, // 18: admin.service.v1.WarehouseService.List:output_type -> inventory.service.v1.ListWarehouseResponse
+	17, // 19: admin.service.v1.WarehouseService.Get:output_type -> inventory.service.v1.Warehouse
+	18, // 20: admin.service.v1.WarehouseService.Create:output_type -> google.protobuf.Empty
+	18, // 21: admin.service.v1.WarehouseService.Update:output_type -> google.protobuf.Empty
+	18, // 22: admin.service.v1.WarehouseService.Delete:output_type -> google.protobuf.Empty
+	19, // 23: admin.service.v1.InventoryService.List:output_type -> inventory.service.v1.ListInventoryResponse
+	20, // 24: admin.service.v1.InventoryService.Get:output_type -> inventory.service.v1.Inventory
+	21, // 25: admin.service.v1.InventoryService.GetOverview:output_type -> inventory.service.v1.InventoryOverview
+	22, // 26: admin.service.v1.InventoryService.GetMovementTrend:output_type -> inventory.service.v1.MovementTrendResponse
+	18, // 27: admin.service.v1.InventoryService.Create:output_type -> google.protobuf.Empty
+	18, // 28: admin.service.v1.InventoryService.Update:output_type -> google.protobuf.Empty
+	18, // 29: admin.service.v1.InventoryService.Delete:output_type -> google.protobuf.Empty
+	23, // 30: admin.service.v1.StockMovementService.List:output_type -> inventory.service.v1.ListStockMovementResponse
+	24, // 31: admin.service.v1.StockMovementService.Get:output_type -> inventory.service.v1.StockMovement
+	18, // 32: admin.service.v1.StockMovementService.Create:output_type -> google.protobuf.Empty
+	18, // 33: admin.service.v1.StockMovementService.Reverse:output_type -> google.protobuf.Empty
+	18, // 34: admin.service.v1.StockMovementService.Transfer:output_type -> google.protobuf.Empty
+	18, // 35: admin.service.v1.StockMovementService.Delete:output_type -> google.protobuf.Empty
+	18, // [18:36] is the sub-list for method output_type
+	0,  // [0:18] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

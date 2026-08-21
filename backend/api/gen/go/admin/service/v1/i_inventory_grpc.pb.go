@@ -290,12 +290,13 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	InventoryService_List_FullMethodName        = "/admin.service.v1.InventoryService/List"
-	InventoryService_Get_FullMethodName         = "/admin.service.v1.InventoryService/Get"
-	InventoryService_GetOverview_FullMethodName = "/admin.service.v1.InventoryService/GetOverview"
-	InventoryService_Create_FullMethodName      = "/admin.service.v1.InventoryService/Create"
-	InventoryService_Update_FullMethodName      = "/admin.service.v1.InventoryService/Update"
-	InventoryService_Delete_FullMethodName      = "/admin.service.v1.InventoryService/Delete"
+	InventoryService_List_FullMethodName             = "/admin.service.v1.InventoryService/List"
+	InventoryService_Get_FullMethodName              = "/admin.service.v1.InventoryService/Get"
+	InventoryService_GetOverview_FullMethodName      = "/admin.service.v1.InventoryService/GetOverview"
+	InventoryService_GetMovementTrend_FullMethodName = "/admin.service.v1.InventoryService/GetMovementTrend"
+	InventoryService_Create_FullMethodName           = "/admin.service.v1.InventoryService/Create"
+	InventoryService_Update_FullMethodName           = "/admin.service.v1.InventoryService/Update"
+	InventoryService_Delete_FullMethodName           = "/admin.service.v1.InventoryService/Delete"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -310,6 +311,8 @@ type InventoryServiceClient interface {
 	Get(ctx context.Context, in *v11.GetInventoryRequest, opts ...grpc.CallOption) (*v11.Inventory, error)
 	// 库存经营总览
 	GetOverview(ctx context.Context, in *v11.GetInventoryOverviewRequest, opts ...grpc.CallOption) (*v11.InventoryOverview, error)
+	// 库存流水趋势
+	GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error)
 	// 创建库存
 	Create(ctx context.Context, in *v11.CreateInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 更新库存
@@ -350,6 +353,16 @@ func (c *inventoryServiceClient) GetOverview(ctx context.Context, in *v11.GetInv
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.InventoryOverview)
 	err := c.cc.Invoke(ctx, InventoryService_GetOverview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inventoryServiceClient) GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.MovementTrendResponse)
+	err := c.cc.Invoke(ctx, InventoryService_GetMovementTrend_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -398,6 +411,8 @@ type InventoryServiceServer interface {
 	Get(context.Context, *v11.GetInventoryRequest) (*v11.Inventory, error)
 	// 库存经营总览
 	GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error)
+	// 库存流水趋势
+	GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error)
 	// 创建库存
 	Create(context.Context, *v11.CreateInventoryRequest) (*emptypb.Empty, error)
 	// 更新库存
@@ -422,6 +437,9 @@ func (UnimplementedInventoryServiceServer) Get(context.Context, *v11.GetInventor
 }
 func (UnimplementedInventoryServiceServer) GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOverview not implemented")
+}
+func (UnimplementedInventoryServiceServer) GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMovementTrend not implemented")
 }
 func (UnimplementedInventoryServiceServer) Create(context.Context, *v11.CreateInventoryRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
@@ -507,6 +525,24 @@ func _InventoryService_GetOverview_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventoryService_GetMovementTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetMovementTrendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).GetMovementTrend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_GetMovementTrend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).GetMovementTrend(ctx, req.(*v11.GetMovementTrendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InventoryService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.CreateInventoryRequest)
 	if err := dec(in); err != nil {
@@ -579,6 +615,10 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOverview",
 			Handler:    _InventoryService_GetOverview_Handler,
+		},
+		{
+			MethodName: "GetMovementTrend",
+			Handler:    _InventoryService_GetMovementTrend_Handler,
 		},
 		{
 			MethodName: "Create",

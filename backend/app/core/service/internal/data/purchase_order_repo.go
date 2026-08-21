@@ -284,13 +284,14 @@ func (r *PurchaseOrderRepo) TransitionStatus(
 
 // ApplyReceipt 收货回写：对匹配明细原子累计 received_quantity（条件
 // received + qty <= ordered 防超收），随后若全部明细收齐且单据为
-// APPROVED 则自动完结。返回 (本次收货后累计, 订单量)。
+// APPROVED 则自动完结。返回 (本次收货后累计, 订单量, 是否触发自动完结)。
+// autoCompleted 供调用方在整体成功后发下游通知。
 func (r *PurchaseOrderRepo) ApplyReceipt(
 	ctx context.Context,
 	poID uint32,
 	skuCode string,
 	qty int64,
-) (received int64, ordered int64, err error) {
+) (received int64, ordered int64, autoCompleted bool, err error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	item, err := r.entClient.Client().PurchaseOrderItem.Query().
@@ -298,9 +299,28 @@ func (r *PurchaseOrderRepo) ApplyReceipt(
 		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return 0, 0, procurementV1.ErrorNotFound("purchase order item not found for sku")
+			return 0, 0, false, procurementV1.ErrorNotFound("purchase order item not found for sku")
 		}
-		return 0, 0, procurementV1.ErrorInternalServerError("query purchase order item failed")
+		return 0, 0, false, procurementV1.ErrorInternalServerError("query purchase order item failed")
+	}
+
+	// 收货闸门：仅 APPROVED 单据可收货，与付款轨对称。非 APPROVED
+	// （DRAFT/SUBMITTED/REJECTED/CANCELLED/COMPLETED）一律拒绝，避免绕过
+	// 审批链直接入库。以条件计数实现——PO 不存在或状态非 APPROVED 均记为
+	// 冲突（计数为 0），消除状态枚举泄漏的同时关闭主要收货绕过路径。
+	gateQuery := r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.IDEQ(poID)).
+		Where(purchaseorder.StatusEQ(purchaseorder.StatusApproved))
+	if hasTenant {
+		gateQuery.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	gateN, gerr := gateQuery.Count(ctx)
+	if gerr != nil {
+		r.log.Errorf("receiving status gate query failed: %s", gerr.Error())
+		return 0, 0, false, procurementV1.ErrorInternalServerError("receiving status gate query failed")
+	}
+	if gateN != 1 {
+		return 0, 0, false, procurementV1.ErrorConflict("purchase order is not approved for receiving")
 	}
 
 	ordered = *item.Quantity
@@ -320,10 +340,10 @@ func (r *PurchaseOrderRepo) ApplyReceipt(
 	n, serr := builder.Save(ctx)
 	if serr != nil {
 		r.log.Errorf("apply receipt failed: %s", serr.Error())
-		return 0, 0, procurementV1.ErrorInternalServerError("apply receipt failed")
+		return 0, 0, false, procurementV1.ErrorInternalServerError("apply receipt failed")
 	}
 	if n == 0 {
-		return 0, 0, procurementV1.ErrorConflict("receipt exceeds ordered quantity")
+		return 0, 0, false, procurementV1.ErrorConflict("receipt exceeds ordered quantity")
 	}
 
 	received = *item.ReceivedQuantity + qty
@@ -342,10 +362,12 @@ func (r *PurchaseOrderRepo) ApplyReceipt(
 		if terr := r.TransitionStatus(ctx, poID,
 			procurementV1.PurchaseOrder_APPROVED, procurementV1.PurchaseOrder_COMPLETED); terr != nil {
 			r.log.Warnf("auto-complete purchase order %d failed: %s", poID, terr.Error())
+		} else {
+			autoCompleted = true
 		}
 	}
 
-	return received, ordered, nil
+	return received, ordered, autoCompleted, nil
 }
 
 // HasInFlightReplenishment 该 SKU 是否有在途补货：存在未收满的明细，

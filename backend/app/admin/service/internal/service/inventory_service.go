@@ -47,6 +47,10 @@ func (s *InventoryService) GetOverview(ctx context.Context, req *inventoryV1.Get
 	return s.inventoryServiceClient.GetOverview(ctx, req)
 }
 
+func (s *InventoryService) GetMovementTrend(ctx context.Context, req *inventoryV1.GetMovementTrendRequest) (*inventoryV1.MovementTrendResponse, error) {
+	return s.inventoryServiceClient.GetMovementTrend(ctx, req)
+}
+
 func (s *InventoryService) Create(ctx context.Context, req *inventoryV1.CreateInventoryRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")

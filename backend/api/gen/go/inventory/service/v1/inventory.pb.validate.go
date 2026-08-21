@@ -2600,6 +2600,350 @@ var _ interface {
 	ErrorName() string
 } = InventoryOverviewValidationError{}
 
+// Validate checks the field values on GetMovementTrendRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetMovementTrendRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetMovementTrendRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetMovementTrendRequestMultiError, or nil if none found.
+func (m *GetMovementTrendRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetMovementTrendRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetMovementTrendRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetMovementTrendRequestMultiError is an error wrapping multiple validation
+// errors returned by GetMovementTrendRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetMovementTrendRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetMovementTrendRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetMovementTrendRequestMultiError) AllErrors() []error { return m }
+
+// GetMovementTrendRequestValidationError is the validation error returned by
+// GetMovementTrendRequest.Validate if the designated constraints aren't met.
+type GetMovementTrendRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetMovementTrendRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetMovementTrendRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetMovementTrendRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetMovementTrendRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetMovementTrendRequestValidationError) ErrorName() string {
+	return "GetMovementTrendRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetMovementTrendRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetMovementTrendRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetMovementTrendRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetMovementTrendRequestValidationError{}
+
+// Validate checks the field values on MovementTrendPoint with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MovementTrendPoint) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MovementTrendPoint with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MovementTrendPointMultiError, or nil if none found.
+func (m *MovementTrendPoint) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MovementTrendPoint) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Date
+
+	// no validation rules for Count
+
+	if len(errors) > 0 {
+		return MovementTrendPointMultiError(errors)
+	}
+
+	return nil
+}
+
+// MovementTrendPointMultiError is an error wrapping multiple validation errors
+// returned by MovementTrendPoint.ValidateAll() if the designated constraints
+// aren't met.
+type MovementTrendPointMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MovementTrendPointMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MovementTrendPointMultiError) AllErrors() []error { return m }
+
+// MovementTrendPointValidationError is the validation error returned by
+// MovementTrendPoint.Validate if the designated constraints aren't met.
+type MovementTrendPointValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MovementTrendPointValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MovementTrendPointValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MovementTrendPointValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MovementTrendPointValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MovementTrendPointValidationError) ErrorName() string {
+	return "MovementTrendPointValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MovementTrendPointValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMovementTrendPoint.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MovementTrendPointValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MovementTrendPointValidationError{}
+
+// Validate checks the field values on MovementTrendResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MovementTrendResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MovementTrendResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MovementTrendResponseMultiError, or nil if none found.
+func (m *MovementTrendResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MovementTrendResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPoints() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MovementTrendResponseValidationError{
+						field:  fmt.Sprintf("Points[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MovementTrendResponseValidationError{
+						field:  fmt.Sprintf("Points[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MovementTrendResponseValidationError{
+					field:  fmt.Sprintf("Points[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return MovementTrendResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// MovementTrendResponseMultiError is an error wrapping multiple validation
+// errors returned by MovementTrendResponse.ValidateAll() if the designated
+// constraints aren't met.
+type MovementTrendResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MovementTrendResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MovementTrendResponseMultiError) AllErrors() []error { return m }
+
+// MovementTrendResponseValidationError is the validation error returned by
+// MovementTrendResponse.Validate if the designated constraints aren't met.
+type MovementTrendResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MovementTrendResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MovementTrendResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MovementTrendResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MovementTrendResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MovementTrendResponseValidationError) ErrorName() string {
+	return "MovementTrendResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MovementTrendResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMovementTrendResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MovementTrendResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MovementTrendResponseValidationError{}
+
 // Validate checks the field values on ListStockMovementResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

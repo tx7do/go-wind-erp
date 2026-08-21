@@ -171,6 +171,95 @@ func (r *PayableRepo) Create(ctx context.Context, req *financeV1.CreatePayableRe
 	return r.mapper.ToDTO(t), nil
 }
 
+// AgingReport 按 due_date 对未结清（PENDING/PARTIAL）应付做分桶聚合：
+// overdue / 0_7 / 8_30 / 31_90 / over_90 / no_due_date。
+//
+// ent 的 GroupBy 只接受真实列（无法 GROUP BY 计算列 CASE），故 SQL 端
+// 只按 due_date 聚合金额，分桶在客户端按距今天数完成。NULL due_date
+// （手工建账或无账期）入 no_due_date 桶。
+func (r *PayableRepo) AgingReport(ctx context.Context) ([]*financeV1.AgingBucket, error) {
+	// 每行汇总未清余额（amount − paid_amount）而非面值 amount，否则对
+	// PARTIAL（部分付款）行会高估未清余额。COUNT(*) 仅作该桶行数，由
+	// ent.As 别名至下方 scan 结构字段；详见 ent.AggregateFunc 文档。
+	type agingRow struct {
+		DueDate *time.Time `sql:"due_date"`
+		Total   int64      `sql:"total"`
+		Count   int64      `sql:"count"`
+	}
+	var rows []agingRow
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	builder := r.entClient.Client().Payable.Query().
+		Where(payable.StatusIn(payable.StatusPending, payable.StatusPartial))
+	if hasTenant {
+		builder.Where(payable.TenantIDEQ(tid))
+	}
+	if err := builder.GroupBy(payable.FieldDueDate).
+		Aggregate(
+			ent.As(outstandingBalanceSum, "total"),
+			ent.As(ent.Count(), "count"),
+		).
+		Scan(ctx, &rows); err != nil {
+		r.log.Errorf("aging report query failed: %s", err.Error())
+		return nil, financeV1.ErrorInternalServerError("aging report query failed")
+	}
+
+	labels := []string{"overdue", "0_7", "8_30", "31_90", "over_90", "no_due_date"}
+	agg := map[string]*financeV1.AgingBucket{}
+	for _, l := range labels {
+		lbl := l
+		zero := int64(0)
+		// Count/TotalAmount 初始化为 0 的指针，使累加路径恒有非 nil 接收方。
+		agg[l] = &financeV1.AgingBucket{Bucket: &lbl, Count: &zero, TotalAmount: &zero}
+	}
+	now := time.Now()
+	for _, row := range rows {
+		var label string
+		if row.DueDate == nil {
+			label = "no_due_date"
+		} else {
+			days := int(row.DueDate.Sub(now).Hours() / 24)
+			switch {
+			case days < 0:
+				label = "overdue"
+			case days <= 7:
+				label = "0_7"
+			case days <= 30:
+				label = "8_30"
+			case days <= 90:
+				label = "31_90"
+			default:
+				label = "over_90"
+			}
+		}
+		// 累加该桶的未清余额与行数（旧实现把 Count 覆写成 1，计数恒无效）。
+		c := *agg[label].Count + row.Count
+		agg[label].Count = &c
+		t := *agg[label].TotalAmount + row.Total
+		agg[label].TotalAmount = &t
+	}
+	out := make([]*financeV1.AgingBucket, 0, len(labels))
+	for _, l := range labels {
+		out = append(out, agg[l])
+	}
+	return out, nil
+}
+
+// outstandingBalanceSum 按 due_date 分组聚合未清余额之和
+// SUM(COALESCE(amount,0) − COALESCE(paid_amount,0))。直接以 s.C 拼接带
+// 引号列名并外包 SUM(...)，绕过 sql.Sum 对普通标识符的强制 Quote——差值
+// 表达式不是单一标识符，经 Quote 会损坏 SQL。ent.As 将其别名至 "total"
+// 以匹配 scan 结构标签。COALESCE 兜底空值：两列虽 Default(0)，但 schema
+// 仍为 Optional+Nillable。ent.Count() 产出 COUNT(*)，同样经 As 别名 "count"。
+func outstandingBalanceSum(s *sql.Selector) string {
+	expr := fmt.Sprintf(
+		"COALESCE(%s,0) - COALESCE(%s,0)",
+		s.C(payable.FieldAmount), s.C(payable.FieldPaidAmount),
+	)
+	return fmt.Sprintf("SUM(%s)", expr)
+}
+
 // CancelAsUnpaid 取消：仅 PENDING 且 paid_amount=0（条件更新保证并发安全）。
 func (r *PayableRepo) CancelAsUnpaid(ctx context.Context, id uint32) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)

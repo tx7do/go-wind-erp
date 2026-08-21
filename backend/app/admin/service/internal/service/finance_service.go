@@ -44,6 +44,11 @@ func (s *PayableService) Get(ctx context.Context, req *financeV1.GetPayableReque
 	return s.payableServiceClient.Get(ctx, req)
 }
 
+// AgingReport 应付账龄报表（委派 core）。
+func (s *PayableService) AgingReport(ctx context.Context, req *emptypb.Empty) (*financeV1.AgingReportResponse, error) {
+	return s.payableServiceClient.AgingReport(ctx, req)
+}
+
 func (s *PayableService) Create(ctx context.Context, req *financeV1.CreatePayableRequest) (*emptypb.Empty, error) {
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")

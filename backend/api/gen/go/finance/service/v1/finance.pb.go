@@ -1003,6 +1003,112 @@ func (x *CountPaymentResponse) GetCount() uint64 {
 	return 0
 }
 
+// 账龄分桶统计
+type AgingBucket struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Bucket        *string                `protobuf:"bytes,1,opt,name=bucket,proto3,oneof" json:"bucket,omitempty"`
+	Count         *int64                 `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"`
+	TotalAmount   *int64                 `protobuf:"varint,3,opt,name=total_amount,json=totalAmount,proto3,oneof" json:"total_amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgingBucket) Reset() {
+	*x = AgingBucket{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgingBucket) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgingBucket) ProtoMessage() {}
+
+func (x *AgingBucket) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgingBucket.ProtoReflect.Descriptor instead.
+func (*AgingBucket) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *AgingBucket) GetBucket() string {
+	if x != nil && x.Bucket != nil {
+		return *x.Bucket
+	}
+	return ""
+}
+
+func (x *AgingBucket) GetCount() int64 {
+	if x != nil && x.Count != nil {
+		return *x.Count
+	}
+	return 0
+}
+
+func (x *AgingBucket) GetTotalAmount() int64 {
+	if x != nil && x.TotalAmount != nil {
+		return *x.TotalAmount
+	}
+	return 0
+}
+
+// 账龄报表回应
+type AgingReportResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Buckets       []*AgingBucket         `protobuf:"bytes,1,rep,name=buckets,proto3" json:"buckets,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgingReportResponse) Reset() {
+	*x = AgingReportResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgingReportResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgingReportResponse) ProtoMessage() {}
+
+func (x *AgingReportResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgingReportResponse.ProtoReflect.Descriptor instead.
+func (*AgingReportResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AgingReportResponse) GetBuckets() []*AgingBucket {
+	if x != nil {
+		return x.Buckets
+	}
+	return nil
+}
+
 var File_finance_service_v1_finance_proto protoreflect.FileDescriptor
 
 const file_finance_service_v1_finance_proto_rawDesc = "" +
@@ -1125,14 +1231,24 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\x14CreatePaymentRequest\x12/\n" +
 	"\x04data\x18\x01 \x01(\v2\x1b.finance.service.v1.PaymentR\x04data\",\n" +
 	"\x14CountPaymentResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count2\xe5\x03\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"\xe7\x01\n" +
+	"\vAgingBucket\x12/\n" +
+	"\x06bucket\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f分桶标签H\x00R\x06bucket\x88\x01\x01\x126\n" +
+	"\x05count\x18\x02 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15该桶应付单笔数H\x01R\x05count\x88\x01\x01\x12I\n" +
+	"\ftotal_amount\x18\x03 \x01(\x03B!\xbaG\x1e\x92\x02\x1b该桶应付总额（分）H\x02R\vtotalAmount\x88\x01\x01B\t\n" +
+	"\a_bucketB\b\n" +
+	"\x06_countB\x0f\n" +
+	"\r_total_amount\"P\n" +
+	"\x13AgingReportResponse\x129\n" +
+	"\abuckets\x18\x01 \x03(\v2\x1f.finance.service.v1.AgingBucketR\abuckets2\xb7\x04\n" +
 	"\x0ePayableService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPayableResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountPayableResponse\"\x00\x12K\n" +
 	"\x03Get\x12%.finance.service.v1.GetPayableRequest\x1a\x1b.finance.service.v1.Payable\"\x00\x12L\n" +
 	"\x06Create\x12(.finance.service.v1.CreatePayableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\x06Delete\x12(.finance.service.v1.DeletePayableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
-	"\x06Cancel\x12(.finance.service.v1.CancelPayableRequest\x1a\x16.google.protobuf.Empty\"\x002\xc9\x02\n" +
+	"\x06Cancel\x12(.finance.service.v1.CancelPayableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n" +
+	"\vAgingReport\x12\x16.google.protobuf.Empty\x1a'.finance.service.v1.AgingReportResponse\"\x002\xc9\x02\n" +
 	"\x0ePaymentService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPaymentResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountPaymentResponse\"\x00\x12K\n" +
@@ -1153,7 +1269,7 @@ func file_finance_service_v1_finance_proto_rawDescGZIP() []byte {
 }
 
 var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_finance_service_v1_finance_proto_goTypes = []any{
 	(Payable_Status)(0),           // 0: finance.service.v1.Payable.Status
 	(Payment_Method)(0),           // 1: finance.service.v1.Payment.Method
@@ -1170,51 +1286,56 @@ var file_finance_service_v1_finance_proto_goTypes = []any{
 	(*GetPaymentRequest)(nil),     // 12: finance.service.v1.GetPaymentRequest
 	(*CreatePaymentRequest)(nil),  // 13: finance.service.v1.CreatePaymentRequest
 	(*CountPaymentResponse)(nil),  // 14: finance.service.v1.CountPaymentResponse
-	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 16: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 17: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 18: google.protobuf.Empty
+	(*AgingBucket)(nil),           // 15: finance.service.v1.AgingBucket
+	(*AgingReportResponse)(nil),   // 16: finance.service.v1.AgingReportResponse
+	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil), // 18: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),      // 19: pagination.PagingRequest
+	(*emptypb.Empty)(nil),         // 20: google.protobuf.Empty
 }
 var file_finance_service_v1_finance_proto_depIdxs = []int32{
 	0,  // 0: finance.service.v1.Payable.status:type_name -> finance.service.v1.Payable.Status
-	15, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
-	15, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
-	15, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
-	15, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
+	17, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
+	17, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
+	17, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
 	2,  // 6: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
-	15, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
+	17, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
 	3,  // 8: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
-	16, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	18, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
 	3,  // 10: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
 	4,  // 11: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
-	16, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	18, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
 	4,  // 13: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
-	17, // 14: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	17, // 15: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
-	6,  // 16: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	7,  // 17: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
-	8,  // 18: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
-	9,  // 19: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
-	17, // 20: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	17, // 21: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
-	12, // 22: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	13, // 23: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	5,  // 24: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	10, // 25: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
-	3,  // 26: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	18, // 27: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	18, // 28: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	18, // 29: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	11, // 30: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	14, // 31: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
-	4,  // 32: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	18, // 33: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	24, // [24:34] is the sub-list for method output_type
-	14, // [14:24] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	15, // 14: finance.service.v1.AgingReportResponse.buckets:type_name -> finance.service.v1.AgingBucket
+	19, // 15: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	19, // 16: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
+	6,  // 17: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	7,  // 18: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
+	8,  // 19: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
+	9,  // 20: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
+	20, // 21: finance.service.v1.PayableService.AgingReport:input_type -> google.protobuf.Empty
+	19, // 22: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	19, // 23: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
+	12, // 24: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	13, // 25: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
+	5,  // 26: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	10, // 27: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
+	3,  // 28: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	20, // 29: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	20, // 30: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	20, // 31: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	16, // 32: finance.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	11, // 33: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	14, // 34: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
+	4,  // 35: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	20, // 36: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	26, // [26:37] is the sub-list for method output_type
+	15, // [15:26] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_finance_service_v1_finance_proto_init() }
@@ -1233,13 +1354,14 @@ func file_finance_service_v1_finance_proto_init() {
 	file_finance_service_v1_finance_proto_msgTypes[9].OneofWrappers = []any{
 		(*GetPaymentRequest_Id)(nil),
 	}
+	file_finance_service_v1_finance_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_finance_service_v1_finance_proto_rawDesc), len(file_finance_service_v1_finance_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

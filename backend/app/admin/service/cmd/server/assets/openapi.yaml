@@ -2981,6 +2981,19 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/payables:aging-report:
+        get:
+            tags:
+                - PaymentService
+            description: 应付账龄报表
+            operationId: PaymentService_AgingReport
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.AgingReportResponse'
     /admin/v1/payables:cancel:
         post:
             tags:
@@ -6965,6 +6978,27 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新语言 - 请求
+        finance.service.v1.AgingBucket:
+            type: object
+            properties:
+                bucket:
+                    type: string
+                    description: 分桶标签
+                count:
+                    type: string
+                    description: 该桶应付单笔数
+                totalAmount:
+                    type: string
+                    description: 该桶应付总额（分）
+            description: 账龄分桶统计
+        finance.service.v1.AgingReportResponse:
+            type: object
+            properties:
+                buckets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/finance.service.v1.AgingBucket'
+            description: 账龄报表回应
         finance.service.v1.CancelPayableRequest:
             type: object
             properties:

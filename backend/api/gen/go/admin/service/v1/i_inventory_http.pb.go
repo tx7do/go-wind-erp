@@ -254,6 +254,7 @@ func (c *WarehouseServiceHTTPClientImpl) Update(ctx context.Context, in *v11.Upd
 const OperationInventoryServiceCreate = "/admin.service.v1.InventoryService/Create"
 const OperationInventoryServiceDelete = "/admin.service.v1.InventoryService/Delete"
 const OperationInventoryServiceGet = "/admin.service.v1.InventoryService/Get"
+const OperationInventoryServiceGetMovementTrend = "/admin.service.v1.InventoryService/GetMovementTrend"
 const OperationInventoryServiceGetOverview = "/admin.service.v1.InventoryService/GetOverview"
 const OperationInventoryServiceList = "/admin.service.v1.InventoryService/List"
 const OperationInventoryServiceUpdate = "/admin.service.v1.InventoryService/Update"
@@ -265,6 +266,8 @@ type InventoryServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeleteInventoryRequest) (*emptypb.Empty, error)
 	// Get 查询库存详情
 	Get(context.Context, *v11.GetInventoryRequest) (*v11.Inventory, error)
+	// GetMovementTrend 库存流水趋势
+	GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error)
 	// GetOverview 库存经营总览
 	GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error)
 	// List 查询库存列表
@@ -278,6 +281,7 @@ func RegisterInventoryServiceHTTPServer(s *http.Server, srv InventoryServiceHTTP
 	r.GET("/admin/v1/inventories", _InventoryService_List11_HTTP_Handler(srv))
 	r.GET("/admin/v1/inventories/{id}", _InventoryService_Get11_HTTP_Handler(srv))
 	r.GET("/admin/v1/inventories:overview", _InventoryService_GetOverview0_HTTP_Handler(srv))
+	r.GET("/admin/v1/inventories:movement-trend", _InventoryService_GetMovementTrend0_HTTP_Handler(srv))
 	r.POST("/admin/v1/inventories", _InventoryService_Create9_HTTP_Handler(srv))
 	r.PUT("/admin/v1/inventories/{id}", _InventoryService_Update6_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/inventories/{id}", _InventoryService_Delete8_HTTP_Handler(srv))
@@ -339,6 +343,25 @@ func _InventoryService_GetOverview0_HTTP_Handler(srv InventoryServiceHTTPServer)
 			return err
 		}
 		reply := out.(*v11.InventoryOverview)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _InventoryService_GetMovementTrend0_HTTP_Handler(srv InventoryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetMovementTrendRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationInventoryServiceGetMovementTrend)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetMovementTrend(ctx, req.(*v11.GetMovementTrendRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.MovementTrendResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -419,6 +442,8 @@ type InventoryServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeleteInventoryRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 查询库存详情
 	Get(ctx context.Context, req *v11.GetInventoryRequest, opts ...http.CallOption) (rsp *v11.Inventory, err error)
+	// GetMovementTrend 库存流水趋势
+	GetMovementTrend(ctx context.Context, req *v11.GetMovementTrendRequest, opts ...http.CallOption) (rsp *v11.MovementTrendResponse, err error)
 	// GetOverview 库存经营总览
 	GetOverview(ctx context.Context, req *v11.GetInventoryOverviewRequest, opts ...http.CallOption) (rsp *v11.InventoryOverview, err error)
 	// List 查询库存列表
@@ -469,6 +494,20 @@ func (c *InventoryServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetInv
 	pattern := "/admin/v1/inventories/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationInventoryServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetMovementTrend 库存流水趋势
+func (c *InventoryServiceHTTPClientImpl) GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...http.CallOption) (*v11.MovementTrendResponse, error) {
+	var out v11.MovementTrendResponse
+	pattern := "/admin/v1/inventories:movement-trend"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationInventoryServiceGetMovementTrend))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

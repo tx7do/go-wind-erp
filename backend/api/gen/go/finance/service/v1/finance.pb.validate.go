@@ -1752,3 +1752,250 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CountPaymentResponseValidationError{}
+
+// Validate checks the field values on AgingBucket with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AgingBucket) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AgingBucket with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AgingBucketMultiError, or
+// nil if none found.
+func (m *AgingBucket) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AgingBucket) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Bucket != nil {
+		// no validation rules for Bucket
+	}
+
+	if m.Count != nil {
+		// no validation rules for Count
+	}
+
+	if m.TotalAmount != nil {
+		// no validation rules for TotalAmount
+	}
+
+	if len(errors) > 0 {
+		return AgingBucketMultiError(errors)
+	}
+
+	return nil
+}
+
+// AgingBucketMultiError is an error wrapping multiple validation errors
+// returned by AgingBucket.ValidateAll() if the designated constraints aren't met.
+type AgingBucketMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AgingBucketMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AgingBucketMultiError) AllErrors() []error { return m }
+
+// AgingBucketValidationError is the validation error returned by
+// AgingBucket.Validate if the designated constraints aren't met.
+type AgingBucketValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AgingBucketValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AgingBucketValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AgingBucketValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AgingBucketValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AgingBucketValidationError) ErrorName() string { return "AgingBucketValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AgingBucketValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAgingBucket.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AgingBucketValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AgingBucketValidationError{}
+
+// Validate checks the field values on AgingReportResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AgingReportResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AgingReportResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AgingReportResponseMultiError, or nil if none found.
+func (m *AgingReportResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AgingReportResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetBuckets() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AgingReportResponseValidationError{
+						field:  fmt.Sprintf("Buckets[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AgingReportResponseValidationError{
+						field:  fmt.Sprintf("Buckets[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AgingReportResponseValidationError{
+					field:  fmt.Sprintf("Buckets[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return AgingReportResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AgingReportResponseMultiError is an error wrapping multiple validation
+// errors returned by AgingReportResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AgingReportResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AgingReportResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AgingReportResponseMultiError) AllErrors() []error { return m }
+
+// AgingReportResponseValidationError is the validation error returned by
+// AgingReportResponse.Validate if the designated constraints aren't met.
+type AgingReportResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AgingReportResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AgingReportResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AgingReportResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AgingReportResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AgingReportResponseValidationError) ErrorName() string {
+	return "AgingReportResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AgingReportResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAgingReportResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AgingReportResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AgingReportResponseValidationError{}

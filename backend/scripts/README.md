@@ -118,27 +118,6 @@ HOSTS_SERVICES="postgres mysql redis" \
 
 ---
 
-### install_golang.sh
-
-**用途：** 独立的 Go 运行时安装脚本
-
-**功能：**
-
-- 检测当前 Go 版本
-- 下载最新稳定版
-- 解压到指定位置
-- 配置 PATH
-
-**使用方式：**
-
-```bash
-./scripts/env/install_golang.sh
-```
-
-**支持：** macOS 和 Linux（自动检测 ARM64/AMD64）
-
----
-
 ### install_windows_dev.ps1
 
 **用途：** Windows 开发环境完整配置脚本
@@ -169,7 +148,6 @@ HOSTS_SERVICES="postgres mysql redis" \
 - ✅ 灵活定制（Scoop 包、Go 插件、CLI 工具）
 - ✅ 详细文档（2000+ 行）
 
-详见：Windows 脚本目录下的 `QUICK_START.md` 和 `GO_ENVIRONMENT_GUIDE.md`
 
 ---
 
@@ -482,17 +460,6 @@ docker logs -f postgres  # 查看数据库日志
 # 4. 本地开发
 gow run admin
 ```
-
----
-
-## 📚 详细文档
-
-| 文档                       | 说明             | 位置           |
-|--------------------------|----------------|--------------|
-| PREPARE_UNIX.md          | Unix 环境准备详解    | scripts/     |
-| DOCKER_COMPOSE_NAMING.md | Docker 脚本说明    | scripts/     |
-| GO_ENVIRONMENT_GUIDE.md  | Go 环境配置详解      | scripts/env/ |
-| QUICK_START.md           | Windows 脚本快速参考 | scripts/env/ |
 
 ---
 

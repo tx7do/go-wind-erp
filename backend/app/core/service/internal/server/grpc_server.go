@@ -85,6 +85,8 @@ func NewGrpcServer(
 	internalMessageService *service.InternalMessageService,
 	internalMessageCategoryService *service.InternalMessageCategoryService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
+
+	_ *service.DemoDataService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 

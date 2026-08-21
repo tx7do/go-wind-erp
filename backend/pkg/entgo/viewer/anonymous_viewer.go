@@ -1,6 +1,8 @@
 package viewer
 
 import (
+	"context"
+
 	"github.com/tx7do/go-crud/viewer"
 )
 
@@ -25,6 +27,13 @@ type AnonymousTenantViewer struct {
 // NewAnonymousTenantViewer 构造一个绑定指定 tenant 的只读匿名 viewer。
 func NewAnonymousTenantViewer(tid uint64, traceID string) viewer.Context {
 	return AnonymousTenantViewer{tid: tid, traceID: traceID}
+}
+
+// NewAnonymousTenantViewerContext 构造一个绑定指定 tenant 的匿名 viewer 并
+// 注入到 context 中，用于系统后台任务中需要按某 tenant 隔离写入/读取的场景
+// （如演示数据灌入：先用 SystemViewer 建租户，再切换为该租户作用域灌入域数据）。
+func NewAnonymousTenantViewerContext(ctx context.Context, tid uint32, traceID string) context.Context {
+	return viewer.WithContext(ctx, NewAnonymousTenantViewer(uint64(tid), traceID))
 }
 
 // UserID 返回当前用户ID（匿名访问者无用户身份）
