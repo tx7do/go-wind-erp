@@ -29,7 +29,7 @@ GoWind ERP is an enterprise-grade ERP foundation platform built on a Golang micr
 
 ## Project Status
 
-GoWind ERP is currently in the **foundation-building phase**. Common foundation capabilities — organization and permissions, authentication, audit, file storage, dictionaries, internal messaging, task scheduling, and internationalization — are implemented, and both the admin console and the mobile entry point are provided. The ERP business modules (Inventory/WMS, Procurement/SRM, Finance/AP) and their corresponding mobile features are still under planning and development and **are not yet part of the current codebase**. Items marked "Planned" in the feature tables below fall into this category.
+Both the common foundation capabilities of GoWind ERP — organization and permissions, authentication, audit, file storage, dictionaries, internal messaging, task scheduling, internationalization — and the three ERP business modules (Inventory/WMS, Procurement/SRM, Finance/AP) are implemented across the core backend service, the admin console, and the mobile app. The core business loops — PO approval through goods receipt into stock, payable-to-payment settlement, stock transfer and reversal, and low-stock auto-replenishment — are closed end to end, with regression tests covering the key consistency logic (receiving approval gate, single-transaction stock transfer, aging outstanding-balance reporting).
 
 ## Tech Stack
 
@@ -88,14 +88,15 @@ GoWind ERP is currently in the **foundation-building phase**. Common foundation 
 | Task Scheduling | Cron job management, start/pause/execute, execution history & logs |
 | Multi-language Management | Language management, unified translation for content, menus & UI text |
 
-### ERP Business Modules (Planned — not implemented in the current release)
+### ERP Business Modules
 
 | Module | Description |
 |:---|:---|
-| Inventory / WMS | Warehouse, location, atomic stock operations & state machine (Module 1, in development) |
-| Procurement / SRM | Suppliers & procurement workflow (Module 2, planned) |
-| Finance / AP | Payables & financial accounting (Module 3, planned) |
-| Mobile business features | WMS scanning, approval center, executive dashboard (planned, pending backend readiness) |
+| Inventory / WMS | Warehouse & stock management (state machine), inbound/outbound movements (server-verified write-back), cross-warehouse transfer (single-transaction atomic), movement reversal (idempotent), low-stock auto-replenishment proposals (draft PO via the approval rail), executive dashboard aggregation & 30-day movement trend |
+| Procurement / SRM | Supplier management, full PO lifecycle (draft → submit → approve → revise-and-resubmit → receive → auto-complete on full receipt / cancel), per-item goods receipt with approval gate & over-receipt guard |
+| Finance / AP | Payables (auto-created on PO approval), payment requests (applied via the approval rail), partial-payment & settlement state machine, AP aging report |
+| Approval Rail (cross-module) | Unified approval for POs / payments / replenishments; applicant & approver derived server-side, self-approval blocked; resolution notifies the applicant, with downstream notifications on replenishment-draft creation and PO auto-completion |
+| Mobile business features | WMS scanning (in/out / transfer / reversal), approval center, executive dashboard |
 
 ## Project Structure
 
