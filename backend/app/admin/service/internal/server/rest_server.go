@@ -111,6 +111,7 @@ func NewRestServer(
 	approvalRequestService *service.ApprovalRequestService,
 
 	supplierService *service.SupplierService,
+	productService *service.ProductService,
 	purchaseOrderService *service.PurchaseOrderService,
 
 	payableService *service.PayableService,
@@ -168,6 +169,7 @@ func NewRestServer(
 	adminV1.RegisterApprovalRequestServiceHTTPServer(srv, approvalRequestService)
 
 	adminV1.RegisterSupplierServiceHTTPServer(srv, supplierService)
+	adminV1.RegisterProductServiceHTTPServer(srv, productService)
 	adminV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
 
 	adminV1.RegisterPayableServiceHTTPServer(srv, payableService)

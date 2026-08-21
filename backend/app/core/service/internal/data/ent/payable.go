@@ -44,6 +44,8 @@ type Payable struct {
 	Amount *int64 `json:"amount,omitempty"`
 	// 已付金额（分，付款驱动）
 	PaidAmount *int64 `json:"paid_amount,omitempty"`
+	// 账期到期日
+	DueDate *time.Time `json:"due_date,omitempty"`
 	// 应付状态
 	Status       *payable.Status `json:"status,omitempty"`
 	selectValues sql.SelectValues
@@ -58,7 +60,7 @@ func (*Payable) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case payable.FieldRemark, payable.FieldPayableNumber, payable.FieldPoRef, payable.FieldSupplierCode, payable.FieldStatus:
 			values[i] = new(sql.NullString)
-		case payable.FieldCreatedAt, payable.FieldUpdatedAt, payable.FieldDeletedAt:
+		case payable.FieldCreatedAt, payable.FieldUpdatedAt, payable.FieldDeletedAt, payable.FieldDueDate:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -172,6 +174,13 @@ func (_m *Payable) assignValues(columns []string, values []any) error {
 				_m.PaidAmount = new(int64)
 				*_m.PaidAmount = value.Int64
 			}
+		case payable.FieldDueDate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field due_date", values[i])
+			} else if value.Valid {
+				_m.DueDate = new(time.Time)
+				*_m.DueDate = value.Time
+			}
 		case payable.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -278,6 +287,11 @@ func (_m *Payable) String() string {
 	if v := _m.PaidAmount; v != nil {
 		builder.WriteString("paid_amount=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.DueDate; v != nil {
+		builder.WriteString("due_date=")
+		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {

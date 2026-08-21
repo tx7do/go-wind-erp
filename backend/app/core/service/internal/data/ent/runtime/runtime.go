@@ -37,6 +37,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
+	"go-wind-erp/app/core/service/internal/data/ent/product"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
@@ -1053,6 +1054,34 @@ func init() {
 	positionDescID := positionMixinFields0[0].Descriptor()
 	// position.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	position.IDValidator = positionDescID.Validators[0].(func(uint32) error)
+	productMixin := schema.Product{}.Mixin()
+	product.Policy = privacy.NewPolicies(productMixin[4], schema.Product{})
+	product.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := product.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	productMixinFields0 := productMixin[0].Fields()
+	_ = productMixinFields0
+	productMixinFields4 := productMixin[4].Fields()
+	_ = productMixinFields4
+	productFields := schema.Product{}.Fields()
+	_ = productFields
+	// productDescTenantID is the schema descriptor for tenant_id field.
+	productDescTenantID := productMixinFields4[0].Descriptor()
+	// product.DefaultTenantID holds the default value on creation for the tenant_id field.
+	product.DefaultTenantID = productDescTenantID.Default.(uint32)
+	// productDescEnable is the schema descriptor for enable field.
+	productDescEnable := productFields[4].Descriptor()
+	// product.DefaultEnable holds the default value on creation for the enable field.
+	product.DefaultEnable = productDescEnable.Default.(bool)
+	// productDescID is the schema descriptor for id field.
+	productDescID := productMixinFields0[0].Descriptor()
+	// product.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	product.IDValidator = productDescID.Validators[0].(func(uint32) error)
 	purchaseorderMixin := schema.PurchaseOrder{}.Mixin()
 	purchaseorder.Policy = privacy.NewPolicies(purchaseorderMixin[4], schema.PurchaseOrder{})
 	purchaseorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {

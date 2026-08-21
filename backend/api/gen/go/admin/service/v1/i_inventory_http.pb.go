@@ -523,6 +523,8 @@ const OperationStockMovementServiceCreate = "/admin.service.v1.StockMovementServ
 const OperationStockMovementServiceDelete = "/admin.service.v1.StockMovementService/Delete"
 const OperationStockMovementServiceGet = "/admin.service.v1.StockMovementService/Get"
 const OperationStockMovementServiceList = "/admin.service.v1.StockMovementService/List"
+const OperationStockMovementServiceReverse = "/admin.service.v1.StockMovementService/Reverse"
+const OperationStockMovementServiceTransfer = "/admin.service.v1.StockMovementService/Transfer"
 
 type StockMovementServiceHTTPServer interface {
 	// Create 创建库存流水
@@ -533,6 +535,10 @@ type StockMovementServiceHTTPServer interface {
 	Get(context.Context, *v11.GetStockMovementRequest) (*v11.StockMovement, error)
 	// List 查询库存流水列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListStockMovementResponse, error)
+	// Reverse 冲正库存流水
+	Reverse(context.Context, *v11.ReverseStockMovementRequest) (*emptypb.Empty, error)
+	// Transfer 库存调拨
+	Transfer(context.Context, *v11.TransferStockRequest) (*emptypb.Empty, error)
 }
 
 func RegisterStockMovementServiceHTTPServer(s *http.Server, srv StockMovementServiceHTTPServer) {
@@ -540,6 +546,8 @@ func RegisterStockMovementServiceHTTPServer(s *http.Server, srv StockMovementSer
 	r.GET("/admin/v1/stock-movements", _StockMovementService_List12_HTTP_Handler(srv))
 	r.GET("/admin/v1/stock-movements/{id}", _StockMovementService_Get12_HTTP_Handler(srv))
 	r.POST("/admin/v1/stock-movements", _StockMovementService_Create10_HTTP_Handler(srv))
+	r.POST("/admin/v1/stock-movements:reverse", _StockMovementService_Reverse0_HTTP_Handler(srv))
+	r.POST("/admin/v1/stock-movements:transfer", _StockMovementService_Transfer0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/stock-movements/{id}", _StockMovementService_Delete9_HTTP_Handler(srv))
 }
 
@@ -606,6 +614,50 @@ func _StockMovementService_Create10_HTTP_Handler(srv StockMovementServiceHTTPSer
 	}
 }
 
+func _StockMovementService_Reverse0_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ReverseStockMovementRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockMovementServiceReverse)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Reverse(ctx, req.(*v11.ReverseStockMovementRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _StockMovementService_Transfer0_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.TransferStockRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockMovementServiceTransfer)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Transfer(ctx, req.(*v11.TransferStockRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _StockMovementService_Delete9_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteStockMovementRequest
@@ -637,6 +689,10 @@ type StockMovementServiceHTTPClient interface {
 	Get(ctx context.Context, req *v11.GetStockMovementRequest, opts ...http.CallOption) (rsp *v11.StockMovement, err error)
 	// List 查询库存流水列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListStockMovementResponse, err error)
+	// Reverse 冲正库存流水
+	Reverse(ctx context.Context, req *v11.ReverseStockMovementRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Transfer 库存调拨
+	Transfer(ctx context.Context, req *v11.TransferStockRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type StockMovementServiceHTTPClientImpl struct {
@@ -697,6 +753,34 @@ func (c *StockMovementServiceHTTPClientImpl) List(ctx context.Context, in *v1.Pa
 	opts = append(opts, http.Operation(OperationStockMovementServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Reverse 冲正库存流水
+func (c *StockMovementServiceHTTPClientImpl) Reverse(ctx context.Context, in *v11.ReverseStockMovementRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/stock-movements:reverse"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationStockMovementServiceReverse))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Transfer 库存调拨
+func (c *StockMovementServiceHTTPClientImpl) Transfer(ctx context.Context, in *v11.TransferStockRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/stock-movements:transfer"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationStockMovementServiceTransfer))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -119,6 +119,22 @@ service StockMovementService {
     };
   }
 
+  // 冲正库存流水
+  rpc Reverse (inventory.service.v1.ReverseStockMovementRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/stock-movements:reverse"
+      body: "*"
+    };
+  }
+
+  // 库存调拨
+  rpc Transfer (inventory.service.v1.TransferStockRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/stock-movements:transfer"
+      body: "*"
+    };
+  }
+
   // 删除库存流水
   rpc Delete (inventory.service.v1.DeleteStockMovementRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {

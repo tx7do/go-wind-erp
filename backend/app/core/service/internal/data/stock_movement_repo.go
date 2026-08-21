@@ -156,6 +156,16 @@ func (r *StockMovementRepo) Create(ctx context.Context, req *inventoryV1.CreateS
 	return r.mapper.ToDTO(t), nil
 }
 
+// HasReversalMarker 是否已存在携带指定冲正标记的流水（冲正幂等检查）。
+func (r *StockMovementRepo) HasReversalMarker(ctx context.Context, warehouseCode, skuCode, marker string) (bool, error) {
+	return r.entClient.Client().StockMovement.Query().
+		Where(stockmovement.WarehouseCodeEQ(warehouseCode)).
+		Where(stockmovement.SkuCodeEQ(skuCode)).
+		Where(stockmovement.RemarkContains(marker)).
+		Exist(ctx)
+}
+
+
 func (r *StockMovementRepo) Delete(ctx context.Context, req *inventoryV1.DeleteStockMovementRequest) error {
 	if req == nil {
 		return inventoryV1.ErrorBadRequest("invalid parameter")

@@ -541,5 +541,16 @@
     "amount": "Amount",
     "method": "Method",
     "status": "Status"
+  },
+  "product": {
+    "moduleName": "Product",
+    "code": "SKU Code",
+    "name": "Product Name",
+    "spec": "Spec",
+    "unit": "Unit",
+    "enable": "Enabled",
+    "button": {
+      "create": "Create Product"
+    }
   }
 }

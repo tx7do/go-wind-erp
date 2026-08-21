@@ -43,6 +43,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
+	"go-wind-erp/app/core/service/internal/data/ent/product"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
@@ -134,6 +135,8 @@ type Client struct {
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
 	// PurchaseOrder is the client for interacting with the PurchaseOrder builders.
 	PurchaseOrder *PurchaseOrderClient
 	// PurchaseOrderItem is the client for interacting with the PurchaseOrderItem builders.
@@ -207,6 +210,7 @@ func (c *Client) init() {
 	c.PermissionPolicy = NewPermissionPolicyClient(c.config)
 	c.PolicyEvaluationLog = NewPolicyEvaluationLogClient(c.config)
 	c.Position = NewPositionClient(c.config)
+	c.Product = NewProductClient(c.config)
 	c.PurchaseOrder = NewPurchaseOrderClient(c.config)
 	c.PurchaseOrderItem = NewPurchaseOrderItemClient(c.config)
 	c.Role = NewRoleClient(c.config)
@@ -346,6 +350,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PermissionPolicy:         NewPermissionPolicyClient(cfg),
 		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
 		Position:                 NewPositionClient(cfg),
+		Product:                  NewProductClient(cfg),
 		PurchaseOrder:            NewPurchaseOrderClient(cfg),
 		PurchaseOrderItem:        NewPurchaseOrderItemClient(cfg),
 		Role:                     NewRoleClient(cfg),
@@ -412,6 +417,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PermissionPolicy:         NewPermissionPolicyClient(cfg),
 		PolicyEvaluationLog:      NewPolicyEvaluationLogClient(cfg),
 		Position:                 NewPositionClient(cfg),
+		Product:                  NewProductClient(cfg),
 		PurchaseOrder:            NewPurchaseOrderClient(cfg),
 		PurchaseOrderItem:        NewPurchaseOrderItemClient(cfg),
 		Role:                     NewRoleClient(cfg),
@@ -463,9 +469,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
 		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata,
-		c.RolePermission, c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
+		c.Position, c.Product, c.PurchaseOrder, c.PurchaseOrderItem, c.Role,
+		c.RoleMetadata, c.RolePermission, c.StockMovement, c.Supplier, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Warehouse,
 	} {
 		n.Use(hooks...)
 	}
@@ -482,9 +489,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
 		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.PurchaseOrder, c.PurchaseOrderItem, c.Role, c.RoleMetadata,
-		c.RolePermission, c.StockMovement, c.Supplier, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
+		c.Position, c.Product, c.PurchaseOrder, c.PurchaseOrderItem, c.Role,
+		c.RoleMetadata, c.RolePermission, c.StockMovement, c.Supplier, c.Task,
+		c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Warehouse,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -557,6 +565,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PolicyEvaluationLog.mutate(ctx, m)
 	case *PositionMutation:
 		return c.Position.mutate(ctx, m)
+	case *ProductMutation:
+		return c.Product.mutate(ctx, m)
 	case *PurchaseOrderMutation:
 		return c.PurchaseOrder.mutate(ctx, m)
 	case *PurchaseOrderItemMutation:
@@ -5039,6 +5049,140 @@ func (c *PositionClient) mutate(ctx context.Context, m *PositionMutation) (Value
 	}
 }
 
+// ProductClient is a client for the Product schema.
+type ProductClient struct {
+	config
+}
+
+// NewProductClient returns a client for the Product from the given config.
+func NewProductClient(c config) *ProductClient {
+	return &ProductClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `product.Hooks(f(g(h())))`.
+func (c *ProductClient) Use(hooks ...Hook) {
+	c.hooks.Product = append(c.hooks.Product, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `product.Intercept(f(g(h())))`.
+func (c *ProductClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Product = append(c.inters.Product, interceptors...)
+}
+
+// Create returns a builder for creating a Product entity.
+func (c *ProductClient) Create() *ProductCreate {
+	mutation := newProductMutation(c.config, OpCreate)
+	return &ProductCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Product entities.
+func (c *ProductClient) CreateBulk(builders ...*ProductCreate) *ProductCreateBulk {
+	return &ProductCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProductClient) MapCreateBulk(slice any, setFunc func(*ProductCreate, int)) *ProductCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProductCreateBulk{err: fmt.Errorf("calling to ProductClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProductCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProductCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Product.
+func (c *ProductClient) Update() *ProductUpdate {
+	mutation := newProductMutation(c.config, OpUpdate)
+	return &ProductUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProductClient) UpdateOne(_m *Product) *ProductUpdateOne {
+	mutation := newProductMutation(c.config, OpUpdateOne, withProduct(_m))
+	return &ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProductClient) UpdateOneID(id uint32) *ProductUpdateOne {
+	mutation := newProductMutation(c.config, OpUpdateOne, withProductID(id))
+	return &ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Product.
+func (c *ProductClient) Delete() *ProductDelete {
+	mutation := newProductMutation(c.config, OpDelete)
+	return &ProductDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProductClient) DeleteOne(_m *Product) *ProductDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProductClient) DeleteOneID(id uint32) *ProductDeleteOne {
+	builder := c.Delete().Where(product.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProductDeleteOne{builder}
+}
+
+// Query returns a query builder for Product.
+func (c *ProductClient) Query() *ProductQuery {
+	return &ProductQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProduct},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Product entity by its id.
+func (c *ProductClient) Get(ctx context.Context, id uint32) (*Product, error) {
+	return c.Query().Where(product.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProductClient) GetX(ctx context.Context, id uint32) *Product {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ProductClient) Hooks() []Hook {
+	hooks := c.hooks.Product
+	return append(hooks[:len(hooks):len(hooks)], product.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProductClient) Interceptors() []Interceptor {
+	return c.inters.Product
+}
+
+func (c *ProductClient) mutate(ctx context.Context, m *ProductMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProductCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProductUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProductDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Product mutation op: %q", m.Op())
+	}
+}
+
 // PurchaseOrderClient is a client for the PurchaseOrder schema.
 type PurchaseOrderClient struct {
 	config
@@ -7057,7 +7201,7 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, PurchaseOrder, PurchaseOrderItem, Role,
+		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem, Role,
 		RoleMetadata, RolePermission, StockMovement, Supplier, Task, Tenant, User,
 		UserCredential, UserOrgUnit, UserPosition, UserRole, Warehouse []ent.Hook
 	}
@@ -7068,7 +7212,7 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, PurchaseOrder, PurchaseOrderItem, Role,
+		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem, Role,
 		RoleMetadata, RolePermission, StockMovement, Supplier, Task, Tenant, User,
 		UserCredential, UserOrgUnit, UserPosition, UserRole,
 		Warehouse []ent.Interceptor

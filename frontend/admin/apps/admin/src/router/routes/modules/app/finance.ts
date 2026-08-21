@@ -14,7 +14,7 @@ const finance: RouteRecordRaw[] = [
       icon: 'lucide:circle-dollar-sign',
       title: $t('menu.finance.moduleName'),
       keepAlive: true,
-      authority: ['sys:platform_admin', 'sys:tenant_manager'],
+      authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
     },
     children: [
       {
@@ -24,7 +24,7 @@ const finance: RouteRecordRaw[] = [
           order: 1,
           icon: 'lucide:notebook-pen',
           title: $t('menu.finance.payable'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
         },
         component: () => import('#/views/app/finance/payable/index.vue'),
       },
@@ -35,7 +35,7 @@ const finance: RouteRecordRaw[] = [
           order: 2,
           icon: 'lucide:download',
           title: $t('menu.finance.payment'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
         },
         component: () => import('#/views/app/finance/payment/index.vue'),
       },

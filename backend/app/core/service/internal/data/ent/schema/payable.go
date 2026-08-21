@@ -57,6 +57,11 @@ func (Payable) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Time("due_date").
+			Comment("账期到期日").
+			Optional().
+			Nillable(),
+
 		field.Enum("status").
 			Comment("应付状态").
 			NamedValues(

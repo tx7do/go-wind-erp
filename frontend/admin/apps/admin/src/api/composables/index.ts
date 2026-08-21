@@ -41,6 +41,8 @@ export * from './permission';
 
 export * from './procurement';
 
+export * from './product';
+
 export * from './permission-audit-log';
 
 export * from './permission-group';

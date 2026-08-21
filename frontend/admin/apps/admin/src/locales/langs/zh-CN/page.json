@@ -570,5 +570,16 @@
     "amount": "金额（元）",
     "method": "付款方式",
     "status": "状态"
+  },
+  "product": {
+    "moduleName": "商品",
+    "code": "SKU编码",
+    "name": "商品名称",
+    "spec": "规格",
+    "unit": "单位",
+    "enable": "启用状态",
+    "button": {
+      "create": "创建商品"
+    }
   }
 }

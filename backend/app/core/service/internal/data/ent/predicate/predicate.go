@@ -102,6 +102,9 @@ type PolicyEvaluationLog func(*sql.Selector)
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
 
+// Product is the predicate function for product builders.
+type Product func(*sql.Selector)
+
 // PurchaseOrder is the predicate function for purchaseorder builders.
 type PurchaseOrder func(*sql.Selector)
 

@@ -879,6 +879,30 @@ func (f PositionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PositionMutation", m)
 }
 
+// The ProductQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ProductQueryRuleFunc func(context.Context, *ent.ProductQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ProductQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ProductQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ProductQuery", q)
+}
+
+// The ProductMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ProductMutationRuleFunc func(context.Context, *ent.ProductMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ProductMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ProductMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProductMutation", m)
+}
+
 // The PurchaseOrderQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PurchaseOrderQueryRuleFunc func(context.Context, *ent.PurchaseOrderQuery) error
@@ -1338,6 +1362,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PositionQuery:
 		return q.Filter(), nil
+	case *ent.ProductQuery:
+		return q.Filter(), nil
 	case *ent.PurchaseOrderQuery:
 		return q.Filter(), nil
 	case *ent.PurchaseOrderItemQuery:
@@ -1438,6 +1464,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PolicyEvaluationLogMutation:
 		return m.Filter(), nil
 	case *ent.PositionMutation:
+		return m.Filter(), nil
+	case *ent.ProductMutation:
 		return m.Filter(), nil
 	case *ent.PurchaseOrderMutation:
 		return m.Filter(), nil

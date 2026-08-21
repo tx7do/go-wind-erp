@@ -392,6 +392,18 @@ func (f PositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PositionMutation", m)
 }
 
+// The ProductFunc type is an adapter to allow the use of ordinary
+// function as Product mutator.
+type ProductFunc func(context.Context, *ent.ProductMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProductFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProductMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProductMutation", m)
+}
+
 // The PurchaseOrderFunc type is an adapter to allow the use of ordinary
 // function as PurchaseOrder mutator.
 type PurchaseOrderFunc func(context.Context, *ent.PurchaseOrderMutation) (ent.Value, error)

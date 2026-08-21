@@ -193,6 +193,7 @@ type Payable struct {
 	Amount        *int64                 `protobuf:"varint,5,opt,name=amount,proto3,oneof" json:"amount,omitempty"`                                        // 应付总额（分）
 	PaidAmount    *int64                 `protobuf:"varint,6,opt,name=paid_amount,json=paidAmount,proto3,oneof" json:"paid_amount,omitempty"`              // 已付金额（分）
 	Status        *Payable_Status        `protobuf:"varint,7,opt,name=status,proto3,enum=finance.service.v1.Payable_Status,oneof" json:"status,omitempty"` // 应付状态
+	DueDate       *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=due_date,json=dueDate,proto3,oneof" json:"due_date,omitempty"`                        // 账期到期日
 	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                        // 备注
 	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                   // 租户ID
 	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`               // 创建者用户ID
@@ -282,6 +283,13 @@ func (x *Payable) GetStatus() Payable_Status {
 		return *x.Status
 	}
 	return Payable_PENDING
+}
+
+func (x *Payable) GetDueDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DueDate
+	}
+	return nil
 }
 
 func (x *Payable) GetRemark() string {
@@ -999,8 +1007,7 @@ var File_finance_service_v1_finance_proto protoreflect.FileDescriptor
 
 const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\n" +
-	" finance/service/v1/finance.proto\x12\x12finance.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xdc\n" +
-	"\n" +
+	" finance/service/v1/finance.proto\x12\x12finance.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xda\v\n" +
 	"\aPayable\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v应付单IDH\x00R\x02id\x88\x01\x01\x12S\n" +
 	"\x0epayable_number\x18\x02 \x01(\tB'\xbaG$\x92\x02!应付单号（服务端生成）H\x01R\rpayableNumber\x88\x01\x01\x12p\n" +
@@ -1009,22 +1016,23 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\x06amount\x18\x05 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15应付总额（分）H\x04R\x06amount\x88\x01\x01\x12P\n" +
 	"\vpaid_amount\x18\x06 \x01(\x03B*\xbaG'\x92\x02$已付金额（分，付款驱动）H\x05R\n" +
 	"paidAmount\x88\x01\x01\x12V\n" +
-	"\x06status\x18\a \x01(\x0e2\".finance.service.v1.Payable.StatusB\x15\xe0A\x01\xbaG\x0f\x92\x02\f应付状态H\x06R\x06status\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\aR\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\bR\btenantId\x88\x01\x01\x12;\n" +
+	"\x06status\x18\a \x01(\x0e2\".finance.service.v1.Payable.StatusB\x15\xe0A\x01\xbaG\x0f\x92\x02\f应付状态H\x06R\x06status\x88\x01\x01\x12o\n" +
+	"\bdue_date\x18\b \x01(\v2\x1a.google.protobuf.TimestampB3\xbaG0\x92\x02-账期到期日（逾期未结清即超期）H\aR\adueDate\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\tR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
+	"R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\n" +
-	"R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\rR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0eR\tdeletedAt\x88\x01\x01\">\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\">\n" +
 	"\x06Status\x12\v\n" +
 	"\aPENDING\x10\x00\x12\v\n" +
 	"\aPARTIAL\x10\x01\x12\v\n" +
@@ -1036,7 +1044,8 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\x0e_supplier_codeB\t\n" +
 	"\a_amountB\x0e\n" +
 	"\f_paid_amountB\t\n" +
-	"\a_statusB\t\n" +
+	"\a_statusB\v\n" +
+	"\t_due_dateB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
@@ -1168,43 +1177,44 @@ var file_finance_service_v1_finance_proto_goTypes = []any{
 }
 var file_finance_service_v1_finance_proto_depIdxs = []int32{
 	0,  // 0: finance.service.v1.Payable.status:type_name -> finance.service.v1.Payable.Status
-	15, // 1: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
-	15, // 2: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
-	15, // 3: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
-	1,  // 4: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
-	2,  // 5: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
-	15, // 6: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 7: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
-	16, // 8: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
-	3,  // 9: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
-	4,  // 10: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
-	16, // 11: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
-	4,  // 12: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
-	17, // 13: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	17, // 14: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
-	6,  // 15: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	7,  // 16: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
-	8,  // 17: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
-	9,  // 18: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
-	17, // 19: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	17, // 20: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
-	12, // 21: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	13, // 22: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	5,  // 23: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	10, // 24: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
-	3,  // 25: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	18, // 26: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	18, // 27: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	18, // 28: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	11, // 29: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	14, // 30: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
-	4,  // 31: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	18, // 32: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	23, // [23:33] is the sub-list for method output_type
-	13, // [13:23] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	15, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
+	15, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
+	15, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
+	1,  // 5: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
+	2,  // 6: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
+	15, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 8: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
+	16, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	3,  // 10: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
+	4,  // 11: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
+	16, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	4,  // 13: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
+	17, // 14: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	17, // 15: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
+	6,  // 16: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	7,  // 17: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
+	8,  // 18: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
+	9,  // 19: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
+	17, // 20: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	17, // 21: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
+	12, // 22: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	13, // 23: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
+	5,  // 24: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	10, // 25: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
+	3,  // 26: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	18, // 27: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	18, // 28: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	18, // 29: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	11, // 30: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	14, // 31: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
+	4,  // 32: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	18, // 33: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	24, // [24:34] is the sub-list for method output_type
+	14, // [14:24] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_finance_service_v1_finance_proto_init() }

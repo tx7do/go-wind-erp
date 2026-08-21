@@ -63,3 +63,12 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 func (s *StockMovementService) Delete(ctx context.Context, req *inventoryV1.DeleteStockMovementRequest) (*emptypb.Empty, error) {
 	return s.stockMovementServiceClient.Delete(ctx, req)
 }
+
+// Transfer/Reverse 冲正与调拨：core 委派。
+func (s *StockMovementService) Transfer(ctx context.Context, req *inventoryV1.TransferStockRequest) (*emptypb.Empty, error) {
+	return s.stockMovementServiceClient.Transfer(ctx, req)
+}
+
+func (s *StockMovementService) Reverse(ctx context.Context, req *inventoryV1.ReverseStockMovementRequest) (*emptypb.Empty, error) {
+	return s.stockMovementServiceClient.Reverse(ctx, req)
+}

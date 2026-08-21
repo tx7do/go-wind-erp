@@ -13,6 +13,7 @@ import (
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	productV1 "go-wind-erp/api/gen/go/product/service/v1"
 	auditV1 "go-wind-erp/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
@@ -51,6 +52,7 @@ func NewGrpcServer(
 	approvalRequestService *service.ApprovalRequestService,
 
 	supplierService *service.SupplierService,
+	productService *service.ProductService,
 	purchaseOrderService *service.PurchaseOrderService,
 
 	payableService *service.PayableService,
@@ -104,6 +106,7 @@ func NewGrpcServer(
 	approvalV1.RegisterApprovalRequestServiceServer(srv, approvalRequestService)
 
 	procurementV1.RegisterSupplierServiceServer(srv, supplierService)
+	productV1.RegisterProductServiceServer(srv, productService)
 	procurementV1.RegisterPurchaseOrderServiceServer(srv, purchaseOrderService)
 
 	financeV1.RegisterPayableServiceServer(srv, payableService)

@@ -58,7 +58,8 @@
     "moduleName": "仓储管理",
     "warehouse": "仓库管理",
     "inventory": "库存管理",
-    "stockMovement": "库存流水"
+    "stockMovement": "库存流水",
+    "product": "商品管理"
   },
   "approval": {
     "moduleName": "审批中心",

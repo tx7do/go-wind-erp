@@ -1350,6 +1350,10 @@ components:
                     type: string
                     description: 应付状态
                     format: enum
+                dueDate:
+                    type: string
+                    description: 账期到期日（逾期未结清即超期）
+                    format: date-time
                 remark:
                     type: string
                     description: 备注

@@ -5,3 +5,10 @@ authenticator:
     access_token_expires: 5400s      # 1.5 小时
     refresh_token_expires: 43200s       # 12 小时
     aes_key: "f51d66a73d8a0927" # AES 加密密钥，必须是 16、24 或 32 字节长，生产环境必须通过环境变量 aes_key 覆盖
+
+  app:
+    method: "HS256"
+    key: "${jwt_signing_key:dev_only_change_me_in_prod}"
+    access_token_expires: 5400s
+    refresh_token_expires: 43200s
+    aes_key: "${aes_key:f51d66a73d8a0927}"

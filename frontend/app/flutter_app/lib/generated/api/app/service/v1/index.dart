@@ -2201,6 +2201,7 @@ class FinanceServiceV1Payable {
   int? createdBy;
   String? deletedAt;
   int? deletedBy;
+  String? dueDate;
   ///
   /// Behaviors: OPTIONAL
   int? id;
@@ -2226,6 +2227,7 @@ class FinanceServiceV1Payable {
     this.createdBy,
     this.deletedAt,
     this.deletedBy,
+    this.dueDate,
     this.id,
     this.paidAmount,
     this.payableNumber,
@@ -2245,6 +2247,7 @@ class FinanceServiceV1Payable {
       createdBy: json['createdBy'] as int?,
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
+      dueDate: json['dueDate'] as String?,
       id: json['id'] as int?,
       paidAmount: json['paidAmount'] != null ? int.parse(json['paidAmount'].toString()) : null,
       payableNumber: json['payableNumber'] as String?,
@@ -2265,6 +2268,7 @@ class FinanceServiceV1Payable {
     if (createdBy != null) json['createdBy'] = createdBy;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (dueDate != null) json['dueDate'] = dueDate;
     if (id != null) json['id'] = id;
     if (paidAmount != null) json['paidAmount'] = paidAmount.toString();
     if (payableNumber != null) json['payableNumber'] = payableNumber;
@@ -2280,7 +2284,7 @@ class FinanceServiceV1Payable {
 
   @override
   String toString() {
-    return 'FinanceServiceV1Payable(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, paidAmount: $paidAmount, payableNumber: $payableNumber, poRef: $poRef, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'FinanceServiceV1Payable(amount: $amount, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, dueDate: $dueDate, id: $id, paidAmount: $paidAmount, payableNumber: $payableNumber, poRef: $poRef, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -2293,6 +2297,7 @@ class FinanceServiceV1Payable {
       && createdBy == other.createdBy
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
+      && dueDate == other.dueDate
       && id == other.id
       && paidAmount == other.paidAmount
       && payableNumber == other.payableNumber
@@ -2312,6 +2317,7 @@ class FinanceServiceV1Payable {
     createdBy,
     deletedAt,
     deletedBy,
+    dueDate,
     id,
     paidAmount,
     payableNumber,
@@ -2330,6 +2336,7 @@ class FinanceServiceV1Payable {
     int? createdBy,
     String? deletedAt,
     int? deletedBy,
+    String? dueDate,
     int? id,
     int? paidAmount,
     String? payableNumber,
@@ -2347,6 +2354,7 @@ class FinanceServiceV1Payable {
       createdBy: createdBy ?? this.createdBy,
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
+      dueDate: dueDate ?? this.dueDate,
       id: id ?? this.id,
       paidAmount: paidAmount ?? this.paidAmount,
       payableNumber: payableNumber ?? this.payableNumber,

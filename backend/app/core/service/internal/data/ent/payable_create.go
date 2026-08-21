@@ -204,6 +204,20 @@ func (_c *PayableCreate) SetNillablePaidAmount(v *int64) *PayableCreate {
 	return _c
 }
 
+// SetDueDate sets the "due_date" field.
+func (_c *PayableCreate) SetDueDate(v time.Time) *PayableCreate {
+	_c.mutation.SetDueDate(v)
+	return _c
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_c *PayableCreate) SetNillableDueDate(v *time.Time) *PayableCreate {
+	if v != nil {
+		_c.SetDueDate(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PayableCreate) SetStatus(v payable.Status) *PayableCreate {
 	_c.mutation.SetStatus(v)
@@ -376,6 +390,10 @@ func (_c *PayableCreate) createSpec() (*Payable, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.PaidAmount(); ok {
 		_spec.SetField(payable.FieldPaidAmount, field.TypeInt64, value)
 		_node.PaidAmount = &value
+	}
+	if value, ok := _c.mutation.DueDate(); ok {
+		_spec.SetField(payable.FieldDueDate, field.TypeTime, value)
+		_node.DueDate = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(payable.FieldStatus, field.TypeEnum, value)
@@ -658,6 +676,24 @@ func (u *PayableUpsert) AddPaidAmount(v int64) *PayableUpsert {
 // ClearPaidAmount clears the value of the "paid_amount" field.
 func (u *PayableUpsert) ClearPaidAmount() *PayableUpsert {
 	u.SetNull(payable.FieldPaidAmount)
+	return u
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *PayableUpsert) SetDueDate(v time.Time) *PayableUpsert {
+	u.Set(payable.FieldDueDate, v)
+	return u
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *PayableUpsert) UpdateDueDate() *PayableUpsert {
+	u.SetExcluded(payable.FieldDueDate)
+	return u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *PayableUpsert) ClearDueDate() *PayableUpsert {
+	u.SetNull(payable.FieldDueDate)
 	return u
 }
 
@@ -996,6 +1032,27 @@ func (u *PayableUpsertOne) UpdatePaidAmount() *PayableUpsertOne {
 func (u *PayableUpsertOne) ClearPaidAmount() *PayableUpsertOne {
 	return u.Update(func(s *PayableUpsert) {
 		s.ClearPaidAmount()
+	})
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *PayableUpsertOne) SetDueDate(v time.Time) *PayableUpsertOne {
+	return u.Update(func(s *PayableUpsert) {
+		s.SetDueDate(v)
+	})
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *PayableUpsertOne) UpdateDueDate() *PayableUpsertOne {
+	return u.Update(func(s *PayableUpsert) {
+		s.UpdateDueDate()
+	})
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *PayableUpsertOne) ClearDueDate() *PayableUpsertOne {
+	return u.Update(func(s *PayableUpsert) {
+		s.ClearDueDate()
 	})
 }
 
@@ -1503,6 +1560,27 @@ func (u *PayableUpsertBulk) UpdatePaidAmount() *PayableUpsertBulk {
 func (u *PayableUpsertBulk) ClearPaidAmount() *PayableUpsertBulk {
 	return u.Update(func(s *PayableUpsert) {
 		s.ClearPaidAmount()
+	})
+}
+
+// SetDueDate sets the "due_date" field.
+func (u *PayableUpsertBulk) SetDueDate(v time.Time) *PayableUpsertBulk {
+	return u.Update(func(s *PayableUpsert) {
+		s.SetDueDate(v)
+	})
+}
+
+// UpdateDueDate sets the "due_date" field to the value that was provided on create.
+func (u *PayableUpsertBulk) UpdateDueDate() *PayableUpsertBulk {
+	return u.Update(func(s *PayableUpsert) {
+		s.UpdateDueDate()
+	})
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (u *PayableUpsertBulk) ClearDueDate() *PayableUpsertBulk {
+	return u.Update(func(s *PayableUpsert) {
+		s.ClearDueDate()
 	})
 }
 

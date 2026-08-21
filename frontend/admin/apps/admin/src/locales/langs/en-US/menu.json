@@ -57,7 +57,8 @@
     "moduleName": "Warehouse Management",
     "warehouse": "Warehouses",
     "inventory": "Inventory",
-    "stockMovement": "Stock Movements"
+    "stockMovement": "Stock Movements",
+    "product": "Products"
   },
   "approval": {
     "moduleName": "Approval Center",

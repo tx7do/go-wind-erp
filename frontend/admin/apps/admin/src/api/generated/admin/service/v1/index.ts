@@ -2786,6 +2786,7 @@ export type financeservicev1_Payable = {
   createdBy?: number;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  dueDate?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL
   id?: number;
@@ -4334,6 +4335,14 @@ export interface StockMovementService {
   Create(
     request: inventoryservicev1_CreateStockMovementRequest,
   ): Promise<wellKnownEmpty>;
+  // 冲正库存流水
+  Reverse(
+    request: inventoryservicev1_ReverseStockMovementRequest,
+  ): Promise<wellKnownEmpty>;
+  // 库存调拨
+  Transfer(
+    request: inventoryservicev1_TransferStockRequest,
+  ): Promise<wellKnownEmpty>;
   // 删除库存流水
   Delete(
     request: inventoryservicev1_DeleteStockMovementRequest,
@@ -4488,6 +4497,22 @@ export function createStockMovementServiceClient(
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
+    Reverse(request) {
+      const path = `admin/v1/stock-movements:reverse`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'StockMovementService',
+        method: 'Reverse',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Transfer(request) {
+      const path = `admin/v1/stock-movements:transfer`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'StockMovementService',
+        method: 'Transfer',
+      }) as Promise<wellKnownEmpty>;
+    },
     Delete(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -4552,6 +4577,21 @@ export type inventoryservicev1_GetStockMovementRequest = {
 // 创建库存流水 - 请求
 export type inventoryservicev1_CreateStockMovementRequest = {
   data: inventoryservicev1_StockMovement | undefined;
+};
+
+// 冲正库存流水 - 请求
+export type inventoryservicev1_ReverseStockMovementRequest = {
+  id: number | undefined;
+  reason?: string;
+};
+
+// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
+export type inventoryservicev1_TransferStockRequest = {
+  fromWarehouseCode: string | undefined;
+  quantity: number | undefined;
+  remark?: string;
+  skuCode: string | undefined;
+  toWarehouseCode: string | undefined;
 };
 
 // 删除库存流水 - 请求
@@ -7885,6 +7925,250 @@ export type procurementservicev1_CompletePurchaseOrderRequest = {
   id: number | undefined;
 };
 
+// 商品（SKU）主数据管理服务
+export interface ProductService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<productservicev1_ListProductResponse>;
+  Get(
+    request: productservicev1_GetProductRequest,
+  ): Promise<productservicev1_Product>;
+  Create(
+    request: productservicev1_CreateProductRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: productservicev1_UpdateProductRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: productservicev1_DeleteProductRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createProductServiceClient(
+  transport: ClientTransport,
+): ProductService {
+  return {
+    List(request) {
+      const path = `admin/v1/products`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ProductService',
+        method: 'List',
+      }) as Promise<productservicev1_ListProductResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/products/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ProductService',
+        method: 'Get',
+      }) as Promise<productservicev1_Product>;
+    },
+    Create(request) {
+      const path = `admin/v1/products`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ProductService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/products/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ProductService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/products/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ProductService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type productservicev1_ListProductResponse = {
+  items: productservicev1_Product[] | undefined;
+  total: number | undefined;
+};
+
+// 商品（SKU）
+export type productservicev1_Product = {
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  enable?: boolean;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  spec?: string;
+  tenantId?: number;
+  //
+  // Behaviors: OPTIONAL
+  unit?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+export type productservicev1_GetProductRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type productservicev1_CreateProductRequest = {
+  data: productservicev1_Product | undefined;
+};
+
+export type productservicev1_UpdateProductRequest = {
+  allowMissing?: boolean;
+  data: productservicev1_Product | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type productservicev1_DeleteProductRequest = {
+  id?: number;
+};
+
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -9460,6 +9744,7 @@ export class ApiClient {
   private _permissionService?: PermissionService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
+  private _productService?: ProductService;
   private _purchaseOrderService?: PurchaseOrderService;
   private _roleService?: RoleService;
   private _stockMovementService?: StockMovementService;
@@ -9581,6 +9866,10 @@ export class ApiClient {
 
   get positionService(): PositionService {
     return this._positionService ??= createPositionServiceClient(this._transport);
+  }
+
+  get productService(): ProductService {
+    return this._productService ??= createProductServiceClient(this._transport);
   }
 
   get purchaseOrderService(): PurchaseOrderService {

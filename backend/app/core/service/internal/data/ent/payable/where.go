@@ -119,6 +119,11 @@ func PaidAmount(v int64) predicate.Payable {
 	return predicate.Payable(sql.FieldEQ(FieldPaidAmount, v))
 }
 
+// DueDate applies equality check predicate on the "due_date" field. It's identical to DueDateEQ.
+func DueDate(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldEQ(FieldDueDate, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Payable {
 	return predicate.Payable(sql.FieldEQ(FieldCreatedAt, v))
@@ -867,6 +872,56 @@ func PaidAmountIsNil() predicate.Payable {
 // PaidAmountNotNil applies the NotNil predicate on the "paid_amount" field.
 func PaidAmountNotNil() predicate.Payable {
 	return predicate.Payable(sql.FieldNotNull(FieldPaidAmount))
+}
+
+// DueDateEQ applies the EQ predicate on the "due_date" field.
+func DueDateEQ(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldEQ(FieldDueDate, v))
+}
+
+// DueDateNEQ applies the NEQ predicate on the "due_date" field.
+func DueDateNEQ(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldNEQ(FieldDueDate, v))
+}
+
+// DueDateIn applies the In predicate on the "due_date" field.
+func DueDateIn(vs ...time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldIn(FieldDueDate, vs...))
+}
+
+// DueDateNotIn applies the NotIn predicate on the "due_date" field.
+func DueDateNotIn(vs ...time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldNotIn(FieldDueDate, vs...))
+}
+
+// DueDateGT applies the GT predicate on the "due_date" field.
+func DueDateGT(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldGT(FieldDueDate, v))
+}
+
+// DueDateGTE applies the GTE predicate on the "due_date" field.
+func DueDateGTE(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldGTE(FieldDueDate, v))
+}
+
+// DueDateLT applies the LT predicate on the "due_date" field.
+func DueDateLT(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldLT(FieldDueDate, v))
+}
+
+// DueDateLTE applies the LTE predicate on the "due_date" field.
+func DueDateLTE(v time.Time) predicate.Payable {
+	return predicate.Payable(sql.FieldLTE(FieldDueDate, v))
+}
+
+// DueDateIsNil applies the IsNil predicate on the "due_date" field.
+func DueDateIsNil() predicate.Payable {
+	return predicate.Payable(sql.FieldIsNull(FieldDueDate))
+}
+
+// DueDateNotNil applies the NotNil predicate on the "due_date" field.
+func DueDateNotNil() predicate.Payable {
+	return predicate.Payable(sql.FieldNotNull(FieldDueDate))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -150,6 +151,7 @@ func (r *PayableRepo) Create(ctx context.Context, req *financeV1.CreatePayableRe
 		SetNillablePoRef(req.Data.PoRef).
 		SetNillableSupplierCode(req.Data.SupplierCode).
 		SetNillableAmount(req.Data.Amount).
+		SetNillableDueDate(protoTime(req.Data.DueDate)).
 		SetPaidAmount(0).
 		SetStatus(payable.StatusPending).
 		SetNillableRemark(req.Data.Remark).
@@ -274,4 +276,14 @@ func (r *PayableRepo) ApplyPayment(ctx context.Context, payableID uint32, amount
 	return r.Get(ctx, &financeV1.GetPayableRequest{
 		QueryBy: &financeV1.GetPayableRequest_Id{Id: payableID},
 	})
+}
+
+
+// protoTime *timestamppb.Timestamp → *time.Time（nil 安全）。
+func protoTime(t *timestamppb.Timestamp) *time.Time {
+	if t == nil {
+		return nil
+	}
+	tt := t.AsTime()
+	return &tt
 }

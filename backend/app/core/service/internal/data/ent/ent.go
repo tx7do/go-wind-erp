@@ -38,6 +38,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
+	"go-wind-erp/app/core/service/internal/data/ent/product"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
@@ -151,6 +152,7 @@ func checkColumn(t, c string) error {
 			permissionpolicy.Table:         permissionpolicy.ValidColumn,
 			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
 			position.Table:                 position.ValidColumn,
+			product.Table:                  product.ValidColumn,
 			purchaseorder.Table:            purchaseorder.ValidColumn,
 			purchaseorderitem.Table:        purchaseorderitem.ValidColumn,
 			role.Table:                     role.ValidColumn,

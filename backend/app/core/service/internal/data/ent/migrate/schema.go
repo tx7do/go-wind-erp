@@ -1650,6 +1650,7 @@ var (
 		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "应付总额（分）", Default: 0},
 		{Name: "paid_amount", Type: field.TypeInt64, Nullable: true, Comment: "已付金额（分，付款驱动）", Default: 0},
+		{Name: "due_date", Type: field.TypeTime, Nullable: true, Comment: "账期到期日"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "应付状态", Enums: []string{"PENDING", "PARTIAL", "SETTLED", "CANCELLED"}, Default: "PENDING"},
 	}
 	// FinPayablesTable holds the schema information for the "fin_payables" table.
@@ -1667,7 +1668,7 @@ var (
 			{
 				Name:    "idx_fin_payable_tenant_status_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[14], FinPayablesColumns[1]},
+				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[15], FinPayablesColumns[1]},
 			},
 			{
 				Name:    "idx_fin_payable_tenant_supplier",
@@ -2186,6 +2187,37 @@ var (
 				Name:    "idx_sys_positions_tenant_id",
 				Unique:  false,
 				Columns: []*schema.Column{SysPositionsColumns[9]},
+			},
+		},
+	}
+	// PrdProductsColumns holds the columns for the "prd_products" table.
+	PrdProductsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "商品名称"},
+		{Name: "spec", Type: field.TypeString, Nullable: true, Comment: "规格"},
+		{Name: "unit", Type: field.TypeString, Nullable: true, Comment: "单位"},
+		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用", Default: true},
+	}
+	// PrdProductsTable holds the schema information for the "prd_products" table.
+	PrdProductsTable = &schema.Table{
+		Name:       "prd_products",
+		Comment:    "商品（SKU）主数据表",
+		Columns:    PrdProductsColumns,
+		PrimaryKey: []*schema.Column{PrdProductsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_prd_product_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{PrdProductsColumns[8], PrdProductsColumns[9]},
 			},
 		},
 	}
@@ -3146,6 +3178,7 @@ var (
 		SysPermissionPoliciesTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
+		PrdProductsTable,
 		PurPurchaseOrdersTable,
 		PurPurchaseOrderItemsTable,
 		SysRolesTable,
@@ -3327,6 +3360,11 @@ func init() {
 	}
 	SysPositionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_positions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PrdProductsTable.Annotation = &entsql.Annotation{
+		Table:     "prd_products",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -76,6 +76,8 @@ type Tx struct {
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
 	// PurchaseOrder is the client for interacting with the PurchaseOrder builders.
 	PurchaseOrder *PurchaseOrderClient
 	// PurchaseOrderItem is the client for interacting with the PurchaseOrderItem builders.
@@ -269,6 +271,7 @@ func (tx *Tx) init() {
 	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
+	tx.Product = NewProductClient(tx.config)
 	tx.PurchaseOrder = NewPurchaseOrderClient(tx.config)
 	tx.PurchaseOrderItem = NewPurchaseOrderItemClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)

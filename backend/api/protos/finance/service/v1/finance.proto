@@ -107,6 +107,11 @@ message Payable {
     }
   ]; // 应付状态
 
+  optional google.protobuf.Timestamp due_date = 8 [
+    json_name = "dueDate",
+    (gnostic.openapi.v3.property) = {description: "账期到期日（逾期未结清即超期）"}
+  ]; // 账期到期日
+
   optional string remark = 11 [
     json_name = "remark",
     (gnostic.openapi.v3.property) = {description: "备注"}

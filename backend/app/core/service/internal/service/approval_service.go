@@ -46,6 +46,9 @@ type ApprovalRequestService struct {
 
 	// 付款联动：biz_type=payment 的审批通过/拒绝时驱动付款入账。
 	paymentService *PaymentService
+
+	// 审结站内信通知（申请人）。
+	notifier *approvalNotifier
 }
 
 func NewApprovalRequestService(
@@ -53,12 +56,20 @@ func NewApprovalRequestService(
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	purchaseOrderService *PurchaseOrderService,
 	paymentService *PaymentService,
+	messageRepo *data.InternalMessageRepo,
+	recipientRepo *data.InternalMessageRecipientRepo,
 ) *ApprovalRequestService {
+	l := ctx.NewLoggerHelper("approval_request/service/core-service")
 	svc := &ApprovalRequestService{
-		log:                  ctx.NewLoggerHelper("approval_request/service/core-service"),
+		log:                  l,
 		approvalRequestRepo:  approvalRequestRepo,
 		purchaseOrderService: purchaseOrderService,
 		paymentService:       paymentService,
+		notifier: &approvalNotifier{
+			messageRepo:   messageRepo,
+			recipientRepo: recipientRepo,
+			log:           l,
+		},
 	}
 
 	return svc
@@ -164,9 +175,14 @@ func (s *ApprovalRequestService) transition(
 		return nil, err
 	}
 
-	// 业务联动：审批结果按 biz_type 分发回写（采购单/付款）。回写失败
-	// 不回滚审批（审批已是事实），仅记录，业务侧可经管理端动作对齐。
+	// 业务联动：审批结果按 biz_type 分发回写（采购单/付款/补货）。回写
+	// 失败不回滚审批（审批已是事实），仅记录，业务侧可经管理端动作对齐。
 	s.syncBusiness(ctx, old, to)
+
+	// 审结通知申请人（尽力而为）。
+	if nerr := s.notifier.notifyResolved(ctx, old, to == approvalV1.ApprovalRequest_APPROVED); nerr != nil {
+		s.log.Errorf("notify approval resolved failed: %s", nerr.Error())
+	}
 
 	return &emptypb.Empty{}, nil
 }

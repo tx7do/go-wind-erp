@@ -14,7 +14,7 @@ const approval: RouteRecordRaw[] = [
       icon: 'lucide:clipboard-check',
       title: $t('menu.approval.moduleName'),
       keepAlive: true,
-      authority: ['sys:platform_admin', 'sys:tenant_manager'],
+      authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:approver'],
     },
     children: [
       {
@@ -24,7 +24,7 @@ const approval: RouteRecordRaw[] = [
           order: 1,
           icon: 'lucide:clipboard-check',
           title: $t('menu.approval.request'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:approver'],
         },
         component: () => import('#/views/app/approval/index.vue'),
       },

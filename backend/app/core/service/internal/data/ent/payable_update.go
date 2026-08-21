@@ -284,6 +284,26 @@ func (_u *PayableUpdate) ClearPaidAmount() *PayableUpdate {
 	return _u
 }
 
+// SetDueDate sets the "due_date" field.
+func (_u *PayableUpdate) SetDueDate(v time.Time) *PayableUpdate {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *PayableUpdate) SetNillableDueDate(v *time.Time) *PayableUpdate {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (_u *PayableUpdate) ClearDueDate() *PayableUpdate {
+	_u.mutation.ClearDueDate()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PayableUpdate) SetStatus(v payable.Status) *PayableUpdate {
 	_u.mutation.SetStatus(v)
@@ -450,6 +470,12 @@ func (_u *PayableUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.PaidAmountCleared() {
 		_spec.ClearField(payable.FieldPaidAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(payable.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.DueDateCleared() {
+		_spec.ClearField(payable.FieldDueDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(payable.FieldStatus, field.TypeEnum, value)
@@ -734,6 +760,26 @@ func (_u *PayableUpdateOne) ClearPaidAmount() *PayableUpdateOne {
 	return _u
 }
 
+// SetDueDate sets the "due_date" field.
+func (_u *PayableUpdateOne) SetDueDate(v time.Time) *PayableUpdateOne {
+	_u.mutation.SetDueDate(v)
+	return _u
+}
+
+// SetNillableDueDate sets the "due_date" field if the given value is not nil.
+func (_u *PayableUpdateOne) SetNillableDueDate(v *time.Time) *PayableUpdateOne {
+	if v != nil {
+		_u.SetDueDate(*v)
+	}
+	return _u
+}
+
+// ClearDueDate clears the value of the "due_date" field.
+func (_u *PayableUpdateOne) ClearDueDate() *PayableUpdateOne {
+	_u.mutation.ClearDueDate()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PayableUpdateOne) SetStatus(v payable.Status) *PayableUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -930,6 +976,12 @@ func (_u *PayableUpdateOne) sqlSave(ctx context.Context) (_node *Payable, err er
 	}
 	if _u.mutation.PaidAmountCleared() {
 		_spec.ClearField(payable.FieldPaidAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.DueDate(); ok {
+		_spec.SetField(payable.FieldDueDate, field.TypeTime, value)
+	}
+	if _u.mutation.DueDateCleared() {
+		_spec.ClearField(payable.FieldDueDate, field.TypeTime)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(payable.FieldStatus, field.TypeEnum, value)

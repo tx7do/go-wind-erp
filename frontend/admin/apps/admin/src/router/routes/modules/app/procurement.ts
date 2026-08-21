@@ -14,7 +14,7 @@ const procurement: RouteRecordRaw[] = [
       icon: 'lucide:truck',
       title: $t('menu.procurement.moduleName'),
       keepAlive: true,
-      authority: ['sys:platform_admin', 'sys:tenant_manager'],
+      authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:purchaser'],
     },
     children: [
       {
@@ -24,7 +24,7 @@ const procurement: RouteRecordRaw[] = [
           order: 1,
           icon: 'lucide:notebook-pen',
           title: $t('menu.procurement.purchaseOrder'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:purchaser'],
         },
         component: () => import('#/views/app/procurement/purchase_order/index.vue'),
       },
@@ -35,7 +35,7 @@ const procurement: RouteRecordRaw[] = [
           order: 2,
           icon: 'lucide:building',
           title: $t('menu.procurement.supplier'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:purchaser'],
         },
         component: () => import('#/views/app/procurement/supplier/index.vue'),
       },

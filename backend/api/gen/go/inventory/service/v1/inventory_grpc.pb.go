@@ -677,11 +677,13 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	StockMovementService_List_FullMethodName   = "/inventory.service.v1.StockMovementService/List"
-	StockMovementService_Count_FullMethodName  = "/inventory.service.v1.StockMovementService/Count"
-	StockMovementService_Get_FullMethodName    = "/inventory.service.v1.StockMovementService/Get"
-	StockMovementService_Create_FullMethodName = "/inventory.service.v1.StockMovementService/Create"
-	StockMovementService_Delete_FullMethodName = "/inventory.service.v1.StockMovementService/Delete"
+	StockMovementService_List_FullMethodName     = "/inventory.service.v1.StockMovementService/List"
+	StockMovementService_Count_FullMethodName    = "/inventory.service.v1.StockMovementService/Count"
+	StockMovementService_Get_FullMethodName      = "/inventory.service.v1.StockMovementService/Get"
+	StockMovementService_Create_FullMethodName   = "/inventory.service.v1.StockMovementService/Create"
+	StockMovementService_Reverse_FullMethodName  = "/inventory.service.v1.StockMovementService/Reverse"
+	StockMovementService_Transfer_FullMethodName = "/inventory.service.v1.StockMovementService/Transfer"
+	StockMovementService_Delete_FullMethodName   = "/inventory.service.v1.StockMovementService/Delete"
 )
 
 // StockMovementServiceClient is the client API for StockMovementService service.
@@ -698,6 +700,10 @@ type StockMovementServiceClient interface {
 	Get(ctx context.Context, in *GetStockMovementRequest, opts ...grpc.CallOption) (*StockMovement, error)
 	// 创建库存流水
 	Create(ctx context.Context, in *CreateStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 冲正库存流水（对指定流水记一笔等量反向流水，台账 append-only 约定）
+	Reverse(ctx context.Context, in *ReverseStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 库存调拨（源仓出、目的仓入；失败自动冲正源仓出库——SAGA 补偿语义）
+	Transfer(ctx context.Context, in *TransferStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除库存流水
 	Delete(ctx context.Context, in *DeleteStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -750,6 +756,26 @@ func (c *stockMovementServiceClient) Create(ctx context.Context, in *CreateStock
 	return out, nil
 }
 
+func (c *stockMovementServiceClient) Reverse(ctx context.Context, in *ReverseStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockMovementService_Reverse_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockMovementServiceClient) Transfer(ctx context.Context, in *TransferStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockMovementService_Transfer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *stockMovementServiceClient) Delete(ctx context.Context, in *DeleteStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -774,6 +800,10 @@ type StockMovementServiceServer interface {
 	Get(context.Context, *GetStockMovementRequest) (*StockMovement, error)
 	// 创建库存流水
 	Create(context.Context, *CreateStockMovementRequest) (*emptypb.Empty, error)
+	// 冲正库存流水（对指定流水记一笔等量反向流水，台账 append-only 约定）
+	Reverse(context.Context, *ReverseStockMovementRequest) (*emptypb.Empty, error)
+	// 库存调拨（源仓出、目的仓入；失败自动冲正源仓出库——SAGA 补偿语义）
+	Transfer(context.Context, *TransferStockRequest) (*emptypb.Empty, error)
 	// 删除库存流水
 	Delete(context.Context, *DeleteStockMovementRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedStockMovementServiceServer()
@@ -797,6 +827,12 @@ func (UnimplementedStockMovementServiceServer) Get(context.Context, *GetStockMov
 }
 func (UnimplementedStockMovementServiceServer) Create(context.Context, *CreateStockMovementRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedStockMovementServiceServer) Reverse(context.Context, *ReverseStockMovementRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Reverse not implemented")
+}
+func (UnimplementedStockMovementServiceServer) Transfer(context.Context, *TransferStockRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Transfer not implemented")
 }
 func (UnimplementedStockMovementServiceServer) Delete(context.Context, *DeleteStockMovementRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -894,6 +930,42 @@ func _StockMovementService_Create_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StockMovementService_Reverse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReverseStockMovementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockMovementServiceServer).Reverse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockMovementService_Reverse_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockMovementServiceServer).Reverse(ctx, req.(*ReverseStockMovementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockMovementService_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockMovementServiceServer).Transfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockMovementService_Transfer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockMovementServiceServer).Transfer(ctx, req.(*TransferStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _StockMovementService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteStockMovementRequest)
 	if err := dec(in); err != nil {
@@ -934,6 +1006,14 @@ var StockMovementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _StockMovementService_Create_Handler,
+		},
+		{
+			MethodName: "Reverse",
+			Handler:    _StockMovementService_Reverse_Handler,
+		},
+		{
+			MethodName: "Transfer",
+			Handler:    _StockMovementService_Transfer_Handler,
 		},
 		{
 			MethodName: "Delete",

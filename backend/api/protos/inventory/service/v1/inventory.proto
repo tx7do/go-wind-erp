@@ -72,6 +72,12 @@ service StockMovementService {
   // 创建库存流水
   rpc Create (CreateStockMovementRequest) returns (google.protobuf.Empty) {}
 
+  // 冲正库存流水（对指定流水记一笔等量反向流水，台账 append-only 约定）
+  rpc Reverse (ReverseStockMovementRequest) returns (google.protobuf.Empty) {}
+
+  // 库存调拨（源仓出、目的仓入；失败自动冲正源仓出库——SAGA 补偿语义）
+  rpc Transfer (TransferStockRequest) returns (google.protobuf.Empty) {}
+
   // 删除库存流水
   rpc Delete (DeleteStockMovementRequest) returns (google.protobuf.Empty) {}
 }
@@ -498,4 +504,45 @@ message DeleteStockMovementRequest {
 
 message CountStockMovementResponse {
   uint64 count = 1;
+}
+
+// 冲正库存流水 - 请求
+message ReverseStockMovementRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "被冲正的流水ID", read_only: true},
+    json_name = "id"
+  ]; // 被冲正的流水ID
+
+  optional string reason = 2 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {description: "冲正原因"}
+  ]; // 冲正原因
+}
+
+// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
+message TransferStockRequest {
+  string from_warehouse_code = 1 [
+    json_name = "fromWarehouseCode",
+    (gnostic.openapi.v3.property) = {description: "源仓库编码"}
+  ]; // 源仓库编码
+
+  string to_warehouse_code = 2 [
+    json_name = "toWarehouseCode",
+    (gnostic.openapi.v3.property) = {description: "目的仓库编码"}
+  ]; // 目的仓库编码
+
+  string sku_code = 3 [
+    json_name = "skuCode",
+    (gnostic.openapi.v3.property) = {description: "SKU编码"}
+  ]; // SKU编码
+
+  int64 quantity = 4 [
+    json_name = "quantity",
+    (gnostic.openapi.v3.property) = {description: "调拨数量（正数）"}
+  ]; // 调拨数量
+
+  optional string remark = 5 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
 }

@@ -14,7 +14,7 @@ const warehouse: RouteRecordRaw[] = [
       icon: 'lucide:warehouse',
       title: $t('menu.wms.moduleName'),
       keepAlive: true,
-      authority: ['sys:platform_admin', 'sys:tenant_manager'],
+      authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
     },
     children: [
       {
@@ -24,7 +24,7 @@ const warehouse: RouteRecordRaw[] = [
           order: 1,
           icon: 'lucide:warehouse',
           title: $t('menu.wms.warehouse'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
         },
         component: () => import('#/views/app/wms/warehouse/index.vue'),
       },
@@ -36,9 +36,21 @@ const warehouse: RouteRecordRaw[] = [
           order: 2,
           icon: 'lucide:package',
           title: $t('menu.wms.inventory'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
         },
         component: () => import('#/views/app/wms/inventory/index.vue'),
+      },
+
+      {
+        path: 'products',
+        name: 'ProductManagement',
+        meta: {
+          order: 0,
+          icon: 'lucide:package',
+          title: $t('menu.wms.product'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
+        },
+        component: () => import('#/views/app/wms/product/index.vue'),
       },
 
       {
@@ -48,7 +60,7 @@ const warehouse: RouteRecordRaw[] = [
           order: 3,
           icon: 'lucide:arrow-right-left',
           title: $t('menu.wms.stockMovement'),
-          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
         },
         component: () => import('#/views/app/wms/stock_movement/index.vue'),
       },

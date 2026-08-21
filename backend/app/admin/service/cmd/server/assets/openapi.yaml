@@ -3837,6 +3837,157 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/products:
+        get:
+            tags:
+                - ProductService
+            operationId: ProductService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/product.service.v1.ListProductResponse'
+        post:
+            tags:
+                - ProductService
+            operationId: ProductService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/product.service.v1.CreateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/products/{id}:
+        get:
+            tags:
+                - ProductService
+            operationId: ProductService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/product.service.v1.Product'
+        put:
+            tags:
+                - ProductService
+            operationId: ProductService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/product.service.v1.UpdateProductRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ProductService
+            operationId: ProductService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/purchase-orders:
         get:
             tags:
@@ -4408,6 +4559,38 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/stock-movements:reverse:
+        post:
+            tags:
+                - StockMovementService
+            description: 冲正库存流水
+            operationId: StockMovementService_Reverse
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.ReverseStockMovementRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/stock-movements:transfer:
+        post:
+            tags:
+                - StockMovementService
+            description: 库存调拨
+            operationId: StockMovementService_Transfer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.TransferStockRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -6847,6 +7030,10 @@ components:
                     type: string
                     description: 应付状态
                     format: enum
+                dueDate:
+                    type: string
+                    description: 账期到期日（逾期未结清即超期）
+                    format: date-time
                 remark:
                     type: string
                     description: 备注
@@ -8230,6 +8417,18 @@ components:
                 total:
                     type: string
             description: 查询仓库列表 - 回应
+        inventory.service.v1.ReverseStockMovementRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: 被冲正的流水ID
+                    format: uint32
+                reason:
+                    type: string
+                    description: 冲正原因
+            description: 冲正库存流水 - 请求
         inventory.service.v1.StockMovement:
             type: object
             properties:
@@ -8289,6 +8488,25 @@ components:
                     description: 删除时间
                     format: date-time
             description: 库存流水
+        inventory.service.v1.TransferStockRequest:
+            type: object
+            properties:
+                fromWarehouseCode:
+                    type: string
+                    description: 源仓库编码
+                toWarehouseCode:
+                    type: string
+                    description: 目的仓库编码
+                skuCode:
+                    type: string
+                    description: SKU编码
+                quantity:
+                    type: string
+                    description: 调拨数量（正数）
+                remark:
+                    type: string
+                    description: 备注
+            description: 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
         inventory.service.v1.UpdateInventoryRequest:
             type: object
             properties:
@@ -9307,6 +9525,89 @@ components:
                 allowMissing:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+        product.service.v1.CreateProductRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/product.service.v1.Product'
+        product.service.v1.ListProductResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/product.service.v1.Product'
+                total:
+                    type: string
+        product.service.v1.Product:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 商品ID
+                    format: uint32
+                code:
+                    type: string
+                    description: SKU编码，租户范围内唯一
+                name:
+                    type: string
+                    description: 商品名称
+                spec:
+                    type: string
+                    description: 规格
+                unit:
+                    type: string
+                    description: 单位
+                enable:
+                    type: boolean
+                    description: 启用/禁用
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 商品（SKU）
+        product.service.v1.UpdateProductRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/product.service.v1.Product'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 资源不存在则新增
         storage.service.v1.CreateFileRequest:
             type: object
             properties:
@@ -9760,6 +10061,8 @@ tags:
       description: 策略评估日志服务
     - name: PositionService
       description: 职位管理服务
+    - name: ProductService
+      description: 商品（SKU）主数据管理服务
     - name: PurchaseOrderService
       description: 采购单管理服务
     - name: RoleService

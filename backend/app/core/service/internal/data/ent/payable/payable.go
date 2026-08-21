@@ -40,6 +40,8 @@ const (
 	FieldAmount = "amount"
 	// FieldPaidAmount holds the string denoting the paid_amount field in the database.
 	FieldPaidAmount = "paid_amount"
+	// FieldDueDate holds the string denoting the due_date field in the database.
+	FieldDueDate = "due_date"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// Table holds the table name of the payable in the database.
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldSupplierCode,
 	FieldAmount,
 	FieldPaidAmount,
+	FieldDueDate,
 	FieldStatus,
 }
 
@@ -192,6 +195,11 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByPaidAmount orders the results by the paid_amount field.
 func ByPaidAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPaidAmount, opts...).ToFunc()
+}
+
+// ByDueDate orders the results by the due_date field.
+func ByDueDate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDueDate, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
