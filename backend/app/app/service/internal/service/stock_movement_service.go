@@ -60,3 +60,22 @@ func (s *StockMovementService) Create(ctx context.Context, req *inventoryV1.Crea
 	_, err = s.stockMovementServiceClient.Create(ctx, req)
 	return &emptypb.Empty{}, err
 }
+
+// Reverse 冲正流水：等量反向台账，幂等防重复冲正（守卫在核心服务）。
+func (s *StockMovementService) Reverse(ctx context.Context, req *inventoryV1.ReverseStockMovementRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, appV1.ErrorBadRequest("invalid parameter")
+	}
+	_, err := s.stockMovementServiceClient.Reverse(ctx, req)
+	return &emptypb.Empty{}, err
+}
+
+// Transfer 库存调拨：源仓出、目的仓入，核心服务内单事务原子执行。
+func (s *StockMovementService) Transfer(ctx context.Context, req *inventoryV1.TransferStockRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetFromWarehouseCode() == "" ||
+		req.GetToWarehouseCode() == "" || req.GetSkuCode() == "" || req.GetQuantity() <= 0 {
+		return nil, appV1.ErrorBadRequest("invalid parameter")
+	}
+	_, err := s.stockMovementServiceClient.Transfer(ctx, req)
+	return &emptypb.Empty{}, err
+}

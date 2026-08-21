@@ -314,6 +314,71 @@ class S {
     return Intl.message('提交失败', name: 'submitFailed', desc: '', args: []);
   }
 
+  /// `调拨`
+  String get transferAction {
+    return Intl.message('调拨', name: 'transferAction', desc: '', args: []);
+  }
+
+  /// `目的仓库`
+  String get transferToWarehouse {
+    return Intl.message(
+      '目的仓库',
+      name: 'transferToWarehouse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `调拨成功`
+  String get transferSuccess {
+    return Intl.message('调拨成功', name: 'transferSuccess', desc: '', args: []);
+  }
+
+  /// `调拨失败`
+  String get transferFailed {
+    return Intl.message('调拨失败', name: 'transferFailed', desc: '', args: []);
+  }
+
+  /// `冲正`
+  String get reverseAction {
+    return Intl.message('冲正', name: 'reverseAction', desc: '', args: []);
+  }
+
+  /// `冲正原因`
+  String get reverseReason {
+    return Intl.message('冲正原因', name: 'reverseReason', desc: '', args: []);
+  }
+
+  /// `请填写冲正原因`
+  String get reverseReasonRequired {
+    return Intl.message(
+      '请填写冲正原因',
+      name: 'reverseReasonRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `冲正成功`
+  String get reverseSuccess {
+    return Intl.message('冲正成功', name: 'reverseSuccess', desc: '', args: []);
+  }
+
+  /// `冲正失败`
+  String get reverseFailed {
+    return Intl.message('冲正失败', name: 'reverseFailed', desc: '', args: []);
+  }
+
+  /// `源仓库与目的仓库不能相同`
+  String get sameWarehouse {
+    return Intl.message(
+      '源仓库与目的仓库不能相同',
+      name: 'sameWarehouse',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `出库数量不能超过当前库存`
   String get negativeStock {
     return Intl.message(

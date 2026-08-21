@@ -144,6 +144,71 @@ class WmsCubit extends Cubit<WmsState> {
     }
   }
 
+  /// 库存调拨：源仓=当前选中仓库，SKU=当前查询上下文。
+  /// 客户端守卫：目的仓须不同于源仓、数量须为正且不超当前库存
+  /// （后端单事务原子执行，仍有防负库存守卫）。
+  Future<void> transferStock({
+    required String toWarehouseCode,
+    required int quantity,
+    String? remark,
+  }) async {
+    final s = state;
+    if (s is! WmsReady) return;
+    final from = s.selectedWarehouseCode;
+    final inv = s.inventory;
+    if (from == null || inv == null) return;
+
+    if (toWarehouseCode == from) {
+      emit(s.copyWith(message: 'sameWarehouse'));
+      return;
+    }
+    if (quantity <= 0 || quantity > inv.quantity) {
+      emit(s.copyWith(message: 'negativeStock'));
+      return;
+    }
+
+    emit(s.copyWith(submitting: true, message: null));
+    try {
+      await _repository.transferStock(
+        fromWarehouseCode: from,
+        toWarehouseCode: toWarehouseCode,
+        skuCode: inv.skuCode,
+        quantity: quantity,
+        remark: remark,
+      );
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'transferSuccess'));
+      await lookupInventory(inv.skuCode);
+    } on WmsFailure {
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'transferFailed'));
+    }
+  }
+
+  /// 冲正流水：等量反向台账，成功后刷新库存与流水。
+  Future<void> reverseMovement(int movementId, String reason) async {
+    final s = state;
+    if (s is! WmsReady) return;
+
+    emit(s.copyWith(submitting: true, message: null));
+    try {
+      await _repository.reverseMovement(movementId, reason);
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'reverseSuccess'));
+      final sku = cur.currentSku;
+      if (sku.isNotEmpty) {
+        await lookupInventory(sku);
+      }
+    } on WmsFailure {
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'reverseFailed'));
+    }
+  }
+
   void clearMessage() {
     final s = state;
     if (s is! WmsReady) return;

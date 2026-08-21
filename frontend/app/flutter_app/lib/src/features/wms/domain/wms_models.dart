@@ -63,6 +63,8 @@ class StockMovementDraft {
 
 /// 流水记录（历史列表展示项）。
 class StockMovementRecord {
+  /// 流水主键（冲正接口的入参；列表脏数据缺失时为 0，UI 据此隐藏冲正入口）。
+  final int id;
   final String movementType;
   final int delta;
   final int quantityBefore;
@@ -70,6 +72,7 @@ class StockMovementRecord {
   final String? createdAt;
 
   const StockMovementRecord({
+    this.id = 0,
     required this.movementType,
     required this.delta,
     required this.quantityBefore,

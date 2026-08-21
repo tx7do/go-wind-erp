@@ -145,6 +145,7 @@ dev_dependencies:
   swagger_parser: ^1.43.1
   yaml: ^3.1.2
   retrofit_generator: ^10.2.1
+  intl_utils: ^2.8.14
 
 # The following section is specific to Flutter packages.
 flutter_native_splash:

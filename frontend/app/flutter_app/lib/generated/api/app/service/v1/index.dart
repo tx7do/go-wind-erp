@@ -3710,6 +3710,28 @@ class StockMovementServiceClient {
     ), headers: headers);
     return result as Map<String, dynamic>;
   }
+
+  /// 冲正库存流水（等量反向台账，幂等防重复冲正）
+  Future<Map<String, dynamic>> reverse(InventoryServiceV1ReverseStockMovementRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-movements:reverse';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'StockMovementService',
+      method: 'Reverse',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
+
+  /// 库存调拨（源仓出、目的仓入，单事务原子执行）
+  Future<Map<String, dynamic>> transfer(InventoryServiceV1TransferStockRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-movements:transfer';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'StockMovementService',
+      method: 'Transfer',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
 }
 
 /// 查询库存流水列表 - 回应
@@ -4044,6 +4066,140 @@ class InventoryServiceV1CreateStockMovementRequest {
   }) {
     return InventoryServiceV1CreateStockMovementRequest(
       data: data ?? this.data,
+    );
+  }
+}
+
+/// 冲正库存流水 - 请求
+class InventoryServiceV1ReverseStockMovementRequest {
+  int? id;
+  String? reason;
+
+  InventoryServiceV1ReverseStockMovementRequest({
+    this.id,
+    this.reason,
+  });
+
+  factory InventoryServiceV1ReverseStockMovementRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ReverseStockMovementRequest(
+      id: json['id'] as int?,
+      reason: json['reason'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (reason != null) json['reason'] = reason;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1ReverseStockMovementRequest(id: $id, reason: $reason)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1ReverseStockMovementRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && reason == other.reason
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    reason,
+  ]);
+
+  InventoryServiceV1ReverseStockMovementRequest copyWith({
+    int? id,
+    String? reason,
+  }) {
+    return InventoryServiceV1ReverseStockMovementRequest(
+      id: id ?? this.id,
+      reason: reason ?? this.reason,
+    );
+  }
+}
+
+/// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
+class InventoryServiceV1TransferStockRequest {
+  String? fromWarehouseCode;
+  int? quantity;
+  String? remark;
+  String? skuCode;
+  String? toWarehouseCode;
+
+  InventoryServiceV1TransferStockRequest({
+    this.fromWarehouseCode,
+    this.quantity,
+    this.remark,
+    this.skuCode,
+    this.toWarehouseCode,
+  });
+
+  factory InventoryServiceV1TransferStockRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1TransferStockRequest(
+      fromWarehouseCode: json['fromWarehouseCode'] as String?,
+      quantity: json['quantity'] != null ? int.parse(json['quantity'].toString()) : null,
+      remark: json['remark'] as String?,
+      skuCode: json['skuCode'] as String?,
+      toWarehouseCode: json['toWarehouseCode'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (fromWarehouseCode != null) json['fromWarehouseCode'] = fromWarehouseCode;
+    if (quantity != null) json['quantity'] = quantity.toString();
+    if (remark != null) json['remark'] = remark;
+    if (skuCode != null) json['skuCode'] = skuCode;
+    if (toWarehouseCode != null) json['toWarehouseCode'] = toWarehouseCode;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1TransferStockRequest(fromWarehouseCode: $fromWarehouseCode, quantity: $quantity, remark: $remark, skuCode: $skuCode, toWarehouseCode: $toWarehouseCode)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1TransferStockRequest &&
+      runtimeType == other.runtimeType
+      && fromWarehouseCode == other.fromWarehouseCode
+      && quantity == other.quantity
+      && remark == other.remark
+      && skuCode == other.skuCode
+      && toWarehouseCode == other.toWarehouseCode
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    fromWarehouseCode,
+    quantity,
+    remark,
+    skuCode,
+    toWarehouseCode,
+  ]);
+
+  InventoryServiceV1TransferStockRequest copyWith({
+    String? fromWarehouseCode,
+    int? quantity,
+    String? remark,
+    String? skuCode,
+    String? toWarehouseCode,
+  }) {
+    return InventoryServiceV1TransferStockRequest(
+      fromWarehouseCode: fromWarehouseCode ?? this.fromWarehouseCode,
+      quantity: quantity ?? this.quantity,
+      remark: remark ?? this.remark,
+      skuCode: skuCode ?? this.skuCode,
+      toWarehouseCode: toWarehouseCode ?? this.toWarehouseCode,
     );
   }
 }

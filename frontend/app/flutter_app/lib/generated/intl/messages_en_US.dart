@@ -108,6 +108,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "recentMovements": MessageLookupByLibrary.simpleMessage("Recent Movements"),
     "remarkLabel": MessageLookupByLibrary.simpleMessage("Remark"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "reverseAction": MessageLookupByLibrary.simpleMessage("Reverse"),
+    "reverseFailed": MessageLookupByLibrary.simpleMessage("Reverse failed"),
+    "reverseReason": MessageLookupByLibrary.simpleMessage("Reversal reason"),
+    "reverseReasonRequired": MessageLookupByLibrary.simpleMessage(
+      "Enter a reversal reason",
+    ),
+    "reverseSuccess": MessageLookupByLibrary.simpleMessage("Reversed"),
+    "sameWarehouse": MessageLookupByLibrary.simpleMessage(
+      "Source and destination warehouses must differ",
+    ),
     "scanSkuFirst": MessageLookupByLibrary.simpleMessage(
       "Look up the SKU first",
     ),
@@ -124,6 +134,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Leave empty for platform login",
     ),
     "themeColor": MessageLookupByLibrary.simpleMessage("Theme Color"),
+    "transferAction": MessageLookupByLibrary.simpleMessage("Transfer"),
+    "transferFailed": MessageLookupByLibrary.simpleMessage("Transfer failed"),
+    "transferSuccess": MessageLookupByLibrary.simpleMessage(
+      "Transfer completed",
+    ),
+    "transferToWarehouse": MessageLookupByLibrary.simpleMessage(
+      "Destination Warehouse",
+    ),
     "username": MessageLookupByLibrary.simpleMessage("Username"),
     "usernameHint": MessageLookupByLibrary.simpleMessage("Enter username"),
   };

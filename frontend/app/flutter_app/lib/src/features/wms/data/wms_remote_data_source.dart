@@ -8,8 +8,10 @@ import 'package:go_wind_erp/generated/api/app/service/v1/index.dart'
         InventoryServiceV1ListInventoryResponse,
         InventoryServiceV1ListStockMovementResponse,
         InventoryServiceV1ListWarehouseResponse,
+        InventoryServiceV1ReverseStockMovementRequest,
         InventoryServiceV1StockMovement,
         InventoryServiceV1StockMovement$MovementType,
+        InventoryServiceV1TransferStockRequest,
         InventoryServiceV1Warehouse,
         PaginationPagingRequest,
         StockMovementServiceClient,
@@ -67,6 +69,38 @@ class WmsRemoteDataSource {
     );
     return _movements.create(
       InventoryServiceV1CreateStockMovementRequest(data: movement),
+    );
+  }
+
+  /// 库存调拨 → `POST /app/v1/stock-movements:transfer`（双腿单事务）。
+  Future<Map<String, dynamic>> transferStock({
+    required String fromWarehouseCode,
+    required String toWarehouseCode,
+    required String skuCode,
+    required int quantity,
+    String? remark,
+  }) {
+    return _movements.transfer(
+      InventoryServiceV1TransferStockRequest(
+        fromWarehouseCode: fromWarehouseCode,
+        toWarehouseCode: toWarehouseCode,
+        skuCode: skuCode,
+        quantity: quantity,
+        remark: (remark ?? '').isEmpty ? null : remark,
+      ),
+    );
+  }
+
+  /// 冲正流水 → `POST /app/v1/stock-movements:reverse`（幂等防重复冲正）。
+  Future<Map<String, dynamic>> reverseMovement(
+    int movementId,
+    String reason,
+  ) {
+    return _movements.reverse(
+      InventoryServiceV1ReverseStockMovementRequest(
+        id: movementId,
+        reason: reason,
+      ),
     );
   }
 

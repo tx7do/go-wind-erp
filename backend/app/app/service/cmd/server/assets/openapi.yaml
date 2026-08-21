@@ -974,6 +974,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/inventory.service.v1.StockMovement'
+    /app/v1/stock-movements:reverse:
+        post:
+            tags:
+                - StockMovementService
+            description: 冲正库存流水（等量反向台账，幂等防重复冲正）
+            operationId: StockMovementService_Reverse
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.ReverseStockMovementRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/stock-movements:transfer:
+        post:
+            tags:
+                - StockMovementService
+            description: 库存调拨（源仓出、目的仓入，单事务原子执行）
+            operationId: StockMovementService_Transfer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.TransferStockRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/warehouses:
         get:
             tags:
@@ -1828,6 +1860,18 @@ components:
                 total:
                     type: string
             description: 查询仓库列表 - 回应
+        inventory.service.v1.ReverseStockMovementRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: 被冲正的流水ID
+                    format: uint32
+                reason:
+                    type: string
+                    description: 冲正原因
+            description: 冲正库存流水 - 请求
         inventory.service.v1.StockMovement:
             type: object
             properties:
@@ -1887,6 +1931,25 @@ components:
                     description: 删除时间
                     format: date-time
             description: 库存流水
+        inventory.service.v1.TransferStockRequest:
+            type: object
+            properties:
+                fromWarehouseCode:
+                    type: string
+                    description: 源仓库编码
+                toWarehouseCode:
+                    type: string
+                    description: 目的仓库编码
+                skuCode:
+                    type: string
+                    description: SKU编码
+                quantity:
+                    type: string
+                    description: 调拨数量（正数）
+                remark:
+                    type: string
+                    description: 备注
+            description: 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
         inventory.service.v1.Warehouse:
             type: object
             properties:

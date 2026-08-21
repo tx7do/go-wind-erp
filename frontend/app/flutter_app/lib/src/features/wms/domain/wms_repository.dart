@@ -19,6 +19,20 @@ abstract class WmsRepository {
   /// 当前库存计算后传入；提交失败抛 [WmsFailure]。
   Future<void> submitMovement(StockMovementDraft draft);
 
+  /// 库存调拨：源仓出、目的仓入（后端单事务原子执行）。
+  ///
+  /// 客户端须先校验源/目的仓不同且数量不超当前库存；后端仍有守卫。
+  Future<void> transferStock({
+    required String fromWarehouseCode,
+    required String toWarehouseCode,
+    required String skuCode,
+    required int quantity,
+    String? remark,
+  });
+
+  /// 冲正指定流水（等量反向台账；重复冲正会被后端 409 拒绝）。
+  Future<void> reverseMovement(int movementId, String reason);
+
   /// 拉取指定仓库 + SKU 的近期流水（默认 20 条）。
   Future<List<StockMovementRecord>> listMovements(
     String warehouseCode,

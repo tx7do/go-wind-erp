@@ -60,6 +60,36 @@ class WmsRepositoryImpl implements WmsRepository {
   }
 
   @override
+  Future<void> transferStock({
+    required String fromWarehouseCode,
+    required String toWarehouseCode,
+    required String skuCode,
+    required int quantity,
+    String? remark,
+  }) async {
+    try {
+      await _dataSource.transferStock(
+        fromWarehouseCode: fromWarehouseCode,
+        toWarehouseCode: toWarehouseCode,
+        skuCode: skuCode,
+        quantity: quantity,
+        remark: remark,
+      );
+    } on DioException catch (e) {
+      throw _toFailure(e);
+    }
+  }
+
+  @override
+  Future<void> reverseMovement(int movementId, String reason) async {
+    try {
+      await _dataSource.reverseMovement(movementId, reason);
+    } on DioException catch (e) {
+      throw _toFailure(e);
+    }
+  }
+
+  @override
   Future<List<StockMovementRecord>> listMovements(
     String warehouseCode,
     String skuCode, {
@@ -75,6 +105,7 @@ class WmsRepositoryImpl implements WmsRepository {
       return items
           .map(
             (m) => StockMovementRecord(
+              id: m.id ?? 0,
               movementType: m.movementType?.toString() ?? '',
               delta: m.delta ?? 0,
               quantityBefore: m.quantityBefore ?? 0,

@@ -44,6 +44,11 @@ class _WmsPageState extends State<WmsPage> {
               'submitFailed' => loc.submitFailed,
               'negativeStock' => loc.negativeStock,
               'lookupFailed' => loc.lookupFailed,
+              'transferSuccess' => loc.transferSuccess,
+              'transferFailed' => loc.transferFailed,
+              'reverseSuccess' => loc.reverseSuccess,
+              'reverseFailed' => loc.reverseFailed,
+              'sameWarehouse' => loc.sameWarehouse,
               _ => state.message!,
             };
             ScaffoldMessenger.of(context)
@@ -252,18 +257,170 @@ class _WmsPageState extends State<WmsPage> {
               ),
             ),
             const SizedBox(height: 12),
-            FilledButton(
-              onPressed: state.submitting ? null : () => _submit(context, state),
-              child: state.submitting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(loc.submitMovement),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: state.submitting
+                        ? null
+                        : () => _submit(context, state),
+                    child: state.submitting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(loc.submitMovement),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: state.submitting
+                        ? null
+                        : () => _showTransferDialog(context, loc, state),
+                    icon: const Icon(Icons.swap_horiz),
+                    label: Text(loc.transferAction),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 调拨对话框：目的仓库下拉（排除当前仓）+ 数量 + 备注。
+  void _showTransferDialog(BuildContext context, S loc, WmsReady state) {
+    final inv = state.inventory;
+    if (inv == null) {
+      _showSnackBar(context, loc.scanSkuFirst);
+      return;
+    }
+    final candidates = state.warehouses
+        .where((w) => w.code != state.selectedWarehouseCode)
+        .toList();
+    if (candidates.isEmpty) {
+      _showSnackBar(context, loc.sameWarehouse);
+      return;
+    }
+
+    final qtyController = TextEditingController();
+    final remarkController = TextEditingController();
+    var toWarehouse = candidates.first.code;
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(loc.transferAction),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                initialValue: toWarehouse,
+                decoration: InputDecoration(
+                  labelText: loc.transferToWarehouse,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                items: [
+                  for (final w in candidates)
+                    DropdownMenuItem(
+                      value: w.code,
+                      child: Text('${w.code} — ${w.name}'),
+                    ),
+                ],
+                onChanged: (code) {
+                  if (code != null) setDialogState(() => toWarehouse = code);
+                },
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: qtyController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: loc.quantityLabel,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: remarkController,
+                decoration: InputDecoration(
+                  labelText: loc.remarkLabel,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(loc.cancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                final quantity = int.tryParse(qtyController.text.trim());
+                if (quantity == null || quantity <= 0) {
+                  _showSnackBar(dialogContext, loc.quantityInvalid);
+                  return;
+                }
+                Navigator.of(dialogContext).pop();
+                context.read<WmsCubit>().transferStock(
+                      toWarehouseCode: toWarehouse,
+                      quantity: quantity,
+                      remark: remarkController.text.trim(),
+                    );
+              },
+              child: Text(loc.confirm),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 冲正对话框：填写冲正原因后提交（后端幂等防重复冲正）。
+  void _showReverseDialog(BuildContext context, S loc, StockMovementRecord m) {
+    final reasonController = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(loc.reverseAction),
+        content: TextField(
+          controller: reasonController,
+          decoration: InputDecoration(
+            labelText: loc.reverseReason,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(loc.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              final reason = reasonController.text.trim();
+              if (reason.isEmpty) {
+                _showSnackBar(dialogContext, loc.reverseReasonRequired);
+                return;
+              }
+              Navigator.of(dialogContext).pop();
+              context
+                  .read<WmsCubit>()
+                  .reverseMovement(m.id, reason);
+            },
+            child: Text(loc.confirm),
+          ),
+        ],
       ),
     );
   }
@@ -309,6 +466,16 @@ class _WmsPageState extends State<WmsPage> {
               ),
               title: Text('${_movementLabel(loc, m.movementType)}  ${m.delta >= 0 ? '+' : ''}${m.delta}'),
               subtitle: Text('${m.quantityBefore} → ${m.quantityAfter}'),
+              // 冲正入口：仅对有 id 且非零变动的流水开放（冲正幂等标记在
+              // 服务端，重复冲正会被 409 拒绝）。
+              trailing: m.id != 0 && m.delta != 0
+                  ? IconButton(
+                      icon: const Icon(Icons.undo, size: 20),
+                      tooltip: loc.reverseAction,
+                      onPressed: () =>
+                          _showReverseDialog(context, loc, m),
+                    )
+                  : null,
             ),
         ],
       ),

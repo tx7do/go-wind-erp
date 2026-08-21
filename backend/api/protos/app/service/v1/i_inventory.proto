@@ -72,4 +72,20 @@ service StockMovementService {
       body: "*"
     };
   }
+
+  // 冲正库存流水（等量反向台账，幂等防重复冲正）
+  rpc Reverse (inventory.service.v1.ReverseStockMovementRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/stock-movements:reverse"
+      body: "*"
+    };
+  }
+
+  // 库存调拨（源仓出、目的仓入，单事务原子执行）
+  rpc Transfer (inventory.service.v1.TransferStockRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/stock-movements:transfer"
+      body: "*"
+    };
+  }
 }
