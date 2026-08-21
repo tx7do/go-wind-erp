@@ -86,6 +86,16 @@ export async function fetchInventoryOverview(
   });
 }
 
+// 拉取近 30 日库存流水趋势（看板折线图用）。
+export async function fetchMovementTrend() {
+  return queryClient.fetchQuery({
+    queryKey: ['getMovementTrend'],
+    queryFn: () => apiClient.inventoryService.GetMovementTrend({}),
+    staleTime: 0,
+    retry: 0,
+  });
+}
+
 export function useCreateInventory(
   options?: UseMutationOptions<object, Error, Record<string, any>>,
 ) {

@@ -2603,6 +2603,10 @@ export interface PayableService {
   Cancel(
     request: financeservicev1_CancelPayableRequest,
   ): Promise<wellKnownEmpty>;
+  // 应付账龄报表
+  AgingReport(
+    request: wellKnownEmpty,
+  ): Promise<financeservicev1_AgingReportResponse>;
 }
 
 export function createPayableServiceClient(
@@ -2772,6 +2776,14 @@ export function createPayableServiceClient(
         method: 'Cancel',
       }) as Promise<wellKnownEmpty>;
     },
+    AgingReport(_request) {
+      const path = `admin/v1/payables:aging-report`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PayableService',
+        method: 'AgingReport',
+      }) as Promise<financeservicev1_AgingReportResponse>;
+    },
   };
 }
 export type financeservicev1_ListPayableResponse = {
@@ -2828,6 +2840,18 @@ export type financeservicev1_DeletePayableRequest = {
 
 export type financeservicev1_CancelPayableRequest = {
   id: number | undefined;
+};
+
+// 账龄报表回应
+export type financeservicev1_AgingReportResponse = {
+  buckets: financeservicev1_AgingBucket[] | undefined;
+};
+
+// 账龄分桶统计
+export type financeservicev1_AgingBucket = {
+  bucket?: string;
+  count?: number;
+  totalAmount?: number;
 };
 
 // 付款管理服务（append-only 台账）
@@ -4035,6 +4059,10 @@ export interface InventoryService {
   GetOverview(
     request: inventoryservicev1_GetInventoryOverviewRequest,
   ): Promise<inventoryservicev1_InventoryOverview>;
+  // 库存流水趋势
+  GetMovementTrend(
+    request: inventoryservicev1_GetMovementTrendRequest,
+  ): Promise<inventoryservicev1_MovementTrendResponse>;
   // 创建库存
   Create(
     request: inventoryservicev1_CreateInventoryRequest,
@@ -4212,6 +4240,14 @@ export function createInventoryServiceClient(
         method: 'GetOverview',
       }) as Promise<inventoryservicev1_InventoryOverview>;
     },
+    GetMovementTrend(_request) {
+      const path = `admin/v1/inventories:movement-trend`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'InventoryService',
+        method: 'GetMovementTrend',
+      }) as Promise<inventoryservicev1_MovementTrendResponse>;
+    },
     Create(request) {
       const path = `admin/v1/inventories`;
       const body = JSON.stringify(request);
@@ -4301,6 +4337,21 @@ export type inventoryservicev1_InventoryOverview = {
   skuCount: number | undefined;
   totalQuantity: number | undefined;
   warehouseCount: number | undefined;
+};
+
+// 库存流水趋势 - 请求
+export type inventoryservicev1_GetMovementTrendRequest = {
+};
+
+// 库存流水趋势 - 回应
+export type inventoryservicev1_MovementTrendResponse = {
+  points: inventoryservicev1_MovementTrendPoint[] | undefined;
+};
+
+// 库存流水趋势 - 单日数据点
+export type inventoryservicev1_MovementTrendPoint = {
+  count: number | undefined;
+  date: string | undefined;
 };
 
 // 创建库存 - 请求

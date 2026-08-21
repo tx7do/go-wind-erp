@@ -29,6 +29,18 @@ const finance: RouteRecordRaw[] = [
         component: () => import('#/views/app/finance/payable/index.vue'),
       },
       {
+        path: 'aging',
+        name: 'PayableAgingReport',
+        meta: {
+          order: 0,
+          icon: 'lucide:alarm-clock',
+          title: $t('menu.finance.aging'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/aging/index.vue'),
+      },
+
+      {
         path: 'payments',
         name: 'PaymentManagement',
         meta: {

@@ -4,6 +4,8 @@ import type {
   inventoryservicev1_ListStockMovementResponse,
   inventoryservicev1_StockMovement,
   inventoryservicev1_StockMovement_MovementType,
+  inventoryservicev1_ReverseStockMovementRequest,
+  inventoryservicev1_TransferStockRequest,
 } from '#/api/generated/admin/service/v1';
 
 import { computed } from 'vue';
@@ -82,6 +84,32 @@ export function useDeleteStockMovement(
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.stockMovementService.Delete(req),
+    ...options,
+  });
+}
+
+export function useTransferStock(
+  options?: UseMutationOptions<
+    object,
+    Error,
+    inventoryservicev1_TransferStockRequest
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.stockMovementService.Transfer(req),
+    ...options,
+  });
+}
+
+export function useReverseStockMovement(
+  options?: UseMutationOptions<
+    object,
+    Error,
+    inventoryservicev1_ReverseStockMovementRequest
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.stockMovementService.Reverse(req),
     ...options,
   });
 }

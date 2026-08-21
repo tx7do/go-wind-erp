@@ -14,7 +14,8 @@
     "totalQuantity": "Total Quantity",
     "movementCount": "Movements",
     "lowStockTitle": "Low Stock",
-    "lowStockEmpty": "No low-stock items"
+    "lowStockEmpty": "No low-stock items",
+    "movementTrendTitle": "Movement Trend (Last 30 Days)"
   },
   "user": {
     "moduleName": "User",
@@ -461,8 +462,24 @@
     "movementType": "Movement Type",
     "quantityBefore": "Quantity Before",
     "quantityAfter": "Quantity After",
+    "transfer": {
+      "title": "Stock Transfer",
+      "fromWarehouse": "Source Warehouse",
+      "toWarehouse": "Destination Warehouse",
+      "quantity": "Transfer Quantity",
+      "remark": "Remark",
+      "sameWarehouse": "Source and destination warehouses must differ"
+    },
+    "reverse": {
+      "title": "Reverse Movement",
+      "reason": "Reversal Reason",
+      "reasonHint": "Provide a reason for reversing this movement",
+      "confirm": "Confirm Reverse"
+    },
     "button": {
-      "create": "Create Movement"
+      "create": "Create Movement",
+      "transfer": "Transfer",
+      "reverse": "Reverse"
     }
   },
   "approval": {
@@ -507,13 +524,22 @@
     "addItem": "Add Item",
     "itemsRequired": "At least one item is required",
     "itemInvalid": "Fill SKU and a positive quantity",
+    "receivedQuantity": "Received",
+    "receive": {
+      "title": "Receive Goods",
+      "warehouse": "Receiving Warehouse",
+      "quantity": "Receive Quantity",
+      "quantityHint": "Defaults to the remaining unreceived quantity",
+      "exceedsRemaining": "Receive quantity exceeds the remaining unreceived quantity"
+    },
     "button": {
       "create": "New Purchase Order",
       "submit": "Submit",
       "approve": "Approve",
       "reject": "Reject",
       "cancel": "Cancel",
-      "complete": "Complete"
+      "complete": "Complete",
+      "receive": "Receive"
     }
   },
   "payable": {
@@ -551,6 +577,21 @@
     "enable": "Enabled",
     "button": {
       "create": "Create Product"
+    }
+  },
+  "aging": {
+    "title": "Payable Aging Report",
+    "disclaimer": "This report buckets unsettled payables by due date. The overdue bucket (red) requires priority action. Amounts in yuan.",
+    "bucket": "Bucket",
+    "count": "Count",
+    "totalAmount": "Amount",
+    "bucketLabel": {
+      "overdue": "Overdue",
+      "0_7": "0-7 days",
+      "8_30": "8-30 days",
+      "31_90": "31-90 days",
+      "over_90": "over 90 days",
+      "no_due_date": "No due date"
     }
   }
 }

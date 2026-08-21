@@ -3,8 +3,17 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { h } from 'vue';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { LucideTrash2 } from '@vben/icons';
+import {
+  Page,
+  useVbenDrawer,
+  useVbenModal,
+  type VbenFormProps,
+} from '@vben/common-ui';
+import {
+  LucideArrowLeftRight,
+  LucideRotateCcw,
+  LucideTrash2,
+} from '@vben/icons';
 
 import { notification } from 'ant-design-vue';
 
@@ -20,7 +29,9 @@ import {
 } from '#/api';
 import { $t } from '#/locales';
 
+import ReverseModalComponent from './reverse-modal.vue';
 import StockMovementDrawer from './stock_movement-drawer.vue';
+import TransferDrawerComponent from './transfer-drawer.vue';
 
 const formOptions: VbenFormProps = {
   collapsed: false,
@@ -111,7 +122,7 @@ const gridOptions: VxeGridProps<StockMovement> = {
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
-      width: 80,
+      width: 120,
     },
   ],
 };
@@ -120,6 +131,26 @@ const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 const [Drawer, drawerApi] = useVbenDrawer({
   connectedComponent: StockMovementDrawer,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      gridApi.reload();
+    }
+  },
+});
+
+const [TransferDrawer, transferDrawerApi] = useVbenDrawer({
+  connectedComponent: TransferDrawerComponent,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      gridApi.reload();
+    }
+  },
+});
+
+const [ReverseModal, reverseModalApi] = useVbenModal({
+  connectedComponent: ReverseModalComponent,
 
   onOpenChange(isOpen: boolean) {
     if (!isOpen) {
@@ -139,6 +170,15 @@ function openModal(create: boolean, row?: any) {
 
 function handleCreate() {
   openModal(true);
+}
+
+function handleTransfer() {
+  transferDrawerApi.open();
+}
+
+function handleReverse(row: any) {
+  reverseModalApi.setData({ id: row.id });
+  reverseModalApi.open();
 }
 
 async function handleDelete(row: any) {
@@ -165,6 +205,9 @@ async function handleDelete(row: any) {
         <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('page.stockMovement.button.create') }}
         </a-button>
+        <a-button class="mr-2" :icon="h(LucideArrowLeftRight)" @click="handleTransfer">
+          {{ $t('page.stockMovement.button.transfer') }}
+        </a-button>
       </template>
 
       <template #movementType="{ row }">
@@ -173,6 +216,9 @@ async function handleDelete(row: any) {
         </a-tag>
       </template>
       <template #action="{ row }">
+        <a-tooltip :title="$t('page.stockMovement.button.reverse')">
+          <a-button type="link" :icon="h(LucideRotateCcw)" @click="handleReverse(row)" />
+        </a-tooltip>
         <a-popconfirm
           :cancel-text="$t('ui.button.cancel')"
           :ok-text="$t('ui.button.ok')"
@@ -188,5 +234,7 @@ async function handleDelete(row: any) {
       </template>
     </Grid>
     <Drawer />
+    <TransferDrawer />
+    <ReverseModal />
   </Page>
 </template>

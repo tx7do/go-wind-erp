@@ -1,20 +1,29 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, shallowRef, watch } from 'vue';
+
+import type { EchartsUIType } from '@vben/plugins/echarts';
 
 import { LucideBuilding, LucideInbox, LucideNotebookPen, LucidePencil } from '@vben/icons';
+import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 
 import { notification } from 'ant-design-vue';
 
 import {
   fetchInventoryOverview,
+  fetchMovementTrend,
   inventoryStatusToColor,
   inventoryStatusToName,
   type inventoryservicev1_InventoryOverview as InventoryOverview,
+  type inventoryservicev1_MovementTrendResponse as MovementTrendResponse,
 } from '#/api';
 import { $t } from '#/locales';
 
+const chartRef = shallowRef<EchartsUIType>();
+const { renderEcharts } = useEcharts(chartRef);
+
 const loading = ref(true);
 const overview = ref<InventoryOverview>();
+const trend = ref<MovementTrendResponse>();
 
 const metricCards = [
   {
@@ -63,8 +72,35 @@ async function loadOverview() {
   }
 }
 
+async function loadTrend() {
+  try {
+    trend.value = await fetchMovementTrend();
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  }
+}
+
+watch(trend, (val) => {
+  if (!val?.points?.length) return;
+  const pts = val.points.filter((p) => p.date !== undefined && p.count !== undefined);
+  if (!pts.length) return;
+  renderEcharts({
+    grid: { top: 30, right: 20, bottom: 30, left: 40 },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: pts.map((p) => p.date as string),
+    },
+    yAxis: { type: 'value', minInterval: 1 },
+    series: [{ type: 'line', smooth: true, areaStyle: {}, data: pts.map((p) => p.count as number) }],
+  });
+});
+
 onMounted(() => {
   loadOverview();
+  loadTrend();
 });
 </script>
 
@@ -103,6 +139,10 @@ onMounted(() => {
           </a-card>
         </a-col>
       </a-row>
+
+      <a-card class="mt-4" :title="$t('page.dashboard.movementTrendTitle')">
+        <EchartsUI ref="chartRef" height="320px" />
+      </a-card>
 
       <a-card
         class="mt-4"

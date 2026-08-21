@@ -72,6 +72,7 @@
   "finance": {
     "moduleName": "Finance",
     "payable": "Payables",
-    "payment": "Payments"
+    "payment": "Payments",
+    "aging": "Aging Report"
   }
 }

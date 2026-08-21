@@ -227,33 +227,42 @@ export const apiClient = createApiClient(transport);
 
 ```typescript
 apiClient.adminPortalService              // 管理门户
+apiClient.apiAuditLogService              // API 审计日志
 apiClient.apiService                      // API 管理
+apiClient.approvalRequestService          // 审批请求
 apiClient.authenticationService           // 认证服务
+apiClient.dataAccessAuditLogService       // 数据访问审计日志
 apiClient.dictEntryService                // 字典条目
 apiClient.dictTypeService                 // 字典类型
 apiClient.fileService                     // 文件管理
 apiClient.fileTransferService             // 文件传输
-apiClient.internalMessageService          // 内部消息
 apiClient.internalMessageCategoryService  // 内部消息分类
 apiClient.internalMessageRecipientService // 内部消息接收
+apiClient.internalMessageService          // 内部消息
+apiClient.inventoryService                // 库存管理
 apiClient.languageService                 // 语言管理
+apiClient.loginAuditLogService            // 登录审计日志
 apiClient.loginPolicyService              // 登录策略
 apiClient.menuService                     // 菜单管理
+apiClient.operationAuditLogService        // 操作审计日志
 apiClient.orgUnitService                  // 组织单元
-apiClient.permissionService               // 权限管理
+apiClient.payableService                  // 应付账款
+apiClient.paymentService                  // 付款管理
+apiClient.permissionAuditLogService       // 权限审计日志
 apiClient.permissionGroupService          // 权限组管理
+apiClient.permissionService               // 权限管理
+apiClient.policyEvaluationLogService      // 策略评估日志
 apiClient.positionService                 // 岗位管理
+apiClient.productService                  // 商品管理
+apiClient.purchaseOrderService            // 采购订单
 apiClient.roleService                     // 角色管理
+apiClient.stockMovementService            // 库存移动
+apiClient.supplierService                 // 供应商管理
 apiClient.taskService                     // 异步任务
 apiClient.tenantService                   // 租户管理
 apiClient.userProfileService              // 用户资料
 apiClient.userService                     // 用户管理
-apiClient.apiAuditLogService              // API 审计日志
-apiClient.dataAccessAuditLogService       // 数据访问审计日志
-apiClient.loginAuditLogService            // 登录审计日志
-apiClient.operationAuditLogService        // 操作审计日志
-apiClient.permissionAuditLogService       // 权限审计日志
-apiClient.policyEvaluationLogService      // 策略评估日志
+apiClient.warehouseService                // 仓库管理
 ```
 
 ### composables 层模板

@@ -102,6 +102,16 @@ export function useCancelPayable(
   });
 }
 
+// 拉取应付账龄报表。
+export async function fetchAgingReport() {
+  return queryClient.fetchQuery({
+    queryKey: ['agingReport'],
+    queryFn: () => apiClient.payableService.AgingReport({}),
+    staleTime: 0,
+    retry: 0,
+  });
+}
+
 // ==============================
 // 付款管理（append-only 台账）
 // ==============================

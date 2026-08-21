@@ -14,7 +14,8 @@
     "totalQuantity": "库存总量",
     "movementCount": "流水数",
     "lowStockTitle": "低库存清单",
-    "lowStockEmpty": "暂无低库存项"
+    "lowStockEmpty": "暂无低库存项",
+    "movementTrendTitle": "近 30 日库存流水趋势"
   },
   "user": {
     "moduleName": "用户",
@@ -490,8 +491,24 @@
     "movementType": "流水类型",
     "quantityBefore": "操作前数量",
     "quantityAfter": "操作后数量",
+    "transfer": {
+      "title": "库存调拨",
+      "fromWarehouse": "源仓库",
+      "toWarehouse": "目的仓库",
+      "quantity": "调拨数量",
+      "remark": "备注",
+      "sameWarehouse": "源仓库与目的仓库不能相同"
+    },
+    "reverse": {
+      "title": "冲正流水",
+      "reason": "冲正原因",
+      "reasonHint": "请填写冲正该流水的原因",
+      "confirm": "确认冲正"
+    },
     "button": {
-      "create": "创建流水"
+      "create": "创建流水",
+      "transfer": "调拨",
+      "reverse": "冲正"
     }
   },
   "approval": {
@@ -536,13 +553,22 @@
     "addItem": "添加明细",
     "itemsRequired": "至少需要一条明细",
     "itemInvalid": "请完整填写 SKU 与正整数数量",
+    "receivedQuantity": "已收数量",
+    "receive": {
+      "title": "采购收货",
+      "warehouse": "收货仓库",
+      "quantity": "收货数量",
+      "quantityHint": "默认为未收完的剩余数量",
+      "exceedsRemaining": "收货数量超过剩余未收数量"
+    },
     "button": {
       "create": "创建采购单",
       "submit": "提交审批",
       "approve": "通过",
       "reject": "驳回",
       "cancel": "取消",
-      "complete": "完结"
+      "complete": "完结",
+      "receive": "收货"
     }
   },
   "payable": {
@@ -580,6 +606,21 @@
     "enable": "启用状态",
     "button": {
       "create": "创建商品"
+    }
+  },
+  "aging": {
+    "title": "应付账龄报表",
+    "disclaimer": "本报表按账期到期日对未结清应付分桶统计，逾期桶（红色）需优先处置。金额单位元。",
+    "bucket": "分桶",
+    "count": "笔数",
+    "totalAmount": "金额（元）",
+    "bucketLabel": {
+      "overdue": "已逾期",
+      "0_7": "0-7 天",
+      "8_30": "8-30 天",
+      "31_90": "31-90 天",
+      "over_90": "90 天以上",
+      "no_due_date": "无账期"
     }
   }
 }

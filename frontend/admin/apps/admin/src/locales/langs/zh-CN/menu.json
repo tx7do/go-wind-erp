@@ -73,6 +73,7 @@
   "finance": {
     "moduleName": "财务管理",
     "payable": "应付管理",
-    "payment": "付款流水"
+    "payment": "付款流水",
+    "aging": "账龄报表"
   }
 }

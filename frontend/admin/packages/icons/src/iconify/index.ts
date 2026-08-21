@@ -20,6 +20,10 @@ export const LucideArrowBigLeft = createIconifyIcon('lucide:arrow-big-left');
 
 export const LucideArrowLeft = createIconifyIcon('lucide:arrow-left');
 
+export const LucideArrowLeftRight = createIconifyIcon(
+  'lucide:arrow-left-right',
+);
+
 export const LucideChevronLeft = createIconifyIcon('lucide:chevron-left');
 
 export const LucideTrash = createIconifyIcon('lucide:trash');

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
@@ -15,6 +15,8 @@ import {
   fetchListSuppliers,
   purchaseOrderStatusToName,
 } from '#/api';
+
+import ReceiveModalComponent from './receive-modal.vue';
 
 const data = ref();
 
@@ -33,6 +35,28 @@ const newItem = reactive<ItemRow>({
 
 const isCreate = computed(() => data.value?.create);
 const isDraft = computed(() => data.value?.row?.status === 'DRAFT');
+// APPROVED 状态下可按明细收货（服务端 ApplyReceipt 有审批闸门与防超收守卫）。
+const isApproved = computed(() => data.value?.row?.status === 'APPROVED');
+
+// 收货弹窗：收集仓库+数量，成功后关闭抽屉让列表刷新（与工作流动作同模式）。
+const [ReceiveModal, receiveModalApi] = useVbenModal({
+  connectedComponent: ReceiveModalComponent,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      drawerApi.close();
+    }
+  },
+});
+
+function handleReceive(record: any) {
+  receiveModalApi.setData({
+    poId: data.value.row.id,
+    skuCode: record.skuCode,
+    remaining: (record.quantity ?? 0) - (record.receivedQuantity ?? 0),
+  });
+  receiveModalApi.open();
+}
 
 const getTitle = computed(() =>
   isCreate.value
@@ -249,6 +273,25 @@ const itemColumns = [
   },
 ];
 
+// 只读明细列：额外展示已收数量与收货操作（收货仅 APPROVED 且未收满时可用）。
+const readonlyItemColumns = [
+  { title: $t('page.purchaseOrder.skuCode'), dataIndex: 'skuCode' },
+  { title: $t('page.purchaseOrder.quantity'), dataIndex: 'quantity' },
+  {
+    title: $t('page.purchaseOrder.receivedQuantity'),
+    dataIndex: 'receivedQuantity',
+  },
+  {
+    title: $t('page.purchaseOrder.unitPrice'),
+    dataIndex: 'unitPrice',
+  },
+  {
+    title: $t('page.purchaseOrder.amount'),
+    dataIndex: 'amount',
+  },
+  { title: $t('ui.table.action'), key: 'op', width: 90 },
+];
+
 function setLoading(loading: boolean) {
   drawerApi.setState({ confirmLoading: loading });
 }
@@ -315,7 +358,7 @@ function setLoading(loading: boolean) {
 
         <template v-else>
           <a-table
-            :columns="itemColumns"
+            :columns="readonlyItemColumns"
             :data-source="data?.row?.items ?? []"
             :pagination="false"
             size="small"
@@ -327,6 +370,23 @@ function setLoading(loading: boolean) {
               </template>
               <template v-else-if="column.dataIndex === 'amount'">
                 {{ centsToYuan(record.amount) }}
+              </template>
+              <template v-else-if="column.key === 'op'">
+                <a-button
+                  v-if="
+                    isApproved &&
+                    (record.quantity ?? 0) - (record.receivedQuantity ?? 0) > 0
+                  "
+                  size="small"
+                  type="primary"
+                  @click="handleReceive(record)"
+                >
+                  {{ $t('page.purchaseOrder.button.receive') }}
+                </a-button>
+                <a-tag v-else-if="isApproved" color="green">
+                  {{ $t('page.purchaseOrder.receivedQuantity') }}:
+                  {{ record.receivedQuantity ?? 0 }}/{{ record.quantity ?? 0 }}
+                </a-tag>
               </template>
             </template>
           </a-table>
@@ -364,5 +424,6 @@ function setLoading(loading: boolean) {
         </template>
       </div>
     </div>
+    <ReceiveModal />
   </Drawer>
 </template>
