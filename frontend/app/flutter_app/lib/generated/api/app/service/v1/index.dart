@@ -3800,6 +3800,11 @@ class InventoryServiceV1StockPicking {
   /// derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
   InventoryServiceV1StockPicking$DerivedState? derivedState;
   int? destinationLocationId;
+  /// 调拨源/目的仓库编码（仅 INTERNAL 类型使用；服务层据此推导 source/dest
+  /// location）。入库类型不使用这两个字段（source 固定为供应商位置）。
+  ///
+  /// Behaviors: OPTIONAL
+  String? fromWarehouseCode;
   ///
   /// Behaviors: OPTIONAL
   int? id;
@@ -3821,6 +3826,9 @@ class InventoryServiceV1StockPicking {
   /// source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
   int? sourceLocationId;
   int? tenantId;
+  ///
+  /// Behaviors: OPTIONAL
+  String? toWarehouseCode;
   String? updatedAt;
   int? updatedBy;
 
@@ -3831,6 +3839,7 @@ class InventoryServiceV1StockPicking {
     this.deletedBy,
     this.derivedState,
     this.destinationLocationId,
+    this.fromWarehouseCode,
     this.id,
     this.moves,
     this.partnerCode,
@@ -3840,6 +3849,7 @@ class InventoryServiceV1StockPicking {
     this.remark,
     this.sourceLocationId,
     this.tenantId,
+    this.toWarehouseCode,
     this.updatedAt,
     this.updatedBy,
   });
@@ -3852,6 +3862,7 @@ class InventoryServiceV1StockPicking {
       deletedBy: json['deletedBy'] as int?,
       derivedState: json['derivedState'] != null ? InventoryServiceV1StockPicking$DerivedState.fromString(json['derivedState'] as String) : null,
       destinationLocationId: json['destinationLocationId'] as int?,
+      fromWarehouseCode: json['fromWarehouseCode'] as String?,
       id: json['id'] as int?,
       moves: (json['moves'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockMove.fromJson(e as Map<String, dynamic>)).toList(),
       partnerCode: json['partnerCode'] as String?,
@@ -3861,6 +3872,7 @@ class InventoryServiceV1StockPicking {
       remark: json['remark'] as String?,
       sourceLocationId: json['sourceLocationId'] as int?,
       tenantId: json['tenantId'] as int?,
+      toWarehouseCode: json['toWarehouseCode'] as String?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
     );
@@ -3874,6 +3886,7 @@ class InventoryServiceV1StockPicking {
     if (deletedBy != null) json['deletedBy'] = deletedBy;
     if (derivedState != null) json['derivedState'] = derivedState!.value;
     if (destinationLocationId != null) json['destinationLocationId'] = destinationLocationId;
+    if (fromWarehouseCode != null) json['fromWarehouseCode'] = fromWarehouseCode;
     if (id != null) json['id'] = id;
     if (moves != null) json['moves'] = moves!.map((e) => e.toJson()).toList();
     if (partnerCode != null) json['partnerCode'] = partnerCode;
@@ -3883,6 +3896,7 @@ class InventoryServiceV1StockPicking {
     if (remark != null) json['remark'] = remark;
     if (sourceLocationId != null) json['sourceLocationId'] = sourceLocationId;
     if (tenantId != null) json['tenantId'] = tenantId;
+    if (toWarehouseCode != null) json['toWarehouseCode'] = toWarehouseCode;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
     return json;
@@ -3890,7 +3904,7 @@ class InventoryServiceV1StockPicking {
 
   @override
   String toString() {
-    return 'InventoryServiceV1StockPicking(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, derivedState: $derivedState, destinationLocationId: $destinationLocationId, id: $id, moves: $moves, partnerCode: $partnerCode, pickingNumber: $pickingNumber, pickingType: $pickingType, purchaseOrderId: $purchaseOrderId, remark: $remark, sourceLocationId: $sourceLocationId, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'InventoryServiceV1StockPicking(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, derivedState: $derivedState, destinationLocationId: $destinationLocationId, fromWarehouseCode: $fromWarehouseCode, id: $id, moves: $moves, partnerCode: $partnerCode, pickingNumber: $pickingNumber, pickingType: $pickingType, purchaseOrderId: $purchaseOrderId, remark: $remark, sourceLocationId: $sourceLocationId, tenantId: $tenantId, toWarehouseCode: $toWarehouseCode, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -3904,6 +3918,7 @@ class InventoryServiceV1StockPicking {
       && deletedBy == other.deletedBy
       && derivedState == other.derivedState
       && destinationLocationId == other.destinationLocationId
+      && fromWarehouseCode == other.fromWarehouseCode
       && id == other.id
       && moves == other.moves
       && partnerCode == other.partnerCode
@@ -3913,6 +3928,7 @@ class InventoryServiceV1StockPicking {
       && remark == other.remark
       && sourceLocationId == other.sourceLocationId
       && tenantId == other.tenantId
+      && toWarehouseCode == other.toWarehouseCode
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
     ;
@@ -3925,6 +3941,7 @@ class InventoryServiceV1StockPicking {
     deletedBy,
     derivedState,
     destinationLocationId,
+    fromWarehouseCode,
     id,
     moves,
     partnerCode,
@@ -3934,6 +3951,7 @@ class InventoryServiceV1StockPicking {
     remark,
     sourceLocationId,
     tenantId,
+    toWarehouseCode,
     updatedAt,
     updatedBy,
   ]);
@@ -3945,6 +3963,7 @@ class InventoryServiceV1StockPicking {
     int? deletedBy,
     InventoryServiceV1StockPicking$DerivedState? derivedState,
     int? destinationLocationId,
+    String? fromWarehouseCode,
     int? id,
     List<InventoryServiceV1StockMove>? moves,
     String? partnerCode,
@@ -3954,6 +3973,7 @@ class InventoryServiceV1StockPicking {
     String? remark,
     int? sourceLocationId,
     int? tenantId,
+    String? toWarehouseCode,
     String? updatedAt,
     int? updatedBy,
   }) {
@@ -3964,6 +3984,7 @@ class InventoryServiceV1StockPicking {
       deletedBy: deletedBy ?? this.deletedBy,
       derivedState: derivedState ?? this.derivedState,
       destinationLocationId: destinationLocationId ?? this.destinationLocationId,
+      fromWarehouseCode: fromWarehouseCode ?? this.fromWarehouseCode,
       id: id ?? this.id,
       moves: moves ?? this.moves,
       partnerCode: partnerCode ?? this.partnerCode,
@@ -3973,6 +3994,7 @@ class InventoryServiceV1StockPicking {
       remark: remark ?? this.remark,
       sourceLocationId: sourceLocationId ?? this.sourceLocationId,
       tenantId: tenantId ?? this.tenantId,
+      toWarehouseCode: toWarehouseCode ?? this.toWarehouseCode,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );

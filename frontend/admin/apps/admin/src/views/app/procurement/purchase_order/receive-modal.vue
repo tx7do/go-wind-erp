@@ -116,6 +116,13 @@ const [Modal, modalApi] = useVbenModal({
         return;
       }
 
+      // 入库拣货单在 PO 审批时创建，初始派生态为 DRAFT。Validate 要求
+      // CONFIRMED 态，因此 DRAFT 时先调 Confirm（借鉴 Odoo action_confirm），
+      // 再调 Validate（借鉴 Odoo button_validate / _action_done）。
+      if (picking.derivedState === 'DRAFT') {
+        await apiClient.stockPickingService.Confirm({ id: picking.id });
+      }
+
       await apiClient.stockPickingService.Validate({ id: picking.id });
 
       notification.success({

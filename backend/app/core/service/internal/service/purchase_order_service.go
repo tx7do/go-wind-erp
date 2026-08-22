@@ -388,6 +388,9 @@ func computeOrderAmounts(po *procurementV1.PurchaseOrder) error {
 	if po.GetSupplierCode() == "" {
 		return procurementV1.ErrorBadRequest("supplier_code is required")
 	}
+	if po.GetWarehouseCode() == "" {
+		return procurementV1.ErrorBadRequest("warehouse_code is required")
+	}
 	if len(po.GetItems()) == 0 {
 		return procurementV1.ErrorBadRequest("at least one item is required")
 	}

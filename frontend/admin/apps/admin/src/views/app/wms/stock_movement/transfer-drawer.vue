@@ -20,6 +20,56 @@ const [BaseForm, baseFormApi] = useVbenForm({
   },
   schema: [
     {
+      component: 'ApiSelect',
+      fieldName: 'fromWarehouseCode',
+      label: $t('page.stockPicking.transfer.fromWarehouse'),
+      rules: 'required',
+      componentProps: {
+        allowClear: true,
+        showSearch: true,
+        placeholder: $t('ui.placeholder.select'),
+        api: async () => {
+          const { fetchListWarehouses, PaginationQuery } = await import('#/api');
+          const result = await fetchListWarehouses(
+            // biome-ignore lint/style/noNonNullAssertion: 仓库下拉不分页
+            new PaginationQuery({
+              paging: { page: 1, pageSize: 500 },
+            }),
+          );
+          return result?.items ?? [];
+        },
+        afterFetch: (warehouses: { code?: string; enable?: boolean }[]) =>
+          warehouses
+            .filter((w) => w.enable)
+            .map((w) => ({ label: w.code, value: w.code })),
+      },
+    },
+    {
+      component: 'ApiSelect',
+      fieldName: 'toWarehouseCode',
+      label: $t('page.stockPicking.transfer.toWarehouse'),
+      rules: 'required',
+      componentProps: {
+        allowClear: true,
+        showSearch: true,
+        placeholder: $t('ui.placeholder.select'),
+        api: async () => {
+          const { fetchListWarehouses, PaginationQuery } = await import('#/api');
+          const result = await fetchListWarehouses(
+            // biome-ignore lint/style/noNonNullAssertion: 仓库下拉不分页
+            new PaginationQuery({
+              paging: { page: 1, pageSize: 500 },
+            }),
+          );
+          return result?.items ?? [];
+        },
+        afterFetch: (warehouses: { code?: string; enable?: boolean }[]) =>
+          warehouses
+            .filter((w) => w.enable)
+            .map((w) => ({ label: w.code, value: w.code })),
+      },
+    },
+    {
       component: 'Input',
       fieldName: 'productCode',
       label: $t('page.stockPicking.productCode'),
@@ -68,9 +118,22 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     const values = await baseFormApi.getValues();
 
+    const fromWh = values.fromWarehouseCode as string | undefined;
+    const toWh = values.toWarehouseCode as string | undefined;
+
+    if (fromWh && toWh && fromWh === toWh) {
+      notification.error({
+        message: $t('page.stockPicking.transfer.sameWarehouse'),
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       await createMutation.mutateAsync({
         pickingType: 'INTERNAL',
+        fromWarehouseCode: fromWh,
+        toWarehouseCode: toWh,
         moves: [
           {
             productCode: values.productCode,

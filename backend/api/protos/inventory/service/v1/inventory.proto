@@ -364,6 +364,24 @@ message StockPicking {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
+  // 调拨源/目的仓库编码（仅 INTERNAL 类型使用；服务层据此推导 source/dest
+  // location）。入库类型不使用这两个字段（source 固定为供应商位置）。
+  optional string from_warehouse_code = 12 [
+    json_name = "fromWarehouseCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "调拨源仓库编码"
+        }
+  ]; // 调拨源仓库编码
+
+  optional string to_warehouse_code = 13 [
+    json_name = "toWarehouseCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "调拨目的仓库编码"
+        }
+  ]; // 调拨目的仓库编码
+
   optional uint32 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}

@@ -658,17 +658,21 @@ type StockPicking struct {
 	SourceLocationId      *uint32 `protobuf:"varint,9,opt,name=source_location_id,json=sourceLocationId,proto3,oneof" json:"source_location_id,omitempty"`                 // 源位置ID（服务端推导，不存储客户端传值）
 	DestinationLocationId *uint32 `protobuf:"varint,10,opt,name=destination_location_id,json=destinationLocationId,proto3,oneof" json:"destination_location_id,omitempty"` // 目的位置ID（服务端推导，不存储客户端传值）
 	// moves：子移动计划（Get 返回；Create 时客户端提供）。
-	Moves         []*StockMove           `protobuf:"bytes,7,rep,name=moves,proto3" json:"moves,omitempty"`                                   // 子移动计划列表
-	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                          // 备注
-	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`     // 租户ID，0代表系统全局
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Moves  []*StockMove `protobuf:"bytes,7,rep,name=moves,proto3" json:"moves,omitempty"`          // 子移动计划列表
+	Remark *string      `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"` // 备注
+	// 调拨源/目的仓库编码（仅 INTERNAL 类型使用；服务层据此推导 source/dest
+	// location）。入库类型不使用这两个字段（source 固定为供应商位置）。
+	FromWarehouseCode *string                `protobuf:"bytes,12,opt,name=from_warehouse_code,json=fromWarehouseCode,proto3,oneof" json:"from_warehouse_code,omitempty"` // 调拨源仓库编码
+	ToWarehouseCode   *string                `protobuf:"bytes,13,opt,name=to_warehouse_code,json=toWarehouseCode,proto3,oneof" json:"to_warehouse_code,omitempty"`       // 调拨目的仓库编码
+	TenantId          *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                             // 租户ID，0代表系统全局
+	CreatedBy         *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                         // 创建者用户ID
+	UpdatedBy         *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                         // 更新者用户ID
+	DeletedBy         *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                         // 删除者用户ID
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                          // 创建时间
+	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                          // 更新时间
+	DeletedAt         *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                          // 删除时间
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *StockPicking) Reset() {
@@ -767,6 +771,20 @@ func (x *StockPicking) GetMoves() []*StockMove {
 func (x *StockPicking) GetRemark() string {
 	if x != nil && x.Remark != nil {
 		return *x.Remark
+	}
+	return ""
+}
+
+func (x *StockPicking) GetFromWarehouseCode() string {
+	if x != nil && x.FromWarehouseCode != nil {
+		return *x.FromWarehouseCode
+	}
+	return ""
+}
+
+func (x *StockPicking) GetToWarehouseCode() string {
+	if x != nil && x.ToWarehouseCode != nil {
+		return *x.ToWarehouseCode
 	}
 	return ""
 }
@@ -2646,7 +2664,7 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xe8\r\n" +
+	"\v_deleted_at\"\xbf\x0f\n" +
 	"\fStockPicking\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v拣货单IDH\x00R\x02id\x88\x01\x01\x12V\n" +
 	"\x0epicking_number\x18\x02 \x01(\tB*\xe0A\x01\xbaG$\x92\x02!拣货单号（服务端生成）H\x01R\rpickingNumber\x88\x01\x01\x12m\n" +
@@ -2658,21 +2676,23 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\x17destination_location_id\x18\n" +
 	" \x01(\rB)\xbaG&\x92\x02#目的位置ID（服务端推导）H\aR\x15destinationLocationId\x88\x01\x01\x12R\n" +
 	"\x05moves\x18\a \x03(\v2\x1f.inventory.service.v1.StockMoveB\x1b\xbaG\x18\x92\x02\x15子移动计划列表R\x05moves\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\tR\btenantId\x88\x01\x01\x12;\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12S\n" +
+	"\x13from_warehouse_code\x18\f \x01(\tB\x1e\xe0A\x01\xbaG\x18\x92\x02\x15调拨源仓库编码H\tR\x11fromWarehouseCode\x88\x01\x01\x12R\n" +
+	"\x11to_warehouse_code\x18\r \x01(\tB!\xe0A\x01\xbaG\x1b\x92\x02\x18调拨目的仓库编码H\n" +
+	"R\x0ftoWarehouseCode\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\vR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
-	"R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\")\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\")\n" +
 	"\vPickingType\x12\f\n" +
 	"\bINCOMING\x10\x00\x12\f\n" +
 	"\bINTERNAL\x10\x01\"A\n" +
@@ -2689,7 +2709,9 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\r_partner_codeB\x15\n" +
 	"\x13_source_location_idB\x1a\n" +
 	"\x18_destination_location_idB\t\n" +
-	"\a_remarkB\f\n" +
+	"\a_remarkB\x16\n" +
+	"\x14_from_warehouse_codeB\x14\n" +
+	"\x12_to_warehouse_codeB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +

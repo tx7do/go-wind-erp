@@ -4794,6 +4794,11 @@ export type inventoryservicev1_StockPicking = {
   // derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
   derivedState?: inventoryservicev1_StockPicking_DerivedState;
   destinationLocationId?: number;
+  // 调拨源/目的仓库编码（仅 INTERNAL 类型使用；服务层据此推导 source/dest
+  // location）。入库类型不使用这两个字段（source 固定为供应商位置）。
+  //
+  // Behaviors: OPTIONAL
+  fromWarehouseCode?: string;
   //
   // Behaviors: OPTIONAL
   id?: number;
@@ -4815,6 +4820,9 @@ export type inventoryservicev1_StockPicking = {
   // source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
   sourceLocationId?: number;
   tenantId?: number;
+  //
+  // Behaviors: OPTIONAL
+  toWarehouseCode?: string;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
 };

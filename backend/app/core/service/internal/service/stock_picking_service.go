@@ -8,6 +8,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/tx7do/go-utils/trans"
+
 	"go-wind-erp/app/core/service/internal/data"
 
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
@@ -110,17 +112,54 @@ func (s *StockPickingService) Create(ctx context.Context, req *inventoryV1.Creat
 }
 
 // createInternalPicking 创建调拨拣货单（INTERNAL：仓库间转移）。
+// source/dest location 由服务层按 from/to warehouse code 推导——
+// 客户端提供仓库编码，不直接提供 location ID。
 func (s *StockPickingService) createInternalPicking(ctx context.Context, req *inventoryV1.CreateStockPickingRequest) (*emptypb.Empty, error) {
-	// 调拨的 source/dest 由仓库推导，但当前设计下客户端需提供 from/to
-	// 仓库信息。由于 proto 未显式携带 from/to warehouse code（location
-	// 由服务层推导），这里暂要求客户端在 partner_code 或 remark 中不携带
-	// 仓库信息——而是由后续 proto 扩展字段补充。当前暂不支持直接创建
-	// 调拨拣货单（需先扩展 proto 添加 from/to warehouse 字段）。
-	//
-	// TODO: 扩展 proto 添加 from_warehouse_code / to_warehouse_code 字段
-	// 后启用调拨创建。当前返回 not implemented。
-	_ = req
-	return nil, inventoryV1.ErrorBadRequest("internal transfer picking creation not yet implemented")
+	fromWh := req.Data.GetFromWarehouseCode()
+	toWh := req.Data.GetToWarehouseCode()
+	if fromWh == "" || toWh == "" {
+		return nil, inventoryV1.ErrorBadRequest("from_warehouse_code and to_warehouse_code are required for internal transfer")
+	}
+	if fromWh == toWh {
+		return nil, inventoryV1.ErrorBadRequest("source and destination warehouses must differ")
+	}
+
+	// 推导 source/dest location（各自仓库的 receiving_location_id）。
+	sourceLocID, err := s.locationRepo.GetLocationID(ctx, fromWh)
+	if err != nil {
+		return nil, err
+	}
+	destLocID, err := s.locationRepo.GetLocationID(ctx, toWh)
+	if err != nil {
+		return nil, err
+	}
+
+	// 构建 moves：客户端提供 per-move 的 product+planned_quantity，
+	// location 从 picking 继承。
+	moves := req.Data.GetMoves()
+	if len(moves) == 0 {
+		return nil, inventoryV1.ErrorBadRequest("at least one move is required")
+	}
+	for _, m := range moves {
+		if m == nil || m.GetProductCode() == "" || m.GetPlannedQuantity() <= 0 {
+			return nil, inventoryV1.ErrorBadRequest("each move must have a valid product_code and positive planned_quantity")
+		}
+	}
+
+	_, err = s.stockPickingRepo.Create(ctx, &inventoryV1.CreateStockPickingRequest{
+		Data: &inventoryV1.StockPicking{
+			PickingType:           inventoryV1.StockPicking_INTERNAL.Enum(),
+			SourceLocationId:      trans.Ptr(sourceLocID),
+			DestinationLocationId: trans.Ptr(destLocID),
+			Moves:                 moves,
+			Remark:                req.Data.Remark,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 // Confirm 确认拣货单：将该 picking 下所有 DRAFT move 迁至 CONFIRMED
@@ -200,6 +239,10 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		return nil, err
 	}
 
+	// 收集出库事件（source 为 INTERNAL 的 move），供事务提交后触发
+	// 补货 SAGA 评估。借鉴 Odoo 的 _action_done 后置检查。
+	var sagaEvents []stockEvent
+
 	for _, move := range confirmedMoves {
 		if move == nil {
 			continue
@@ -251,6 +294,21 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 			if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, srcQuant.GetId(), -executedQty); err != nil {
 				return nil, err
 			}
+
+			// 收集出库事件（source INTERNAL 的扣减），供事务提交后
+			// 触发补货 SAGA 评估（借鉴 Odoo _action_done 后置检查）。
+			whCode, werr := s.locationRepo.GetWarehouseCodeTx(ctx, tx, sourceLocID)
+			if werr != nil {
+				err = werr
+				return nil, err
+			}
+			if whCode != "" {
+				sagaEvents = append(sagaEvents, stockEvent{
+					warehouseCode: whCode,
+					skuCode:       productCode,
+					delta:         -executedQty,
+				})
+			}
 		}
 
 		// 更新 dest quant：quantity += executedQty（EnsureForLocation 先确保行存在）。
@@ -289,6 +347,16 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 	// 事务提交（由 FinishTx 执行）。
 	ret = &emptypb.Empty{}
 	err = nil
+
+	// 事务提交后触发补货 SAGA 评估（借鉴 Odoo _action_done 后置检查）。
+	// 评估失败仅记录，不阻塞出库——下次任何出库会重新评估，最终一致
+	// 靠"重评估"而非"重放"（见 procurementSagaSeam 文档）。
+	for _, event := range sagaEvents {
+		if serr := s.saga.notifyProcurement(ctx, event); serr != nil {
+			s.log.Errorf("saga notifyProcurement failed for %s/%s: %s",
+				event.warehouseCode, event.skuCode, serr.Error())
+		}
+	}
 
 	return ret, err
 }

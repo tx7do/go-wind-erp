@@ -231,9 +231,13 @@ func (r *LocationRepo) Delete(ctx context.Context, req *inventoryV1.DeleteLocati
 // 不返回位置对象本身，只返回 ID——调用方只需要 ID 来设置 move/picking 的
 // destination_location_id。
 func (r *LocationRepo) GetLocationID(ctx context.Context, warehouseCode string) (uint32, error) {
-	loc, err := r.entClient.Client().StockLocation.Query().
-		Where(stocklocation.WarehouseCodeEQ(warehouseCode), stocklocation.UsageEQ(stocklocation.UsageInternal)).
-		Only(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockLocation.Query().
+		Where(stocklocation.WarehouseCodeEQ(warehouseCode), stocklocation.UsageEQ(stocklocation.UsageInternal))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return 0, inventoryV1.ErrorNotFound("receiving location not found for warehouse")
@@ -246,9 +250,13 @@ func (r *LocationRepo) GetLocationID(ctx context.Context, warehouseCode string) 
 // GetSupplierLocationID 取租户的供应商位置ID（入库 move 的 source location）。
 // 每租户仅一条 usage=SUPPLIER 的位置。
 func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (uint32, error) {
-	loc, err := r.entClient.Client().StockLocation.Query().
-		Where(stocklocation.UsageEQ(stocklocation.UsageSupplier)).
-		Only(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockLocation.Query().
+		Where(stocklocation.UsageEQ(stocklocation.UsageSupplier))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return 0, inventoryV1.ErrorNotFound("supplier location not found for tenant")
@@ -265,9 +273,13 @@ func (r *LocationRepo) GetUsageTx(
 	tx *ent.Tx,
 	locationID uint32,
 ) (inventoryV1.StockLocation_Usage, error) {
-	loc, err := tx.StockLocation.Query().
-		Where(stocklocation.IDEQ(locationID)).
-		Only(ctx)
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := tx.StockLocation.Query().
+		Where(stocklocation.IDEQ(locationID))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return 0, inventoryV1.ErrorNotFound("location not found")
@@ -279,11 +291,38 @@ func (r *LocationRepo) GetUsageTx(
 	}
 	switch *loc.Usage {
 	case stocklocation.UsageSupplier:
-		return inventoryV1.StockLocation_SUPPLIER, nil
+			return inventoryV1.StockLocation_SUPPLIER, nil
 	case stocklocation.UsageInternal:
-		return inventoryV1.StockLocation_INTERNAL, nil
+			return inventoryV1.StockLocation_INTERNAL, nil
 	default:
-		return inventoryV1.StockLocation_INTERNAL, nil
+			return inventoryV1.StockLocation_INTERNAL, nil
 	}
+}
+
+// GetWarehouseCodeTx 在事务内查位置的 warehouse_code（INTERNAL 位置的归属
+// 仓库编码）。SAGA 触发用此将 source locationID 解析回仓库编码，供
+// notifyProcurement 构建 biz_ref 和重新查 quant。
+func (r *LocationRepo) GetWarehouseCodeTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	locationID uint32,
+) (string, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := tx.StockLocation.Query().
+		Where(stocklocation.IDEQ(locationID))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", inventoryV1.ErrorNotFound("location not found")
+		}
+		return "", inventoryV1.ErrorInternalServerError("query location failed")
+	}
+	if loc.WarehouseCode == nil {
+		return "", nil
+	}
+	return *loc.WarehouseCode, nil
 }
 

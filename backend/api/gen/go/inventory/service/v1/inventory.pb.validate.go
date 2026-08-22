@@ -838,6 +838,14 @@ func (m *StockPicking) validate(all bool) error {
 		// no validation rules for Remark
 	}
 
+	if m.FromWarehouseCode != nil {
+		// no validation rules for FromWarehouseCode
+	}
+
+	if m.ToWarehouseCode != nil {
+		// no validation rules for ToWarehouseCode
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}

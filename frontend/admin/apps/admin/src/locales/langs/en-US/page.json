@@ -460,7 +460,10 @@
     "deleteNotAllowed": "Only draft or cancelled pickings can be deleted",
     "transfer": {
       "title": "Internal Transfer",
-      "remark": "Remark"
+      "remark": "Remark",
+      "fromWarehouse": "Source Warehouse",
+      "toWarehouse": "Destination Warehouse",
+      "sameWarehouse": "Source and destination warehouses must differ"
     },
     "button": {
       "create": "Create Picking",

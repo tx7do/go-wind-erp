@@ -489,7 +489,10 @@
     "deleteNotAllowed": "仅草稿或已取消的拣货单可删除",
     "transfer": {
       "title": "内部调拨",
-      "remark": "备注"
+      "remark": "备注",
+      "fromWarehouse": "源仓库",
+      "toWarehouse": "目的仓库",
+      "sameWarehouse": "源仓库和目的仓库不能相同"
     },
     "button": {
       "create": "创建拣货单",
