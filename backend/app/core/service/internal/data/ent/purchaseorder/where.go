@@ -109,6 +109,11 @@ func TotalAmount(v int64) predicate.PurchaseOrder {
 	return predicate.PurchaseOrder(sql.FieldEQ(FieldTotalAmount, v))
 }
 
+// WarehouseCode applies equality check predicate on the "warehouse_code" field. It's identical to WarehouseCodeEQ.
+func WarehouseCode(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldEQ(FieldWarehouseCode, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.PurchaseOrder {
 	return predicate.PurchaseOrder(sql.FieldEQ(FieldCreatedAt, v))
@@ -762,6 +767,81 @@ func TotalAmountIsNil() predicate.PurchaseOrder {
 // TotalAmountNotNil applies the NotNil predicate on the "total_amount" field.
 func TotalAmountNotNil() predicate.PurchaseOrder {
 	return predicate.PurchaseOrder(sql.FieldNotNull(FieldTotalAmount))
+}
+
+// WarehouseCodeEQ applies the EQ predicate on the "warehouse_code" field.
+func WarehouseCodeEQ(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldEQ(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeNEQ applies the NEQ predicate on the "warehouse_code" field.
+func WarehouseCodeNEQ(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldNEQ(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeIn applies the In predicate on the "warehouse_code" field.
+func WarehouseCodeIn(vs ...string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldIn(FieldWarehouseCode, vs...))
+}
+
+// WarehouseCodeNotIn applies the NotIn predicate on the "warehouse_code" field.
+func WarehouseCodeNotIn(vs ...string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldNotIn(FieldWarehouseCode, vs...))
+}
+
+// WarehouseCodeGT applies the GT predicate on the "warehouse_code" field.
+func WarehouseCodeGT(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldGT(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeGTE applies the GTE predicate on the "warehouse_code" field.
+func WarehouseCodeGTE(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldGTE(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeLT applies the LT predicate on the "warehouse_code" field.
+func WarehouseCodeLT(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldLT(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeLTE applies the LTE predicate on the "warehouse_code" field.
+func WarehouseCodeLTE(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldLTE(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeContains applies the Contains predicate on the "warehouse_code" field.
+func WarehouseCodeContains(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldContains(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeHasPrefix applies the HasPrefix predicate on the "warehouse_code" field.
+func WarehouseCodeHasPrefix(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldHasPrefix(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeHasSuffix applies the HasSuffix predicate on the "warehouse_code" field.
+func WarehouseCodeHasSuffix(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldHasSuffix(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeIsNil applies the IsNil predicate on the "warehouse_code" field.
+func WarehouseCodeIsNil() predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldIsNull(FieldWarehouseCode))
+}
+
+// WarehouseCodeNotNil applies the NotNil predicate on the "warehouse_code" field.
+func WarehouseCodeNotNil() predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldNotNull(FieldWarehouseCode))
+}
+
+// WarehouseCodeEqualFold applies the EqualFold predicate on the "warehouse_code" field.
+func WarehouseCodeEqualFold(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldEqualFold(FieldWarehouseCode, v))
+}
+
+// WarehouseCodeContainsFold applies the ContainsFold predicate on the "warehouse_code" field.
+func WarehouseCodeContainsFold(v string) predicate.PurchaseOrder {
+	return predicate.PurchaseOrder(sql.FieldContainsFold(FieldWarehouseCode, v))
 }
 
 // And groups predicates with the AND operator between them.

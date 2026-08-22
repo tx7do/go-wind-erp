@@ -138,15 +138,16 @@ func (r *WarehouseRepo) Create(ctx context.Context, req *inventoryV1.CreateWareh
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
 
-	builder := r.entClient.Client().Warehouse.Create().
-		SetNillableTenantID(req.Data.TenantId).
-		SetNillableCode(req.Data.Code).
-		SetNillableName(req.Data.Name).
-		SetNillableLocation(req.Data.Location).
-		SetNillableEnable(req.Data.Enable).
-		SetNillableRemark(req.Data.Remark).
-		SetNillableCreatedBy(req.Data.CreatedBy).
-		SetCreatedAt(time.Now())
+		builder := r.entClient.Client().Warehouse.Create().
+			SetNillableTenantID(req.Data.TenantId).
+			SetNillableCode(req.Data.Code).
+			SetNillableName(req.Data.Name).
+			SetNillableLocation(req.Data.Location).
+			SetNillableEnable(req.Data.Enable).
+			SetNillableReceivingLocationID(req.Data.ReceivingLocationId).
+			SetNillableRemark(req.Data.Remark).
+			SetNillableCreatedBy(req.Data.CreatedBy).
+			SetCreatedAt(time.Now())
 
 	if req.Data.Id != nil {
 		builder.SetID(req.GetData().GetId())
@@ -194,6 +195,7 @@ func (r *WarehouseRepo) Update(ctx context.Context, req *inventoryV1.UpdateWareh
 				SetNillableName(req.Data.Name).
 				SetNillableLocation(req.Data.Location).
 				SetNillableEnable(req.Data.Enable).
+				SetNillableReceivingLocationID(req.Data.ReceivingLocationId).
 				SetNillableRemark(req.Data.Remark).
 				SetUpdatedAt(time.Now())
 

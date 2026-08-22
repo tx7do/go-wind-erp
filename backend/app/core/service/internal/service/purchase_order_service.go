@@ -14,6 +14,7 @@ import (
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
+	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 )
 
@@ -33,7 +34,9 @@ type PurchaseOrderService struct {
 	purchaseOrderRepo   *data.PurchaseOrderRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
 	payableRepo         *data.PayableRepo
-	inventoryRepo       *data.InventoryRepo
+	stockQuantRepo      *data.StockQuantRepo
+	locationRepo        *data.LocationRepo
+	stockPickingRepo    *data.StockPickingRepo
 }
 
 func NewPurchaseOrderService(
@@ -41,14 +44,18 @@ func NewPurchaseOrderService(
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	payableRepo *data.PayableRepo,
-	inventoryRepo *data.InventoryRepo,
+	stockQuantRepo *data.StockQuantRepo,
+	locationRepo *data.LocationRepo,
+	stockPickingRepo *data.StockPickingRepo,
 ) *PurchaseOrderService {
 	svc := &PurchaseOrderService{
 		log:                 ctx.NewLoggerHelper("purchase_order/service/core-service"),
 		purchaseOrderRepo:   purchaseOrderRepo,
 		approvalRequestRepo: approvalRequestRepo,
 		payableRepo:         payableRepo,
-		inventoryRepo:       inventoryRepo,
+		stockQuantRepo:      stockQuantRepo,
+		locationRepo:        locationRepo,
+		stockPickingRepo:    stockPickingRepo,
 	}
 
 	return svc
@@ -247,6 +254,13 @@ func (s *PurchaseOrderService) transition(
 		}); err != nil {
 			s.log.Errorf("create payable for purchase order %d failed: %s", id, err.Error())
 		}
+
+		// 库存联动：采购单获批即生成入库拣货单 + 子 moves（借鉴 Odoo
+		// _create_picking / _create_stock_moves）。source = 租户供应商
+		// 位置，dest = PO.warehouse_code 对应仓库的接收位置。每个 PO 明细
+		// 产生一条 DRAFT move（purchase_order_item_id 指向该明细，借鉴
+		// Odoo purchase_line_id）。生成失败不影响审批结果，仅记录。
+		s.createInboundPicking(ctx, old, id)
 	}
 
 	if createApproval && to == procurementV1.PurchaseOrder_SUBMITTED {
@@ -265,6 +279,66 @@ func (s *PurchaseOrderService) transition(
 	return &emptypb.Empty{}, nil
 }
 
+// createInboundPicking 采购单获批后创建入库拣货单 + 子 moves（借鉴 Odoo
+// _create_picking / _create_stock_moves）。source = 租户供应商位置，
+// dest = PO.warehouse_code 对应仓库的接收位置。每个 PO 明细产生一条
+// DRAFT move（purchase_order_item_id 指向该明细，借鉴 Odoo purchase_line_id）。
+// 生成失败仅记录日志，不影响审批结果。
+func (s *PurchaseOrderService) createInboundPicking(
+	ctx context.Context,
+	po *procurementV1.PurchaseOrder,
+	poID uint32,
+) {
+	warehouseCode := po.GetWarehouseCode()
+	if warehouseCode == "" {
+		s.log.Errorf("create inbound picking for po %d failed: no warehouse_code", poID)
+		return
+	}
+
+	// 推导 source（供应商位置）与 dest（仓库接收位置）。
+	sourceLocID, err := s.locationRepo.GetSupplierLocationID(ctx)
+	if err != nil {
+		s.log.Errorf("create inbound picking for po %d failed: resolve supplier location: %s", poID, err.Error())
+		return
+	}
+	destLocID, err := s.locationRepo.GetLocationID(ctx, warehouseCode)
+	if err != nil {
+		s.log.Errorf("create inbound picking for po %d failed: resolve receiving location: %s", poID, err.Error())
+		return
+	}
+
+	// 构建子 moves：每条 PO 明细对应一条 DRAFT move。
+	moves := make([]*inventoryV1.StockMove, 0, len(po.GetItems()))
+	for _, item := range po.GetItems() {
+		if item == nil || item.GetId() == 0 {
+			continue
+		}
+		moves = append(moves, &inventoryV1.StockMove{
+			ProductCode:         item.SkuCode,
+			PlannedQuantity:     item.Quantity,
+			PurchaseOrderItemId: item.Id,
+		})
+	}
+	if len(moves) == 0 {
+		s.log.Errorf("create inbound picking for po %d failed: no valid items", poID)
+		return
+	}
+
+	_, err = s.stockPickingRepo.Create(ctx, &inventoryV1.CreateStockPickingRequest{
+		Data: &inventoryV1.StockPicking{
+			PickingType:          inventoryV1.StockPicking_INCOMING.Enum(),
+			SourceLocationId:     trans.Ptr(sourceLocID),
+			DestinationLocationId: trans.Ptr(destLocID),
+			PurchaseOrderId:      trans.Ptr(poID),
+			PartnerCode:          po.SupplierCode,
+			Moves:                moves,
+		},
+	})
+	if err != nil {
+		s.log.Errorf("create inbound picking for po %d failed: %s", poID, err.Error())
+	}
+}
+
 // CreateReplenishmentDraft 补货建议获批后自动创建草稿采购单：
 // 供应商取该 SKU 最近采购来源（无历史则不建单，返回错误由调用方记录）；
 // 数量补到阈值的 2 倍（至少一个阈值批次）。草稿仍需采购员完善后提交。
@@ -281,16 +355,22 @@ func (s *PurchaseOrderService) CreateReplenishmentDraft(
 		return nil, fmt.Errorf("no supplier history for sku %s", skuCode)
 	}
 
-	inv, err := s.inventoryRepo.FindByWarehouseSku(ctx, warehouseCode, skuCode)
+	// 将仓库编码解析为接收位置ID，再按 location+product 查在手量。
+	locationID, err := s.locationRepo.GetLocationID(ctx, warehouseCode)
 	if err != nil {
 		return nil, err
 	}
-	qty := suggestReplenishQty(inv.GetQuantity(), defaultLowStockThreshold)
+	quant, err := s.stockQuantRepo.FindByLocationProduct(ctx, locationID, skuCode)
+	if err != nil {
+		return nil, err
+	}
+	qty := suggestReplenishQty(quant.GetQuantity(), defaultLowStockThreshold)
 
 	po, err := s.purchaseOrderRepo.Create(ctx, &procurementV1.CreatePurchaseOrderRequest{
 		Data: &procurementV1.PurchaseOrder{
-			SupplierCode: trans.Ptr(supplier),
-			Remark:       trans.Ptr(fmt.Sprintf("低库存自动补货草稿（%s/%s），请完善后提交", warehouseCode, skuCode)),
+			SupplierCode:  trans.Ptr(supplier),
+			WarehouseCode: trans.Ptr(warehouseCode),
+			Remark:        trans.Ptr(fmt.Sprintf("低库存自动补货草稿（%s/%s），请完善后提交", warehouseCode, skuCode)),
 			Items: []*procurementV1.PurchaseOrderItem{
 				{SkuCode: trans.Ptr(skuCode), Quantity: trans.Ptr(qty), UnitPrice: trans.Ptr(int64(0))},
 			},

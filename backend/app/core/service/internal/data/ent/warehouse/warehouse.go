@@ -36,6 +36,8 @@ const (
 	FieldLocation = "location"
 	// FieldEnable holds the string denoting the enable field in the database.
 	FieldEnable = "enable"
+	// FieldReceivingLocationID holds the string denoting the receiving_location_id field in the database.
+	FieldReceivingLocationID = "receiving_location_id"
 	// Table holds the table name of the warehouse in the database.
 	Table = "inv_warehouses"
 )
@@ -55,6 +57,7 @@ var Columns = []string{
 	FieldName,
 	FieldLocation,
 	FieldEnable,
+	FieldReceivingLocationID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -79,6 +82,8 @@ var (
 	DefaultTenantID uint32
 	// DefaultEnable holds the default value on creation for the "enable" field.
 	DefaultEnable bool
+	// DefaultReceivingLocationID holds the default value on creation for the "receiving_location_id" field.
+	DefaultReceivingLocationID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -149,4 +154,9 @@ func ByLocation(opts ...sql.OrderTermOption) OrderOption {
 // ByEnable orders the results by the enable field.
 func ByEnable(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEnable, opts...).ToFunc()
+}
+
+// ByReceivingLocationID orders the results by the receiving_location_id field.
+func ByReceivingLocationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReceivingLocationID, opts...).ToFunc()
 }

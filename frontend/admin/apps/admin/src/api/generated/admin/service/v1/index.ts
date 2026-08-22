@@ -4015,6 +4015,9 @@ export type inventoryservicev1_Warehouse = {
   //
   // Behaviors: OPTIONAL
   name?: string;
+  // receiving_location_id：该仓库的内部接收位置（仓库创建时自动生成的
+  // INTERNAL StockLocation）。入库拣货单的目的位置即取自此字段。
+  receivingLocationId?: number;
   remark?: string;
   tenantId?: number;
   updatedAt?: wellKnownTimestamp;
@@ -4045,44 +4048,36 @@ export type inventoryservicev1_DeleteWarehouseRequest = {
   id?: number;
 };
 
-// 库存管理服务
-export interface InventoryService {
-  // 查询库存列表
+// 库存位置服务
+export interface LocationService {
+  // 查询位置列表
   List(
     request: pagination_PagingRequest,
-  ): Promise<inventoryservicev1_ListInventoryResponse>;
-  // 查询库存详情
+  ): Promise<inventoryservicev1_ListLocationResponse>;
+  // 查询位置详情
   Get(
-    request: inventoryservicev1_GetInventoryRequest,
-  ): Promise<inventoryservicev1_Inventory>;
-  // 库存经营总览
-  GetOverview(
-    request: inventoryservicev1_GetInventoryOverviewRequest,
-  ): Promise<inventoryservicev1_InventoryOverview>;
-  // 库存流水趋势
-  GetMovementTrend(
-    request: inventoryservicev1_GetMovementTrendRequest,
-  ): Promise<inventoryservicev1_MovementTrendResponse>;
-  // 创建库存
+    request: inventoryservicev1_GetLocationRequest,
+  ): Promise<inventoryservicev1_StockLocation>;
+  // 创建位置
   Create(
-    request: inventoryservicev1_CreateInventoryRequest,
+    request: inventoryservicev1_CreateLocationRequest,
   ): Promise<wellKnownEmpty>;
-  // 更新库存
+  // 更新位置
   Update(
-    request: inventoryservicev1_UpdateInventoryRequest,
+    request: inventoryservicev1_UpdateLocationRequest,
   ): Promise<wellKnownEmpty>;
-  // 删除库存
+  // 删除位置
   Delete(
-    request: inventoryservicev1_DeleteInventoryRequest,
+    request: inventoryservicev1_DeleteLocationRequest,
   ): Promise<wellKnownEmpty>;
 }
 
-export function createInventoryServiceClient(
+export function createLocationServiceClient(
   transport: ClientTransport,
-): InventoryService {
+): LocationService {
   return {
     List(request) {
-      const path = `admin/v1/inventories`;
+      const path = `admin/v1/stock-locations`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -4192,15 +4187,15 @@ export function createInventoryServiceClient(
         uri += `?${queryParams.join('&')}`;
       }
       return transport.unary(uri, 'GET', body, {
-        service: 'InventoryService',
+        service: 'LocationService',
         method: 'List',
-      }) as Promise<inventoryservicev1_ListInventoryResponse>;
+      }) as Promise<inventoryservicev1_ListLocationResponse>;
     },
     Get(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/inventories/${request.id}`;
+      const path = `admin/v1/stock-locations/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -4213,12 +4208,257 @@ export function createInventoryServiceClient(
         uri += `?${queryParams.join('&')}`;
       }
       return transport.unary(uri, 'GET', body, {
-        service: 'InventoryService',
+        service: 'LocationService',
         method: 'Get',
-      }) as Promise<inventoryservicev1_Inventory>;
+      }) as Promise<inventoryservicev1_StockLocation>;
+    },
+    Create(request) {
+      const path = `admin/v1/stock-locations`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'LocationService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-locations/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'LocationService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-locations/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'LocationService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type inventoryservicev1_ListLocationResponse = {
+  items: inventoryservicev1_StockLocation[] | undefined;
+  total: number | undefined;
+};
+
+// 库存位置（借鉴 Odoo stock.location，简化为扁平结构）
+export type inventoryservicev1_StockLocation = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  remark?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  usage?: inventoryservicev1_StockLocation_Usage;
+  //
+  // Behaviors: OPTIONAL
+  warehouseCode?: string;
+};
+
+// 位置用途（借鉴 Odoo stock.location.usage，驱动移动语义）
+export type inventoryservicev1_StockLocation_Usage =
+  | 'INTERNAL'
+  | 'SUPPLIER';
+export type inventoryservicev1_GetLocationRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type inventoryservicev1_CreateLocationRequest = {
+  data: inventoryservicev1_StockLocation | undefined;
+};
+
+export type inventoryservicev1_UpdateLocationRequest = {
+  allowMissing?: boolean;
+  data: inventoryservicev1_StockLocation | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type inventoryservicev1_DeleteLocationRequest = {
+  id?: number;
+};
+
+// 库存量服务（只读）
+export interface StockQuantService {
+  // 查询库存量列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<inventoryservicev1_ListStockQuantResponse>;
+  // 查询库存量详情
+  Get(
+    request: inventoryservicev1_GetStockQuantRequest,
+  ): Promise<inventoryservicev1_StockQuant>;
+  // 库存经营总览
+  GetOverview(
+    request: inventoryservicev1_GetStockQuantOverviewRequest,
+  ): Promise<inventoryservicev1_StockQuantOverview>;
+  // 库存流水趋势
+  GetMovementTrend(
+    request: inventoryservicev1_GetMovementTrendRequest,
+  ): Promise<inventoryservicev1_MovementTrendResponse>;
+}
+
+export function createStockQuantServiceClient(
+  transport: ClientTransport,
+): StockQuantService {
+  return {
+    List(request) {
+      const path = `admin/v1/stock-quants`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockQuantService',
+        method: 'List',
+      }) as Promise<inventoryservicev1_ListStockQuantResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-quants/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockQuantService',
+        method: 'Get',
+      }) as Promise<inventoryservicev1_StockQuant>;
     },
     GetOverview(request) {
-      const path = `admin/v1/inventories:overview`;
+      const path = `admin/v1/stock-quants:overview`;
       const body = null;
       const queryParams: string[] = [];
       if (request.lowStockThreshold) {
@@ -4236,58 +4476,27 @@ export function createInventoryServiceClient(
         uri += `?${queryParams.join('&')}`;
       }
       return transport.unary(uri, 'GET', body, {
-        service: 'InventoryService',
+        service: 'StockQuantService',
         method: 'GetOverview',
-      }) as Promise<inventoryservicev1_InventoryOverview>;
+      }) as Promise<inventoryservicev1_StockQuantOverview>;
     },
     GetMovementTrend(_request) {
-      const path = `admin/v1/inventories:movement-trend`;
+      const path = `admin/v1/stock-quants:movement-trend`;
       const body = null;
       return transport.unary(path, 'GET', body, {
-        service: 'InventoryService',
+        service: 'StockQuantService',
         method: 'GetMovementTrend',
       }) as Promise<inventoryservicev1_MovementTrendResponse>;
     },
-    Create(request) {
-      const path = `admin/v1/inventories`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'POST', body, {
-        service: 'InventoryService',
-        method: 'Create',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Update(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `admin/v1/inventories/${request.id}`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'PUT', body, {
-        service: 'InventoryService',
-        method: 'Update',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Delete(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `admin/v1/inventories/${request.id}`;
-      const body = null;
-      return transport.unary(path, 'DELETE', body, {
-        service: 'InventoryService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
   };
 }
-// 查询库存列表 - 回应
-export type inventoryservicev1_ListInventoryResponse = {
-  items: inventoryservicev1_Inventory[] | undefined;
+export type inventoryservicev1_ListStockQuantResponse = {
+  items: inventoryservicev1_StockQuant[] | undefined;
   total: number | undefined;
 };
 
-// 库存
-export type inventoryservicev1_Inventory = {
+// 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
+export type inventoryservicev1_StockQuant = {
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   deletedAt?: wellKnownTimestamp;
@@ -4297,42 +4506,33 @@ export type inventoryservicev1_Inventory = {
   id?: number;
   //
   // Behaviors: OPTIONAL
+  locationId?: number;
+  //
+  // Behaviors: OPTIONAL
+  productCode?: string;
+  //
+  // Behaviors: OPTIONAL
   quantity?: number;
   remark?: string;
-  //
-  // Behaviors: OPTIONAL
-  skuCode?: string;
-  //
-  // Behaviors: OPTIONAL
-  status?: inventoryservicev1_Inventory_Status;
   tenantId?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
-  //
-  // Behaviors: OPTIONAL
-  warehouseCode?: string;
 };
 
-// 库存状态
-export type inventoryservicev1_Inventory_Status =
-  | 'AVAILABLE'
-  | 'LOCKED'
-  | 'QUARANTINED';
-// 查询库存详情 - 请求
-export type inventoryservicev1_GetInventoryRequest = {
+export type inventoryservicev1_GetStockQuantRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
 };
 
 // 库存经营总览 - 请求
-export type inventoryservicev1_GetInventoryOverviewRequest = {
+export type inventoryservicev1_GetStockQuantOverviewRequest = {
   lowStockLimit?: number;
   lowStockThreshold?: number;
 };
 
 // 库存经营总览 - 回应
-export type inventoryservicev1_InventoryOverview = {
-  lowStockItems: inventoryservicev1_Inventory[] | undefined;
+export type inventoryservicev1_StockQuantOverview = {
+  lowStockItems: inventoryservicev1_StockQuant[] | undefined;
   movementCount: number | undefined;
   skuCount: number | undefined;
   totalQuantity: number | undefined;
@@ -4354,58 +4554,44 @@ export type inventoryservicev1_MovementTrendPoint = {
   date: string | undefined;
 };
 
-// 创建库存 - 请求
-export type inventoryservicev1_CreateInventoryRequest = {
-  data: inventoryservicev1_Inventory | undefined;
-};
-
-// 更新库存 - 请求
-export type inventoryservicev1_UpdateInventoryRequest = {
-  allowMissing?: boolean;
-  data: inventoryservicev1_Inventory | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-// 删除库存 - 请求
-export type inventoryservicev1_DeleteInventoryRequest = {
-  id?: number;
-};
-
-// 库存流水管理服务
-export interface StockMovementService {
-  // 查询库存流水列表
+// 拣货单服务
+export interface StockPickingService {
+  // 查询拣货单列表
   List(
     request: pagination_PagingRequest,
-  ): Promise<inventoryservicev1_ListStockMovementResponse>;
-  // 查询库存流水详情
+  ): Promise<inventoryservicev1_ListStockPickingResponse>;
+  // 查询拣货单详情
   Get(
-    request: inventoryservicev1_GetStockMovementRequest,
-  ): Promise<inventoryservicev1_StockMovement>;
-  // 创建库存流水
+    request: inventoryservicev1_GetStockPickingRequest,
+  ): Promise<inventoryservicev1_StockPicking>;
+  // 创建拣货单
   Create(
-    request: inventoryservicev1_CreateStockMovementRequest,
+    request: inventoryservicev1_CreateStockPickingRequest,
   ): Promise<wellKnownEmpty>;
-  // 冲正库存流水
-  Reverse(
-    request: inventoryservicev1_ReverseStockMovementRequest,
+  // 确认拣货单
+  Confirm(
+    request: inventoryservicev1_ConfirmStockPickingRequest,
   ): Promise<wellKnownEmpty>;
-  // 库存调拨
-  Transfer(
-    request: inventoryservicev1_TransferStockRequest,
+  // 校验拣货单
+  Validate(
+    request: inventoryservicev1_ValidateStockPickingRequest,
   ): Promise<wellKnownEmpty>;
-  // 删除库存流水
+  // 取消拣货单
+  Cancel(
+    request: inventoryservicev1_CancelStockPickingRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除拣货单
   Delete(
-    request: inventoryservicev1_DeleteStockMovementRequest,
+    request: inventoryservicev1_DeleteStockPickingRequest,
   ): Promise<wellKnownEmpty>;
 }
 
-export function createStockMovementServiceClient(
+export function createStockPickingServiceClient(
   transport: ClientTransport,
-): StockMovementService {
+): StockPickingService {
   return {
     List(request) {
-      const path = `admin/v1/stock-movements`;
+      const path = `admin/v1/stock-pickings`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -4515,15 +4701,15 @@ export function createStockMovementServiceClient(
         uri += `?${queryParams.join('&')}`;
       }
       return transport.unary(uri, 'GET', body, {
-        service: 'StockMovementService',
+        service: 'StockPickingService',
         method: 'List',
-      }) as Promise<inventoryservicev1_ListStockMovementResponse>;
+      }) as Promise<inventoryservicev1_ListStockPickingResponse>;
     },
     Get(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-movements/${request.id}`;
+      const path = `admin/v1/stock-pickings/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -4536,117 +4722,177 @@ export function createStockMovementServiceClient(
         uri += `?${queryParams.join('&')}`;
       }
       return transport.unary(uri, 'GET', body, {
-        service: 'StockMovementService',
+        service: 'StockPickingService',
         method: 'Get',
-      }) as Promise<inventoryservicev1_StockMovement>;
+      }) as Promise<inventoryservicev1_StockPicking>;
     },
     Create(request) {
-      const path = `admin/v1/stock-movements`;
+      const path = `admin/v1/stock-pickings`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
-        service: 'StockMovementService',
+        service: 'StockPickingService',
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
-    Reverse(request) {
-      const path = `admin/v1/stock-movements:reverse`;
+    Confirm(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-pickings/${request.id}:confirm`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
-        service: 'StockMovementService',
-        method: 'Reverse',
+        service: 'StockPickingService',
+        method: 'Confirm',
       }) as Promise<wellKnownEmpty>;
     },
-    Transfer(request) {
-      const path = `admin/v1/stock-movements:transfer`;
+    Validate(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-pickings/${request.id}:validate`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
-        service: 'StockMovementService',
-        method: 'Transfer',
+        service: 'StockPickingService',
+        method: 'Validate',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Cancel(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/stock-pickings/${request.id}:cancel`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'StockPickingService',
+        method: 'Cancel',
       }) as Promise<wellKnownEmpty>;
     },
     Delete(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-movements/${request.id}`;
+      const path = `admin/v1/stock-pickings/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
-        service: 'StockMovementService',
+        service: 'StockPickingService',
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
   };
 }
-// 查询库存流水列表 - 回应
-export type inventoryservicev1_ListStockMovementResponse = {
-  items: inventoryservicev1_StockMovement[] | undefined;
+export type inventoryservicev1_ListStockPickingResponse = {
+  items: inventoryservicev1_StockPicking[] | undefined;
   total: number | undefined;
 };
 
-// 库存流水
-export type inventoryservicev1_StockMovement = {
+// 拣货单（借鉴 Odoo stock.picking：一等文档，生命周期从子 moves 派生）
+export type inventoryservicev1_StockPicking = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  // derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
+  derivedState?: inventoryservicev1_StockPicking_DerivedState;
+  destinationLocationId?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  // moves：子移动计划（Get 返回；Create 时客户端提供）。
+  moves: inventoryservicev1_StockMove[] | undefined;
+  //
+  // Behaviors: OPTIONAL
+  partnerCode?: string;
+  //
+  // Behaviors: OPTIONAL
+  pickingNumber?: string;
+  //
+  // Behaviors: OPTIONAL
+  pickingType?: inventoryservicev1_StockPicking_PickingType;
+  //
+  // Behaviors: OPTIONAL
+  purchaseOrderId?: number;
+  remark?: string;
+  // source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
+  sourceLocationId?: number;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
+export type inventoryservicev1_StockPicking_PickingType =
+  | 'INCOMING'
+  | 'INTERNAL';
+// 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
+export type inventoryservicev1_StockPicking_DerivedState =
+  | 'CANCELLED'
+  | 'CONFIRMED'
+  | 'DONE'
+  | 'DRAFT';
+// 库存移动计划（借鉴 Odoo stock.move 的计划角色）
+export type inventoryservicev1_StockMove = {
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   //
   // Behaviors: OPTIONAL
-  delta?: number;
+  destinationLocationId?: number;
   //
   // Behaviors: OPTIONAL
   id?: number;
   //
   // Behaviors: OPTIONAL
-  movementType?: inventoryservicev1_StockMovement_MovementType;
+  pickingId?: number;
   //
   // Behaviors: OPTIONAL
-  poId?: number;
-  quantityAfter?: number;
-  quantityBefore?: number;
+  plannedQuantity?: number;
+  //
+  // Behaviors: OPTIONAL
+  productCode?: string;
+  //
+  // Behaviors: OPTIONAL
+  purchaseOrderItemId?: number;
   remark?: string;
   //
   // Behaviors: OPTIONAL
-  skuCode?: string;
-  tenantId?: number;
+  sourceLocationId?: number;
   //
   // Behaviors: OPTIONAL
-  warehouseCode?: string;
+  state?: inventoryservicev1_StockMove_State;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
 };
 
-// 流水类型
-export type inventoryservicev1_StockMovement_MovementType =
-  | 'ADJUSTMENT'
-  | 'INBOUND'
-  | 'OUTBOUND'
-  | 'TRANSFER';
-// 查询库存流水详情 - 请求
-export type inventoryservicev1_GetStockMovementRequest = {
+// 移动状态机（DRAFT→CONFIRMED→DONE/CANCELLED）
+export type inventoryservicev1_StockMove_State =
+  | 'CANCELLED'
+  | 'CONFIRMED'
+  | 'DONE'
+  | 'DRAFT';
+export type inventoryservicev1_GetStockPickingRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
 };
 
-// 创建库存流水 - 请求
-export type inventoryservicev1_CreateStockMovementRequest = {
-  data: inventoryservicev1_StockMovement | undefined;
+export type inventoryservicev1_CreateStockPickingRequest = {
+  data: inventoryservicev1_StockPicking | undefined;
 };
 
-// 冲正库存流水 - 请求
-export type inventoryservicev1_ReverseStockMovementRequest = {
+export type inventoryservicev1_ConfirmStockPickingRequest = {
   id: number | undefined;
-  reason?: string;
 };
 
-// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
-export type inventoryservicev1_TransferStockRequest = {
-  fromWarehouseCode: string | undefined;
-  quantity: number | undefined;
-  remark?: string;
-  skuCode: string | undefined;
-  toWarehouseCode: string | undefined;
+export type inventoryservicev1_ValidateStockPickingRequest = {
+  id: number | undefined;
 };
 
-// 删除库存流水 - 请求
-export type inventoryservicev1_DeleteStockMovementRequest = {
+export type inventoryservicev1_CancelStockPickingRequest = {
+  id: number | undefined;
+};
+
+export type inventoryservicev1_DeleteStockPickingRequest = {
   id?: number;
 };
 
@@ -7911,6 +8157,11 @@ export type procurementservicev1_PurchaseOrder = {
   totalAmount?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
+  // warehouse_code：收货仓库。PO 获批后据此确定 receiving location，
+  // 创建入库拣货单（Odoo PO→_create_picking 桥接的必要字段）。
+  //
+  // Behaviors: OPTIONAL
+  warehouseCode?: string;
 };
 
 // 采购单状态
@@ -9781,8 +10032,8 @@ export class ApiClient {
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _internalMessageService?: InternalMessageService;
-  private _inventoryService?: InventoryService;
   private _languageService?: LanguageService;
+  private _locationService?: LocationService;
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
   private _menuService?: MenuService;
@@ -9798,7 +10049,8 @@ export class ApiClient {
   private _productService?: ProductService;
   private _purchaseOrderService?: PurchaseOrderService;
   private _roleService?: RoleService;
-  private _stockMovementService?: StockMovementService;
+  private _stockPickingService?: StockPickingService;
+  private _stockQuantService?: StockQuantService;
   private _supplierService?: SupplierService;
   private _taskService?: TaskService;
   private _tenantService?: TenantService;
@@ -9863,12 +10115,12 @@ export class ApiClient {
     return this._internalMessageService ??= createInternalMessageServiceClient(this._transport);
   }
 
-  get inventoryService(): InventoryService {
-    return this._inventoryService ??= createInventoryServiceClient(this._transport);
-  }
-
   get languageService(): LanguageService {
     return this._languageService ??= createLanguageServiceClient(this._transport);
+  }
+
+  get locationService(): LocationService {
+    return this._locationService ??= createLocationServiceClient(this._transport);
   }
 
   get loginAuditLogService(): LoginAuditLogService {
@@ -9931,8 +10183,12 @@ export class ApiClient {
     return this._roleService ??= createRoleServiceClient(this._transport);
   }
 
-  get stockMovementService(): StockMovementService {
-    return this._stockMovementService ??= createStockMovementServiceClient(this._transport);
+  get stockPickingService(): StockPickingService {
+    return this._stockPickingService ??= createStockPickingServiceClient(this._transport);
+  }
+
+  get stockQuantService(): StockQuantService {
+    return this._stockQuantService ??= createStockQuantServiceClient(this._transport);
   }
 
   get supplierService(): SupplierService {

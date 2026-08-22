@@ -41,8 +41,10 @@ type Warehouse struct {
 	// 仓库地址
 	Location *string `json:"location,omitempty"`
 	// 启用/禁用仓库
-	Enable       *bool `json:"enable,omitempty"`
-	selectValues sql.SelectValues
+	Enable *bool `json:"enable,omitempty"`
+	// 接收位置ID（仓库创建时自动生成的内部位置）
+	ReceivingLocationID *uint32 `json:"receiving_location_id,omitempty"`
+	selectValues        sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*Warehouse) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case warehouse.FieldEnable:
 			values[i] = new(sql.NullBool)
-		case warehouse.FieldID, warehouse.FieldCreatedBy, warehouse.FieldUpdatedBy, warehouse.FieldDeletedBy, warehouse.FieldTenantID:
+		case warehouse.FieldID, warehouse.FieldCreatedBy, warehouse.FieldUpdatedBy, warehouse.FieldDeletedBy, warehouse.FieldTenantID, warehouse.FieldReceivingLocationID:
 			values[i] = new(sql.NullInt64)
 		case warehouse.FieldRemark, warehouse.FieldCode, warehouse.FieldName, warehouse.FieldLocation:
 			values[i] = new(sql.NullString)
@@ -163,6 +165,13 @@ func (_m *Warehouse) assignValues(columns []string, values []any) error {
 				_m.Enable = new(bool)
 				*_m.Enable = value.Bool
 			}
+		case warehouse.FieldReceivingLocationID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field receiving_location_id", values[i])
+			} else if value.Valid {
+				_m.ReceivingLocationID = new(uint32)
+				*_m.ReceivingLocationID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -256,6 +265,11 @@ func (_m *Warehouse) String() string {
 	builder.WriteString(", ")
 	if v := _m.Enable; v != nil {
 		builder.WriteString("enable=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ReceivingLocationID; v != nil {
+		builder.WriteString("receiving_location_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

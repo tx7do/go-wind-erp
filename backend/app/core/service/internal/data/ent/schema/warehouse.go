@@ -50,6 +50,15 @@ func (Warehouse) Fields() []ent.Field {
 			Default(false).
 			Optional().
 			Nillable(),
+
+		// receiving_location_id：该仓库的内部接收位置（INTERNAL usage 的
+		// StockLocation）。仓库创建时服务层自动创建该位置并回填此字段。
+		// 入库拣货单的目的位置即取自此字段。
+		field.Uint32("receiving_location_id").
+			Comment("接收位置ID（仓库创建时自动生成的内部位置）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 

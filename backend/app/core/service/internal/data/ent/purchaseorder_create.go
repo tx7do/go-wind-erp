@@ -190,6 +190,20 @@ func (_c *PurchaseOrderCreate) SetNillableTotalAmount(v *int64) *PurchaseOrderCr
 	return _c
 }
 
+// SetWarehouseCode sets the "warehouse_code" field.
+func (_c *PurchaseOrderCreate) SetWarehouseCode(v string) *PurchaseOrderCreate {
+	_c.mutation.SetWarehouseCode(v)
+	return _c
+}
+
+// SetNillableWarehouseCode sets the "warehouse_code" field if the given value is not nil.
+func (_c *PurchaseOrderCreate) SetNillableWarehouseCode(v *string) *PurchaseOrderCreate {
+	if v != nil {
+		_c.SetWarehouseCode(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PurchaseOrderCreate) SetID(v uint32) *PurchaseOrderCreate {
 	_c.mutation.SetID(v)
@@ -340,6 +354,10 @@ func (_c *PurchaseOrderCreate) createSpec() (*PurchaseOrder, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.TotalAmount(); ok {
 		_spec.SetField(purchaseorder.FieldTotalAmount, field.TypeInt64, value)
 		_node.TotalAmount = &value
+	}
+	if value, ok := _c.mutation.WarehouseCode(); ok {
+		_spec.SetField(purchaseorder.FieldWarehouseCode, field.TypeString, value)
+		_node.WarehouseCode = &value
 	}
 	return _node, _spec
 }
@@ -594,6 +612,24 @@ func (u *PurchaseOrderUpsert) AddTotalAmount(v int64) *PurchaseOrderUpsert {
 // ClearTotalAmount clears the value of the "total_amount" field.
 func (u *PurchaseOrderUpsert) ClearTotalAmount() *PurchaseOrderUpsert {
 	u.SetNull(purchaseorder.FieldTotalAmount)
+	return u
+}
+
+// SetWarehouseCode sets the "warehouse_code" field.
+func (u *PurchaseOrderUpsert) SetWarehouseCode(v string) *PurchaseOrderUpsert {
+	u.Set(purchaseorder.FieldWarehouseCode, v)
+	return u
+}
+
+// UpdateWarehouseCode sets the "warehouse_code" field to the value that was provided on create.
+func (u *PurchaseOrderUpsert) UpdateWarehouseCode() *PurchaseOrderUpsert {
+	u.SetExcluded(purchaseorder.FieldWarehouseCode)
+	return u
+}
+
+// ClearWarehouseCode clears the value of the "warehouse_code" field.
+func (u *PurchaseOrderUpsert) ClearWarehouseCode() *PurchaseOrderUpsert {
+	u.SetNull(purchaseorder.FieldWarehouseCode)
 	return u
 }
 
@@ -886,6 +922,27 @@ func (u *PurchaseOrderUpsertOne) UpdateTotalAmount() *PurchaseOrderUpsertOne {
 func (u *PurchaseOrderUpsertOne) ClearTotalAmount() *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.ClearTotalAmount()
+	})
+}
+
+// SetWarehouseCode sets the "warehouse_code" field.
+func (u *PurchaseOrderUpsertOne) SetWarehouseCode(v string) *PurchaseOrderUpsertOne {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.SetWarehouseCode(v)
+	})
+}
+
+// UpdateWarehouseCode sets the "warehouse_code" field to the value that was provided on create.
+func (u *PurchaseOrderUpsertOne) UpdateWarehouseCode() *PurchaseOrderUpsertOne {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.UpdateWarehouseCode()
+	})
+}
+
+// ClearWarehouseCode clears the value of the "warehouse_code" field.
+func (u *PurchaseOrderUpsertOne) ClearWarehouseCode() *PurchaseOrderUpsertOne {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.ClearWarehouseCode()
 	})
 }
 
@@ -1344,6 +1401,27 @@ func (u *PurchaseOrderUpsertBulk) UpdateTotalAmount() *PurchaseOrderUpsertBulk {
 func (u *PurchaseOrderUpsertBulk) ClearTotalAmount() *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.ClearTotalAmount()
+	})
+}
+
+// SetWarehouseCode sets the "warehouse_code" field.
+func (u *PurchaseOrderUpsertBulk) SetWarehouseCode(v string) *PurchaseOrderUpsertBulk {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.SetWarehouseCode(v)
+	})
+}
+
+// UpdateWarehouseCode sets the "warehouse_code" field to the value that was provided on create.
+func (u *PurchaseOrderUpsertBulk) UpdateWarehouseCode() *PurchaseOrderUpsertBulk {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.UpdateWarehouseCode()
+	})
+}
+
+// ClearWarehouseCode clears the value of the "warehouse_code" field.
+func (u *PurchaseOrderUpsertBulk) ClearWarehouseCode() *PurchaseOrderUpsertBulk {
+	return u.Update(func(s *PurchaseOrderUpsert) {
+		s.ClearWarehouseCode()
 	})
 }
 

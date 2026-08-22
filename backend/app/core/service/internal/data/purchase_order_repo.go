@@ -149,6 +149,7 @@ func (r *PurchaseOrderRepo) Create(ctx context.Context, req *procurementV1.Creat
 		SetNillableSupplierCode(req.Data.SupplierCode).
 		SetStatus(purchaseorder.StatusDraft).
 		SetNillableTotalAmount(req.Data.TotalAmount).
+		SetNillableWarehouseCode(req.Data.WarehouseCode).
 		SetNillableRemark(req.Data.Remark).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
@@ -203,6 +204,7 @@ func (r *PurchaseOrderRepo) Update(ctx context.Context, req *procurementV1.Updat
 			builder.
 				SetNillableSupplierCode(req.Data.SupplierCode).
 				SetNillableTotalAmount(req.Data.TotalAmount).
+				SetNillableWarehouseCode(req.Data.WarehouseCode).
 				SetNillableRemark(req.Data.Remark).
 				SetUpdatedAt(time.Now())
 
@@ -423,6 +425,146 @@ func (r *PurchaseOrderRepo) LastSupplierForSku(ctx context.Context, skuCode stri
 		return "", procurementV1.ErrorInternalServerError("query last po failed")
 	}
 	return *last.SupplierCode, nil
+}
+
+// GetWarehouseCode 取采购单的收货仓库编码（PO 获批后据此确定 receiving location，
+// 创建入库拣货单——Odoo PO→_create_picking 桥接的必要字段）。
+func (r *PurchaseOrderRepo) GetWarehouseCode(ctx context.Context, poID uint32) (string, error) {
+	po, err := r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.IDEQ(poID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", procurementV1.ErrorNotFound("purchase order not found")
+		}
+		return "", procurementV1.ErrorInternalServerError("query purchase order failed")
+	}
+	if po.WarehouseCode == nil {
+		return "", procurementV1.ErrorBadRequest("purchase order has no warehouse_code")
+	}
+	return *po.WarehouseCode, nil
+}
+
+// GetItemsTx 取采购单明细（事务变体，供 StockPickingService.Validate 在事务内
+// 累计 received_quantity 时使用）。
+func (r *PurchaseOrderRepo) GetItemsTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	poID uint32,
+) ([]*procurementV1.PurchaseOrderItem, error) {
+	rows, err := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Order(ent.Asc(purchaseorderitem.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query purchase order items tx failed: %s", err.Error())
+		return nil, procurementV1.ErrorInternalServerError("query purchase order items failed")
+	}
+
+	items := make([]*procurementV1.PurchaseOrderItem, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, &procurementV1.PurchaseOrderItem{
+			Id:               trans.Ptr(row.ID),
+			PoId:             row.PoID,
+			SkuCode:          row.SkuCode,
+			Quantity:         row.Quantity,
+			UnitPrice:        row.UnitPrice,
+			Amount:           row.Amount,
+			ReceivedQuantity: row.ReceivedQuantity,
+		})
+	}
+	return items, nil
+}
+
+// ApplyReceiptTx 与 ApplyReceipt 同语义的事务变体，接受显式 *ent.Tx，使
+// StockPickingService.Validate 可在单个 DB 事务内运行（消除旧补偿竞态）。
+func (r *PurchaseOrderRepo) ApplyReceiptTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	poItemID uint32,
+	qty int64,
+) (autoCompleted bool, err error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	item, err := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.IDEQ(poItemID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return false, procurementV1.ErrorNotFound("purchase order item not found")
+		}
+		return false, procurementV1.ErrorInternalServerError("query purchase order item failed")
+	}
+
+	poID := *item.PoID
+
+	// 收货闸门：仅 APPROVED 单据可收货（与 ApplyReceipt 对称）。
+	gateQuery := tx.PurchaseOrder.Query().
+		Where(purchaseorder.IDEQ(poID)).
+		Where(purchaseorder.StatusEQ(purchaseorder.StatusApproved))
+	if hasTenant {
+		gateQuery.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	gateN, gerr := gateQuery.Count(ctx)
+	if gerr != nil {
+		r.log.Errorf("receiving status gate query failed: %s", gerr.Error())
+		return false, procurementV1.ErrorInternalServerError("receiving status gate query failed")
+	}
+	if gateN != 1 {
+		return false, procurementV1.ErrorConflict("purchase order is not approved for receiving")
+	}
+
+	builder := tx.PurchaseOrderItem.Update().
+		Where(purchaseorderitem.IDEQ(item.ID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s + %d <= %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), qty, s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		AddReceivedQuantity(qty)
+	if hasTenant {
+		builder.Where(purchaseorderitem.TenantIDEQ(tid))
+	}
+
+	n, serr := builder.Save(ctx)
+	if serr != nil {
+		r.log.Errorf("apply receipt tx failed: %s", serr.Error())
+		return false, procurementV1.ErrorInternalServerError("apply receipt failed")
+	}
+	if n == 0 {
+		return false, procurementV1.ErrorConflict("receipt exceeds ordered quantity")
+	}
+
+	// 全部明细收齐且单据在途 → 自动完结（冲突/失败仅记录）。
+	remaining, cerr := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s < %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		Count(ctx)
+	if cerr == nil && remaining == 0 {
+		// 事务内状态迁移（仅当当前为 APPROVED 时才更新为 COMPLETED）。
+		transitionBuilder := tx.PurchaseOrder.Update().
+			Where(purchaseorder.IDEQ(poID)).
+			Where(purchaseorder.StatusEQ(purchaseorder.StatusApproved)).
+			SetStatus(purchaseorder.StatusCompleted).
+			SetUpdatedAt(time.Now())
+		if hasTenant {
+			transitionBuilder.Where(purchaseorder.TenantIDEQ(tid))
+		}
+		tn, terr := transitionBuilder.Save(ctx)
+		if terr != nil {
+			r.log.Warnf("auto-complete purchase order %d failed: %s", poID, terr.Error())
+		} else if tn > 0 {
+			autoCompleted = true
+		}
+	}
+
+	return autoCompleted, nil
 }
 
 // Delete 删除采购单及其明细。

@@ -57,8 +57,8 @@
   "wms": {
     "moduleName": "仓储管理",
     "warehouse": "仓库管理",
-    "inventory": "库存管理",
-    "stockMovement": "库存流水",
+    "stockQuant": "库存量",
+    "stockPicking": "拣货单",
     "product": "商品管理"
   },
   "approval": {

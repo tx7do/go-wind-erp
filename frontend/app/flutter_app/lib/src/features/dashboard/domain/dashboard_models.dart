@@ -1,6 +1,6 @@
 /// 看板领域模型。
 ///
-/// 纯 Dart 值对象；由 data 层从 `/app/v1/inventories:overview` 响应映射而来。
+/// 纯 Dart 值对象；由 data 层从 `/app/v1/stock-quants:overview` 响应映射而来。
 
 /// 库存经营总览。
 class InventoryOverviewInfo {
@@ -20,16 +20,16 @@ class InventoryOverviewInfo {
 }
 
 /// 低库存清单项。
+///
+/// 对应后端 `stock.quant` 的低库存条目（按 location + productCode 索引）。
 class LowStockItem {
-  final String warehouseCode;
-  final String skuCode;
+  final int locationId;
+  final String productCode;
   final int quantity;
-  final String status;
 
   const LowStockItem({
-    required this.warehouseCode,
-    required this.skuCode,
+    required this.locationId,
+    required this.productCode,
     required this.quantity,
-    required this.status,
   });
 }

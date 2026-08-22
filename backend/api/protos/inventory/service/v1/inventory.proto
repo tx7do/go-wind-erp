@@ -34,55 +34,71 @@ service WarehouseService {
   rpc Delete (DeleteWarehouseRequest) returns (google.protobuf.Empty) {}
 }
 
-// 库存管理服务
-service InventoryService {
-  // 查询库存列表
-  rpc List (pagination.PagingRequest) returns (ListInventoryResponse) {}
+// 库存位置服务（借鉴 Odoo stock.location 的 usage 概念，简化为扁平结构）
+service LocationService {
+  // 查询位置列表
+  rpc List (pagination.PagingRequest) returns (ListLocationResponse) {}
 
-  // 统计库存数量
-  rpc Count (pagination.PagingRequest) returns (CountInventoryResponse) {}
+  // 统计位置数量
+  rpc Count (pagination.PagingRequest) returns (CountLocationResponse) {}
 
-  // 查询库存详情
-  rpc Get (GetInventoryRequest) returns (Inventory) {}
+  // 查询位置详情
+  rpc Get (GetLocationRequest) returns (StockLocation) {}
 
-  // 库存经营总览（看板聚合：仓库数/SKU数/库存总量/流水数/低库存清单）
-  rpc GetOverview (GetInventoryOverviewRequest) returns (InventoryOverview) {}
+  // 创建位置
+  rpc Create (CreateLocationRequest) returns (google.protobuf.Empty) {}
 
-  // 库存流水趋势（近 30 日每日流水条数，用于看板折线图）
-  rpc GetMovementTrend (GetMovementTrendRequest) returns (MovementTrendResponse) {}
+  // 更新位置
+  rpc Update (UpdateLocationRequest) returns (google.protobuf.Empty) {}
 
-  // 创建库存
-  rpc Create (CreateInventoryRequest) returns (google.protobuf.Empty) {}
-
-  // 更新库存
-  rpc Update (UpdateInventoryRequest) returns (google.protobuf.Empty) {}
-
-  // 删除库存
-  rpc Delete (DeleteInventoryRequest) returns (google.protobuf.Empty) {}
+  // 删除位置
+  rpc Delete (DeleteLocationRequest) returns (google.protobuf.Empty) {}
 }
 
-// 库存流水管理服务
-service StockMovementService {
-  // 查询库存流水列表
-  rpc List (pagination.PagingRequest) returns (ListStockMovementResponse) {}
+// 库存量服务（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
+service StockQuantService {
+  // 查询库存量列表
+  rpc List (pagination.PagingRequest) returns (ListStockQuantResponse) {}
 
-  // 统计库存流水数量
-  rpc Count (pagination.PagingRequest) returns (CountStockMovementResponse) {}
+  // 统计库存量行数
+  rpc Count (pagination.PagingRequest) returns (CountStockQuantResponse) {}
 
-  // 查询库存流水详情
-  rpc Get (GetStockMovementRequest) returns (StockMovement) {}
+  // 查询库存量详情
+  rpc Get (GetStockQuantRequest) returns (StockQuant) {}
 
-  // 创建库存流水
-  rpc Create (CreateStockMovementRequest) returns (google.protobuf.Empty) {}
+  // 库存经营总览（看板聚合：仓库数/SKU数/库存总量/低库存清单）
+  rpc GetOverview (GetStockQuantOverviewRequest) returns (StockQuantOverview) {}
 
-  // 冲正库存流水（对指定流水记一笔等量反向流水，台账 append-only 约定）
-  rpc Reverse (ReverseStockMovementRequest) returns (google.protobuf.Empty) {}
+  // 库存流水趋势（近 30 日每日执行记录条数，用于看板折线图）
+  rpc GetMovementTrend (GetMovementTrendRequest) returns (MovementTrendResponse) {}
+}
 
-  // 库存调拨（源仓出、目的仓入；失败自动冲正源仓出库——SAGA 补偿语义）
-  rpc Transfer (TransferStockRequest) returns (google.protobuf.Empty) {}
+// 拣货单服务（借鉴 Odoo stock.picking：一等文档，有生命周期）
+service StockPickingService {
+  // 查询拣货单列表
+  rpc List (pagination.PagingRequest) returns (ListStockPickingResponse) {}
 
-  // 删除库存流水
-  rpc Delete (DeleteStockMovementRequest) returns (google.protobuf.Empty) {}
+  // 统计拣货单数量
+  rpc Count (pagination.PagingRequest) returns (CountStockPickingResponse) {}
+
+  // 查询拣货单详情（含 moves）
+  rpc Get (GetStockPickingRequest) returns (StockPicking) {}
+
+  // 创建拣货单（含嵌套 moves；type=INTERNAL 调拨，客户端提供明细）
+  rpc Create (CreateStockPickingRequest) returns (google.protobuf.Empty) {}
+
+  // 确认拣货单（DRAFT moves → CONFIRMED，借鉴 Odoo action_confirm）
+  rpc Confirm (ConfirmStockPickingRequest) returns (google.protobuf.Empty) {}
+
+  // 校验拣货单（CONFIRMED moves → DONE，事务内创建 move-lines、更新 quants；
+  // 借鉴 Odoo button_validate / _action_done）
+  rpc Validate (ValidateStockPickingRequest) returns (google.protobuf.Empty) {}
+
+  // 取消拣货单（非终态 moves → CANCELLED）
+  rpc Cancel (CancelStockPickingRequest) returns (google.protobuf.Empty) {}
+
+  // 删除拣货单（DRAFT/CANCELLED）
+  rpc Delete (DeleteStockPickingRequest) returns (google.protobuf.Empty) {}
 }
 
 // 仓库
@@ -119,6 +135,13 @@ message Warehouse {
     }
   ]; // 仓库地址
 
+  // receiving_location_id：该仓库的内部接收位置（仓库创建时自动生成的
+  // INTERNAL StockLocation）。入库拣货单的目的位置即取自此字段。
+  optional uint32 receiving_location_id = 5 [
+    json_name = "receivingLocationId",
+    (gnostic.openapi.v3.property) = {description: "接收位置ID（系统生成）"}
+  ]; // 接收位置ID
+
   optional bool enable = 10 [
     json_name = "enable",
     (gnostic.openapi.v3.property) = {
@@ -145,54 +168,45 @@ message Warehouse {
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
-// 库存
-message Inventory {
-  // 库存状态
-  enum Status {
-    AVAILABLE = 0;   // 可用
-    LOCKED = 1;      // 锁定
-    QUARANTINED = 2; // 隔离
+// 库存位置（借鉴 Odoo stock.location，简化为扁平结构）
+message StockLocation {
+  // 位置用途（借鉴 Odoo stock.location.usage，驱动移动语义）
+  enum Usage {
+    INTERNAL = 0; // 内部仓库位置（dest for incoming, src/dst for internal）
+    SUPPLIER = 1; // 供应商位置（src for incoming）
   }
 
   optional uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-      description: "库存ID"
+      description: "位置ID"
     }
-  ]; // 库存ID
+  ]; // 位置ID
 
-  optional string warehouse_code = 2 [
+  optional string name = 2 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "位置名称"
+    }
+  ]; // 位置名称
+
+  optional Usage usage = 3 [
+    json_name = "usage",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "位置用途"
+        }
+  ]; // 位置用途
+
+  optional string warehouse_code = 4 [
     json_name = "warehouseCode",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-      description: "所属仓库编码"
-    }
-  ]; // 所属仓库编码
-
-  optional string sku_code = 3 [
-    json_name = "skuCode",
-    (google.api.field_behavior) = OPTIONAL,
-    (gnostic.openapi.v3.property) = {
-          description: "SKU编码"
+          description: "归属仓库编码（仅 INTERNAL 位置）"
         }
-  ]; // SKU编码
-
-  optional int64 quantity = 4 [
-    json_name = "quantity",
-    (google.api.field_behavior) = OPTIONAL,
-    (gnostic.openapi.v3.property) = {
-          description: "库存数量"
-        }
-  ]; // 库存数量
-
-  optional Status status = 5 [
-    json_name = "status",
-    (google.api.field_behavior) = OPTIONAL,
-    (gnostic.openapi.v3.property) = {
-          description: "库存状态"
-        }
-  ]; // 库存状态
+  ]; // 归属仓库编码
 
   optional string remark = 11 [
     json_name = "remark",
@@ -213,73 +227,39 @@ message Inventory {
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
-// 库存流水
-message StockMovement {
-  // 流水类型
-  enum MovementType {
-    INBOUND = 0;   // 入库
-    OUTBOUND = 1;  // 出库
-    TRANSFER = 2;  // 调拨
-    ADJUSTMENT = 3;// 调整
-  }
-
+// 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
+message StockQuant {
   optional uint32 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-      description: "流水ID"
+      description: "库存量ID"
     }
-  ]; // 流水ID
+  ]; // 库存量ID
 
-  optional string warehouse_code = 2 [
-    json_name = "warehouseCode",
+  optional uint32 location_id = 2 [
+    json_name = "locationId",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-          description: "涉及仓库编码"
+          description: "所在位置ID"
         }
-  ]; // 涉及仓库编码
+  ]; // 所在位置ID
 
-  optional string sku_code = 3 [
-    json_name = "skuCode",
+  optional string product_code = 3 [
+    json_name = "productCode",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-          description: "涉及SKU编码"
+          description: "产品编码"
         }
-  ]; // 涉及SKU编码
+  ]; // 产品编码
 
-  optional int64 delta = 4 [
-    json_name = "delta",
+  optional int64 quantity = 4 [
+    json_name = "quantity",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
-          description: "数量变化量，正为入、负为出"
+          description: "在手数量"
         }
-  ]; // 数量变化量
-
-  optional MovementType movement_type = 5 [
-    json_name = "movementType",
-    (google.api.field_behavior) = OPTIONAL,
-    (gnostic.openapi.v3.property) = {
-          description: "流水类型"
-        }
-  ]; // 流水类型
-
-  optional uint32 po_id = 8 [
-    json_name = "poId",
-    (google.api.field_behavior) = OPTIONAL,
-    (gnostic.openapi.v3.property) = {
-      description: "关联采购单ID（入库收货时回写采购单收货量）"
-    }
-  ]; // 关联采购单ID
-
-  optional int64 quantity_before = 6 [
-    json_name = "quantityBefore",
-    (gnostic.openapi.v3.property) = {description: "操作前数量（服务端计算）"}
-  ]; // 操作前数量（服务端计算，忽略客户端传值）
-
-  optional int64 quantity_after = 7 [
-    json_name = "quantityAfter",
-    (gnostic.openapi.v3.property) = {description: "操作后数量（服务端计算）"}
-  ]; // 操作后数量（服务端计算，忽略客户端传值）
+  ]; // 在手数量
 
   optional string remark = 11 [
     json_name = "remark",
@@ -292,9 +272,202 @@ message StockMovement {
   ];  // 租户ID，0代表系统全局
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
   optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 拣货单（借鉴 Odoo stock.picking：一等文档，生命周期从子 moves 派生）
+message StockPicking {
+  // 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
+  enum PickingType {
+    INCOMING = 0; // 入库（SUPPLIER→INTERNAL）
+    INTERNAL = 1; // 调拨（INTERNAL→INTERNAL）
+  }
+
+  // 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
+  enum DerivedState {
+    DRAFT = 0;      // 有任何 DRAFT move
+    CONFIRMED = 1;  // 有 CONFIRMED move
+    DONE = 2;       // 全部 DONE
+    CANCELLED = 3;  // 全部 CANCELLED
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "拣货单ID"
+    }
+  ]; // 拣货单ID
+
+  optional string picking_number = 2 [
+    json_name = "pickingNumber",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "拣货单号（服务端生成）"
+    }
+  ]; // 拣货单号
+
+  optional PickingType picking_type = 3 [
+    json_name = "pickingType",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "拣货类型"
+        }
+  ]; // 拣货类型
+
+  // derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
+  optional DerivedState derived_state = 4 [
+    json_name = "derivedState",
+    (gnostic.openapi.v3.property) = {description: "派生态（从子 moves 聚合，不存储）"}
+  ]; // 派生态
+
+  optional uint32 purchase_order_id = 5 [
+    json_name = "purchaseOrderId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "关联采购单ID（仅入库）"
+        }
+  ]; // 关联采购单ID
+
+  optional string partner_code = 6 [
+    json_name = "partnerCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "交易方编码"
+        }
+  ]; // 交易方编码
+
+  // source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
+  optional uint32 source_location_id = 9 [
+    json_name = "sourceLocationId",
+    (gnostic.openapi.v3.property) = {description: "源位置ID（服务端推导）"}
+  ]; // 源位置ID（服务端推导，不存储客户端传值）
+
+  optional uint32 destination_location_id = 10 [
+    json_name = "destinationLocationId",
+    (gnostic.openapi.v3.property) = {description: "目的位置ID（服务端推导）"}
+  ]; // 目的位置ID（服务端推导，不存储客户端传值）
+
+  // moves：子移动计划（Get 返回；Create 时客户端提供）。
+  repeated StockMove moves = 7 [
+    json_name = "moves",
+    (gnostic.openapi.v3.property) = {description: "子移动计划列表"}
+  ]; // 子移动计划列表
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 库存移动计划（借鉴 Odoo stock.move 的计划角色）
+message StockMove {
+  // 移动状态机（DRAFT→CONFIRMED→DONE/CANCELLED）
+  enum State {
+    DRAFT = 0;      // 草稿
+    CONFIRMED = 1;  // 已确认
+    DONE = 2;       // 已完成
+    CANCELLED = 3;  // 已取消
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "移动ID"
+    }
+  ]; // 移动ID
+
+  optional uint32 picking_id = 2 [
+    json_name = "pickingId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "所属拣货单ID"
+        }
+  ]; // 所属拣货单ID
+
+  optional string product_code = 3 [
+    json_name = "productCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "产品编码"
+        }
+  ]; // 产品编码
+
+  optional uint32 source_location_id = 4 [
+    json_name = "sourceLocationId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "源位置ID"
+        }
+  ]; // 源位置ID
+
+  optional uint32 destination_location_id = 5 [
+    json_name = "destinationLocationId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "目的位置ID"
+        }
+  ]; // 目的位置ID
+
+  optional int64 planned_quantity = 6 [
+    json_name = "plannedQuantity",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "计划数量"
+        }
+  ]; // 计划数量
+
+  optional State state = 7 [
+    json_name = "state",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "移动状态"
+        }
+  ]; // 移动状态
+
+  optional uint32 purchase_order_item_id = 8 [
+    json_name = "purchaseOrderItemId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "关联采购明细ID（仅入库）"
+        }
+  ]; // 关联采购明细ID
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
 }
 
@@ -360,14 +533,14 @@ message CountWarehouseResponse {
   uint64 count = 1;
 }
 
-// 查询库存列表 - 回应
-message ListInventoryResponse {
-  repeated Inventory items = 1;
+// =========== Location ==========
+
+message ListLocationResponse {
+  repeated StockLocation items = 1;
   uint64 total = 2;
 }
 
-// 查询库存详情 - 请求
-message GetInventoryRequest {
+message GetLocationRequest {
   oneof query_by {
     uint32 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
@@ -383,16 +556,14 @@ message GetInventoryRequest {
   ]; // 视图字段过滤器，用于控制返回的字段
 }
 
-// 创建库存 - 请求
-message CreateInventoryRequest {
-  Inventory data = 1;
+message CreateLocationRequest {
+  StockLocation data = 1;
 }
 
-// 更新库存 - 请求
-message UpdateInventoryRequest {
+message UpdateLocationRequest {
   uint32 id = 1;
 
-  Inventory data = 2;
+  StockLocation data = 2;
 
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {
@@ -408,8 +579,7 @@ message UpdateInventoryRequest {
   ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
 }
 
-// 删除库存 - 请求
-message DeleteInventoryRequest {
+message DeleteLocationRequest {
   oneof query_by {
     uint32 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
@@ -418,12 +588,39 @@ message DeleteInventoryRequest {
   }
 }
 
-message CountInventoryResponse {
+message CountLocationResponse {
+  uint64 count = 1;
+}
+
+// =========== StockQuant ==========
+
+message ListStockQuantResponse {
+  repeated StockQuant items = 1;
+  uint64 total = 2;
+}
+
+message GetStockQuantRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+message CountStockQuantResponse {
   uint64 count = 1;
 }
 
 // 库存经营总览 - 请求
-message GetInventoryOverviewRequest {
+message GetStockQuantOverviewRequest {
   optional int64 low_stock_threshold = 1 [
     json_name = "lowStockThreshold",
     (gnostic.openapi.v3.property) = {
@@ -440,7 +637,7 @@ message GetInventoryOverviewRequest {
 }
 
 // 库存经营总览 - 回应
-message InventoryOverview {
+message StockQuantOverview {
   uint64 warehouse_count = 1 [
     json_name = "warehouseCount",
     (gnostic.openapi.v3.property) = {description: "仓库数量"}
@@ -458,10 +655,10 @@ message InventoryOverview {
 
   uint64 movement_count = 4 [
     json_name = "movementCount",
-    (gnostic.openapi.v3.property) = {description: "库存流水总条数"}
-  ]; // 流水总条数
+    (gnostic.openapi.v3.property) = {description: "库存执行记录总条数"}
+  ]; // 执行记录总条数
 
-  repeated Inventory low_stock_items = 5 [
+  repeated StockQuant low_stock_items = 5 [
     json_name = "lowStockItems",
     (gnostic.openapi.v3.property) = {description: "低库存清单（按数量升序）"}
   ]; // 低库存清单
@@ -473,22 +670,22 @@ message GetMovementTrendRequest {}
 // 库存流水趋势 - 单日数据点
 message MovementTrendPoint {
   string date = 1 [json_name = "date", (gnostic.openapi.v3.property) = {description: "日期（YYYY-MM-DD）"}]; // 日期
-  int64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "当日流水条数"}]; // 当日流水条数
+  int64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "当日执行记录条数"}]; // 当日执行记录条数
 }
 
 // 库存流水趋势 - 回应
 message MovementTrendResponse {
-  repeated MovementTrendPoint points = 1 [json_name = "points", (gnostic.openapi.v3.property) = {description: "近 30 日每日流水条数（无流水的日期补 0）"}]; // 每日流水条数
+  repeated MovementTrendPoint points = 1 [json_name = "points", (gnostic.openapi.v3.property) = {description: "近 30 日每日执行记录条数（无记录的日期补 0）"}]; // 每日执行记录条数
 }
 
-// 查询库存流水列表 - 回应
-message ListStockMovementResponse {
-  repeated StockMovement items = 1;
+// =========== StockPicking ==========
+
+message ListStockPickingResponse {
+  repeated StockPicking items = 1;
   uint64 total = 2;
 }
 
-// 查询库存流水详情 - 请求
-message GetStockMovementRequest {
+message GetStockPickingRequest {
   oneof query_by {
     uint32 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
@@ -504,13 +701,11 @@ message GetStockMovementRequest {
   ]; // 视图字段过滤器，用于控制返回的字段
 }
 
-// 创建库存流水 - 请求
-message CreateStockMovementRequest {
-  StockMovement data = 1;
+message CreateStockPickingRequest {
+  StockPicking data = 1;
 }
 
-// 删除库存流水 - 请求
-message DeleteStockMovementRequest {
+message DeleteStockPickingRequest {
   oneof query_by {
     uint32 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
@@ -519,47 +714,27 @@ message DeleteStockMovementRequest {
   }
 }
 
-message CountStockMovementResponse {
+message CountStockPickingResponse {
   uint64 count = 1;
 }
 
-// 冲正库存流水 - 请求
-message ReverseStockMovementRequest {
+message ConfirmStockPickingRequest {
   uint32 id = 1 [
-    (gnostic.openapi.v3.property) = {description: "被冲正的流水ID", read_only: true},
+    (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
     json_name = "id"
-  ]; // 被冲正的流水ID
-
-  optional string reason = 2 [
-    json_name = "reason",
-    (gnostic.openapi.v3.property) = {description: "冲正原因"}
-  ]; // 冲正原因
+  ]; // ID
 }
 
-// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
-message TransferStockRequest {
-  string from_warehouse_code = 1 [
-    json_name = "fromWarehouseCode",
-    (gnostic.openapi.v3.property) = {description: "源仓库编码"}
-  ]; // 源仓库编码
+message ValidateStockPickingRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+    json_name = "id"
+  ]; // ID
+}
 
-  string to_warehouse_code = 2 [
-    json_name = "toWarehouseCode",
-    (gnostic.openapi.v3.property) = {description: "目的仓库编码"}
-  ]; // 目的仓库编码
-
-  string sku_code = 3 [
-    json_name = "skuCode",
-    (gnostic.openapi.v3.property) = {description: "SKU编码"}
-  ]; // SKU编码
-
-  int64 quantity = 4 [
-    json_name = "quantity",
-    (gnostic.openapi.v3.property) = {description: "调拨数量（正数）"}
-  ]; // 调拨数量
-
-  optional string remark = 5 [
-    json_name = "remark",
-    (gnostic.openapi.v3.property) = {description: "备注"}
-  ]; // 备注
+message CancelStockPickingRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+    json_name = "id"
+  ]; // ID
 }

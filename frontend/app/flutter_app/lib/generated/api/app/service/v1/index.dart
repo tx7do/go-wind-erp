@@ -2929,6 +2929,9 @@ class InventoryServiceV1Warehouse {
   ///
   /// Behaviors: OPTIONAL
   String? name;
+  /// receiving_location_id：该仓库的内部接收位置（仓库创建时自动生成的
+  /// INTERNAL StockLocation）。入库拣货单的目的位置即取自此字段。
+  int? receivingLocationId;
   String? remark;
   int? tenantId;
   String? updatedAt;
@@ -2944,6 +2947,7 @@ class InventoryServiceV1Warehouse {
     this.id,
     this.location,
     this.name,
+    this.receivingLocationId,
     this.remark,
     this.tenantId,
     this.updatedAt,
@@ -2961,6 +2965,7 @@ class InventoryServiceV1Warehouse {
       id: json['id'] as int?,
       location: json['location'] as String?,
       name: json['name'] as String?,
+      receivingLocationId: json['receivingLocationId'] as int?,
       remark: json['remark'] as String?,
       tenantId: json['tenantId'] as int?,
       updatedAt: json['updatedAt'] as String?,
@@ -2979,6 +2984,7 @@ class InventoryServiceV1Warehouse {
     if (id != null) json['id'] = id;
     if (location != null) json['location'] = location;
     if (name != null) json['name'] = name;
+    if (receivingLocationId != null) json['receivingLocationId'] = receivingLocationId;
     if (remark != null) json['remark'] = remark;
     if (tenantId != null) json['tenantId'] = tenantId;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
@@ -2988,7 +2994,7 @@ class InventoryServiceV1Warehouse {
 
   @override
   String toString() {
-    return 'InventoryServiceV1Warehouse(code: $code, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, enable: $enable, id: $id, location: $location, name: $name, remark: $remark, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'InventoryServiceV1Warehouse(code: $code, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, enable: $enable, id: $id, location: $location, name: $name, receivingLocationId: $receivingLocationId, remark: $remark, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -3005,6 +3011,7 @@ class InventoryServiceV1Warehouse {
       && id == other.id
       && location == other.location
       && name == other.name
+      && receivingLocationId == other.receivingLocationId
       && remark == other.remark
       && tenantId == other.tenantId
       && updatedAt == other.updatedAt
@@ -3022,6 +3029,7 @@ class InventoryServiceV1Warehouse {
     id,
     location,
     name,
+    receivingLocationId,
     remark,
     tenantId,
     updatedAt,
@@ -3038,6 +3046,7 @@ class InventoryServiceV1Warehouse {
     int? id,
     String? location,
     String? name,
+    int? receivingLocationId,
     String? remark,
     int? tenantId,
     String? updatedAt,
@@ -3053,6 +3062,7 @@ class InventoryServiceV1Warehouse {
       id: id ?? this.id,
       location: location ?? this.location,
       name: name ?? this.name,
+      receivingLocationId: receivingLocationId ?? this.receivingLocationId,
       remark: remark ?? this.remark,
       tenantId: tenantId ?? this.tenantId,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -3116,15 +3126,15 @@ class InventoryServiceV1GetWarehouseRequest {
   }
 }
 
-/// 库存服务（移动端只读：按仓库/SKU 查询库存）
-class InventoryServiceClient {
+/// 库存量服务（移动端只读：按仓库/SKU 查询库存）
+class StockQuantServiceClient {
   final ClientTransport _transport;
 
-  InventoryServiceClient(this._transport);
+  StockQuantServiceClient(this._transport);
 
-  /// 查询库存列表
-  Future<InventoryServiceV1ListInventoryResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/inventories';
+  /// 查询库存量列表
+  Future<InventoryServiceV1ListStockQuantResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-quants';
     final queryParams = <String>[];
     if (request.page != null) {
       queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
@@ -3164,18 +3174,18 @@ class InventoryServiceClient {
       uri += '?${queryParams.join("&")}';
     }
     final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'InventoryService',
+      service: 'StockQuantService',
       method: 'List',
     ), headers: headers);
-    return InventoryServiceV1ListInventoryResponse.fromJson(result as Map<String, dynamic>);
+    return InventoryServiceV1ListStockQuantResponse.fromJson(result as Map<String, dynamic>);
   }
 
-  /// 查询库存详情
-  Future<InventoryServiceV1Inventory> get(InventoryServiceV1GetInventoryRequest request, {Map<String, String>? headers}) async {
+  /// 查询库存量详情
+  Future<InventoryServiceV1StockQuant> get(InventoryServiceV1GetStockQuantRequest request, {Map<String, String>? headers}) async {
     if (request.id == null) {
       throw ArgumentError('missing required field request.id');
     }
-    final path = '/app/v1/inventories/${request.id}';
+    final path = '/app/v1/stock-quants/${request.id}';
     final queryParams = <String>[];
     if (request.viewMask != null) {
       queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
@@ -3185,15 +3195,15 @@ class InventoryServiceClient {
       uri += '?${queryParams.join("&")}';
     }
     final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'InventoryService',
+      service: 'StockQuantService',
       method: 'Get',
     ), headers: headers);
-    return InventoryServiceV1Inventory.fromJson(result as Map<String, dynamic>);
+    return InventoryServiceV1StockQuant.fromJson(result as Map<String, dynamic>);
   }
 
   /// 库存经营总览（看板聚合）
-  Future<InventoryServiceV1InventoryOverview> getOverview(InventoryServiceV1GetInventoryOverviewRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/inventories:overview';
+  Future<InventoryServiceV1StockQuantOverview> getOverview(InventoryServiceV1GetStockQuantOverviewRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-quants:overview';
     final queryParams = <String>[];
     if (request.lowStockThreshold != null) {
       queryParams.add('lowStockThreshold=${Uri.encodeComponent(request.lowStockThreshold!.toString())}');
@@ -3206,26 +3216,25 @@ class InventoryServiceClient {
       uri += '?${queryParams.join("&")}';
     }
     final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'InventoryService',
+      service: 'StockQuantService',
       method: 'GetOverview',
     ), headers: headers);
-    return InventoryServiceV1InventoryOverview.fromJson(result as Map<String, dynamic>);
+    return InventoryServiceV1StockQuantOverview.fromJson(result as Map<String, dynamic>);
   }
 }
 
-/// 查询库存列表 - 回应
-class InventoryServiceV1ListInventoryResponse {
-  List<InventoryServiceV1Inventory>? items;
+class InventoryServiceV1ListStockQuantResponse {
+  List<InventoryServiceV1StockQuant>? items;
   int? total;
 
-  InventoryServiceV1ListInventoryResponse({
+  InventoryServiceV1ListStockQuantResponse({
     this.items,
     this.total,
   });
 
-  factory InventoryServiceV1ListInventoryResponse.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1ListInventoryResponse(
-      items: (json['items'] as List<dynamic>?)?.map((e) => InventoryServiceV1Inventory.fromJson(e as Map<String, dynamic>)).toList(),
+  factory InventoryServiceV1ListStockQuantResponse.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ListStockQuantResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockQuant.fromJson(e as Map<String, dynamic>)).toList(),
       total: json['total'] != null ? int.parse(json['total'].toString()) : null,
     );
   }
@@ -3239,13 +3248,13 @@ class InventoryServiceV1ListInventoryResponse {
 
   @override
   String toString() {
-    return 'InventoryServiceV1ListInventoryResponse(items: $items, total: $total)';
+    return 'InventoryServiceV1ListStockQuantResponse(items: $items, total: $total)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1ListInventoryResponse &&
+    other is InventoryServiceV1ListStockQuantResponse &&
       runtimeType == other.runtimeType
       && items == other.items
       && total == other.total
@@ -3257,19 +3266,19 @@ class InventoryServiceV1ListInventoryResponse {
     total,
   ]);
 
-  InventoryServiceV1ListInventoryResponse copyWith({
-    List<InventoryServiceV1Inventory>? items,
+  InventoryServiceV1ListStockQuantResponse copyWith({
+    List<InventoryServiceV1StockQuant>? items,
     int? total,
   }) {
-    return InventoryServiceV1ListInventoryResponse(
+    return InventoryServiceV1ListStockQuantResponse(
       items: items ?? this.items,
       total: total ?? this.total,
     );
   }
 }
 
-/// 库存
-class InventoryServiceV1Inventory {
+/// 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
+class InventoryServiceV1StockQuant {
   String? createdAt;
   int? createdBy;
   String? deletedAt;
@@ -3279,52 +3288,47 @@ class InventoryServiceV1Inventory {
   int? id;
   ///
   /// Behaviors: OPTIONAL
+  int? locationId;
+  ///
+  /// Behaviors: OPTIONAL
+  String? productCode;
+  ///
+  /// Behaviors: OPTIONAL
   int? quantity;
   String? remark;
-  ///
-  /// Behaviors: OPTIONAL
-  String? skuCode;
-  ///
-  /// Behaviors: OPTIONAL
-  InventoryServiceV1Inventory$Status? status;
   int? tenantId;
   String? updatedAt;
   int? updatedBy;
-  ///
-  /// Behaviors: OPTIONAL
-  String? warehouseCode;
 
-  InventoryServiceV1Inventory({
+  InventoryServiceV1StockQuant({
     this.createdAt,
     this.createdBy,
     this.deletedAt,
     this.deletedBy,
     this.id,
+    this.locationId,
+    this.productCode,
     this.quantity,
     this.remark,
-    this.skuCode,
-    this.status,
     this.tenantId,
     this.updatedAt,
     this.updatedBy,
-    this.warehouseCode,
   });
 
-  factory InventoryServiceV1Inventory.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1Inventory(
+  factory InventoryServiceV1StockQuant.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1StockQuant(
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
       id: json['id'] as int?,
+      locationId: json['locationId'] as int?,
+      productCode: json['productCode'] as String?,
       quantity: json['quantity'] != null ? int.parse(json['quantity'].toString()) : null,
       remark: json['remark'] as String?,
-      skuCode: json['skuCode'] as String?,
-      status: json['status'] != null ? InventoryServiceV1Inventory$Status.fromString(json['status'] as String) : null,
       tenantId: json['tenantId'] as int?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
-      warehouseCode: json['warehouseCode'] as String?,
     );
   }
 
@@ -3335,40 +3339,38 @@ class InventoryServiceV1Inventory {
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
     if (id != null) json['id'] = id;
+    if (locationId != null) json['locationId'] = locationId;
+    if (productCode != null) json['productCode'] = productCode;
     if (quantity != null) json['quantity'] = quantity.toString();
     if (remark != null) json['remark'] = remark;
-    if (skuCode != null) json['skuCode'] = skuCode;
-    if (status != null) json['status'] = status!.value;
     if (tenantId != null) json['tenantId'] = tenantId;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
-    if (warehouseCode != null) json['warehouseCode'] = warehouseCode;
     return json;
   }
 
   @override
   String toString() {
-    return 'InventoryServiceV1Inventory(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, quantity: $quantity, remark: $remark, skuCode: $skuCode, status: $status, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy, warehouseCode: $warehouseCode)';
+    return 'InventoryServiceV1StockQuant(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, locationId: $locationId, productCode: $productCode, quantity: $quantity, remark: $remark, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1Inventory &&
+    other is InventoryServiceV1StockQuant &&
       runtimeType == other.runtimeType
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
       && id == other.id
+      && locationId == other.locationId
+      && productCode == other.productCode
       && quantity == other.quantity
       && remark == other.remark
-      && skuCode == other.skuCode
-      && status == other.status
       && tenantId == other.tenantId
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
-      && warehouseCode == other.warehouseCode
     ;
 
   @override
@@ -3378,76 +3380,57 @@ class InventoryServiceV1Inventory {
     deletedAt,
     deletedBy,
     id,
+    locationId,
+    productCode,
     quantity,
     remark,
-    skuCode,
-    status,
     tenantId,
     updatedAt,
     updatedBy,
-    warehouseCode,
   ]);
 
-  InventoryServiceV1Inventory copyWith({
+  InventoryServiceV1StockQuant copyWith({
     String? createdAt,
     int? createdBy,
     String? deletedAt,
     int? deletedBy,
     int? id,
+    int? locationId,
+    String? productCode,
     int? quantity,
     String? remark,
-    String? skuCode,
-    InventoryServiceV1Inventory$Status? status,
     int? tenantId,
     String? updatedAt,
     int? updatedBy,
-    String? warehouseCode,
   }) {
-    return InventoryServiceV1Inventory(
+    return InventoryServiceV1StockQuant(
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
       id: id ?? this.id,
+      locationId: locationId ?? this.locationId,
+      productCode: productCode ?? this.productCode,
       quantity: quantity ?? this.quantity,
       remark: remark ?? this.remark,
-      skuCode: skuCode ?? this.skuCode,
-      status: status ?? this.status,
       tenantId: tenantId ?? this.tenantId,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
-      warehouseCode: warehouseCode ?? this.warehouseCode,
     );
   }
 }
 
-/// 库存状态
-enum InventoryServiceV1Inventory$Status {
-  available('AVAILABLE'),
-  locked('LOCKED'),
-  quarantined('QUARANTINED');
-
-  final String value;
-  const InventoryServiceV1Inventory$Status(this.value);
-
-  static InventoryServiceV1Inventory$Status fromString(String v) =>
-    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1Inventory\$Status value: ' + v));
-  @override
-  String toString() => value;
-}
-
-/// 查询库存详情 - 请求
-class InventoryServiceV1GetInventoryRequest {
+class InventoryServiceV1GetStockQuantRequest {
   int? id;
   String? viewMask;
 
-  InventoryServiceV1GetInventoryRequest({
+  InventoryServiceV1GetStockQuantRequest({
     this.id,
     this.viewMask,
   });
 
-  factory InventoryServiceV1GetInventoryRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1GetInventoryRequest(
+  factory InventoryServiceV1GetStockQuantRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1GetStockQuantRequest(
       id: json['id'] as int?,
       viewMask: json['viewMask'] as String?,
     );
@@ -3462,13 +3445,13 @@ class InventoryServiceV1GetInventoryRequest {
 
   @override
   String toString() {
-    return 'InventoryServiceV1GetInventoryRequest(id: $id, viewMask: $viewMask)';
+    return 'InventoryServiceV1GetStockQuantRequest(id: $id, viewMask: $viewMask)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1GetInventoryRequest &&
+    other is InventoryServiceV1GetStockQuantRequest &&
       runtimeType == other.runtimeType
       && id == other.id
       && viewMask == other.viewMask
@@ -3480,11 +3463,11 @@ class InventoryServiceV1GetInventoryRequest {
     viewMask,
   ]);
 
-  InventoryServiceV1GetInventoryRequest copyWith({
+  InventoryServiceV1GetStockQuantRequest copyWith({
     int? id,
     String? viewMask,
   }) {
-    return InventoryServiceV1GetInventoryRequest(
+    return InventoryServiceV1GetStockQuantRequest(
       id: id ?? this.id,
       viewMask: viewMask ?? this.viewMask,
     );
@@ -3492,17 +3475,17 @@ class InventoryServiceV1GetInventoryRequest {
 }
 
 /// 库存经营总览 - 请求
-class InventoryServiceV1GetInventoryOverviewRequest {
+class InventoryServiceV1GetStockQuantOverviewRequest {
   int? lowStockLimit;
   int? lowStockThreshold;
 
-  InventoryServiceV1GetInventoryOverviewRequest({
+  InventoryServiceV1GetStockQuantOverviewRequest({
     this.lowStockLimit,
     this.lowStockThreshold,
   });
 
-  factory InventoryServiceV1GetInventoryOverviewRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1GetInventoryOverviewRequest(
+  factory InventoryServiceV1GetStockQuantOverviewRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1GetStockQuantOverviewRequest(
       lowStockLimit: json['lowStockLimit'] as int?,
       lowStockThreshold: json['lowStockThreshold'] != null ? int.parse(json['lowStockThreshold'].toString()) : null,
     );
@@ -3517,13 +3500,13 @@ class InventoryServiceV1GetInventoryOverviewRequest {
 
   @override
   String toString() {
-    return 'InventoryServiceV1GetInventoryOverviewRequest(lowStockLimit: $lowStockLimit, lowStockThreshold: $lowStockThreshold)';
+    return 'InventoryServiceV1GetStockQuantOverviewRequest(lowStockLimit: $lowStockLimit, lowStockThreshold: $lowStockThreshold)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1GetInventoryOverviewRequest &&
+    other is InventoryServiceV1GetStockQuantOverviewRequest &&
       runtimeType == other.runtimeType
       && lowStockLimit == other.lowStockLimit
       && lowStockThreshold == other.lowStockThreshold
@@ -3535,11 +3518,11 @@ class InventoryServiceV1GetInventoryOverviewRequest {
     lowStockThreshold,
   ]);
 
-  InventoryServiceV1GetInventoryOverviewRequest copyWith({
+  InventoryServiceV1GetStockQuantOverviewRequest copyWith({
     int? lowStockLimit,
     int? lowStockThreshold,
   }) {
-    return InventoryServiceV1GetInventoryOverviewRequest(
+    return InventoryServiceV1GetStockQuantOverviewRequest(
       lowStockLimit: lowStockLimit ?? this.lowStockLimit,
       lowStockThreshold: lowStockThreshold ?? this.lowStockThreshold,
     );
@@ -3547,14 +3530,14 @@ class InventoryServiceV1GetInventoryOverviewRequest {
 }
 
 /// 库存经营总览 - 回应
-class InventoryServiceV1InventoryOverview {
-  List<InventoryServiceV1Inventory>? lowStockItems;
+class InventoryServiceV1StockQuantOverview {
+  List<InventoryServiceV1StockQuant>? lowStockItems;
   int? movementCount;
   int? skuCount;
   int? totalQuantity;
   int? warehouseCount;
 
-  InventoryServiceV1InventoryOverview({
+  InventoryServiceV1StockQuantOverview({
     this.lowStockItems,
     this.movementCount,
     this.skuCount,
@@ -3562,9 +3545,9 @@ class InventoryServiceV1InventoryOverview {
     this.warehouseCount,
   });
 
-  factory InventoryServiceV1InventoryOverview.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1InventoryOverview(
-      lowStockItems: (json['lowStockItems'] as List<dynamic>?)?.map((e) => InventoryServiceV1Inventory.fromJson(e as Map<String, dynamic>)).toList(),
+  factory InventoryServiceV1StockQuantOverview.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1StockQuantOverview(
+      lowStockItems: (json['lowStockItems'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockQuant.fromJson(e as Map<String, dynamic>)).toList(),
       movementCount: json['movementCount'] != null ? int.parse(json['movementCount'].toString()) : null,
       skuCount: json['skuCount'] != null ? int.parse(json['skuCount'].toString()) : null,
       totalQuantity: json['totalQuantity'] != null ? int.parse(json['totalQuantity'].toString()) : null,
@@ -3584,13 +3567,13 @@ class InventoryServiceV1InventoryOverview {
 
   @override
   String toString() {
-    return 'InventoryServiceV1InventoryOverview(lowStockItems: $lowStockItems, movementCount: $movementCount, skuCount: $skuCount, totalQuantity: $totalQuantity, warehouseCount: $warehouseCount)';
+    return 'InventoryServiceV1StockQuantOverview(lowStockItems: $lowStockItems, movementCount: $movementCount, skuCount: $skuCount, totalQuantity: $totalQuantity, warehouseCount: $warehouseCount)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1InventoryOverview &&
+    other is InventoryServiceV1StockQuantOverview &&
       runtimeType == other.runtimeType
       && lowStockItems == other.lowStockItems
       && movementCount == other.movementCount
@@ -3608,14 +3591,14 @@ class InventoryServiceV1InventoryOverview {
     warehouseCount,
   ]);
 
-  InventoryServiceV1InventoryOverview copyWith({
-    List<InventoryServiceV1Inventory>? lowStockItems,
+  InventoryServiceV1StockQuantOverview copyWith({
+    List<InventoryServiceV1StockQuant>? lowStockItems,
     int? movementCount,
     int? skuCount,
     int? totalQuantity,
     int? warehouseCount,
   }) {
-    return InventoryServiceV1InventoryOverview(
+    return InventoryServiceV1StockQuantOverview(
       lowStockItems: lowStockItems ?? this.lowStockItems,
       movementCount: movementCount ?? this.movementCount,
       skuCount: skuCount ?? this.skuCount,
@@ -3625,15 +3608,15 @@ class InventoryServiceV1InventoryOverview {
   }
 }
 
-/// 库存流水服务（移动端：扫码记录出入库流水）
-class StockMovementServiceClient {
+/// 拣货单服务（移动端：扫码创建调拨拣货单，确认与校验）
+class StockPickingServiceClient {
   final ClientTransport _transport;
 
-  StockMovementServiceClient(this._transport);
+  StockPickingServiceClient(this._transport);
 
-  /// 查询库存流水列表
-  Future<InventoryServiceV1ListStockMovementResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/stock-movements';
+  /// 查询拣货单列表
+  Future<InventoryServiceV1ListStockPickingResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-pickings';
     final queryParams = <String>[];
     if (request.page != null) {
       queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
@@ -3673,18 +3656,18 @@ class StockMovementServiceClient {
       uri += '?${queryParams.join("&")}';
     }
     final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'StockMovementService',
+      service: 'StockPickingService',
       method: 'List',
     ), headers: headers);
-    return InventoryServiceV1ListStockMovementResponse.fromJson(result as Map<String, dynamic>);
+    return InventoryServiceV1ListStockPickingResponse.fromJson(result as Map<String, dynamic>);
   }
 
-  /// 查询库存流水详情
-  Future<InventoryServiceV1StockMovement> get(InventoryServiceV1GetStockMovementRequest request, {Map<String, String>? headers}) async {
+  /// 查询拣货单详情
+  Future<InventoryServiceV1StockPicking> get(InventoryServiceV1GetStockPickingRequest request, {Map<String, String>? headers}) async {
     if (request.id == null) {
       throw ArgumentError('missing required field request.id');
     }
-    final path = '/app/v1/stock-movements/${request.id}';
+    final path = '/app/v1/stock-pickings/${request.id}';
     final queryParams = <String>[];
     if (request.viewMask != null) {
       queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
@@ -3694,59 +3677,78 @@ class StockMovementServiceClient {
       uri += '?${queryParams.join("&")}';
     }
     final result = await _transport.unary(uri, 'GET', null, TransportMeta(
-      service: 'StockMovementService',
+      service: 'StockPickingService',
       method: 'Get',
     ), headers: headers);
-    return InventoryServiceV1StockMovement.fromJson(result as Map<String, dynamic>);
+    return InventoryServiceV1StockPicking.fromJson(result as Map<String, dynamic>);
   }
 
-  /// 创建库存流水（扫码入库/出库）
-  Future<Map<String, dynamic>> create(InventoryServiceV1CreateStockMovementRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/stock-movements';
+  /// 创建拣货单（扫码调拨）
+  Future<Map<String, dynamic>> create(InventoryServiceV1CreateStockPickingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-pickings';
     final body = jsonEncode(request.toJson());
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
-      service: 'StockMovementService',
+      service: 'StockPickingService',
       method: 'Create',
     ), headers: headers);
     return result as Map<String, dynamic>;
   }
 
-  /// 冲正库存流水（等量反向台账，幂等防重复冲正）
-  Future<Map<String, dynamic>> reverse(InventoryServiceV1ReverseStockMovementRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/stock-movements:reverse';
+  /// 确认拣货单
+  Future<Map<String, dynamic>> confirm(InventoryServiceV1ConfirmStockPickingRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/stock-pickings/${request.id}:confirm';
     final body = jsonEncode(request.toJson());
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
-      service: 'StockMovementService',
-      method: 'Reverse',
+      service: 'StockPickingService',
+      method: 'Confirm',
     ), headers: headers);
     return result as Map<String, dynamic>;
   }
 
-  /// 库存调拨（源仓出、目的仓入，单事务原子执行）
-  Future<Map<String, dynamic>> transfer(InventoryServiceV1TransferStockRequest request, {Map<String, String>? headers}) async {
-    final path = '/app/v1/stock-movements:transfer';
+  /// 校验拣货单
+  Future<Map<String, dynamic>> validate(InventoryServiceV1ValidateStockPickingRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/stock-pickings/${request.id}:validate';
     final body = jsonEncode(request.toJson());
     final result = await _transport.unary(path, 'POST', body, TransportMeta(
-      service: 'StockMovementService',
-      method: 'Transfer',
+      service: 'StockPickingService',
+      method: 'Validate',
+    ), headers: headers);
+    return result as Map<String, dynamic>;
+  }
+
+  /// 取消拣货单
+  Future<Map<String, dynamic>> cancel(InventoryServiceV1CancelStockPickingRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/stock-pickings/${request.id}:cancel';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'StockPickingService',
+      method: 'Cancel',
     ), headers: headers);
     return result as Map<String, dynamic>;
   }
 }
 
-/// 查询库存流水列表 - 回应
-class InventoryServiceV1ListStockMovementResponse {
-  List<InventoryServiceV1StockMovement>? items;
+class InventoryServiceV1ListStockPickingResponse {
+  List<InventoryServiceV1StockPicking>? items;
   int? total;
 
-  InventoryServiceV1ListStockMovementResponse({
+  InventoryServiceV1ListStockPickingResponse({
     this.items,
     this.total,
   });
 
-  factory InventoryServiceV1ListStockMovementResponse.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1ListStockMovementResponse(
-      items: (json['items'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockMovement.fromJson(e as Map<String, dynamic>)).toList(),
+  factory InventoryServiceV1ListStockPickingResponse.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ListStockPickingResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockPicking.fromJson(e as Map<String, dynamic>)).toList(),
       total: json['total'] != null ? int.parse(json['total'].toString()) : null,
     );
   }
@@ -3760,13 +3762,13 @@ class InventoryServiceV1ListStockMovementResponse {
 
   @override
   String toString() {
-    return 'InventoryServiceV1ListStockMovementResponse(items: $items, total: $total)';
+    return 'InventoryServiceV1ListStockPickingResponse(items: $items, total: $total)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1ListStockMovementResponse &&
+    other is InventoryServiceV1ListStockPickingResponse &&
       runtimeType == other.runtimeType
       && items == other.items
       && total == other.total
@@ -3778,79 +3780,89 @@ class InventoryServiceV1ListStockMovementResponse {
     total,
   ]);
 
-  InventoryServiceV1ListStockMovementResponse copyWith({
-    List<InventoryServiceV1StockMovement>? items,
+  InventoryServiceV1ListStockPickingResponse copyWith({
+    List<InventoryServiceV1StockPicking>? items,
     int? total,
   }) {
-    return InventoryServiceV1ListStockMovementResponse(
+    return InventoryServiceV1ListStockPickingResponse(
       items: items ?? this.items,
       total: total ?? this.total,
     );
   }
 }
 
-/// 库存流水
-class InventoryServiceV1StockMovement {
+/// 拣货单（借鉴 Odoo stock.picking：一等文档，生命周期从子 moves 派生）
+class InventoryServiceV1StockPicking {
   String? createdAt;
   int? createdBy;
   String? deletedAt;
   int? deletedBy;
-  ///
-  /// Behaviors: OPTIONAL
-  int? delta;
+  /// derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
+  InventoryServiceV1StockPicking$DerivedState? derivedState;
+  int? destinationLocationId;
   ///
   /// Behaviors: OPTIONAL
   int? id;
+  /// moves：子移动计划（Get 返回；Create 时客户端提供）。
+  List<InventoryServiceV1StockMove>? moves;
   ///
   /// Behaviors: OPTIONAL
-  InventoryServiceV1StockMovement$MovementType? movementType;
+  String? partnerCode;
   ///
   /// Behaviors: OPTIONAL
-  int? poId;
-  int? quantityAfter;
-  int? quantityBefore;
+  String? pickingNumber;
+  ///
+  /// Behaviors: OPTIONAL
+  InventoryServiceV1StockPicking$PickingType? pickingType;
+  ///
+  /// Behaviors: OPTIONAL
+  int? purchaseOrderId;
   String? remark;
-  ///
-  /// Behaviors: OPTIONAL
-  String? skuCode;
+  /// source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
+  int? sourceLocationId;
   int? tenantId;
-  ///
-  /// Behaviors: OPTIONAL
-  String? warehouseCode;
+  String? updatedAt;
+  int? updatedBy;
 
-  InventoryServiceV1StockMovement({
+  InventoryServiceV1StockPicking({
     this.createdAt,
     this.createdBy,
     this.deletedAt,
     this.deletedBy,
-    this.delta,
+    this.derivedState,
+    this.destinationLocationId,
     this.id,
-    this.movementType,
-    this.poId,
-    this.quantityAfter,
-    this.quantityBefore,
+    this.moves,
+    this.partnerCode,
+    this.pickingNumber,
+    this.pickingType,
+    this.purchaseOrderId,
     this.remark,
-    this.skuCode,
+    this.sourceLocationId,
     this.tenantId,
-    this.warehouseCode,
+    this.updatedAt,
+    this.updatedBy,
   });
 
-  factory InventoryServiceV1StockMovement.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1StockMovement(
+  factory InventoryServiceV1StockPicking.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1StockPicking(
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
-      delta: json['delta'] != null ? int.parse(json['delta'].toString()) : null,
+      derivedState: json['derivedState'] != null ? InventoryServiceV1StockPicking$DerivedState.fromString(json['derivedState'] as String) : null,
+      destinationLocationId: json['destinationLocationId'] as int?,
       id: json['id'] as int?,
-      movementType: json['movementType'] != null ? InventoryServiceV1StockMovement$MovementType.fromString(json['movementType'] as String) : null,
-      poId: json['poId'] as int?,
-      quantityAfter: json['quantityAfter'] != null ? int.parse(json['quantityAfter'].toString()) : null,
-      quantityBefore: json['quantityBefore'] != null ? int.parse(json['quantityBefore'].toString()) : null,
+      moves: (json['moves'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockMove.fromJson(e as Map<String, dynamic>)).toList(),
+      partnerCode: json['partnerCode'] as String?,
+      pickingNumber: json['pickingNumber'] as String?,
+      pickingType: json['pickingType'] != null ? InventoryServiceV1StockPicking$PickingType.fromString(json['pickingType'] as String) : null,
+      purchaseOrderId: json['purchaseOrderId'] as int?,
       remark: json['remark'] as String?,
-      skuCode: json['skuCode'] as String?,
+      sourceLocationId: json['sourceLocationId'] as int?,
       tenantId: json['tenantId'] as int?,
-      warehouseCode: json['warehouseCode'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
     );
   }
 
@@ -3860,43 +3872,49 @@ class InventoryServiceV1StockMovement {
     if (createdBy != null) json['createdBy'] = createdBy;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (delta != null) json['delta'] = delta.toString();
+    if (derivedState != null) json['derivedState'] = derivedState!.value;
+    if (destinationLocationId != null) json['destinationLocationId'] = destinationLocationId;
     if (id != null) json['id'] = id;
-    if (movementType != null) json['movementType'] = movementType!.value;
-    if (poId != null) json['poId'] = poId;
-    if (quantityAfter != null) json['quantityAfter'] = quantityAfter.toString();
-    if (quantityBefore != null) json['quantityBefore'] = quantityBefore.toString();
+    if (moves != null) json['moves'] = moves!.map((e) => e.toJson()).toList();
+    if (partnerCode != null) json['partnerCode'] = partnerCode;
+    if (pickingNumber != null) json['pickingNumber'] = pickingNumber;
+    if (pickingType != null) json['pickingType'] = pickingType!.value;
+    if (purchaseOrderId != null) json['purchaseOrderId'] = purchaseOrderId;
     if (remark != null) json['remark'] = remark;
-    if (skuCode != null) json['skuCode'] = skuCode;
+    if (sourceLocationId != null) json['sourceLocationId'] = sourceLocationId;
     if (tenantId != null) json['tenantId'] = tenantId;
-    if (warehouseCode != null) json['warehouseCode'] = warehouseCode;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
     return json;
   }
 
   @override
   String toString() {
-    return 'InventoryServiceV1StockMovement(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, delta: $delta, id: $id, movementType: $movementType, poId: $poId, quantityAfter: $quantityAfter, quantityBefore: $quantityBefore, remark: $remark, skuCode: $skuCode, tenantId: $tenantId, warehouseCode: $warehouseCode)';
+    return 'InventoryServiceV1StockPicking(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, derivedState: $derivedState, destinationLocationId: $destinationLocationId, id: $id, moves: $moves, partnerCode: $partnerCode, pickingNumber: $pickingNumber, pickingType: $pickingType, purchaseOrderId: $purchaseOrderId, remark: $remark, sourceLocationId: $sourceLocationId, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1StockMovement &&
+    other is InventoryServiceV1StockPicking &&
       runtimeType == other.runtimeType
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
-      && delta == other.delta
+      && derivedState == other.derivedState
+      && destinationLocationId == other.destinationLocationId
       && id == other.id
-      && movementType == other.movementType
-      && poId == other.poId
-      && quantityAfter == other.quantityAfter
-      && quantityBefore == other.quantityBefore
+      && moves == other.moves
+      && partnerCode == other.partnerCode
+      && pickingNumber == other.pickingNumber
+      && pickingType == other.pickingType
+      && purchaseOrderId == other.purchaseOrderId
       && remark == other.remark
-      && skuCode == other.skuCode
+      && sourceLocationId == other.sourceLocationId
       && tenantId == other.tenantId
-      && warehouseCode == other.warehouseCode
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
     ;
 
   @override
@@ -3905,81 +3923,302 @@ class InventoryServiceV1StockMovement {
     createdBy,
     deletedAt,
     deletedBy,
-    delta,
+    derivedState,
+    destinationLocationId,
     id,
-    movementType,
-    poId,
-    quantityAfter,
-    quantityBefore,
+    moves,
+    partnerCode,
+    pickingNumber,
+    pickingType,
+    purchaseOrderId,
     remark,
-    skuCode,
+    sourceLocationId,
     tenantId,
-    warehouseCode,
+    updatedAt,
+    updatedBy,
   ]);
 
-  InventoryServiceV1StockMovement copyWith({
+  InventoryServiceV1StockPicking copyWith({
     String? createdAt,
     int? createdBy,
     String? deletedAt,
     int? deletedBy,
-    int? delta,
+    InventoryServiceV1StockPicking$DerivedState? derivedState,
+    int? destinationLocationId,
     int? id,
-    InventoryServiceV1StockMovement$MovementType? movementType,
-    int? poId,
-    int? quantityAfter,
-    int? quantityBefore,
+    List<InventoryServiceV1StockMove>? moves,
+    String? partnerCode,
+    String? pickingNumber,
+    InventoryServiceV1StockPicking$PickingType? pickingType,
+    int? purchaseOrderId,
     String? remark,
-    String? skuCode,
+    int? sourceLocationId,
     int? tenantId,
-    String? warehouseCode,
+    String? updatedAt,
+    int? updatedBy,
   }) {
-    return InventoryServiceV1StockMovement(
+    return InventoryServiceV1StockPicking(
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
-      delta: delta ?? this.delta,
+      derivedState: derivedState ?? this.derivedState,
+      destinationLocationId: destinationLocationId ?? this.destinationLocationId,
       id: id ?? this.id,
-      movementType: movementType ?? this.movementType,
-      poId: poId ?? this.poId,
-      quantityAfter: quantityAfter ?? this.quantityAfter,
-      quantityBefore: quantityBefore ?? this.quantityBefore,
+      moves: moves ?? this.moves,
+      partnerCode: partnerCode ?? this.partnerCode,
+      pickingNumber: pickingNumber ?? this.pickingNumber,
+      pickingType: pickingType ?? this.pickingType,
+      purchaseOrderId: purchaseOrderId ?? this.purchaseOrderId,
       remark: remark ?? this.remark,
-      skuCode: skuCode ?? this.skuCode,
+      sourceLocationId: sourceLocationId ?? this.sourceLocationId,
       tenantId: tenantId ?? this.tenantId,
-      warehouseCode: warehouseCode ?? this.warehouseCode,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
     );
   }
 }
 
-/// 流水类型
-enum InventoryServiceV1StockMovement$MovementType {
-  adjustment('ADJUSTMENT'),
-  inbound('INBOUND'),
-  outbound('OUTBOUND'),
-  transfer('TRANSFER');
+/// 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
+enum InventoryServiceV1StockPicking$PickingType {
+  incoming('INCOMING'),
+  internal('INTERNAL');
 
   final String value;
-  const InventoryServiceV1StockMovement$MovementType(this.value);
+  const InventoryServiceV1StockPicking$PickingType(this.value);
 
-  static InventoryServiceV1StockMovement$MovementType fromString(String v) =>
-    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1StockMovement\$MovementType value: ' + v));
+  static InventoryServiceV1StockPicking$PickingType fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1StockPicking\$PickingType value: ' + v));
   @override
   String toString() => value;
 }
 
-/// 查询库存流水详情 - 请求
-class InventoryServiceV1GetStockMovementRequest {
+/// 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
+enum InventoryServiceV1StockPicking$DerivedState {
+  cancelled('CANCELLED'),
+  confirmed('CONFIRMED'),
+  done('DONE'),
+  draft('DRAFT');
+
+  final String value;
+  const InventoryServiceV1StockPicking$DerivedState(this.value);
+
+  static InventoryServiceV1StockPicking$DerivedState fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1StockPicking\$DerivedState value: ' + v));
+  @override
+  String toString() => value;
+}
+
+/// 库存移动计划（借鉴 Odoo stock.move 的计划角色）
+class InventoryServiceV1StockMove {
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  ///
+  /// Behaviors: OPTIONAL
+  int? destinationLocationId;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  ///
+  /// Behaviors: OPTIONAL
+  int? pickingId;
+  ///
+  /// Behaviors: OPTIONAL
+  int? plannedQuantity;
+  ///
+  /// Behaviors: OPTIONAL
+  String? productCode;
+  ///
+  /// Behaviors: OPTIONAL
+  int? purchaseOrderItemId;
+  String? remark;
+  ///
+  /// Behaviors: OPTIONAL
+  int? sourceLocationId;
+  ///
+  /// Behaviors: OPTIONAL
+  InventoryServiceV1StockMove$State? state;
+  int? tenantId;
+  String? updatedAt;
+  int? updatedBy;
+
+  InventoryServiceV1StockMove({
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.destinationLocationId,
+    this.id,
+    this.pickingId,
+    this.plannedQuantity,
+    this.productCode,
+    this.purchaseOrderItemId,
+    this.remark,
+    this.sourceLocationId,
+    this.state,
+    this.tenantId,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory InventoryServiceV1StockMove.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1StockMove(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      destinationLocationId: json['destinationLocationId'] as int?,
+      id: json['id'] as int?,
+      pickingId: json['pickingId'] as int?,
+      plannedQuantity: json['plannedQuantity'] != null ? int.parse(json['plannedQuantity'].toString()) : null,
+      productCode: json['productCode'] as String?,
+      purchaseOrderItemId: json['purchaseOrderItemId'] as int?,
+      remark: json['remark'] as String?,
+      sourceLocationId: json['sourceLocationId'] as int?,
+      state: json['state'] != null ? InventoryServiceV1StockMove$State.fromString(json['state'] as String) : null,
+      tenantId: json['tenantId'] as int?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (destinationLocationId != null) json['destinationLocationId'] = destinationLocationId;
+    if (id != null) json['id'] = id;
+    if (pickingId != null) json['pickingId'] = pickingId;
+    if (plannedQuantity != null) json['plannedQuantity'] = plannedQuantity.toString();
+    if (productCode != null) json['productCode'] = productCode;
+    if (purchaseOrderItemId != null) json['purchaseOrderItemId'] = purchaseOrderItemId;
+    if (remark != null) json['remark'] = remark;
+    if (sourceLocationId != null) json['sourceLocationId'] = sourceLocationId;
+    if (state != null) json['state'] = state!.value;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1StockMove(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, destinationLocationId: $destinationLocationId, id: $id, pickingId: $pickingId, plannedQuantity: $plannedQuantity, productCode: $productCode, purchaseOrderItemId: $purchaseOrderItemId, remark: $remark, sourceLocationId: $sourceLocationId, state: $state, tenantId: $tenantId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1StockMove &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && destinationLocationId == other.destinationLocationId
+      && id == other.id
+      && pickingId == other.pickingId
+      && plannedQuantity == other.plannedQuantity
+      && productCode == other.productCode
+      && purchaseOrderItemId == other.purchaseOrderItemId
+      && remark == other.remark
+      && sourceLocationId == other.sourceLocationId
+      && state == other.state
+      && tenantId == other.tenantId
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    destinationLocationId,
+    id,
+    pickingId,
+    plannedQuantity,
+    productCode,
+    purchaseOrderItemId,
+    remark,
+    sourceLocationId,
+    state,
+    tenantId,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  InventoryServiceV1StockMove copyWith({
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? destinationLocationId,
+    int? id,
+    int? pickingId,
+    int? plannedQuantity,
+    String? productCode,
+    int? purchaseOrderItemId,
+    String? remark,
+    int? sourceLocationId,
+    InventoryServiceV1StockMove$State? state,
+    int? tenantId,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return InventoryServiceV1StockMove(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      destinationLocationId: destinationLocationId ?? this.destinationLocationId,
+      id: id ?? this.id,
+      pickingId: pickingId ?? this.pickingId,
+      plannedQuantity: plannedQuantity ?? this.plannedQuantity,
+      productCode: productCode ?? this.productCode,
+      purchaseOrderItemId: purchaseOrderItemId ?? this.purchaseOrderItemId,
+      remark: remark ?? this.remark,
+      sourceLocationId: sourceLocationId ?? this.sourceLocationId,
+      state: state ?? this.state,
+      tenantId: tenantId ?? this.tenantId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 移动状态机（DRAFT→CONFIRMED→DONE/CANCELLED）
+enum InventoryServiceV1StockMove$State {
+  cancelled('CANCELLED'),
+  confirmed('CONFIRMED'),
+  done('DONE'),
+  draft('DRAFT');
+
+  final String value;
+  const InventoryServiceV1StockMove$State(this.value);
+
+  static InventoryServiceV1StockMove$State fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1StockMove\$State value: ' + v));
+  @override
+  String toString() => value;
+}
+
+class InventoryServiceV1GetStockPickingRequest {
   int? id;
   String? viewMask;
 
-  InventoryServiceV1GetStockMovementRequest({
+  InventoryServiceV1GetStockPickingRequest({
     this.id,
     this.viewMask,
   });
 
-  factory InventoryServiceV1GetStockMovementRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1GetStockMovementRequest(
+  factory InventoryServiceV1GetStockPickingRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1GetStockPickingRequest(
       id: json['id'] as int?,
       viewMask: json['viewMask'] as String?,
     );
@@ -3994,13 +4233,13 @@ class InventoryServiceV1GetStockMovementRequest {
 
   @override
   String toString() {
-    return 'InventoryServiceV1GetStockMovementRequest(id: $id, viewMask: $viewMask)';
+    return 'InventoryServiceV1GetStockPickingRequest(id: $id, viewMask: $viewMask)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1GetStockMovementRequest &&
+    other is InventoryServiceV1GetStockPickingRequest &&
       runtimeType == other.runtimeType
       && id == other.id
       && viewMask == other.viewMask
@@ -4012,28 +4251,27 @@ class InventoryServiceV1GetStockMovementRequest {
     viewMask,
   ]);
 
-  InventoryServiceV1GetStockMovementRequest copyWith({
+  InventoryServiceV1GetStockPickingRequest copyWith({
     int? id,
     String? viewMask,
   }) {
-    return InventoryServiceV1GetStockMovementRequest(
+    return InventoryServiceV1GetStockPickingRequest(
       id: id ?? this.id,
       viewMask: viewMask ?? this.viewMask,
     );
   }
 }
 
-/// 创建库存流水 - 请求
-class InventoryServiceV1CreateStockMovementRequest {
-  InventoryServiceV1StockMovement? data;
+class InventoryServiceV1CreateStockPickingRequest {
+  InventoryServiceV1StockPicking? data;
 
-  InventoryServiceV1CreateStockMovementRequest({
+  InventoryServiceV1CreateStockPickingRequest({
     this.data,
   });
 
-  factory InventoryServiceV1CreateStockMovementRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1CreateStockMovementRequest(
-      data: json['data'] != null ? InventoryServiceV1StockMovement.fromJson(json['data'] as Map<String, dynamic>) : null,
+  factory InventoryServiceV1CreateStockPickingRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1CreateStockPickingRequest(
+      data: json['data'] != null ? InventoryServiceV1StockPicking.fromJson(json['data'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -4045,13 +4283,13 @@ class InventoryServiceV1CreateStockMovementRequest {
 
   @override
   String toString() {
-    return 'InventoryServiceV1CreateStockMovementRequest(data: $data)';
+    return 'InventoryServiceV1CreateStockPickingRequest(data: $data)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1CreateStockMovementRequest &&
+    other is InventoryServiceV1CreateStockPickingRequest &&
       runtimeType == other.runtimeType
       && data == other.data
     ;
@@ -4061,145 +4299,149 @@ class InventoryServiceV1CreateStockMovementRequest {
     data,
   ]);
 
-  InventoryServiceV1CreateStockMovementRequest copyWith({
-    InventoryServiceV1StockMovement? data,
+  InventoryServiceV1CreateStockPickingRequest copyWith({
+    InventoryServiceV1StockPicking? data,
   }) {
-    return InventoryServiceV1CreateStockMovementRequest(
+    return InventoryServiceV1CreateStockPickingRequest(
       data: data ?? this.data,
     );
   }
 }
 
-/// 冲正库存流水 - 请求
-class InventoryServiceV1ReverseStockMovementRequest {
+class InventoryServiceV1ConfirmStockPickingRequest {
   int? id;
-  String? reason;
 
-  InventoryServiceV1ReverseStockMovementRequest({
+  InventoryServiceV1ConfirmStockPickingRequest({
     this.id,
-    this.reason,
   });
 
-  factory InventoryServiceV1ReverseStockMovementRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1ReverseStockMovementRequest(
+  factory InventoryServiceV1ConfirmStockPickingRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ConfirmStockPickingRequest(
       id: json['id'] as int?,
-      reason: json['reason'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (id != null) json['id'] = id;
-    if (reason != null) json['reason'] = reason;
     return json;
   }
 
   @override
   String toString() {
-    return 'InventoryServiceV1ReverseStockMovementRequest(id: $id, reason: $reason)';
+    return 'InventoryServiceV1ConfirmStockPickingRequest(id: $id)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1ReverseStockMovementRequest &&
+    other is InventoryServiceV1ConfirmStockPickingRequest &&
       runtimeType == other.runtimeType
       && id == other.id
-      && reason == other.reason
     ;
 
   @override
   int get hashCode => Object.hashAll([
     id,
-    reason,
   ]);
 
-  InventoryServiceV1ReverseStockMovementRequest copyWith({
+  InventoryServiceV1ConfirmStockPickingRequest copyWith({
     int? id,
-    String? reason,
   }) {
-    return InventoryServiceV1ReverseStockMovementRequest(
+    return InventoryServiceV1ConfirmStockPickingRequest(
       id: id ?? this.id,
-      reason: reason ?? this.reason,
     );
   }
 }
 
-/// 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
-class InventoryServiceV1TransferStockRequest {
-  String? fromWarehouseCode;
-  int? quantity;
-  String? remark;
-  String? skuCode;
-  String? toWarehouseCode;
+class InventoryServiceV1ValidateStockPickingRequest {
+  int? id;
 
-  InventoryServiceV1TransferStockRequest({
-    this.fromWarehouseCode,
-    this.quantity,
-    this.remark,
-    this.skuCode,
-    this.toWarehouseCode,
+  InventoryServiceV1ValidateStockPickingRequest({
+    this.id,
   });
 
-  factory InventoryServiceV1TransferStockRequest.fromJson(Map<String, dynamic> json) {
-    return InventoryServiceV1TransferStockRequest(
-      fromWarehouseCode: json['fromWarehouseCode'] as String?,
-      quantity: json['quantity'] != null ? int.parse(json['quantity'].toString()) : null,
-      remark: json['remark'] as String?,
-      skuCode: json['skuCode'] as String?,
-      toWarehouseCode: json['toWarehouseCode'] as String?,
+  factory InventoryServiceV1ValidateStockPickingRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ValidateStockPickingRequest(
+      id: json['id'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (fromWarehouseCode != null) json['fromWarehouseCode'] = fromWarehouseCode;
-    if (quantity != null) json['quantity'] = quantity.toString();
-    if (remark != null) json['remark'] = remark;
-    if (skuCode != null) json['skuCode'] = skuCode;
-    if (toWarehouseCode != null) json['toWarehouseCode'] = toWarehouseCode;
+    if (id != null) json['id'] = id;
     return json;
   }
 
   @override
   String toString() {
-    return 'InventoryServiceV1TransferStockRequest(fromWarehouseCode: $fromWarehouseCode, quantity: $quantity, remark: $remark, skuCode: $skuCode, toWarehouseCode: $toWarehouseCode)';
+    return 'InventoryServiceV1ValidateStockPickingRequest(id: $id)';
   }
 
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is InventoryServiceV1TransferStockRequest &&
+    other is InventoryServiceV1ValidateStockPickingRequest &&
       runtimeType == other.runtimeType
-      && fromWarehouseCode == other.fromWarehouseCode
-      && quantity == other.quantity
-      && remark == other.remark
-      && skuCode == other.skuCode
-      && toWarehouseCode == other.toWarehouseCode
+      && id == other.id
     ;
 
   @override
   int get hashCode => Object.hashAll([
-    fromWarehouseCode,
-    quantity,
-    remark,
-    skuCode,
-    toWarehouseCode,
+    id,
   ]);
 
-  InventoryServiceV1TransferStockRequest copyWith({
-    String? fromWarehouseCode,
-    int? quantity,
-    String? remark,
-    String? skuCode,
-    String? toWarehouseCode,
+  InventoryServiceV1ValidateStockPickingRequest copyWith({
+    int? id,
   }) {
-    return InventoryServiceV1TransferStockRequest(
-      fromWarehouseCode: fromWarehouseCode ?? this.fromWarehouseCode,
-      quantity: quantity ?? this.quantity,
-      remark: remark ?? this.remark,
-      skuCode: skuCode ?? this.skuCode,
-      toWarehouseCode: toWarehouseCode ?? this.toWarehouseCode,
+    return InventoryServiceV1ValidateStockPickingRequest(
+      id: id ?? this.id,
+    );
+  }
+}
+
+class InventoryServiceV1CancelStockPickingRequest {
+  int? id;
+
+  InventoryServiceV1CancelStockPickingRequest({
+    this.id,
+  });
+
+  factory InventoryServiceV1CancelStockPickingRequest.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1CancelStockPickingRequest(
+      id: json['id'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1CancelStockPickingRequest(id: $id)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1CancelStockPickingRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+  ]);
+
+  InventoryServiceV1CancelStockPickingRequest copyWith({
+    int? id,
+  }) {
+    return InventoryServiceV1CancelStockPickingRequest(
+      id: id ?? this.id,
     );
   }
 }
@@ -4357,6 +4599,11 @@ class ProcurementServiceV1PurchaseOrder {
   int? totalAmount;
   String? updatedAt;
   int? updatedBy;
+  /// warehouse_code：收货仓库。PO 获批后据此确定 receiving location，
+  /// 创建入库拣货单（Odoo PO→_create_picking 桥接的必要字段）。
+  ///
+  /// Behaviors: OPTIONAL
+  String? warehouseCode;
 
   ProcurementServiceV1PurchaseOrder({
     this.createdAt,
@@ -4373,6 +4620,7 @@ class ProcurementServiceV1PurchaseOrder {
     this.totalAmount,
     this.updatedAt,
     this.updatedBy,
+    this.warehouseCode,
   });
 
   factory ProcurementServiceV1PurchaseOrder.fromJson(Map<String, dynamic> json) {
@@ -4391,6 +4639,7 @@ class ProcurementServiceV1PurchaseOrder {
       totalAmount: json['totalAmount'] != null ? int.parse(json['totalAmount'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
+      warehouseCode: json['warehouseCode'] as String?,
     );
   }
 
@@ -4410,12 +4659,13 @@ class ProcurementServiceV1PurchaseOrder {
     if (totalAmount != null) json['totalAmount'] = totalAmount.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (warehouseCode != null) json['warehouseCode'] = warehouseCode;
     return json;
   }
 
   @override
   String toString() {
-    return 'ProcurementServiceV1PurchaseOrder(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, items: $items, poNumber: $poNumber, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, totalAmount: $totalAmount, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ProcurementServiceV1PurchaseOrder(createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, items: $items, poNumber: $poNumber, remark: $remark, status: $status, supplierCode: $supplierCode, tenantId: $tenantId, totalAmount: $totalAmount, updatedAt: $updatedAt, updatedBy: $updatedBy, warehouseCode: $warehouseCode)';
   }
 
   @override
@@ -4437,6 +4687,7 @@ class ProcurementServiceV1PurchaseOrder {
       && totalAmount == other.totalAmount
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
+      && warehouseCode == other.warehouseCode
     ;
 
   @override
@@ -4455,6 +4706,7 @@ class ProcurementServiceV1PurchaseOrder {
     totalAmount,
     updatedAt,
     updatedBy,
+    warehouseCode,
   ]);
 
   ProcurementServiceV1PurchaseOrder copyWith({
@@ -4472,6 +4724,7 @@ class ProcurementServiceV1PurchaseOrder {
     int? totalAmount,
     String? updatedAt,
     int? updatedBy,
+    String? warehouseCode,
   }) {
     return ProcurementServiceV1PurchaseOrder(
       createdAt: createdAt ?? this.createdAt,
@@ -4488,6 +4741,7 @@ class ProcurementServiceV1PurchaseOrder {
       totalAmount: totalAmount ?? this.totalAmount,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
+      warehouseCode: warehouseCode ?? this.warehouseCode,
     );
   }
 }
@@ -5734,11 +5988,11 @@ class ApiClient {
   ApprovalRequestServiceClient? _approvalRequestService;
   AuthenticationServiceClient? _authenticationService;
   FileTransferServiceClient? _fileTransferService;
-  InventoryServiceClient? _inventoryService;
   PayableServiceClient? _payableService;
   PaymentServiceClient? _paymentService;
   PurchaseOrderServiceClient? _purchaseOrderService;
-  StockMovementServiceClient? _stockMovementService;
+  StockPickingServiceClient? _stockPickingService;
+  StockQuantServiceClient? _stockQuantService;
   UserProfileServiceClient? _userProfileService;
   WarehouseServiceClient? _warehouseService;
 
@@ -5759,11 +6013,6 @@ class ApiClient {
     return _fileTransferService!;
   }
 
-  InventoryServiceClient get inventoryService {
-    _inventoryService ??= InventoryServiceClient(_transport);
-    return _inventoryService!;
-  }
-
   PayableServiceClient get payableService {
     _payableService ??= PayableServiceClient(_transport);
     return _payableService!;
@@ -5779,9 +6028,14 @@ class ApiClient {
     return _purchaseOrderService!;
   }
 
-  StockMovementServiceClient get stockMovementService {
-    _stockMovementService ??= StockMovementServiceClient(_transport);
-    return _stockMovementService!;
+  StockPickingServiceClient get stockPickingService {
+    _stockPickingService ??= StockPickingServiceClient(_transport);
+    return _stockPickingService!;
+  }
+
+  StockQuantServiceClient get stockQuantService {
+    _stockQuantService ??= StockQuantServiceClient(_transport);
+    return _stockQuantService!;
   }
 
   UserProfileServiceClient get userProfileService {
@@ -5799,11 +6053,11 @@ class ApiClient {
     _approvalRequestService = null;
     _authenticationService = null;
     _fileTransferService = null;
-    _inventoryService = null;
     _payableService = null;
     _paymentService = null;
     _purchaseOrderService = null;
-    _stockMovementService = null;
+    _stockPickingService = null;
+    _stockQuantService = null;
     _userProfileService = null;
     _warehouseService = null;
   }

@@ -7,36 +7,20 @@ abstract class WmsRepository {
   /// 拉取仓库列表（扫码端只读，用于选择当前作业仓库）。
   Future<List<WarehouseInfo>> listWarehouses();
 
-  /// 按仓库 + SKU 查询库存；未命中返回 null。
+  /// 按 location + productCode 查询库存量；未命中返回 null。
+  ///
+  /// 新 API 按 `locationId` 索引；仓库编码 → locationId 由 data 层解析。
   Future<InventoryInfo?> findInventory(
     String warehouseCode,
-    String skuCode,
+    String productCode,
   );
 
-  /// 提交一条出入库流水。
+  /// 提交内部调拨拣货单：create → confirm → validate。
   ///
-  /// 后端强校验 `quantityBefore + delta == quantityAfter`，页面须按查得的
-  /// 当前库存计算后传入；提交失败抛 [WmsFailure]。
-  Future<void> submitMovement(StockMovementDraft draft);
+  /// 客户端须校验 from/to 仓库不同且数量不超当前库存；后端仍有守卫。
+  /// 入库拣货单不再由客户端创建——服务层在采购单审批通过后自动生成。
+  Future<void> submitInternalTransfer(InternalTransferDraft draft);
 
-  /// 库存调拨：源仓出、目的仓入（后端单事务原子执行）。
-  ///
-  /// 客户端须先校验源/目的仓不同且数量不超当前库存；后端仍有守卫。
-  Future<void> transferStock({
-    required String fromWarehouseCode,
-    required String toWarehouseCode,
-    required String skuCode,
-    required int quantity,
-    String? remark,
-  });
-
-  /// 冲正指定流水（等量反向台账；重复冲正会被后端 409 拒绝）。
-  Future<void> reverseMovement(int movementId, String reason);
-
-  /// 拉取指定仓库 + SKU 的近期流水（默认 20 条）。
-  Future<List<StockMovementRecord>> listMovements(
-    String warehouseCode,
-    String skuCode, {
-    int limit = 20,
-  });
+  /// 拉取近期拣货单（默认 20 条）。
+  Future<List<PickingRecord>> listPickings({int limit = 20});
 }

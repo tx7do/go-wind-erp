@@ -257,6 +257,26 @@ func (_u *PurchaseOrderUpdate) ClearTotalAmount() *PurchaseOrderUpdate {
 	return _u
 }
 
+// SetWarehouseCode sets the "warehouse_code" field.
+func (_u *PurchaseOrderUpdate) SetWarehouseCode(v string) *PurchaseOrderUpdate {
+	_u.mutation.SetWarehouseCode(v)
+	return _u
+}
+
+// SetNillableWarehouseCode sets the "warehouse_code" field if the given value is not nil.
+func (_u *PurchaseOrderUpdate) SetNillableWarehouseCode(v *string) *PurchaseOrderUpdate {
+	if v != nil {
+		_u.SetWarehouseCode(*v)
+	}
+	return _u
+}
+
+// ClearWarehouseCode clears the value of the "warehouse_code" field.
+func (_u *PurchaseOrderUpdate) ClearWarehouseCode() *PurchaseOrderUpdate {
+	_u.mutation.ClearWarehouseCode()
+	return _u
+}
+
 // Mutation returns the PurchaseOrderMutation object of the builder.
 func (_u *PurchaseOrderUpdate) Mutation() *PurchaseOrderMutation {
 	return _u.mutation
@@ -394,6 +414,12 @@ func (_u *PurchaseOrderUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.TotalAmountCleared() {
 		_spec.ClearField(purchaseorder.FieldTotalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.WarehouseCode(); ok {
+		_spec.SetField(purchaseorder.FieldWarehouseCode, field.TypeString, value)
+	}
+	if _u.mutation.WarehouseCodeCleared() {
+		_spec.ClearField(purchaseorder.FieldWarehouseCode, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -645,6 +671,26 @@ func (_u *PurchaseOrderUpdateOne) ClearTotalAmount() *PurchaseOrderUpdateOne {
 	return _u
 }
 
+// SetWarehouseCode sets the "warehouse_code" field.
+func (_u *PurchaseOrderUpdateOne) SetWarehouseCode(v string) *PurchaseOrderUpdateOne {
+	_u.mutation.SetWarehouseCode(v)
+	return _u
+}
+
+// SetNillableWarehouseCode sets the "warehouse_code" field if the given value is not nil.
+func (_u *PurchaseOrderUpdateOne) SetNillableWarehouseCode(v *string) *PurchaseOrderUpdateOne {
+	if v != nil {
+		_u.SetWarehouseCode(*v)
+	}
+	return _u
+}
+
+// ClearWarehouseCode clears the value of the "warehouse_code" field.
+func (_u *PurchaseOrderUpdateOne) ClearWarehouseCode() *PurchaseOrderUpdateOne {
+	_u.mutation.ClearWarehouseCode()
+	return _u
+}
+
 // Mutation returns the PurchaseOrderMutation object of the builder.
 func (_u *PurchaseOrderUpdateOne) Mutation() *PurchaseOrderMutation {
 	return _u.mutation
@@ -812,6 +858,12 @@ func (_u *PurchaseOrderUpdateOne) sqlSave(ctx context.Context) (_node *PurchaseO
 	}
 	if _u.mutation.TotalAmountCleared() {
 		_spec.ClearField(purchaseorder.FieldTotalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.WarehouseCode(); ok {
+		_spec.SetField(purchaseorder.FieldWarehouseCode, field.TypeString, value)
+	}
+	if _u.mutation.WarehouseCodeCleared() {
+		_spec.ClearField(purchaseorder.FieldWarehouseCode, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PurchaseOrder{config: _u.config}

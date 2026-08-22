@@ -7,7 +7,12 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { apiClient, fetchListWarehouses, PaginationQuery } from '#/api';
+import {
+  fetchListStockPickings,
+  fetchListWarehouses,
+  PaginationQuery,
+} from '#/api';
+import { apiClient } from '#/api/client';
 
 const data = ref();
 
@@ -87,18 +92,31 @@ const [Modal, modalApi] = useVbenModal({
       return;
     }
 
+    const poId = data.value?.poId as number | undefined;
+
     try {
-      // 收货 = 一笔带 poId 的 INBOUND 流水：服务端 ApplyReceipt 累计收货量
-      // （防超收守卫）并回写库存，全收后自动完结 PO。
-      await apiClient.stockMovementService.Create({
-        data: {
-          warehouseCode: values.warehouseCode as string | undefined,
-          skuCode: data.value?.skuCode as string | undefined,
-          delta: qty,
-          movementType: 'INBOUND',
-          poId: data.value?.poId as number | undefined,
-        },
-      });
+      // 入库拣货单在 PO 审批时由服务端自动创建；此处通过 purchaseOrderId
+      // 关联到该拣货单，调用 Validate 推进收货流程。
+      const pickingList = await fetchListStockPickings(
+        // biome-ignore lint/style/noNonNullAssignment: 收货拣货单按 PO 过滤
+        new PaginationQuery({
+          paging: { page: 1, pageSize: 50 },
+          formValues: { purchaseOrderId: poId },
+        }),
+      );
+
+      const picking = (pickingList?.items ?? []).find(
+        (p) => p.purchaseOrderId === poId,
+      );
+
+      if (!picking || picking.id === undefined) {
+        notification.error({
+          message: $t('ui.notification.operation_failed'),
+        });
+        return;
+      }
+
+      await apiClient.stockPickingService.Validate({ id: picking.id });
 
       notification.success({
         message: $t('ui.notification.operation_success'),

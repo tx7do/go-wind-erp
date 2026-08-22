@@ -34,8 +34,6 @@ type Tx struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
-	// Inventory is the client for interacting with the Inventory builders.
-	Inventory *InventoryClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -88,8 +86,16 @@ type Tx struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
-	// StockMovement is the client for interacting with the StockMovement builders.
-	StockMovement *StockMovementClient
+	// StockLocation is the client for interacting with the StockLocation builders.
+	StockLocation *StockLocationClient
+	// StockMove is the client for interacting with the StockMove builders.
+	StockMove *StockMoveClient
+	// StockMoveLine is the client for interacting with the StockMoveLine builders.
+	StockMoveLine *StockMoveLineClient
+	// StockPicking is the client for interacting with the StockPicking builders.
+	StockPicking *StockPickingClient
+	// StockQuant is the client for interacting with the StockQuant builders.
+	StockQuant *StockQuantClient
 	// Supplier is the client for interacting with the Supplier builders.
 	Supplier *SupplierClient
 	// Task is the client for interacting with the Task builders.
@@ -250,7 +256,6 @@ func (tx *Tx) init() {
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
 	tx.InternalMessageCategory = NewInternalMessageCategoryClient(tx.config)
 	tx.InternalMessageRecipient = NewInternalMessageRecipientClient(tx.config)
-	tx.Inventory = NewInventoryClient(tx.config)
 	tx.Language = NewLanguageClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)
@@ -277,7 +282,11 @@ func (tx *Tx) init() {
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
-	tx.StockMovement = NewStockMovementClient(tx.config)
+	tx.StockLocation = NewStockLocationClient(tx.config)
+	tx.StockMove = NewStockMoveClient(tx.config)
+	tx.StockMoveLine = NewStockMoveLineClient(tx.config)
+	tx.StockPicking = NewStockPickingClient(tx.config)
+	tx.StockQuant = NewStockQuantClient(tx.config)
 	tx.Supplier = NewSupplierClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)

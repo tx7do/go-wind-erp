@@ -17,7 +17,6 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagerecipient"
-	"go-wind-erp/app/core/service/internal/data/ent/inventory"
 	"go-wind-erp/app/core/service/internal/data/ent/language"
 	"go-wind-erp/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/loginpolicy"
@@ -44,7 +43,11 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/role"
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
-	"go-wind-erp/app/core/service/internal/data/ent/stockmovement"
+	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
+	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
+	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
+	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
+	"go-wind-erp/app/core/service/internal/data/ent/stockquant"
 	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
@@ -131,7 +134,6 @@ func checkColumn(t, c string) error {
 			internalmessage.Table:          internalmessage.ValidColumn,
 			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
-			inventory.Table:                inventory.ValidColumn,
 			language.Table:                 language.ValidColumn,
 			loginauditlog.Table:            loginauditlog.ValidColumn,
 			loginpolicy.Table:              loginpolicy.ValidColumn,
@@ -158,7 +160,11 @@ func checkColumn(t, c string) error {
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,
-			stockmovement.Table:            stockmovement.ValidColumn,
+			stocklocation.Table:            stocklocation.ValidColumn,
+			stockmove.Table:                stockmove.ValidColumn,
+			stockmoveline.Table:            stockmoveline.ValidColumn,
+			stockpicking.Table:             stockpicking.ValidColumn,
+			stockquant.Table:               stockquant.ValidColumn,
 			supplier.Table:                 supplier.ValidColumn,
 			task.Table:                     task.ValidColumn,
 			tenant.Table:                   tenant.ValidColumn,

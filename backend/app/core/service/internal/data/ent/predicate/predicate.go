@@ -39,9 +39,6 @@ type InternalMessageCategory func(*sql.Selector)
 // InternalMessageRecipient is the predicate function for internalmessagerecipient builders.
 type InternalMessageRecipient func(*sql.Selector)
 
-// Inventory is the predicate function for inventory builders.
-type Inventory func(*sql.Selector)
-
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)
 
@@ -120,8 +117,20 @@ type RoleMetadata func(*sql.Selector)
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
 
-// StockMovement is the predicate function for stockmovement builders.
-type StockMovement func(*sql.Selector)
+// StockLocation is the predicate function for stocklocation builders.
+type StockLocation func(*sql.Selector)
+
+// StockMove is the predicate function for stockmove builders.
+type StockMove func(*sql.Selector)
+
+// StockMoveLine is the predicate function for stockmoveline builders.
+type StockMoveLine func(*sql.Selector)
+
+// StockPicking is the predicate function for stockpicking builders.
+type StockPicking func(*sql.Selector)
+
+// StockQuant is the predicate function for stockquant builders.
+type StockQuant func(*sql.Selector)
 
 // Supplier is the predicate function for supplier builders.
 type Supplier func(*sql.Selector)

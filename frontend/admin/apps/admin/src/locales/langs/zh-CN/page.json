@@ -473,42 +473,27 @@
       "create": "创建仓库"
     }
   },
-  "inventory": {
-    "moduleName": "库存",
-    "warehouseCode": "仓库编码",
-    "skuCode": "SKU编码",
-    "quantity": "库存数量",
-    "status": "库存状态",
-    "button": {
-      "create": "创建库存"
-    }
+  "stockQuant": {
+    "moduleName": "库存量",
+    "locationId": "库位ID",
+    "productCode": "产品编码",
+    "quantity": "库存数量"
   },
-  "stockMovement": {
-    "moduleName": "库存流水",
-    "warehouseCode": "仓库编码",
-    "skuCode": "SKU编码",
-    "delta": "数量变化量",
-    "movementType": "流水类型",
-    "quantityBefore": "操作前数量",
-    "quantityAfter": "操作后数量",
+  "stockPicking": {
+    "moduleName": "拣货单",
+    "pickingNumber": "拣货单号",
+    "pickingType": "拣货类型",
+    "derivedState": "派生态",
+    "productCode": "产品编码",
+    "plannedQuantity": "计划数量",
+    "deleteNotAllowed": "仅草稿或已取消的拣货单可删除",
     "transfer": {
-      "title": "库存调拨",
-      "fromWarehouse": "源仓库",
-      "toWarehouse": "目的仓库",
-      "quantity": "调拨数量",
-      "remark": "备注",
-      "sameWarehouse": "源仓库与目的仓库不能相同"
-    },
-    "reverse": {
-      "title": "冲正流水",
-      "reason": "冲正原因",
-      "reasonHint": "请填写冲正该流水的原因",
-      "confirm": "确认冲正"
+      "title": "内部调拨",
+      "remark": "备注"
     },
     "button": {
-      "create": "创建流水",
-      "transfer": "调拨",
-      "reverse": "冲正"
+      "create": "创建拣货单",
+      "transfer": "调拨"
     }
   },
   "approval": {

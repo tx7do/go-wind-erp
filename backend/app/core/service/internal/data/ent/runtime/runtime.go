@@ -16,7 +16,6 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagerecipient"
-	"go-wind-erp/app/core/service/internal/data/ent/inventory"
 	"go-wind-erp/app/core/service/internal/data/ent/language"
 	"go-wind-erp/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/loginpolicy"
@@ -44,7 +43,11 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-erp/app/core/service/internal/data/ent/schema"
-	"go-wind-erp/app/core/service/internal/data/ent/stockmovement"
+	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
+	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
+	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
+	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
+	"go-wind-erp/app/core/service/internal/data/ent/stockquant"
 	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
@@ -403,34 +406,6 @@ func init() {
 	internalmessagerecipientDescID := internalmessagerecipientMixinFields0[0].Descriptor()
 	// internalmessagerecipient.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(uint32) error)
-	inventoryMixin := schema.Inventory{}.Mixin()
-	inventory.Policy = privacy.NewPolicies(inventoryMixin[4], schema.Inventory{})
-	inventory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := inventory.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	inventoryMixinFields0 := inventoryMixin[0].Fields()
-	_ = inventoryMixinFields0
-	inventoryMixinFields4 := inventoryMixin[4].Fields()
-	_ = inventoryMixinFields4
-	inventoryFields := schema.Inventory{}.Fields()
-	_ = inventoryFields
-	// inventoryDescTenantID is the schema descriptor for tenant_id field.
-	inventoryDescTenantID := inventoryMixinFields4[0].Descriptor()
-	// inventory.DefaultTenantID holds the default value on creation for the tenant_id field.
-	inventory.DefaultTenantID = inventoryDescTenantID.Default.(uint32)
-	// inventoryDescQuantity is the schema descriptor for quantity field.
-	inventoryDescQuantity := inventoryFields[2].Descriptor()
-	// inventory.DefaultQuantity holds the default value on creation for the quantity field.
-	inventory.DefaultQuantity = inventoryDescQuantity.Default.(int64)
-	// inventoryDescID is the schema descriptor for id field.
-	inventoryDescID := inventoryMixinFields0[0].Descriptor()
-	// inventory.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	inventory.IDValidator = inventoryDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0
@@ -1264,42 +1239,190 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
-	stockmovementMixin := schema.StockMovement{}.Mixin()
-	stockmovement.Policy = privacy.NewPolicies(stockmovementMixin[4], schema.StockMovement{})
-	stockmovement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	stocklocationMixin := schema.StockLocation{}.Mixin()
+	stocklocation.Policy = privacy.NewPolicies(stocklocationMixin[4], schema.StockLocation{})
+	stocklocation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := stockmovement.Policy.EvalMutation(ctx, m); err != nil {
+			if err := stocklocation.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	stockmovementMixinFields0 := stockmovementMixin[0].Fields()
-	_ = stockmovementMixinFields0
-	stockmovementMixinFields4 := stockmovementMixin[4].Fields()
-	_ = stockmovementMixinFields4
-	stockmovementFields := schema.StockMovement{}.Fields()
-	_ = stockmovementFields
-	// stockmovementDescTenantID is the schema descriptor for tenant_id field.
-	stockmovementDescTenantID := stockmovementMixinFields4[0].Descriptor()
-	// stockmovement.DefaultTenantID holds the default value on creation for the tenant_id field.
-	stockmovement.DefaultTenantID = stockmovementDescTenantID.Default.(uint32)
-	// stockmovementDescDelta is the schema descriptor for delta field.
-	stockmovementDescDelta := stockmovementFields[2].Descriptor()
-	// stockmovement.DefaultDelta holds the default value on creation for the delta field.
-	stockmovement.DefaultDelta = stockmovementDescDelta.Default.(int64)
-	// stockmovementDescQuantityBefore is the schema descriptor for quantity_before field.
-	stockmovementDescQuantityBefore := stockmovementFields[4].Descriptor()
-	// stockmovement.DefaultQuantityBefore holds the default value on creation for the quantity_before field.
-	stockmovement.DefaultQuantityBefore = stockmovementDescQuantityBefore.Default.(int64)
-	// stockmovementDescQuantityAfter is the schema descriptor for quantity_after field.
-	stockmovementDescQuantityAfter := stockmovementFields[5].Descriptor()
-	// stockmovement.DefaultQuantityAfter holds the default value on creation for the quantity_after field.
-	stockmovement.DefaultQuantityAfter = stockmovementDescQuantityAfter.Default.(int64)
-	// stockmovementDescID is the schema descriptor for id field.
-	stockmovementDescID := stockmovementMixinFields0[0].Descriptor()
-	// stockmovement.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	stockmovement.IDValidator = stockmovementDescID.Validators[0].(func(uint32) error)
+	stocklocationMixinFields0 := stocklocationMixin[0].Fields()
+	_ = stocklocationMixinFields0
+	stocklocationMixinFields4 := stocklocationMixin[4].Fields()
+	_ = stocklocationMixinFields4
+	stocklocationFields := schema.StockLocation{}.Fields()
+	_ = stocklocationFields
+	// stocklocationDescTenantID is the schema descriptor for tenant_id field.
+	stocklocationDescTenantID := stocklocationMixinFields4[0].Descriptor()
+	// stocklocation.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stocklocation.DefaultTenantID = stocklocationDescTenantID.Default.(uint32)
+	// stocklocationDescParentID is the schema descriptor for parent_id field.
+	stocklocationDescParentID := stocklocationFields[1].Descriptor()
+	// stocklocation.DefaultParentID holds the default value on creation for the parent_id field.
+	stocklocation.DefaultParentID = stocklocationDescParentID.Default.(uint32)
+	// stocklocationDescID is the schema descriptor for id field.
+	stocklocationDescID := stocklocationMixinFields0[0].Descriptor()
+	// stocklocation.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stocklocation.IDValidator = stocklocationDescID.Validators[0].(func(uint32) error)
+	stockmoveMixin := schema.StockMove{}.Mixin()
+	stockmove.Policy = privacy.NewPolicies(stockmoveMixin[4], schema.StockMove{})
+	stockmove.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := stockmove.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	stockmoveMixinFields0 := stockmoveMixin[0].Fields()
+	_ = stockmoveMixinFields0
+	stockmoveMixinFields4 := stockmoveMixin[4].Fields()
+	_ = stockmoveMixinFields4
+	stockmoveFields := schema.StockMove{}.Fields()
+	_ = stockmoveFields
+	// stockmoveDescTenantID is the schema descriptor for tenant_id field.
+	stockmoveDescTenantID := stockmoveMixinFields4[0].Descriptor()
+	// stockmove.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stockmove.DefaultTenantID = stockmoveDescTenantID.Default.(uint32)
+	// stockmoveDescPickingID is the schema descriptor for picking_id field.
+	stockmoveDescPickingID := stockmoveFields[0].Descriptor()
+	// stockmove.DefaultPickingID holds the default value on creation for the picking_id field.
+	stockmove.DefaultPickingID = stockmoveDescPickingID.Default.(uint32)
+	// stockmoveDescSourceLocationID is the schema descriptor for source_location_id field.
+	stockmoveDescSourceLocationID := stockmoveFields[2].Descriptor()
+	// stockmove.DefaultSourceLocationID holds the default value on creation for the source_location_id field.
+	stockmove.DefaultSourceLocationID = stockmoveDescSourceLocationID.Default.(uint32)
+	// stockmoveDescDestinationLocationID is the schema descriptor for destination_location_id field.
+	stockmoveDescDestinationLocationID := stockmoveFields[3].Descriptor()
+	// stockmove.DefaultDestinationLocationID holds the default value on creation for the destination_location_id field.
+	stockmove.DefaultDestinationLocationID = stockmoveDescDestinationLocationID.Default.(uint32)
+	// stockmoveDescPlannedQuantity is the schema descriptor for planned_quantity field.
+	stockmoveDescPlannedQuantity := stockmoveFields[4].Descriptor()
+	// stockmove.DefaultPlannedQuantity holds the default value on creation for the planned_quantity field.
+	stockmove.DefaultPlannedQuantity = stockmoveDescPlannedQuantity.Default.(int64)
+	// stockmoveDescPurchaseOrderItemID is the schema descriptor for purchase_order_item_id field.
+	stockmoveDescPurchaseOrderItemID := stockmoveFields[6].Descriptor()
+	// stockmove.DefaultPurchaseOrderItemID holds the default value on creation for the purchase_order_item_id field.
+	stockmove.DefaultPurchaseOrderItemID = stockmoveDescPurchaseOrderItemID.Default.(uint32)
+	// stockmoveDescID is the schema descriptor for id field.
+	stockmoveDescID := stockmoveMixinFields0[0].Descriptor()
+	// stockmove.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockmove.IDValidator = stockmoveDescID.Validators[0].(func(uint32) error)
+	stockmovelineMixin := schema.StockMoveLine{}.Mixin()
+	stockmoveline.Policy = privacy.NewPolicies(stockmovelineMixin[4], schema.StockMoveLine{})
+	stockmoveline.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := stockmoveline.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	stockmovelineMixinFields0 := stockmovelineMixin[0].Fields()
+	_ = stockmovelineMixinFields0
+	stockmovelineMixinFields4 := stockmovelineMixin[4].Fields()
+	_ = stockmovelineMixinFields4
+	stockmovelineFields := schema.StockMoveLine{}.Fields()
+	_ = stockmovelineFields
+	// stockmovelineDescTenantID is the schema descriptor for tenant_id field.
+	stockmovelineDescTenantID := stockmovelineMixinFields4[0].Descriptor()
+	// stockmoveline.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stockmoveline.DefaultTenantID = stockmovelineDescTenantID.Default.(uint32)
+	// stockmovelineDescMoveID is the schema descriptor for move_id field.
+	stockmovelineDescMoveID := stockmovelineFields[0].Descriptor()
+	// stockmoveline.DefaultMoveID holds the default value on creation for the move_id field.
+	stockmoveline.DefaultMoveID = stockmovelineDescMoveID.Default.(uint32)
+	// stockmovelineDescPickingID is the schema descriptor for picking_id field.
+	stockmovelineDescPickingID := stockmovelineFields[1].Descriptor()
+	// stockmoveline.DefaultPickingID holds the default value on creation for the picking_id field.
+	stockmoveline.DefaultPickingID = stockmovelineDescPickingID.Default.(uint32)
+	// stockmovelineDescSourceLocationID is the schema descriptor for source_location_id field.
+	stockmovelineDescSourceLocationID := stockmovelineFields[3].Descriptor()
+	// stockmoveline.DefaultSourceLocationID holds the default value on creation for the source_location_id field.
+	stockmoveline.DefaultSourceLocationID = stockmovelineDescSourceLocationID.Default.(uint32)
+	// stockmovelineDescDestinationLocationID is the schema descriptor for destination_location_id field.
+	stockmovelineDescDestinationLocationID := stockmovelineFields[4].Descriptor()
+	// stockmoveline.DefaultDestinationLocationID holds the default value on creation for the destination_location_id field.
+	stockmoveline.DefaultDestinationLocationID = stockmovelineDescDestinationLocationID.Default.(uint32)
+	// stockmovelineDescExecutedQuantity is the schema descriptor for executed_quantity field.
+	stockmovelineDescExecutedQuantity := stockmovelineFields[5].Descriptor()
+	// stockmoveline.DefaultExecutedQuantity holds the default value on creation for the executed_quantity field.
+	stockmoveline.DefaultExecutedQuantity = stockmovelineDescExecutedQuantity.Default.(int64)
+	// stockmovelineDescID is the schema descriptor for id field.
+	stockmovelineDescID := stockmovelineMixinFields0[0].Descriptor()
+	// stockmoveline.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockmoveline.IDValidator = stockmovelineDescID.Validators[0].(func(uint32) error)
+	stockpickingMixin := schema.StockPicking{}.Mixin()
+	stockpicking.Policy = privacy.NewPolicies(stockpickingMixin[4], schema.StockPicking{})
+	stockpicking.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := stockpicking.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	stockpickingMixinFields0 := stockpickingMixin[0].Fields()
+	_ = stockpickingMixinFields0
+	stockpickingMixinFields4 := stockpickingMixin[4].Fields()
+	_ = stockpickingMixinFields4
+	stockpickingFields := schema.StockPicking{}.Fields()
+	_ = stockpickingFields
+	// stockpickingDescTenantID is the schema descriptor for tenant_id field.
+	stockpickingDescTenantID := stockpickingMixinFields4[0].Descriptor()
+	// stockpicking.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stockpicking.DefaultTenantID = stockpickingDescTenantID.Default.(uint32)
+	// stockpickingDescSourceLocationID is the schema descriptor for source_location_id field.
+	stockpickingDescSourceLocationID := stockpickingFields[2].Descriptor()
+	// stockpicking.DefaultSourceLocationID holds the default value on creation for the source_location_id field.
+	stockpicking.DefaultSourceLocationID = stockpickingDescSourceLocationID.Default.(uint32)
+	// stockpickingDescDestinationLocationID is the schema descriptor for destination_location_id field.
+	stockpickingDescDestinationLocationID := stockpickingFields[3].Descriptor()
+	// stockpicking.DefaultDestinationLocationID holds the default value on creation for the destination_location_id field.
+	stockpicking.DefaultDestinationLocationID = stockpickingDescDestinationLocationID.Default.(uint32)
+	// stockpickingDescPurchaseOrderID is the schema descriptor for purchase_order_id field.
+	stockpickingDescPurchaseOrderID := stockpickingFields[4].Descriptor()
+	// stockpicking.DefaultPurchaseOrderID holds the default value on creation for the purchase_order_id field.
+	stockpicking.DefaultPurchaseOrderID = stockpickingDescPurchaseOrderID.Default.(uint32)
+	// stockpickingDescID is the schema descriptor for id field.
+	stockpickingDescID := stockpickingMixinFields0[0].Descriptor()
+	// stockpicking.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockpicking.IDValidator = stockpickingDescID.Validators[0].(func(uint32) error)
+	stockquantMixin := schema.StockQuant{}.Mixin()
+	stockquant.Policy = privacy.NewPolicies(stockquantMixin[4], schema.StockQuant{})
+	stockquant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := stockquant.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	stockquantMixinFields0 := stockquantMixin[0].Fields()
+	_ = stockquantMixinFields0
+	stockquantMixinFields4 := stockquantMixin[4].Fields()
+	_ = stockquantMixinFields4
+	stockquantFields := schema.StockQuant{}.Fields()
+	_ = stockquantFields
+	// stockquantDescTenantID is the schema descriptor for tenant_id field.
+	stockquantDescTenantID := stockquantMixinFields4[0].Descriptor()
+	// stockquant.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stockquant.DefaultTenantID = stockquantDescTenantID.Default.(uint32)
+	// stockquantDescLocationID is the schema descriptor for location_id field.
+	stockquantDescLocationID := stockquantFields[0].Descriptor()
+	// stockquant.DefaultLocationID holds the default value on creation for the location_id field.
+	stockquant.DefaultLocationID = stockquantDescLocationID.Default.(uint32)
+	// stockquantDescQuantity is the schema descriptor for quantity field.
+	stockquantDescQuantity := stockquantFields[2].Descriptor()
+	// stockquant.DefaultQuantity holds the default value on creation for the quantity field.
+	stockquant.DefaultQuantity = stockquantDescQuantity.Default.(int64)
+	// stockquantDescID is the schema descriptor for id field.
+	stockquantDescID := stockquantMixinFields0[0].Descriptor()
+	// stockquant.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockquant.IDValidator = stockquantDescID.Validators[0].(func(uint32) error)
 	supplierMixin := schema.Supplier{}.Mixin()
 	supplier.Policy = privacy.NewPolicies(supplierMixin[4], schema.Supplier{})
 	supplier.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1581,6 +1704,10 @@ func init() {
 	warehouseDescEnable := warehouseFields[3].Descriptor()
 	// warehouse.DefaultEnable holds the default value on creation for the enable field.
 	warehouse.DefaultEnable = warehouseDescEnable.Default.(bool)
+	// warehouseDescReceivingLocationID is the schema descriptor for receiving_location_id field.
+	warehouseDescReceivingLocationID := warehouseFields[4].Descriptor()
+	// warehouse.DefaultReceivingLocationID holds the default value on creation for the receiving_location_id field.
+	warehouse.DefaultReceivingLocationID = warehouseDescReceivingLocationID.Default.(uint32)
 	// warehouseDescID is the schema descriptor for id field.
 	warehouseDescID := warehouseMixinFields0[0].Descriptor()
 	// warehouse.IDValidator is a validator for the "id" field. It is called by the builders before save.

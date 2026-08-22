@@ -41,8 +41,10 @@ type PurchaseOrder struct {
 	// 采购单状态
 	Status *purchaseorder.Status `json:"status,omitempty"`
 	// 采购总额（分，服务端按明细计算）
-	TotalAmount  *int64 `json:"total_amount,omitempty"`
-	selectValues sql.SelectValues
+	TotalAmount *int64 `json:"total_amount,omitempty"`
+	// 收货仓库编码
+	WarehouseCode *string `json:"warehouse_code,omitempty"`
+	selectValues  sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*PurchaseOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case purchaseorder.FieldID, purchaseorder.FieldCreatedBy, purchaseorder.FieldUpdatedBy, purchaseorder.FieldDeletedBy, purchaseorder.FieldTenantID, purchaseorder.FieldTotalAmount:
 			values[i] = new(sql.NullInt64)
-		case purchaseorder.FieldRemark, purchaseorder.FieldPoNumber, purchaseorder.FieldSupplierCode, purchaseorder.FieldStatus:
+		case purchaseorder.FieldRemark, purchaseorder.FieldPoNumber, purchaseorder.FieldSupplierCode, purchaseorder.FieldStatus, purchaseorder.FieldWarehouseCode:
 			values[i] = new(sql.NullString)
 		case purchaseorder.FieldCreatedAt, purchaseorder.FieldUpdatedAt, purchaseorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -161,6 +163,13 @@ func (_m *PurchaseOrder) assignValues(columns []string, values []any) error {
 				_m.TotalAmount = new(int64)
 				*_m.TotalAmount = value.Int64
 			}
+		case purchaseorder.FieldWarehouseCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field warehouse_code", values[i])
+			} else if value.Valid {
+				_m.WarehouseCode = new(string)
+				*_m.WarehouseCode = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -255,6 +264,11 @@ func (_m *PurchaseOrder) String() string {
 	if v := _m.TotalAmount; v != nil {
 		builder.WriteString("total_amount=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.WarehouseCode; v != nil {
+		builder.WriteString("warehouse_code=")
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

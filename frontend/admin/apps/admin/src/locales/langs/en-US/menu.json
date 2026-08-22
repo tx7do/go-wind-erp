@@ -56,8 +56,8 @@
   "wms": {
     "moduleName": "Warehouse Management",
     "warehouse": "Warehouses",
-    "inventory": "Inventory",
-    "stockMovement": "Stock Movements",
+    "stockQuant": "Stock Quants",
+    "stockPicking": "Stock Pickings",
     "product": "Products"
   },
   "approval": {

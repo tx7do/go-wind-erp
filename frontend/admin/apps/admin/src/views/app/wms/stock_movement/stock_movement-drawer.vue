@@ -7,13 +7,13 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { apiClient, movementTypeList } from '#/api';
+import { useCreateStockPicking } from '#/api';
 
 const data = ref();
 
 const getTitle = computed(() =>
   $t('ui.modal.create', {
-    moduleName: $t('page.stockMovement.moduleName'),
+    moduleName: $t('page.stockPicking.moduleName'),
   }),
 );
 
@@ -27,19 +27,8 @@ const [BaseForm, baseFormApi] = useVbenForm({
   schema: [
     {
       component: 'Input',
-      fieldName: 'warehouseCode',
-      label: $t('page.stockMovement.warehouseCode'),
-      rules: 'required',
-      componentProps: {
-        placeholder: $t('ui.placeholder.input'),
-        allowClear: true,
-      },
-    },
-
-    {
-      component: 'Input',
-      fieldName: 'skuCode',
-      label: $t('page.stockMovement.skuCode'),
+      fieldName: 'productCode',
+      label: $t('page.stockPicking.productCode'),
       rules: 'required',
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
@@ -49,45 +38,9 @@ const [BaseForm, baseFormApi] = useVbenForm({
 
     {
       component: 'InputNumber',
-      fieldName: 'delta',
-      label: $t('page.stockMovement.delta'),
+      fieldName: 'plannedQuantity',
+      label: $t('page.stockPicking.plannedQuantity'),
       rules: 'required',
-      componentProps: {
-        placeholder: $t('ui.placeholder.input'),
-        allowClear: true,
-      },
-    },
-
-    {
-      component: 'Select',
-      fieldName: 'movementType',
-      label: $t('page.stockMovement.movementType'),
-      defaultValue: 'INBOUND',
-      componentProps: {
-        placeholder: $t('ui.placeholder.select'),
-        options: movementTypeList,
-        filterOption: (input: string, option: any) =>
-          option.label.toLowerCase().includes(input.toLowerCase()),
-        allowClear: true,
-        showSearch: true,
-      },
-      rules: 'selectRequired',
-    },
-
-    {
-      component: 'InputNumber',
-      fieldName: 'quantityBefore',
-      label: $t('page.stockMovement.quantityBefore'),
-      componentProps: {
-        placeholder: $t('ui.placeholder.input'),
-        allowClear: true,
-      },
-    },
-
-    {
-      component: 'InputNumber',
-      fieldName: 'quantityAfter',
-      label: $t('page.stockMovement.quantityAfter'),
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
@@ -106,6 +59,8 @@ const [BaseForm, baseFormApi] = useVbenForm({
   ],
 });
 
+const createMutation = useCreateStockPicking();
+
 const [Drawer, drawerApi] = useVbenDrawer({
   onCancel() {
     drawerApi.close();
@@ -122,8 +77,15 @@ const [Drawer, drawerApi] = useVbenDrawer({
     const values = await baseFormApi.getValues();
 
     try {
-      await apiClient.stockMovementService.Create({
-        data: { ...values },
+      await createMutation.mutateAsync({
+        pickingType: 'INTERNAL',
+        moves: [
+          {
+            productCode: values.productCode,
+            plannedQuantity: values.plannedQuantity,
+          },
+        ],
+        remark: values.remark,
       });
 
       notification.success({
