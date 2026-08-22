@@ -8,6 +8,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/tx7do/go-utils/trans"
+
 	"go-wind-erp/app/core/service/internal/data"
 
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
@@ -20,15 +22,18 @@ type WarehouseService struct {
 	log *log.Helper
 
 	warehouseRepo *data.WarehouseRepo
+	locationRepo  *data.LocationRepo
 }
 
 func NewWarehouseService(
 	ctx *bootstrap.Context,
 	warehouseRepo *data.WarehouseRepo,
+	locationRepo *data.LocationRepo,
 ) *WarehouseService {
 	svc := &WarehouseService{
-		log:      ctx.NewLoggerHelper("warehouse/service/core-service"),
+		log:           ctx.NewLoggerHelper("warehouse/service/core-service"),
 		warehouseRepo: warehouseRepo,
+		locationRepo:  locationRepo,
 	}
 
 	return svc
@@ -54,6 +59,19 @@ func (s *WarehouseService) Create(ctx context.Context, req *inventoryV1.CreateWa
 	if req == nil || req.Data == nil {
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
+
+	// 借鉴 Odoo：仓库创建时自动生成其 INTERNAL 接收位置，并将
+	// receiving_location_id 回填到仓库记录。该位置是入库拣货单的目的
+	// location、调拨拣货单的源/目的 location 的来源。
+	whCode := req.Data.GetCode()
+	if whCode == "" {
+		return nil, inventoryV1.ErrorBadRequest("warehouse code is required")
+	}
+	locID, err := s.locationRepo.CreateInternalLocation(ctx, whCode)
+	if err != nil {
+		return nil, err
+	}
+	req.Data.ReceivingLocationId = trans.Ptr(locID)
 
 	if _, err := s.warehouseRepo.Create(ctx, req); err != nil {
 		return nil, err

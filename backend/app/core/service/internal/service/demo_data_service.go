@@ -126,6 +126,13 @@ func (s *DemoDataService) seedDomain(ctx context.Context) error {
 	}
 	tenantCtx := appViewer.NewAnonymousTenantViewerContext(context.Background(), tenantID, "demo-seed")
 
+	// 借鉴 Odoo：每租户一条 SUPPLIER 虚拟位置，入库拣货单的 source location。
+	// 在仓库/库存种子之前创建，因仓库的 INTERNAL 接收位置由 WarehouseService.Create
+	// 自动生成（不需此处的种子）。
+	if err := s.locationRepo.CreateSupplierLocation(tenantCtx); err != nil {
+		return fmt.Errorf("seed supplier location: %w", err)
+	}
+
 	for i := 0; i < demoWarehouseCount; i++ {
 		code := fmt.Sprintf("WH-%02d", i+1)
 		name := fmt.Sprintf("Demo Warehouse %d", i+1)

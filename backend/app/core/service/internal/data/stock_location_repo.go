@@ -326,3 +326,46 @@ func (r *LocationRepo) GetWarehouseCodeTx(
 	return *loc.WarehouseCode, nil
 }
 
+// CreateInternalLocation 为仓库创建其 INTERNAL 接收位置（仓库创建时调用）。
+// 返回新建位置的 ID，供调用方回填 warehouse.receiving_location_id。
+func (r *LocationRepo) CreateInternalLocation(
+	ctx context.Context,
+	warehouseCode string,
+) (uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	usage := stocklocation.UsageInternal
+	builder := r.entClient.Client().StockLocation.Create().
+		SetUsage(usage).
+		SetWarehouseCode(warehouseCode).
+		SetName(warehouseCode + " receiving")
+	if hasTenant {
+		builder.SetTenantID(tid)
+	}
+	loc, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create internal location for warehouse %s failed: %s", warehouseCode, err.Error())
+		return 0, inventoryV1.ErrorInternalServerError("create internal location failed")
+	}
+	return loc.ID, nil
+}
+
+// CreateSupplierLocation 为租户创建其 SUPPLIER 虚拟位置（租户初始化时调用）。
+// 每租户仅一条。
+func (r *LocationRepo) CreateSupplierLocation(ctx context.Context) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return inventoryV1.ErrorBadRequest("tenant context required for supplier location creation")
+	}
+	usage := stocklocation.UsageSupplier
+	builder := r.entClient.Client().StockLocation.Create().
+		SetUsage(usage).
+		SetName("supplier location").
+		SetTenantID(tid)
+	_, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create supplier location failed: %s", err.Error())
+		return inventoryV1.ErrorInternalServerError("create supplier location failed")
+	}
+	return nil
+}
+

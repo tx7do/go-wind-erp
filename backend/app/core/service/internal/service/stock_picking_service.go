@@ -230,6 +230,25 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 	if terr != nil {
 		return nil, terr
 	}
+
+	// 收集出库事件（source 为 INTERNAL 的 move），供事务提交后触发
+	// 补货 SAGA 评估。借鉴 Odoo 的 _action_done 后置检查。
+	var sagaEvents []stockEvent
+
+	// defer 按 LIFO 顺序执行。先注册的 defer 最后执行。
+	// SAGA 分发必须先注册（最后执行），FinishTx 后注册（先执行），
+	// 这样事务先提交/回滚，SAGA 再读已提交数据。
+	defer func() {
+		if err != nil {
+			return
+		}
+		for _, event := range sagaEvents {
+			if serr := s.saga.notifyProcurement(ctx, event); serr != nil {
+				s.log.Errorf("saga notifyProcurement failed for %s/%s: %s",
+					event.warehouseCode, event.skuCode, serr.Error())
+			}
+		}
+	}()
 	defer func() { s.stockPickingRepo.FinishTx(tx, err) }()
 
 	// 取该 picking 中所有 CONFIRMED moves（事务内）。
@@ -238,10 +257,6 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		err = cerr
 		return nil, err
 	}
-
-	// 收集出库事件（source 为 INTERNAL 的 move），供事务提交后触发
-	// 补货 SAGA 评估。借鉴 Odoo 的 _action_done 后置检查。
-	var sagaEvents []stockEvent
 
 	for _, move := range confirmedMoves {
 		if move == nil {
@@ -348,15 +363,7 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 	ret = &emptypb.Empty{}
 	err = nil
 
-	// 事务提交后触发补货 SAGA 评估（借鉴 Odoo _action_done 后置检查）。
-	// 评估失败仅记录，不阻塞出库——下次任何出库会重新评估，最终一致
-	// 靠"重评估"而非"重放"（见 procurementSagaSeam 文档）。
-	for _, event := range sagaEvents {
-		if serr := s.saga.notifyProcurement(ctx, event); serr != nil {
-			s.log.Errorf("saga notifyProcurement failed for %s/%s: %s",
-				event.warehouseCode, event.skuCode, serr.Error())
-		}
-	}
+	// SAGA 分发由上方先注册的 defer 在 FinishTx 之后执行（读已提交数据）。
 
 	return ret, err
 }
