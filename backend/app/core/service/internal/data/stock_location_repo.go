@@ -258,3 +258,32 @@ func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (uint32, error
 	return loc.ID, nil
 }
 
+// GetUsageTx 在事务内查位置的 usage 值。Validate 用此判断 source/dest
+// 是否为虚拟位置（SUPPLIER = 虚拟，无 quant，跳过该腿的 quant 回写）。
+func (r *LocationRepo) GetUsageTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	locationID uint32,
+) (inventoryV1.StockLocation_Usage, error) {
+	loc, err := tx.StockLocation.Query().
+		Where(stocklocation.IDEQ(locationID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, inventoryV1.ErrorNotFound("location not found")
+		}
+		return 0, inventoryV1.ErrorInternalServerError("query location failed")
+	}
+	if loc.Usage == nil {
+		return inventoryV1.StockLocation_INTERNAL, nil
+	}
+	switch *loc.Usage {
+	case stocklocation.UsageSupplier:
+		return inventoryV1.StockLocation_SUPPLIER, nil
+	case stocklocation.UsageInternal:
+		return inventoryV1.StockLocation_INTERNAL, nil
+	default:
+		return inventoryV1.StockLocation_INTERNAL, nil
+	}
+}
+

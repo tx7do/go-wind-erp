@@ -27,6 +27,7 @@ type StockPickingService struct {
 	stockQuantRepo    *data.StockQuantRepo
 	stockMoveLineRepo *data.StockMoveLineRepo
 	purchaseOrderRepo *data.PurchaseOrderRepo
+	locationRepo      *data.LocationRepo
 	saga              *procurementSagaSeam
 }
 
@@ -47,6 +48,7 @@ func NewStockPickingService(
 		stockQuantRepo:    stockQuantRepo,
 		stockMoveLineRepo: stockMoveLineRepo,
 		purchaseOrderRepo: purchaseOrderRepo,
+		locationRepo:      locationRepo,
 
 		saga: &procurementSagaSeam{
 			stockQuantRepo:      stockQuantRepo,
@@ -214,34 +216,57 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 			return nil, err
 		}
 
+		// 查 source/dest 的 usage——借鉴 Odoo stock.location.usage：
+		// SUPPLIER = 虚拟位置（无 quant，跳过该腿的 quant 回写），
+		// INTERNAL = 真实位置（有 quant，执行回写）。这是双轨制库存的核心：
+		// 只有真实位置之间的移动才同时做 source 减 / dest 加；涉及虚拟
+		// 位置的腿跳过 quant 回写（库存从边界 "出现" 或 "消失"）。
+		srcUsage, uerr := s.locationRepo.GetUsageTx(ctx, tx, sourceLocID)
+		if uerr != nil {
+			err = uerr
+			return nil, err
+		}
+		dstUsage, uerr := s.locationRepo.GetUsageTx(ctx, tx, destLocID)
+		if uerr != nil {
+			err = uerr
+			return nil, err
+		}
+
 		// 创建 move-line（执行记录，借鉴 Odoo stock.move.line._action_done）。
+		// move-line 始终记录完整的 source→dest 轨迹（含虚拟位置），供审计追溯。
 		if err = s.stockMoveLineRepo.CreateTx(ctx, tx, move.GetId(), req.GetId(),
 			productCode, sourceLocID, destLocID, executedQty); err != nil {
 			return nil, err
 		}
 
 		// 更新 source quant：quantity -= executedQty（防负，原子条件更新）。
-		// 先按 location+product 取回 quant 行ID，再 ApplyDeltaTx。
-		srcQuant, qerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, sourceLocID, productCode)
-		if qerr != nil {
-			err = qerr
-			return nil, err
-		}
-		if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, srcQuant.GetId(), -executedQty); err != nil {
-			return nil, err
+		// 仅对真实位置（INTERNAL）执行——虚拟位置（SUPPLIER）无 quant 行，
+		// 跳过（借鉴 Odoo _action_done 对虚拟 source 的处理）。
+		if srcUsage == inventoryV1.StockLocation_INTERNAL {
+			srcQuant, qerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, sourceLocID, productCode)
+			if qerr != nil {
+				err = qerr
+				return nil, err
+			}
+			if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, srcQuant.GetId(), -executedQty); err != nil {
+				return nil, err
+			}
 		}
 
 		// 更新 dest quant：quantity += executedQty（EnsureForLocation 先确保行存在）。
-		if err = s.stockQuantRepo.EnsureForLocationTx(ctx, tx, destLocID, productCode); err != nil {
-			return nil, err
-		}
-		dstQuant, qerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, destLocID, productCode)
-		if qerr != nil {
-			err = qerr
-			return nil, err
-		}
-		if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, dstQuant.GetId(), executedQty); err != nil {
-			return nil, err
+		// 仅对真实位置（INTERNAL）执行——虚拟位置无 quant 行，跳过。
+		if dstUsage == inventoryV1.StockLocation_INTERNAL {
+			if err = s.stockQuantRepo.EnsureForLocationTx(ctx, tx, destLocID, productCode); err != nil {
+				return nil, err
+			}
+			dstQuant, qerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, destLocID, productCode)
+			if qerr != nil {
+				err = qerr
+				return nil, err
+			}
+			if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, dstQuant.GetId(), executedQty); err != nil {
+				return nil, err
+			}
 		}
 
 		// move 状态 → DONE（事务内）。
