@@ -290,347 +290,267 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	InventoryService_List_FullMethodName             = "/admin.service.v1.InventoryService/List"
-	InventoryService_Get_FullMethodName              = "/admin.service.v1.InventoryService/Get"
-	InventoryService_GetOverview_FullMethodName      = "/admin.service.v1.InventoryService/GetOverview"
-	InventoryService_GetMovementTrend_FullMethodName = "/admin.service.v1.InventoryService/GetMovementTrend"
-	InventoryService_Create_FullMethodName           = "/admin.service.v1.InventoryService/Create"
-	InventoryService_Update_FullMethodName           = "/admin.service.v1.InventoryService/Update"
-	InventoryService_Delete_FullMethodName           = "/admin.service.v1.InventoryService/Delete"
+	LocationService_List_FullMethodName   = "/admin.service.v1.LocationService/List"
+	LocationService_Get_FullMethodName    = "/admin.service.v1.LocationService/Get"
+	LocationService_Create_FullMethodName = "/admin.service.v1.LocationService/Create"
+	LocationService_Update_FullMethodName = "/admin.service.v1.LocationService/Update"
+	LocationService_Delete_FullMethodName = "/admin.service.v1.LocationService/Delete"
 )
 
-// InventoryServiceClient is the client API for InventoryService service.
+// LocationServiceClient is the client API for LocationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// 库存管理服务
-type InventoryServiceClient interface {
-	// 查询库存列表
-	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListInventoryResponse, error)
-	// 查询库存详情
-	Get(ctx context.Context, in *v11.GetInventoryRequest, opts ...grpc.CallOption) (*v11.Inventory, error)
-	// 库存经营总览
-	GetOverview(ctx context.Context, in *v11.GetInventoryOverviewRequest, opts ...grpc.CallOption) (*v11.InventoryOverview, error)
-	// 库存流水趋势
-	GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error)
-	// 创建库存
-	Create(ctx context.Context, in *v11.CreateInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 更新库存
-	Update(ctx context.Context, in *v11.UpdateInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 删除库存
-	Delete(ctx context.Context, in *v11.DeleteInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+// 库存位置服务
+type LocationServiceClient interface {
+	// 查询位置列表
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListLocationResponse, error)
+	// 查询位置详情
+	Get(ctx context.Context, in *v11.GetLocationRequest, opts ...grpc.CallOption) (*v11.StockLocation, error)
+	// 创建位置
+	Create(ctx context.Context, in *v11.CreateLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 更新位置
+	Update(ctx context.Context, in *v11.UpdateLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除位置
+	Delete(ctx context.Context, in *v11.DeleteLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type inventoryServiceClient struct {
+type locationServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInventoryServiceClient(cc grpc.ClientConnInterface) InventoryServiceClient {
-	return &inventoryServiceClient{cc}
+func NewLocationServiceClient(cc grpc.ClientConnInterface) LocationServiceClient {
+	return &locationServiceClient{cc}
 }
 
-func (c *inventoryServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListInventoryResponse, error) {
+func (c *locationServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListLocationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.ListInventoryResponse)
-	err := c.cc.Invoke(ctx, InventoryService_List_FullMethodName, in, out, cOpts...)
+	out := new(v11.ListLocationResponse)
+	err := c.cc.Invoke(ctx, LocationService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *inventoryServiceClient) Get(ctx context.Context, in *v11.GetInventoryRequest, opts ...grpc.CallOption) (*v11.Inventory, error) {
+func (c *locationServiceClient) Get(ctx context.Context, in *v11.GetLocationRequest, opts ...grpc.CallOption) (*v11.StockLocation, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.Inventory)
-	err := c.cc.Invoke(ctx, InventoryService_Get_FullMethodName, in, out, cOpts...)
+	out := new(v11.StockLocation)
+	err := c.cc.Invoke(ctx, LocationService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *inventoryServiceClient) GetOverview(ctx context.Context, in *v11.GetInventoryOverviewRequest, opts ...grpc.CallOption) (*v11.InventoryOverview, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.InventoryOverview)
-	err := c.cc.Invoke(ctx, InventoryService_GetOverview_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *inventoryServiceClient) GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.MovementTrendResponse)
-	err := c.cc.Invoke(ctx, InventoryService_GetMovementTrend_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *inventoryServiceClient) Create(ctx context.Context, in *v11.CreateInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *locationServiceClient) Create(ctx context.Context, in *v11.CreateLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, InventoryService_Create_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LocationService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *inventoryServiceClient) Update(ctx context.Context, in *v11.UpdateInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *locationServiceClient) Update(ctx context.Context, in *v11.UpdateLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, InventoryService_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LocationService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *inventoryServiceClient) Delete(ctx context.Context, in *v11.DeleteInventoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *locationServiceClient) Delete(ctx context.Context, in *v11.DeleteLocationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, InventoryService_Delete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, LocationService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InventoryServiceServer is the server API for InventoryService service.
-// All implementations must embed UnimplementedInventoryServiceServer
+// LocationServiceServer is the server API for LocationService service.
+// All implementations must embed UnimplementedLocationServiceServer
 // for forward compatibility.
 //
-// 库存管理服务
-type InventoryServiceServer interface {
-	// 查询库存列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListInventoryResponse, error)
-	// 查询库存详情
-	Get(context.Context, *v11.GetInventoryRequest) (*v11.Inventory, error)
-	// 库存经营总览
-	GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error)
-	// 库存流水趋势
-	GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error)
-	// 创建库存
-	Create(context.Context, *v11.CreateInventoryRequest) (*emptypb.Empty, error)
-	// 更新库存
-	Update(context.Context, *v11.UpdateInventoryRequest) (*emptypb.Empty, error)
-	// 删除库存
-	Delete(context.Context, *v11.DeleteInventoryRequest) (*emptypb.Empty, error)
-	mustEmbedUnimplementedInventoryServiceServer()
+// 库存位置服务
+type LocationServiceServer interface {
+	// 查询位置列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListLocationResponse, error)
+	// 查询位置详情
+	Get(context.Context, *v11.GetLocationRequest) (*v11.StockLocation, error)
+	// 创建位置
+	Create(context.Context, *v11.CreateLocationRequest) (*emptypb.Empty, error)
+	// 更新位置
+	Update(context.Context, *v11.UpdateLocationRequest) (*emptypb.Empty, error)
+	// 删除位置
+	Delete(context.Context, *v11.DeleteLocationRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedLocationServiceServer()
 }
 
-// UnimplementedInventoryServiceServer must be embedded to have
+// UnimplementedLocationServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInventoryServiceServer struct{}
+type UnimplementedLocationServiceServer struct{}
 
-func (UnimplementedInventoryServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListInventoryResponse, error) {
+func (UnimplementedLocationServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListLocationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedInventoryServiceServer) Get(context.Context, *v11.GetInventoryRequest) (*v11.Inventory, error) {
+func (UnimplementedLocationServiceServer) Get(context.Context, *v11.GetLocationRequest) (*v11.StockLocation, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedInventoryServiceServer) GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetOverview not implemented")
-}
-func (UnimplementedInventoryServiceServer) GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetMovementTrend not implemented")
-}
-func (UnimplementedInventoryServiceServer) Create(context.Context, *v11.CreateInventoryRequest) (*emptypb.Empty, error) {
+func (UnimplementedLocationServiceServer) Create(context.Context, *v11.CreateLocationRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedInventoryServiceServer) Update(context.Context, *v11.UpdateInventoryRequest) (*emptypb.Empty, error) {
+func (UnimplementedLocationServiceServer) Update(context.Context, *v11.UpdateLocationRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedInventoryServiceServer) Delete(context.Context, *v11.DeleteInventoryRequest) (*emptypb.Empty, error) {
+func (UnimplementedLocationServiceServer) Delete(context.Context, *v11.DeleteLocationRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedInventoryServiceServer) mustEmbedUnimplementedInventoryServiceServer() {}
-func (UnimplementedInventoryServiceServer) testEmbeddedByValue()                          {}
+func (UnimplementedLocationServiceServer) mustEmbedUnimplementedLocationServiceServer() {}
+func (UnimplementedLocationServiceServer) testEmbeddedByValue()                         {}
 
-// UnsafeInventoryServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InventoryServiceServer will
+// UnsafeLocationServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LocationServiceServer will
 // result in compilation errors.
-type UnsafeInventoryServiceServer interface {
-	mustEmbedUnimplementedInventoryServiceServer()
+type UnsafeLocationServiceServer interface {
+	mustEmbedUnimplementedLocationServiceServer()
 }
 
-func RegisterInventoryServiceServer(s grpc.ServiceRegistrar, srv InventoryServiceServer) {
-	// If the following call panics, it indicates UnimplementedInventoryServiceServer was
+func RegisterLocationServiceServer(s grpc.ServiceRegistrar, srv LocationServiceServer) {
+	// If the following call panics, it indicates UnimplementedLocationServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&InventoryService_ServiceDesc, srv)
+	s.RegisterService(&LocationService_ServiceDesc, srv)
 }
 
-func _InventoryService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _LocationService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.PagingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryServiceServer).List(ctx, in)
+		return srv.(LocationServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InventoryService_List_FullMethodName,
+		FullMethod: LocationService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).List(ctx, req.(*v1.PagingRequest))
+		return srv.(LocationServiceServer).List(ctx, req.(*v1.PagingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetInventoryRequest)
+func _LocationService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetLocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryServiceServer).Get(ctx, in)
+		return srv.(LocationServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InventoryService_Get_FullMethodName,
+		FullMethod: LocationService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).Get(ctx, req.(*v11.GetInventoryRequest))
+		return srv.(LocationServiceServer).Get(ctx, req.(*v11.GetLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_GetOverview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetInventoryOverviewRequest)
+func _LocationService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreateLocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryServiceServer).GetOverview(ctx, in)
+		return srv.(LocationServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InventoryService_GetOverview_FullMethodName,
+		FullMethod: LocationService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).GetOverview(ctx, req.(*v11.GetInventoryOverviewRequest))
+		return srv.(LocationServiceServer).Create(ctx, req.(*v11.CreateLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_GetMovementTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetMovementTrendRequest)
+func _LocationService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.UpdateLocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryServiceServer).GetMovementTrend(ctx, in)
+		return srv.(LocationServiceServer).Update(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InventoryService_GetMovementTrend_FullMethodName,
+		FullMethod: LocationService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).GetMovementTrend(ctx, req.(*v11.GetMovementTrendRequest))
+		return srv.(LocationServiceServer).Update(ctx, req.(*v11.UpdateLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.CreateInventoryRequest)
+func _LocationService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.DeleteLocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryServiceServer).Create(ctx, in)
+		return srv.(LocationServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InventoryService_Create_FullMethodName,
+		FullMethod: LocationService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).Create(ctx, req.(*v11.CreateInventoryRequest))
+		return srv.(LocationServiceServer).Delete(ctx, req.(*v11.DeleteLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InventoryService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.UpdateInventoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InventoryServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: InventoryService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).Update(ctx, req.(*v11.UpdateInventoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InventoryService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeleteInventoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InventoryServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: InventoryService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServiceServer).Delete(ctx, req.(*v11.DeleteInventoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// InventoryService_ServiceDesc is the grpc.ServiceDesc for InventoryService service.
+// LocationService_ServiceDesc is the grpc.ServiceDesc for LocationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var InventoryService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "admin.service.v1.InventoryService",
-	HandlerType: (*InventoryServiceServer)(nil),
+var LocationService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.service.v1.LocationService",
+	HandlerType: (*LocationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "List",
-			Handler:    _InventoryService_List_Handler,
+			Handler:    _LocationService_List_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _InventoryService_Get_Handler,
-		},
-		{
-			MethodName: "GetOverview",
-			Handler:    _InventoryService_GetOverview_Handler,
-		},
-		{
-			MethodName: "GetMovementTrend",
-			Handler:    _InventoryService_GetMovementTrend_Handler,
+			Handler:    _LocationService_Get_Handler,
 		},
 		{
 			MethodName: "Create",
-			Handler:    _InventoryService_Create_Handler,
+			Handler:    _LocationService_Create_Handler,
 		},
 		{
 			MethodName: "Update",
-			Handler:    _InventoryService_Update_Handler,
+			Handler:    _LocationService_Update_Handler,
 		},
 		{
 			MethodName: "Delete",
-			Handler:    _InventoryService_Delete_Handler,
+			Handler:    _LocationService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -638,307 +558,575 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	StockMovementService_List_FullMethodName     = "/admin.service.v1.StockMovementService/List"
-	StockMovementService_Get_FullMethodName      = "/admin.service.v1.StockMovementService/Get"
-	StockMovementService_Create_FullMethodName   = "/admin.service.v1.StockMovementService/Create"
-	StockMovementService_Reverse_FullMethodName  = "/admin.service.v1.StockMovementService/Reverse"
-	StockMovementService_Transfer_FullMethodName = "/admin.service.v1.StockMovementService/Transfer"
-	StockMovementService_Delete_FullMethodName   = "/admin.service.v1.StockMovementService/Delete"
+	StockQuantService_List_FullMethodName             = "/admin.service.v1.StockQuantService/List"
+	StockQuantService_Get_FullMethodName              = "/admin.service.v1.StockQuantService/Get"
+	StockQuantService_GetOverview_FullMethodName      = "/admin.service.v1.StockQuantService/GetOverview"
+	StockQuantService_GetMovementTrend_FullMethodName = "/admin.service.v1.StockQuantService/GetMovementTrend"
 )
 
-// StockMovementServiceClient is the client API for StockMovementService service.
+// StockQuantServiceClient is the client API for StockQuantService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// 库存流水管理服务
-type StockMovementServiceClient interface {
-	// 查询库存流水列表
-	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockMovementResponse, error)
-	// 查询库存流水详情
-	Get(ctx context.Context, in *v11.GetStockMovementRequest, opts ...grpc.CallOption) (*v11.StockMovement, error)
-	// 创建库存流水
-	Create(ctx context.Context, in *v11.CreateStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 冲正库存流水
-	Reverse(ctx context.Context, in *v11.ReverseStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 库存调拨
-	Transfer(ctx context.Context, in *v11.TransferStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 删除库存流水
-	Delete(ctx context.Context, in *v11.DeleteStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+// 库存量服务（只读）
+type StockQuantServiceClient interface {
+	// 查询库存量列表
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockQuantResponse, error)
+	// 查询库存量详情
+	Get(ctx context.Context, in *v11.GetStockQuantRequest, opts ...grpc.CallOption) (*v11.StockQuant, error)
+	// 库存经营总览
+	GetOverview(ctx context.Context, in *v11.GetStockQuantOverviewRequest, opts ...grpc.CallOption) (*v11.StockQuantOverview, error)
+	// 库存流水趋势
+	GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error)
 }
 
-type stockMovementServiceClient struct {
+type stockQuantServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStockMovementServiceClient(cc grpc.ClientConnInterface) StockMovementServiceClient {
-	return &stockMovementServiceClient{cc}
+func NewStockQuantServiceClient(cc grpc.ClientConnInterface) StockQuantServiceClient {
+	return &stockQuantServiceClient{cc}
 }
 
-func (c *stockMovementServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockMovementResponse, error) {
+func (c *stockQuantServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockQuantResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.ListStockMovementResponse)
-	err := c.cc.Invoke(ctx, StockMovementService_List_FullMethodName, in, out, cOpts...)
+	out := new(v11.ListStockQuantResponse)
+	err := c.cc.Invoke(ctx, StockQuantService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stockMovementServiceClient) Get(ctx context.Context, in *v11.GetStockMovementRequest, opts ...grpc.CallOption) (*v11.StockMovement, error) {
+func (c *stockQuantServiceClient) Get(ctx context.Context, in *v11.GetStockQuantRequest, opts ...grpc.CallOption) (*v11.StockQuant, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.StockMovement)
-	err := c.cc.Invoke(ctx, StockMovementService_Get_FullMethodName, in, out, cOpts...)
+	out := new(v11.StockQuant)
+	err := c.cc.Invoke(ctx, StockQuantService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stockMovementServiceClient) Create(ctx context.Context, in *v11.CreateStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *stockQuantServiceClient) GetOverview(ctx context.Context, in *v11.GetStockQuantOverviewRequest, opts ...grpc.CallOption) (*v11.StockQuantOverview, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, StockMovementService_Create_FullMethodName, in, out, cOpts...)
+	out := new(v11.StockQuantOverview)
+	err := c.cc.Invoke(ctx, StockQuantService_GetOverview_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stockMovementServiceClient) Reverse(ctx context.Context, in *v11.ReverseStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *stockQuantServiceClient) GetMovementTrend(ctx context.Context, in *v11.GetMovementTrendRequest, opts ...grpc.CallOption) (*v11.MovementTrendResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, StockMovementService_Reverse_FullMethodName, in, out, cOpts...)
+	out := new(v11.MovementTrendResponse)
+	err := c.cc.Invoke(ctx, StockQuantService_GetMovementTrend_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stockMovementServiceClient) Transfer(ctx context.Context, in *v11.TransferStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, StockMovementService_Transfer_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *stockMovementServiceClient) Delete(ctx context.Context, in *v11.DeleteStockMovementRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, StockMovementService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// StockMovementServiceServer is the server API for StockMovementService service.
-// All implementations must embed UnimplementedStockMovementServiceServer
+// StockQuantServiceServer is the server API for StockQuantService service.
+// All implementations must embed UnimplementedStockQuantServiceServer
 // for forward compatibility.
 //
-// 库存流水管理服务
-type StockMovementServiceServer interface {
-	// 查询库存流水列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListStockMovementResponse, error)
-	// 查询库存流水详情
-	Get(context.Context, *v11.GetStockMovementRequest) (*v11.StockMovement, error)
-	// 创建库存流水
-	Create(context.Context, *v11.CreateStockMovementRequest) (*emptypb.Empty, error)
-	// 冲正库存流水
-	Reverse(context.Context, *v11.ReverseStockMovementRequest) (*emptypb.Empty, error)
-	// 库存调拨
-	Transfer(context.Context, *v11.TransferStockRequest) (*emptypb.Empty, error)
-	// 删除库存流水
-	Delete(context.Context, *v11.DeleteStockMovementRequest) (*emptypb.Empty, error)
-	mustEmbedUnimplementedStockMovementServiceServer()
+// 库存量服务（只读）
+type StockQuantServiceServer interface {
+	// 查询库存量列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListStockQuantResponse, error)
+	// 查询库存量详情
+	Get(context.Context, *v11.GetStockQuantRequest) (*v11.StockQuant, error)
+	// 库存经营总览
+	GetOverview(context.Context, *v11.GetStockQuantOverviewRequest) (*v11.StockQuantOverview, error)
+	// 库存流水趋势
+	GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error)
+	mustEmbedUnimplementedStockQuantServiceServer()
 }
 
-// UnimplementedStockMovementServiceServer must be embedded to have
+// UnimplementedStockQuantServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStockMovementServiceServer struct{}
+type UnimplementedStockQuantServiceServer struct{}
 
-func (UnimplementedStockMovementServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListStockMovementResponse, error) {
+func (UnimplementedStockQuantServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListStockQuantResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedStockMovementServiceServer) Get(context.Context, *v11.GetStockMovementRequest) (*v11.StockMovement, error) {
+func (UnimplementedStockQuantServiceServer) Get(context.Context, *v11.GetStockQuantRequest) (*v11.StockQuant, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedStockMovementServiceServer) Create(context.Context, *v11.CreateStockMovementRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedStockQuantServiceServer) GetOverview(context.Context, *v11.GetStockQuantOverviewRequest) (*v11.StockQuantOverview, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOverview not implemented")
 }
-func (UnimplementedStockMovementServiceServer) Reverse(context.Context, *v11.ReverseStockMovementRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Reverse not implemented")
+func (UnimplementedStockQuantServiceServer) GetMovementTrend(context.Context, *v11.GetMovementTrendRequest) (*v11.MovementTrendResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMovementTrend not implemented")
 }
-func (UnimplementedStockMovementServiceServer) Transfer(context.Context, *v11.TransferStockRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Transfer not implemented")
-}
-func (UnimplementedStockMovementServiceServer) Delete(context.Context, *v11.DeleteStockMovementRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
-}
-func (UnimplementedStockMovementServiceServer) mustEmbedUnimplementedStockMovementServiceServer() {}
-func (UnimplementedStockMovementServiceServer) testEmbeddedByValue()                              {}
+func (UnimplementedStockQuantServiceServer) mustEmbedUnimplementedStockQuantServiceServer() {}
+func (UnimplementedStockQuantServiceServer) testEmbeddedByValue()                           {}
 
-// UnsafeStockMovementServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StockMovementServiceServer will
+// UnsafeStockQuantServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StockQuantServiceServer will
 // result in compilation errors.
-type UnsafeStockMovementServiceServer interface {
-	mustEmbedUnimplementedStockMovementServiceServer()
+type UnsafeStockQuantServiceServer interface {
+	mustEmbedUnimplementedStockQuantServiceServer()
 }
 
-func RegisterStockMovementServiceServer(s grpc.ServiceRegistrar, srv StockMovementServiceServer) {
-	// If the following call panics, it indicates UnimplementedStockMovementServiceServer was
+func RegisterStockQuantServiceServer(s grpc.ServiceRegistrar, srv StockQuantServiceServer) {
+	// If the following call panics, it indicates UnimplementedStockQuantServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&StockMovementService_ServiceDesc, srv)
+	s.RegisterService(&StockQuantService_ServiceDesc, srv)
 }
 
-func _StockMovementService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StockQuantService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.PagingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StockMovementServiceServer).List(ctx, in)
+		return srv.(StockQuantServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StockMovementService_List_FullMethodName,
+		FullMethod: StockQuantService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).List(ctx, req.(*v1.PagingRequest))
+		return srv.(StockQuantServiceServer).List(ctx, req.(*v1.PagingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StockMovementService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetStockMovementRequest)
+func _StockQuantService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetStockQuantRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StockMovementServiceServer).Get(ctx, in)
+		return srv.(StockQuantServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StockMovementService_Get_FullMethodName,
+		FullMethod: StockQuantService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).Get(ctx, req.(*v11.GetStockMovementRequest))
+		return srv.(StockQuantServiceServer).Get(ctx, req.(*v11.GetStockQuantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StockMovementService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.CreateStockMovementRequest)
+func _StockQuantService_GetOverview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetStockQuantOverviewRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StockMovementServiceServer).Create(ctx, in)
+		return srv.(StockQuantServiceServer).GetOverview(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StockMovementService_Create_FullMethodName,
+		FullMethod: StockQuantService_GetOverview_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).Create(ctx, req.(*v11.CreateStockMovementRequest))
+		return srv.(StockQuantServiceServer).GetOverview(ctx, req.(*v11.GetStockQuantOverviewRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StockMovementService_Reverse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.ReverseStockMovementRequest)
+func _StockQuantService_GetMovementTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetMovementTrendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StockMovementServiceServer).Reverse(ctx, in)
+		return srv.(StockQuantServiceServer).GetMovementTrend(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StockMovementService_Reverse_FullMethodName,
+		FullMethod: StockQuantService_GetMovementTrend_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).Reverse(ctx, req.(*v11.ReverseStockMovementRequest))
+		return srv.(StockQuantServiceServer).GetMovementTrend(ctx, req.(*v11.GetMovementTrendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StockMovementService_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.TransferStockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(StockMovementServiceServer).Transfer(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: StockMovementService_Transfer_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).Transfer(ctx, req.(*v11.TransferStockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _StockMovementService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeleteStockMovementRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(StockMovementServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: StockMovementService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StockMovementServiceServer).Delete(ctx, req.(*v11.DeleteStockMovementRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// StockMovementService_ServiceDesc is the grpc.ServiceDesc for StockMovementService service.
+// StockQuantService_ServiceDesc is the grpc.ServiceDesc for StockQuantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StockMovementService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "admin.service.v1.StockMovementService",
-	HandlerType: (*StockMovementServiceServer)(nil),
+var StockQuantService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.service.v1.StockQuantService",
+	HandlerType: (*StockQuantServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "List",
-			Handler:    _StockMovementService_List_Handler,
+			Handler:    _StockQuantService_List_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _StockMovementService_Get_Handler,
+			Handler:    _StockQuantService_Get_Handler,
+		},
+		{
+			MethodName: "GetOverview",
+			Handler:    _StockQuantService_GetOverview_Handler,
+		},
+		{
+			MethodName: "GetMovementTrend",
+			Handler:    _StockQuantService_GetMovementTrend_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "admin/service/v1/i_inventory.proto",
+}
+
+const (
+	StockPickingService_List_FullMethodName     = "/admin.service.v1.StockPickingService/List"
+	StockPickingService_Get_FullMethodName      = "/admin.service.v1.StockPickingService/Get"
+	StockPickingService_Create_FullMethodName   = "/admin.service.v1.StockPickingService/Create"
+	StockPickingService_Confirm_FullMethodName  = "/admin.service.v1.StockPickingService/Confirm"
+	StockPickingService_Validate_FullMethodName = "/admin.service.v1.StockPickingService/Validate"
+	StockPickingService_Cancel_FullMethodName   = "/admin.service.v1.StockPickingService/Cancel"
+	StockPickingService_Delete_FullMethodName   = "/admin.service.v1.StockPickingService/Delete"
+)
+
+// StockPickingServiceClient is the client API for StockPickingService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 拣货单服务
+type StockPickingServiceClient interface {
+	// 查询拣货单列表
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockPickingResponse, error)
+	// 查询拣货单详情
+	Get(ctx context.Context, in *v11.GetStockPickingRequest, opts ...grpc.CallOption) (*v11.StockPicking, error)
+	// 创建拣货单
+	Create(ctx context.Context, in *v11.CreateStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 确认拣货单
+	Confirm(ctx context.Context, in *v11.ConfirmStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 校验拣货单
+	Validate(ctx context.Context, in *v11.ValidateStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 取消拣货单
+	Cancel(ctx context.Context, in *v11.CancelStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除拣货单
+	Delete(ctx context.Context, in *v11.DeleteStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type stockPickingServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStockPickingServiceClient(cc grpc.ClientConnInterface) StockPickingServiceClient {
+	return &stockPickingServiceClient{cc}
+}
+
+func (c *stockPickingServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockPickingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListStockPickingResponse)
+	err := c.cc.Invoke(ctx, StockPickingService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Get(ctx context.Context, in *v11.GetStockPickingRequest, opts ...grpc.CallOption) (*v11.StockPicking, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.StockPicking)
+	err := c.cc.Invoke(ctx, StockPickingService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Create(ctx context.Context, in *v11.CreateStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Confirm(ctx context.Context, in *v11.ConfirmStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_Confirm_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Validate(ctx context.Context, in *v11.ValidateStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_Validate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Cancel(ctx context.Context, in *v11.CancelStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_Cancel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) Delete(ctx context.Context, in *v11.DeleteStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// StockPickingServiceServer is the server API for StockPickingService service.
+// All implementations must embed UnimplementedStockPickingServiceServer
+// for forward compatibility.
+//
+// 拣货单服务
+type StockPickingServiceServer interface {
+	// 查询拣货单列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListStockPickingResponse, error)
+	// 查询拣货单详情
+	Get(context.Context, *v11.GetStockPickingRequest) (*v11.StockPicking, error)
+	// 创建拣货单
+	Create(context.Context, *v11.CreateStockPickingRequest) (*emptypb.Empty, error)
+	// 确认拣货单
+	Confirm(context.Context, *v11.ConfirmStockPickingRequest) (*emptypb.Empty, error)
+	// 校验拣货单
+	Validate(context.Context, *v11.ValidateStockPickingRequest) (*emptypb.Empty, error)
+	// 取消拣货单
+	Cancel(context.Context, *v11.CancelStockPickingRequest) (*emptypb.Empty, error)
+	// 删除拣货单
+	Delete(context.Context, *v11.DeleteStockPickingRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedStockPickingServiceServer()
+}
+
+// UnimplementedStockPickingServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedStockPickingServiceServer struct{}
+
+func (UnimplementedStockPickingServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListStockPickingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Get(context.Context, *v11.GetStockPickingRequest) (*v11.StockPicking, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Create(context.Context, *v11.CreateStockPickingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Confirm(context.Context, *v11.ConfirmStockPickingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Confirm not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Validate(context.Context, *v11.ValidateStockPickingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Validate not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Cancel(context.Context, *v11.CancelStockPickingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Cancel not implemented")
+}
+func (UnimplementedStockPickingServiceServer) Delete(context.Context, *v11.DeleteStockPickingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedStockPickingServiceServer) mustEmbedUnimplementedStockPickingServiceServer() {}
+func (UnimplementedStockPickingServiceServer) testEmbeddedByValue()                             {}
+
+// UnsafeStockPickingServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StockPickingServiceServer will
+// result in compilation errors.
+type UnsafeStockPickingServiceServer interface {
+	mustEmbedUnimplementedStockPickingServiceServer()
+}
+
+func RegisterStockPickingServiceServer(s grpc.ServiceRegistrar, srv StockPickingServiceServer) {
+	// If the following call panics, it indicates UnimplementedStockPickingServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&StockPickingService_ServiceDesc, srv)
+}
+
+func _StockPickingService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).List(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Get(ctx, req.(*v11.GetStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreateStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Create(ctx, req.(*v11.CreateStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Confirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ConfirmStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Confirm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Confirm_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Confirm(ctx, req.(*v11.ConfirmStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Validate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ValidateStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Validate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Validate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Validate(ctx, req.(*v11.ValidateStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Cancel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CancelStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Cancel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Cancel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Cancel(ctx, req.(*v11.CancelStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.DeleteStockPickingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).Delete(ctx, req.(*v11.DeleteStockPickingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// StockPickingService_ServiceDesc is the grpc.ServiceDesc for StockPickingService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StockPickingService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.service.v1.StockPickingService",
+	HandlerType: (*StockPickingServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "List",
+			Handler:    _StockPickingService_List_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _StockPickingService_Get_Handler,
 		},
 		{
 			MethodName: "Create",
-			Handler:    _StockMovementService_Create_Handler,
+			Handler:    _StockPickingService_Create_Handler,
 		},
 		{
-			MethodName: "Reverse",
-			Handler:    _StockMovementService_Reverse_Handler,
+			MethodName: "Confirm",
+			Handler:    _StockPickingService_Confirm_Handler,
 		},
 		{
-			MethodName: "Transfer",
-			Handler:    _StockMovementService_Transfer_Handler,
+			MethodName: "Validate",
+			Handler:    _StockPickingService_Validate_Handler,
+		},
+		{
+			MethodName: "Cancel",
+			Handler:    _StockPickingService_Cancel_Handler,
 		},
 		{
 			MethodName: "Delete",
-			Handler:    _StockMovementService_Delete_Handler,
+			Handler:    _StockPickingService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

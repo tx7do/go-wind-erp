@@ -237,21 +237,24 @@ func (x *Supplier) GetDeletedAt() *timestamppb.Timestamp {
 
 // 采购单
 type PurchaseOrder struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                          // 采购单ID
-	PoNumber      *string                `protobuf:"bytes,2,opt,name=po_number,json=poNumber,proto3,oneof" json:"po_number,omitempty"`                               // 采购单号
-	SupplierCode  *string                `protobuf:"bytes,3,opt,name=supplier_code,json=supplierCode,proto3,oneof" json:"supplier_code,omitempty"`                   // 供应商编码
-	Status        *PurchaseOrder_Status  `protobuf:"varint,4,opt,name=status,proto3,enum=procurement.service.v1.PurchaseOrder_Status,oneof" json:"status,omitempty"` // 采购单状态
-	TotalAmount   *int64                 `protobuf:"varint,5,opt,name=total_amount,json=totalAmount,proto3,oneof" json:"total_amount,omitempty"`                     // 采购总额（分）
-	Items         []*PurchaseOrderItem   `protobuf:"bytes,6,rep,name=items,proto3" json:"items,omitempty"`                                                           // 采购明细
-	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                                  // 备注
-	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                             // 租户ID
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                         // 创建者
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                         // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                         // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                          // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                          // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                          // 删除时间
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                          // 采购单ID
+	PoNumber     *string                `protobuf:"bytes,2,opt,name=po_number,json=poNumber,proto3,oneof" json:"po_number,omitempty"`                               // 采购单号
+	SupplierCode *string                `protobuf:"bytes,3,opt,name=supplier_code,json=supplierCode,proto3,oneof" json:"supplier_code,omitempty"`                   // 供应商编码
+	Status       *PurchaseOrder_Status  `protobuf:"varint,4,opt,name=status,proto3,enum=procurement.service.v1.PurchaseOrder_Status,oneof" json:"status,omitempty"` // 采购单状态
+	TotalAmount  *int64                 `protobuf:"varint,5,opt,name=total_amount,json=totalAmount,proto3,oneof" json:"total_amount,omitempty"`                     // 采购总额（分）
+	// warehouse_code：收货仓库。PO 获批后据此确定 receiving location，
+	// 创建入库拣货单（Odoo PO→_create_picking 桥接的必要字段）。
+	WarehouseCode *string                `protobuf:"bytes,7,opt,name=warehouse_code,json=warehouseCode,proto3,oneof" json:"warehouse_code,omitempty"` // 收货仓库编码
+	Items         []*PurchaseOrderItem   `protobuf:"bytes,6,rep,name=items,proto3" json:"items,omitempty"`                                            // 采购明细
+	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                   // 备注
+	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`              // 租户ID
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`          // 创建者
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`          // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`          // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`           // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`           // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`           // 删除时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -319,6 +322,13 @@ func (x *PurchaseOrder) GetTotalAmount() int64 {
 		return *x.TotalAmount
 	}
 	return 0
+}
+
+func (x *PurchaseOrder) GetWarehouseCode() string {
+	if x != nil && x.WarehouseCode != nil {
+		return *x.WarehouseCode
+	}
+	return ""
 }
 
 func (x *PurchaseOrder) GetItems() []*PurchaseOrderItem {
@@ -1436,30 +1446,30 @@ const file_procurement_service_v1_procurement_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xdf\n" +
-	"\n" +
+	"\v_deleted_at\"\xbb\v\n" +
 	"\rPurchaseOrder\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v采购单IDH\x00R\x02id\x88\x01\x01\x12I\n" +
 	"\tpo_number\x18\x02 \x01(\tB'\xbaG$\x92\x02!采购单号（服务端生成）H\x01R\bpoNumber\x88\x01\x01\x12B\n" +
 	"\rsupplier_code\x18\x03 \x01(\tB\x18\xe0A\x01\xbaG\x12\x92\x02\x0f供应商编码H\x02R\fsupplierCode\x88\x01\x01\x12c\n" +
 	"\x06status\x18\x04 \x01(\x0e2,.procurement.service.v1.PurchaseOrder.StatusB\x18\xe0A\x01\xbaG\x12\x92\x02\x0f采购单状态H\x03R\x06status\x88\x01\x01\x12^\n" +
-	"\ftotal_amount\x18\x05 \x01(\x03B6\xbaG3\x92\x020采购总额（分，服务端按明细计算）H\x04R\vtotalAmount\x88\x01\x01\x12q\n" +
+	"\ftotal_amount\x18\x05 \x01(\x03B6\xbaG3\x92\x020采购总额（分，服务端按明细计算）H\x04R\vtotalAmount\x88\x01\x01\x12G\n" +
+	"\x0ewarehouse_code\x18\a \x01(\tB\x1b\xe0A\x01\xbaG\x15\x92\x02\x12收货仓库编码H\x05R\rwarehouseCode\x88\x01\x01\x12q\n" +
 	"\x05items\x18\x06 \x03(\v2).procurement.service.v1.PurchaseOrderItemB0\xbaG-\x92\x02*采购明细（Get 返回；List 不含）R\x05items\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x05R\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\x06R\btenantId\x88\x01\x01\x12\\\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x06R\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\aR\btenantId\x88\x01\x01\x12\\\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB8\xbaG5\x92\x022创建者（发起人）用户ID，服务端推导H\aR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB8\xbaG5\x92\x022创建者（发起人）用户ID，服务端推导H\bR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\bR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\tR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
+	"R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\n" +
-	"R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\vR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\fR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\fR\tdeletedAt\x88\x01\x01\"\\\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\rR\tdeletedAt\x88\x01\x01\"\\\n" +
 	"\x06Status\x12\t\n" +
 	"\x05DRAFT\x10\x00\x12\r\n" +
 	"\tSUBMITTED\x10\x01\x12\f\n" +
@@ -1472,7 +1482,8 @@ const file_procurement_service_v1_procurement_proto_rawDesc = "" +
 	"_po_numberB\x10\n" +
 	"\x0e_supplier_codeB\t\n" +
 	"\a_statusB\x0f\n" +
-	"\r_total_amountB\t\n" +
+	"\r_total_amountB\x11\n" +
+	"\x0f_warehouse_codeB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +

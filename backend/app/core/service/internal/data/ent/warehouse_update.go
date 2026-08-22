@@ -250,6 +250,33 @@ func (_u *WarehouseUpdate) ClearEnable() *WarehouseUpdate {
 	return _u
 }
 
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (_u *WarehouseUpdate) SetReceivingLocationID(v uint32) *WarehouseUpdate {
+	_u.mutation.ResetReceivingLocationID()
+	_u.mutation.SetReceivingLocationID(v)
+	return _u
+}
+
+// SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
+func (_u *WarehouseUpdate) SetNillableReceivingLocationID(v *uint32) *WarehouseUpdate {
+	if v != nil {
+		_u.SetReceivingLocationID(*v)
+	}
+	return _u
+}
+
+// AddReceivingLocationID adds value to the "receiving_location_id" field.
+func (_u *WarehouseUpdate) AddReceivingLocationID(v int32) *WarehouseUpdate {
+	_u.mutation.AddReceivingLocationID(v)
+	return _u
+}
+
+// ClearReceivingLocationID clears the value of the "receiving_location_id" field.
+func (_u *WarehouseUpdate) ClearReceivingLocationID() *WarehouseUpdate {
+	_u.mutation.ClearReceivingLocationID()
+	return _u
+}
+
 // Mutation returns the WarehouseMutation object of the builder.
 func (_u *WarehouseUpdate) Mutation() *WarehouseMutation {
 	return _u.mutation
@@ -371,6 +398,15 @@ func (_u *WarehouseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.EnableCleared() {
 		_spec.ClearField(warehouse.FieldEnable, field.TypeBool)
+	}
+	if value, ok := _u.mutation.ReceivingLocationID(); ok {
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedReceivingLocationID(); ok {
+		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+	}
+	if _u.mutation.ReceivingLocationIDCleared() {
+		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -615,6 +651,33 @@ func (_u *WarehouseUpdateOne) ClearEnable() *WarehouseUpdateOne {
 	return _u
 }
 
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (_u *WarehouseUpdateOne) SetReceivingLocationID(v uint32) *WarehouseUpdateOne {
+	_u.mutation.ResetReceivingLocationID()
+	_u.mutation.SetReceivingLocationID(v)
+	return _u
+}
+
+// SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
+func (_u *WarehouseUpdateOne) SetNillableReceivingLocationID(v *uint32) *WarehouseUpdateOne {
+	if v != nil {
+		_u.SetReceivingLocationID(*v)
+	}
+	return _u
+}
+
+// AddReceivingLocationID adds value to the "receiving_location_id" field.
+func (_u *WarehouseUpdateOne) AddReceivingLocationID(v int32) *WarehouseUpdateOne {
+	_u.mutation.AddReceivingLocationID(v)
+	return _u
+}
+
+// ClearReceivingLocationID clears the value of the "receiving_location_id" field.
+func (_u *WarehouseUpdateOne) ClearReceivingLocationID() *WarehouseUpdateOne {
+	_u.mutation.ClearReceivingLocationID()
+	return _u
+}
+
 // Mutation returns the WarehouseMutation object of the builder.
 func (_u *WarehouseUpdateOne) Mutation() *WarehouseMutation {
 	return _u.mutation
@@ -766,6 +829,15 @@ func (_u *WarehouseUpdateOne) sqlSave(ctx context.Context) (_node *Warehouse, er
 	}
 	if _u.mutation.EnableCleared() {
 		_spec.ClearField(warehouse.FieldEnable, field.TypeBool)
+	}
+	if value, ok := _u.mutation.ReceivingLocationID(); ok {
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedReceivingLocationID(); ok {
+		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+	}
+	if _u.mutation.ReceivingLocationIDCleared() {
+		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Warehouse{config: _u.config}

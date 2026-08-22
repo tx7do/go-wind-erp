@@ -7,9 +7,9 @@ import { $t } from '@vben/locales';
 import { notification } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { fetchListWarehouses, PaginationQuery, useTransferStock } from '#/api';
+import { useCreateStockPicking } from '#/api';
 
-const getTitle = computed(() => $t('page.stockMovement.transfer.title'));
+const getTitle = computed(() => $t('page.stockPicking.transfer.title'));
 
 const [BaseForm, baseFormApi] = useVbenForm({
   showDefaultActions: false,
@@ -20,67 +20,9 @@ const [BaseForm, baseFormApi] = useVbenForm({
   },
   schema: [
     {
-      component: 'ApiSelect',
-      fieldName: 'fromWarehouseCode',
-      label: $t('page.stockMovement.transfer.fromWarehouse'),
-      rules: 'required',
-      componentProps: {
-        allowClear: true,
-        showSearch: true,
-        placeholder: $t('ui.placeholder.select'),
-        api: async () => {
-          const result = await fetchListWarehouses(
-            // biome-ignore lint/style/noNonNullAssertion: 调拨仓库下拉不分页
-            new PaginationQuery({
-              paging: { page: 1, pageSize: 500 },
-            }),
-          );
-          return result?.items ?? [];
-        },
-        afterFetch: (
-          warehouses: {
-            code?: string;
-            enable?: boolean;
-          }[],
-        ) =>
-          warehouses
-            .filter((w) => w.enable)
-            .map((w) => ({ label: w.code, value: w.code })),
-      },
-    },
-    {
-      component: 'ApiSelect',
-      fieldName: 'toWarehouseCode',
-      label: $t('page.stockMovement.transfer.toWarehouse'),
-      rules: 'required',
-      componentProps: {
-        allowClear: true,
-        showSearch: true,
-        placeholder: $t('ui.placeholder.select'),
-        api: async () => {
-          const result = await fetchListWarehouses(
-            // biome-ignore lint/style/noNonNullAssertion: 调拨仓库下拉不分页
-            new PaginationQuery({
-              paging: { page: 1, pageSize: 500 },
-            }),
-          );
-          return result?.items ?? [];
-        },
-        afterFetch: (
-          warehouses: {
-            code?: string;
-            enable?: boolean;
-          }[],
-        ) =>
-          warehouses
-            .filter((w) => w.enable)
-            .map((w) => ({ label: w.code, value: w.code })),
-      },
-    },
-    {
       component: 'Input',
-      fieldName: 'skuCode',
-      label: $t('page.stockMovement.skuCode'),
+      fieldName: 'productCode',
+      label: $t('page.stockPicking.productCode'),
       rules: 'required',
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
@@ -89,8 +31,8 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
     {
       component: 'InputNumber',
-      fieldName: 'quantity',
-      label: $t('page.stockMovement.transfer.quantity'),
+      fieldName: 'plannedQuantity',
+      label: $t('page.stockPicking.plannedQuantity'),
       rules: 'required',
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
@@ -100,7 +42,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
     {
       component: 'Textarea',
       fieldName: 'remark',
-      label: $t('page.stockMovement.transfer.remark'),
+      label: $t('page.stockPicking.transfer.remark'),
       componentProps: {
         placeholder: $t('ui.placeholder.input'),
         allowClear: true,
@@ -109,7 +51,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
   ],
 });
 
-const transferMutation = useTransferStock();
+const createMutation = useCreateStockPicking();
 
 const [Drawer, drawerApi] = useVbenDrawer({
   onCancel() {
@@ -125,24 +67,17 @@ const [Drawer, drawerApi] = useVbenDrawer({
     setLoading(true);
 
     const values = await baseFormApi.getValues();
-    const from = values.fromWarehouseCode as string | undefined;
-    const to = values.toWarehouseCode as string | undefined;
-
-    if (from && to && from === to) {
-      notification.error({
-        message: $t('page.stockMovement.transfer.sameWarehouse'),
-      });
-      setLoading(false);
-      return;
-    }
 
     try {
-      await transferMutation.mutateAsync({
-        fromWarehouseCode: from,
-        toWarehouseCode: to,
-        skuCode: values.skuCode as string | undefined,
-        quantity: values.quantity as number | undefined,
-        remark: values.remark as string | undefined,
+      await createMutation.mutateAsync({
+        pickingType: 'INTERNAL',
+        moves: [
+          {
+            productCode: values.productCode,
+            plannedQuantity: values.plannedQuantity,
+          },
+        ],
+        remark: values.remark,
       });
 
       notification.success({

@@ -59,6 +59,13 @@ func (PurchaseOrder) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		// warehouse_code：收货仓库。PO 获批后据此确定 receiving location，
+		// 创建入库拣货单（Odoo PO→_create_picking 桥接的必要字段）。
+		field.String("warehouse_code").
+			Comment("收货仓库编码").
+			Optional().
+			Nillable(),
 	}
 }
 

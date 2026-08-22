@@ -2,7 +2,7 @@ import 'package:dio/dio.dart' show DioException;
 import 'package:get_it/get_it.dart' show GetIt;
 
 import 'package:go_wind_erp/generated/api/app/service/v1/index.dart'
-    show ApiClient, InventoryServiceV1GetInventoryOverviewRequest;
+    show ApiClient, InventoryServiceV1GetStockQuantOverviewRequest;
 import 'package:go_wind_erp/src/core/transport/http/api_exception.dart'
     show ApiException, ApiExceptionCategory;
 import 'package:go_wind_erp/src/features/dashboard/domain/dashboard_failure.dart';
@@ -11,7 +11,7 @@ import 'package:go_wind_erp/src/features/dashboard/domain/dashboard_repository.d
 
 /// [DashboardRepository] 的 data 层实现。
 ///
-/// 直接调用生成客户端的 `inventoryService.getOverview`，将响应映射为领域
+/// 直接调用生成客户端的 `stockQuantService.getOverview`，将响应映射为领域
 /// 模型；将传输层 [DioException]（已由统一拦截器封装为 [ApiException]）
 /// 映射为 [DashboardFailure] 子类抛出。看板为只读聚合，无需独立 data source
 /// 类，仓储内联远程调用。
@@ -26,8 +26,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
     int? lowStockLimit,
   }) async {
     try {
-      final resp = await _api.inventoryService.getOverview(
-        InventoryServiceV1GetInventoryOverviewRequest(
+      final resp = await _api.stockQuantService.getOverview(
+        InventoryServiceV1GetStockQuantOverviewRequest(
           lowStockThreshold: lowStockThreshold,
           lowStockLimit: lowStockLimit,
         ),
@@ -41,10 +41,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
         lowStockItems: [
           for (final item in lowItems)
             LowStockItem(
-              warehouseCode: item.warehouseCode ?? '',
-              skuCode: item.skuCode ?? '',
+              locationId: item.locationId ?? 0,
+              productCode: item.productCode ?? '',
               quantity: item.quantity ?? 0,
-              status: item.status?.toString() ?? '',
             ),
         ],
       );

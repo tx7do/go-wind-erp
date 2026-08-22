@@ -11,72 +11,54 @@ class WarehouseInfo {
   const WarehouseInfo({required this.code, required this.name, this.location});
 }
 
-/// 库存记录（按仓库 + SKU 查询的结果）。
+/// 库存量记录（按 location + productCode 查询的结果）。
+///
+/// 对应后端 `stock.quant`（只读；quantity 仅由拣货校验变更）。
 class InventoryInfo {
-  final String warehouseCode;
-  final String skuCode;
+  final int locationId;
+  final String productCode;
   final int quantity;
 
-  /// AVAILABLE / LOCKED / QUARANTINED（后端原始字符串）。
-  final String status;
-
   const InventoryInfo({
-    required this.warehouseCode,
-    required this.skuCode,
+    required this.locationId,
+    required this.productCode,
     required this.quantity,
-    required this.status,
   });
 }
 
-/// 扫码支持的流水类型。
+/// 待提交的内部调拨拣货单草稿。
 ///
-/// 移动端仅做入库/出库；调拨与调整属后台操作，不暴露给扫码端。
-enum MovementKind { inbound, outbound }
+/// 移动端仅可发起 INTERNAL 调拨：服务层按仓库推导 source/dest location，
+/// 客户端提供 from/to 仓库编码（用于解析 locationId）与单条 move 计划。
+/// 提交流程：create → confirm → validate。
+class InternalTransferDraft {
+  final String fromWarehouseCode;
+  final String toWarehouseCode;
+  final String productCode;
+  final int plannedQuantity;
 
-extension MovementKindProto on MovementKind {
-  /// 对应后端 `StockMovement.MovementType` 的 wire 值。
-  String get wireName => this == MovementKind.inbound ? 'INBOUND' : 'OUTBOUND';
-}
-
-/// 待提交的出入库流水。
-class StockMovementDraft {
-  final String warehouseCode;
-  final String skuCode;
-  final MovementKind kind;
-
-  /// 正为入、负为出（出库时由页面取负后传入）。
-  final int delta;
-  final int quantityBefore;
-  final int quantityAfter;
-  final String? remark;
-
-  const StockMovementDraft({
-    required this.warehouseCode,
-    required this.skuCode,
-    required this.kind,
-    required this.delta,
-    required this.quantityBefore,
-    required this.quantityAfter,
-    this.remark,
+  const InternalTransferDraft({
+    required this.fromWarehouseCode,
+    required this.toWarehouseCode,
+    required this.productCode,
+    required this.plannedQuantity,
   });
 }
 
-/// 流水记录（历史列表展示项）。
-class StockMovementRecord {
-  /// 流水主键（冲正接口的入参；列表脏数据缺失时为 0，UI 据此隐藏冲正入口）。
-  final int id;
-  final String movementType;
-  final int delta;
-  final int quantityBefore;
-  final int quantityAfter;
+/// 拣货单记录（历史列表展示项）。
+///
+/// 对应后端 `stock.picking` 的一等文档视图；`derivedState` 由子 moves 聚合
+/// 计算（不存储）。
+class PickingRecord {
+  final String pickingNumber;
+  final String pickingType;
+  final String derivedState;
   final String? createdAt;
 
-  const StockMovementRecord({
-    this.id = 0,
-    required this.movementType,
-    required this.delta,
-    required this.quantityBefore,
-    required this.quantityAfter,
+  const PickingRecord({
+    required this.pickingNumber,
+    required this.pickingType,
+    required this.derivedState,
     this.createdAt,
   });
 }

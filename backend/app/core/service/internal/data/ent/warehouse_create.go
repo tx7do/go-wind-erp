@@ -190,6 +190,20 @@ func (_c *WarehouseCreate) SetNillableEnable(v *bool) *WarehouseCreate {
 	return _c
 }
 
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (_c *WarehouseCreate) SetReceivingLocationID(v uint32) *WarehouseCreate {
+	_c.mutation.SetReceivingLocationID(v)
+	return _c
+}
+
+// SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
+func (_c *WarehouseCreate) SetNillableReceivingLocationID(v *uint32) *WarehouseCreate {
+	if v != nil {
+		_c.SetReceivingLocationID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *WarehouseCreate) SetID(v uint32) *WarehouseCreate {
 	_c.mutation.SetID(v)
@@ -240,6 +254,10 @@ func (_c *WarehouseCreate) defaults() error {
 	if _, ok := _c.mutation.Enable(); !ok {
 		v := warehouse.DefaultEnable
 		_c.mutation.SetEnable(v)
+	}
+	if _, ok := _c.mutation.ReceivingLocationID(); !ok {
+		v := warehouse.DefaultReceivingLocationID
+		_c.mutation.SetReceivingLocationID(v)
 	}
 	return nil
 }
@@ -331,6 +349,10 @@ func (_c *WarehouseCreate) createSpec() (*Warehouse, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Enable(); ok {
 		_spec.SetField(warehouse.FieldEnable, field.TypeBool, value)
 		_node.Enable = &value
+	}
+	if value, ok := _c.mutation.ReceivingLocationID(); ok {
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_node.ReceivingLocationID = &value
 	}
 	return _node, _spec
 }
@@ -579,6 +601,30 @@ func (u *WarehouseUpsert) UpdateEnable() *WarehouseUpsert {
 // ClearEnable clears the value of the "enable" field.
 func (u *WarehouseUpsert) ClearEnable() *WarehouseUpsert {
 	u.SetNull(warehouse.FieldEnable)
+	return u
+}
+
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (u *WarehouseUpsert) SetReceivingLocationID(v uint32) *WarehouseUpsert {
+	u.Set(warehouse.FieldReceivingLocationID, v)
+	return u
+}
+
+// UpdateReceivingLocationID sets the "receiving_location_id" field to the value that was provided on create.
+func (u *WarehouseUpsert) UpdateReceivingLocationID() *WarehouseUpsert {
+	u.SetExcluded(warehouse.FieldReceivingLocationID)
+	return u
+}
+
+// AddReceivingLocationID adds v to the "receiving_location_id" field.
+func (u *WarehouseUpsert) AddReceivingLocationID(v uint32) *WarehouseUpsert {
+	u.Add(warehouse.FieldReceivingLocationID, v)
+	return u
+}
+
+// ClearReceivingLocationID clears the value of the "receiving_location_id" field.
+func (u *WarehouseUpsert) ClearReceivingLocationID() *WarehouseUpsert {
+	u.SetNull(warehouse.FieldReceivingLocationID)
 	return u
 }
 
@@ -864,6 +910,34 @@ func (u *WarehouseUpsertOne) UpdateEnable() *WarehouseUpsertOne {
 func (u *WarehouseUpsertOne) ClearEnable() *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.ClearEnable()
+	})
+}
+
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (u *WarehouseUpsertOne) SetReceivingLocationID(v uint32) *WarehouseUpsertOne {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.SetReceivingLocationID(v)
+	})
+}
+
+// AddReceivingLocationID adds v to the "receiving_location_id" field.
+func (u *WarehouseUpsertOne) AddReceivingLocationID(v uint32) *WarehouseUpsertOne {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.AddReceivingLocationID(v)
+	})
+}
+
+// UpdateReceivingLocationID sets the "receiving_location_id" field to the value that was provided on create.
+func (u *WarehouseUpsertOne) UpdateReceivingLocationID() *WarehouseUpsertOne {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.UpdateReceivingLocationID()
+	})
+}
+
+// ClearReceivingLocationID clears the value of the "receiving_location_id" field.
+func (u *WarehouseUpsertOne) ClearReceivingLocationID() *WarehouseUpsertOne {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.ClearReceivingLocationID()
 	})
 }
 
@@ -1315,6 +1389,34 @@ func (u *WarehouseUpsertBulk) UpdateEnable() *WarehouseUpsertBulk {
 func (u *WarehouseUpsertBulk) ClearEnable() *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.ClearEnable()
+	})
+}
+
+// SetReceivingLocationID sets the "receiving_location_id" field.
+func (u *WarehouseUpsertBulk) SetReceivingLocationID(v uint32) *WarehouseUpsertBulk {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.SetReceivingLocationID(v)
+	})
+}
+
+// AddReceivingLocationID adds v to the "receiving_location_id" field.
+func (u *WarehouseUpsertBulk) AddReceivingLocationID(v uint32) *WarehouseUpsertBulk {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.AddReceivingLocationID(v)
+	})
+}
+
+// UpdateReceivingLocationID sets the "receiving_location_id" field to the value that was provided on create.
+func (u *WarehouseUpsertBulk) UpdateReceivingLocationID() *WarehouseUpsertBulk {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.UpdateReceivingLocationID()
+	})
+}
+
+// ClearReceivingLocationID clears the value of the "receiving_location_id" field.
+func (u *WarehouseUpsertBulk) ClearReceivingLocationID() *WarehouseUpsertBulk {
+	return u.Update(func(s *WarehouseUpsert) {
+		s.ClearReceivingLocationID()
 	})
 }
 

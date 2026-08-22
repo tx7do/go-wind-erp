@@ -63,8 +63,8 @@ export * from './user';
 
 export * from './warehouse';
 
-export * from './inventory';
+export * from './stock-picking';
 
-export * from './stock-movement';
+export * from './stock-quant';
 
 export * from './user-profile';

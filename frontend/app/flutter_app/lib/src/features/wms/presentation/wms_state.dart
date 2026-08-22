@@ -51,7 +51,7 @@ final class WmsReady extends WmsState {
   /// 当前查询的 SKU（用于回显与流水上下文）。
   final String currentSku;
 
-  final List<StockMovementRecord> movements;
+  final List<PickingRecord> pickings;
 
   final bool lookingUp;
   final bool submitting;
@@ -65,7 +65,7 @@ final class WmsReady extends WmsState {
     this.inventory,
     this.lookupMiss = false,
     this.currentSku = '',
-    this.movements = const [],
+    this.pickings = const [],
     this.lookingUp = false,
     this.submitting = false,
     this.message,
@@ -76,7 +76,7 @@ final class WmsReady extends WmsState {
     InventoryInfo? inventory,
     bool? lookupMiss,
     String? currentSku,
-    List<StockMovementRecord>? movements,
+    List<PickingRecord>? pickings,
     bool? lookingUp,
     bool? submitting,
     String? message,
@@ -86,9 +86,9 @@ final class WmsReady extends WmsState {
       selectedWarehouseCode: selectedWarehouseCode ?? this.selectedWarehouseCode,
       inventory: inventory ?? this.inventory,
       lookupMiss: lookupMiss ?? this.lookupMiss,
-      currentSku: currentSku ?? this.currentSku,
-      movements: movements ?? this.movements,
-      lookingUp: lookingUp ?? this.lookingUp,
+        currentSku: currentSku ?? this.currentSku,
+        pickings: pickings ?? this.pickings,
+        lookingUp: lookingUp ?? this.lookingUp,
       submitting: submitting ?? this.submitting,
       message: message,
     );
@@ -101,7 +101,7 @@ final class WmsReady extends WmsState {
         inventory,
         lookupMiss,
         currentSku,
-        movements,
+        pickings,
         lookingUp,
         submitting,
         message,

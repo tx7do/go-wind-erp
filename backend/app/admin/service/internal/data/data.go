@@ -337,22 +337,31 @@ func NewWarehouseServiceClient(ctx *bootstrap.Context, r registry.Discovery) inv
 	return inventoryV1.NewWarehouseServiceClient(cli)
 }
 
-func NewInventoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) inventoryV1.InventoryServiceClient {
+func NewLocationServiceClient(ctx *bootstrap.Context, r registry.Discovery) inventoryV1.LocationServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
 		return nil
 	}
 
-	return inventoryV1.NewInventoryServiceClient(cli)
+	return inventoryV1.NewLocationServiceClient(cli)
 }
 
-func NewStockMovementServiceClient(ctx *bootstrap.Context, r registry.Discovery) inventoryV1.StockMovementServiceClient {
+func NewStockQuantServiceClient(ctx *bootstrap.Context, r registry.Discovery) inventoryV1.StockQuantServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
 		return nil
 	}
 
-	return inventoryV1.NewStockMovementServiceClient(cli)
+	return inventoryV1.NewStockQuantServiceClient(cli)
+}
+
+func NewStockPickingServiceClient(ctx *bootstrap.Context, r registry.Discovery) inventoryV1.StockPickingServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return inventoryV1.NewStockPickingServiceClient(cli)
 }
 
 func NewApprovalRequestServiceClient(ctx *bootstrap.Context, r registry.Discovery) approvalV1.ApprovalRequestServiceClient {

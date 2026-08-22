@@ -46,8 +46,9 @@ func NewGrpcServer(
 	taskService *service.TaskService,
 
 	warehouseService *service.WarehouseService,
-	inventoryService *service.InventoryService,
-	stockMovementService *service.StockMovementService,
+	locationService *service.LocationService,
+	stockQuantService *service.StockQuantService,
+	stockPickingService *service.StockPickingService,
 
 	approvalRequestService *service.ApprovalRequestService,
 
@@ -102,8 +103,9 @@ func NewGrpcServer(
 	taskV1.RegisterTaskServiceServer(srv, taskService)
 
 	inventoryV1.RegisterWarehouseServiceServer(srv, warehouseService)
-	inventoryV1.RegisterInventoryServiceServer(srv, inventoryService)
-	inventoryV1.RegisterStockMovementServiceServer(srv, stockMovementService)
+	inventoryV1.RegisterLocationServiceServer(srv, locationService)
+	inventoryV1.RegisterStockQuantServiceServer(srv, stockQuantService)
+	inventoryV1.RegisterStockPickingServiceServer(srv, stockPickingService)
 
 	approvalV1.RegisterApprovalRequestServiceServer(srv, approvalRequestService)
 

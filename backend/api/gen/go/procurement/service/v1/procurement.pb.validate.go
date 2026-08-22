@@ -353,6 +353,10 @@ func (m *PurchaseOrder) validate(all bool) error {
 		// no validation rules for TotalAmount
 	}
 
+	if m.WarehouseCode != nil {
+		// no validation rules for WarehouseCode
+	}
+
 	if m.Remark != nil {
 		// no validation rules for Remark
 	}

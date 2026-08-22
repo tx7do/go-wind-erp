@@ -30,12 +30,12 @@ const warehouse: RouteRecordRaw[] = [
       },
 
       {
-        path: 'inventories',
-        name: 'InventoryManagement',
+        path: 'stock-quants',
+        name: 'StockQuantManagement',
         meta: {
           order: 2,
           icon: 'lucide:package',
-          title: $t('menu.wms.inventory'),
+          title: $t('menu.wms.stockQuant'),
           authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
         },
         component: () => import('#/views/app/wms/inventory/index.vue'),
@@ -54,12 +54,12 @@ const warehouse: RouteRecordRaw[] = [
       },
 
       {
-        path: 'stock-movements',
-        name: 'StockMovementManagement',
+        path: 'stock-pickings',
+        name: 'StockPickingManagement',
         meta: {
           order: 3,
           icon: 'lucide:arrow-right-left',
-          title: $t('menu.wms.stockMovement'),
+          title: $t('menu.wms.stockPicking'),
           authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
         },
         component: () => import('#/views/app/wms/stock_movement/index.vue'),

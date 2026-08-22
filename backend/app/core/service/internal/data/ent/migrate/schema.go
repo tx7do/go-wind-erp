@@ -691,36 +691,6 @@ var (
 			},
 		},
 	}
-	// InvInventoriesColumns holds the columns for the "inv_inventories" table.
-	InvInventoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "所属仓库编码"},
-		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
-		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "库存数量", Default: 0},
-		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "库存状态", Enums: []string{"AVAILABLE", "LOCKED", "QUARANTINED"}, Default: "AVAILABLE"},
-	}
-	// InvInventoriesTable holds the schema information for the "inv_inventories" table.
-	InvInventoriesTable = &schema.Table{
-		Name:       "inv_inventories",
-		Comment:    "库存表",
-		Columns:    InvInventoriesColumns,
-		PrimaryKey: []*schema.Column{InvInventoriesColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "idx_inv_inventory_tenant_warehouse_sku",
-				Unique:  true,
-				Columns: []*schema.Column{InvInventoriesColumns[8], InvInventoriesColumns[9], InvInventoriesColumns[10]},
-			},
-		},
-	}
 	// SysLanguagesColumns holds the columns for the "sys_languages" table.
 	SysLanguagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2236,6 +2206,7 @@ var (
 		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "采购单状态", Enums: []string{"DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "COMPLETED", "CANCELLED"}, Default: "DRAFT"},
 		{Name: "total_amount", Type: field.TypeInt64, Nullable: true, Comment: "采购总额（分，服务端按明细计算）", Default: 0},
+		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "收货仓库编码"},
 	}
 	// PurPurchaseOrdersTable holds the schema information for the "pur_purchase_orders" table.
 	PurPurchaseOrdersTable = &schema.Table{
@@ -2490,8 +2461,8 @@ var (
 			},
 		},
 	}
-	// InvStockMovementsColumns holds the columns for the "inv_stock_movements" table.
-	InvStockMovementsColumns = []*schema.Column{
+	// InvStockLocationsColumns holds the columns for the "inv_stock_locations" table.
+	InvStockLocationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
@@ -2501,29 +2472,172 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "涉及仓库编码"},
-		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "涉及SKU编码"},
-		{Name: "delta", Type: field.TypeInt64, Nullable: true, Comment: "数量变化量", Default: 0},
-		{Name: "movement_type", Type: field.TypeEnum, Nullable: true, Comment: "流水类型", Enums: []string{"INBOUND", "OUTBOUND", "TRANSFER", "ADJUSTMENT"}, Default: "INBOUND"},
-		{Name: "quantity_before", Type: field.TypeInt64, Nullable: true, Comment: "操作前数量", Default: 0},
-		{Name: "quantity_after", Type: field.TypeInt64, Nullable: true, Comment: "操作后数量", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "位置名称"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父位置ID（预留层级，初始不用）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "物化路径（预留层级，初始为 /{id}/）"},
+		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置", Enums: []string{"SUPPLIER", "INTERNAL"}, Default: "INTERNAL"},
+		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "归属仓库编码（仅 INTERNAL 位置有值）"},
 	}
-	// InvStockMovementsTable holds the schema information for the "inv_stock_movements" table.
-	InvStockMovementsTable = &schema.Table{
-		Name:       "inv_stock_movements",
-		Comment:    "库存流水表",
-		Columns:    InvStockMovementsColumns,
-		PrimaryKey: []*schema.Column{InvStockMovementsColumns[0]},
+	// InvStockLocationsTable holds the schema information for the "inv_stock_locations" table.
+	InvStockLocationsTable = &schema.Table{
+		Name:       "inv_stock_locations",
+		Comment:    "库存位置表",
+		Columns:    InvStockLocationsColumns,
+		PrimaryKey: []*schema.Column{InvStockLocationsColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "idx_inv_stock_movement_tenant_created_at",
+				Name:    "idx_inv_stock_location_tenant_usage",
 				Unique:  false,
-				Columns: []*schema.Column{InvStockMovementsColumns[8], InvStockMovementsColumns[1]},
+				Columns: []*schema.Column{InvStockLocationsColumns[8], InvStockLocationsColumns[12]},
 			},
 			{
-				Name:    "idx_inv_stock_movement_tenant_warehouse_sku",
+				Name:    "idx_inv_stock_location_tenant_warehouse",
 				Unique:  false,
-				Columns: []*schema.Column{InvStockMovementsColumns[8], InvStockMovementsColumns[9], InvStockMovementsColumns[10]},
+				Columns: []*schema.Column{InvStockLocationsColumns[8], InvStockLocationsColumns[13]},
+			},
+		},
+	}
+	// InvStockMovesColumns holds the columns for the "inv_stock_moves" table.
+	InvStockMovesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "picking_id", Type: field.TypeUint32, Nullable: true, Comment: "所属拣货单ID", Default: 0},
+		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
+		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "planned_quantity", Type: field.TypeInt64, Nullable: true, Comment: "计划数量", Default: 0},
+		{Name: "state", Type: field.TypeEnum, Nullable: true, Comment: "移动状态", Enums: []string{"DRAFT", "CONFIRMED", "DONE", "CANCELLED"}, Default: "DRAFT"},
+		{Name: "purchase_order_item_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购明细ID（仅入库，Odoo purchase_line_id）", Default: 0},
+	}
+	// InvStockMovesTable holds the schema information for the "inv_stock_moves" table.
+	InvStockMovesTable = &schema.Table{
+		Name:       "inv_stock_moves",
+		Comment:    "库存移动计划表",
+		Columns:    InvStockMovesColumns,
+		PrimaryKey: []*schema.Column{InvStockMovesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_inv_stock_move_tenant_picking",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMovesColumns[8], InvStockMovesColumns[9]},
+			},
+			{
+				Name:    "idx_inv_stock_move_tenant_state",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMovesColumns[8], InvStockMovesColumns[14]},
+			},
+			{
+				Name:    "idx_inv_stock_move_tenant_po_item",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMovesColumns[8], InvStockMovesColumns[15]},
+			},
+		},
+	}
+	// InvStockMoveLinesColumns holds the columns for the "inv_stock_move_lines" table.
+	InvStockMoveLinesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "move_id", Type: field.TypeUint32, Nullable: true, Comment: "所属移动计划ID", Default: 0},
+		{Name: "picking_id", Type: field.TypeUint32, Nullable: true, Comment: "所属拣货单ID（反范式）", Default: 0},
+		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
+		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "executed_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已执行数量", Default: 0},
+	}
+	// InvStockMoveLinesTable holds the schema information for the "inv_stock_move_lines" table.
+	InvStockMoveLinesTable = &schema.Table{
+		Name:       "inv_stock_move_lines",
+		Comment:    "库存移动执行记录表",
+		Columns:    InvStockMoveLinesColumns,
+		PrimaryKey: []*schema.Column{InvStockMoveLinesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_inv_stock_move_line_tenant_move",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMoveLinesColumns[6], InvStockMoveLinesColumns[7]},
+			},
+			{
+				Name:    "idx_inv_stock_move_line_tenant_picking",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMoveLinesColumns[6], InvStockMoveLinesColumns[8]},
+			},
+		},
+	}
+	// InvStockPickingsColumns holds the columns for the "inv_stock_pickings" table.
+	InvStockPickingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "picking_number", Type: field.TypeString, Nullable: true, Comment: "拣货单号（服务端生成）"},
+		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨", Enums: []string{"INCOMING", "INTERNAL"}, Default: "INCOMING"},
+		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "purchase_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购单ID（仅入库）", Default: 0},
+		{Name: "partner_code", Type: field.TypeString, Nullable: true, Comment: "交易方编码（供应商/客户）"},
+	}
+	// InvStockPickingsTable holds the schema information for the "inv_stock_pickings" table.
+	InvStockPickingsTable = &schema.Table{
+		Name:       "inv_stock_pickings",
+		Comment:    "拣货单表",
+		Columns:    InvStockPickingsColumns,
+		PrimaryKey: []*schema.Column{InvStockPickingsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_inv_stock_picking_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockPickingsColumns[8], InvStockPickingsColumns[1]},
+			},
+			{
+				Name:    "idx_inv_stock_picking_tenant_po",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockPickingsColumns[8], InvStockPickingsColumns[13]},
+			},
+		},
+	}
+	// InvStockQuantsColumns holds the columns for the "inv_stock_quants" table.
+	InvStockQuantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "location_id", Type: field.TypeUint32, Nullable: true, Comment: "所在位置ID", Default: 0},
+		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
+		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "在手数量", Default: 0},
+	}
+	// InvStockQuantsTable holds the schema information for the "inv_stock_quants" table.
+	InvStockQuantsTable = &schema.Table{
+		Name:       "inv_stock_quants",
+		Comment:    "库存量表",
+		Columns:    InvStockQuantsColumns,
+		PrimaryKey: []*schema.Column{InvStockQuantsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_inv_stock_quant_tenant_location_product",
+				Unique:  true,
+				Columns: []*schema.Column{InvStockQuantsColumns[8], InvStockQuantsColumns[9], InvStockQuantsColumns[10]},
 			},
 		},
 	}
@@ -3129,6 +3243,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "仓库名称"},
 		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "仓库地址"},
 		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用仓库", Default: false},
+		{Name: "receiving_location_id", Type: field.TypeUint32, Nullable: true, Comment: "接收位置ID（仓库创建时自动生成的内部位置）", Default: 0},
 	}
 	// InvWarehousesTable holds the schema information for the "inv_warehouses" table.
 	InvWarehousesTable = &schema.Table{
@@ -3157,7 +3272,6 @@ var (
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
-		InvInventoriesTable,
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
@@ -3184,7 +3298,11 @@ var (
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
-		InvStockMovementsTable,
+		InvStockLocationsTable,
+		InvStockMovesTable,
+		InvStockMoveLinesTable,
+		InvStockPickingsTable,
+		InvStockQuantsTable,
 		PurSuppliersTable,
 		SysTasksTable,
 		SysTenantsTable,
@@ -3252,11 +3370,6 @@ func init() {
 	}
 	InternalMessageRecipientsTable.Annotation = &entsql.Annotation{
 		Table:     "internal_message_recipients",
-		Charset:   "utf8mb4",
-		Collation: "utf8mb4_bin",
-	}
-	InvInventoriesTable.Annotation = &entsql.Annotation{
-		Table:     "inv_inventories",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3393,8 +3506,28 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
-	InvStockMovementsTable.Annotation = &entsql.Annotation{
-		Table:     "inv_stock_movements",
+	InvStockLocationsTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_locations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InvStockMovesTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_moves",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InvStockMoveLinesTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_move_lines",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InvStockPickingsTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_pickings",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InvStockQuantsTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_quants",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -32,18 +32,15 @@ class WmsRepositoryImpl implements WmsRepository {
   @override
   Future<InventoryInfo?> findInventory(
     String warehouseCode,
-    String skuCode,
+    String productCode,
   ) async {
     try {
-      final resp = await _dataSource.findInventory(warehouseCode, skuCode);
-      final items = resp.items ?? const [];
-      if (items.isEmpty) return null;
-      final inv = items.first;
+      final q = await _dataSource.findInventory(warehouseCode, productCode);
+      if (q == null) return null;
       return InventoryInfo(
-        warehouseCode: inv.warehouseCode ?? warehouseCode,
-        skuCode: inv.skuCode ?? skuCode,
-        quantity: inv.quantity ?? 0,
-        status: inv.status?.toString() ?? 'AVAILABLE',
+        locationId: q.locationId ?? 0,
+        productCode: q.productCode ?? '',
+        quantity: q.quantity ?? 0,
       );
     } on DioException catch (e) {
       throw _toFailure(e);
@@ -51,66 +48,26 @@ class WmsRepositoryImpl implements WmsRepository {
   }
 
   @override
-  Future<void> submitMovement(StockMovementDraft draft) async {
+  Future<void> submitInternalTransfer(InternalTransferDraft draft) async {
     try {
-      await _dataSource.createMovement(draft);
+      await _dataSource.submitInternalTransfer(draft);
     } on DioException catch (e) {
       throw _toFailure(e);
     }
   }
 
   @override
-  Future<void> transferStock({
-    required String fromWarehouseCode,
-    required String toWarehouseCode,
-    required String skuCode,
-    required int quantity,
-    String? remark,
-  }) async {
+  Future<List<PickingRecord>> listPickings({int limit = 20}) async {
     try {
-      await _dataSource.transferStock(
-        fromWarehouseCode: fromWarehouseCode,
-        toWarehouseCode: toWarehouseCode,
-        skuCode: skuCode,
-        quantity: quantity,
-        remark: remark,
-      );
-    } on DioException catch (e) {
-      throw _toFailure(e);
-    }
-  }
-
-  @override
-  Future<void> reverseMovement(int movementId, String reason) async {
-    try {
-      await _dataSource.reverseMovement(movementId, reason);
-    } on DioException catch (e) {
-      throw _toFailure(e);
-    }
-  }
-
-  @override
-  Future<List<StockMovementRecord>> listMovements(
-    String warehouseCode,
-    String skuCode, {
-    int limit = 20,
-  }) async {
-    try {
-      final resp = await _dataSource.listMovements(
-        warehouseCode,
-        skuCode,
-        limit,
-      );
+      final resp = await _dataSource.listPickings(limit: limit);
       final items = resp.items ?? const [];
       return items
           .map(
-            (m) => StockMovementRecord(
-              id: m.id ?? 0,
-              movementType: m.movementType?.toString() ?? '',
-              delta: m.delta ?? 0,
-              quantityBefore: m.quantityBefore ?? 0,
-              quantityAfter: m.quantityAfter ?? 0,
-              createdAt: m.createdAt,
+            (p) => PickingRecord(
+              pickingNumber: p.pickingNumber ?? '',
+              pickingType: p.pickingType?.toString() ?? '',
+              derivedState: p.derivedState?.toString() ?? '',
+              createdAt: p.createdAt,
             ),
           )
           .toList();

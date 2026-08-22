@@ -40,10 +40,12 @@ type sagaSeam interface {
 	notifyProcurement(ctx context.Context, event stockEvent) error
 }
 
-// procurementSagaSeam sagaSeam 的真实现（依赖在 NewStockMovementService
-// 组装，同进程直连 repo）。
+// procurementSagaSeam sagaSeam 的真实现（依赖在 NewStockPickingService
+// 组装，同进程直连 repo）。数据源从旧 InventoryRepo 改为 StockQuantRepo
+// ——按 location+product 查在手量（借鉴 Odoo stock.quant）。
 type procurementSagaSeam struct {
-	inventoryRepo        *data.InventoryRepo
+	stockQuantRepo       *data.StockQuantRepo
+	locationRepo         *data.LocationRepo
 	purchaseOrderRepo    *data.PurchaseOrderRepo
 	approvalRequestRepo  *data.ApprovalRequestRepo
 }
@@ -54,11 +56,18 @@ func (s *procurementSagaSeam) notifyProcurement(ctx context.Context, event stock
 		return nil
 	}
 
-	inv, err := s.inventoryRepo.FindByWarehouseSku(ctx, event.warehouseCode, event.skuCode)
+	// 将仓库编码解析为接收位置ID（INTERNAL location），然后按
+	// location+product 查在手量。
+	locationID, err := s.locationRepo.GetLocationID(ctx, event.warehouseCode)
 	if err != nil {
-		return fmt.Errorf("saga: query inventory: %w", err)
+		return fmt.Errorf("saga: resolve location: %w", err)
 	}
-	current := inv.GetQuantity()
+
+	quant, err := s.stockQuantRepo.FindByLocationProduct(ctx, locationID, event.skuCode)
+	if err != nil {
+		return fmt.Errorf("saga: query stock_quant: %w", err)
+	}
+	current := quant.GetQuantity()
 	if current >= defaultLowStockThreshold {
 		return nil
 	}

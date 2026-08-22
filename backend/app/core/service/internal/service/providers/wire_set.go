@@ -26,8 +26,9 @@ var ProviderSet = wire.NewSet(
 	service.NewDemoDataService,
 
 	service.NewWarehouseService,
-	service.NewInventoryService,
-	service.NewStockMovementService,
+	service.NewLocationService,
+	service.NewStockQuantService,
+	service.NewStockPickingService,
 
 	service.NewApprovalRequestService,
 

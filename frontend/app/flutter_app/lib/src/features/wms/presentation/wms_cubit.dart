@@ -10,9 +10,11 @@ import 'package:go_wind_erp/src/features/wms/presentation/wms_state.dart';
 /// 仅依赖 [WmsRepository] 抽象。动作：
 /// - [load]：进入页面拉取仓库列表。
 /// - [selectWarehouse]：切换作业仓库，清空当前查询上下文。
-/// - [lookupInventory]：按仓库 + SKU 查库存，并联动拉取该组合的近期流水。
-/// - [submitMovement]：提交出入库流水。出库做客户端守卫（不允许超过当前
-///   库存导致负库存）；后端仍强校验 `before + delta == after`。
+/// - [lookupInventory]：按仓库 + productCode 查库存量，并联动拉取近期拣货单。
+/// - [submitInternalTransfer]：发起 INTERNAL 调拨拣货单
+///   （create → confirm → validate）。客户端守卫：目的仓须不同于源仓、
+///   数量须为正且不超当前库存。入库拣货单不再由客户端发起——服务层在
+///   采购单审批通过后自动生成。
 /// - [clearMessage]：UI 展示完一次性提示后清除。
 class WmsCubit extends Cubit<WmsState> {
   final WmsRepository _repository;
@@ -44,22 +46,22 @@ class WmsCubit extends Cubit<WmsState> {
         inventory: null,
         lookupMiss: false,
         currentSku: '',
-        movements: const [],
+        pickings: const [],
         message: null,
       ),
     );
   }
 
-  Future<void> lookupInventory(String skuCode) async {
+  Future<void> lookupInventory(String productCode) async {
     final s = state;
     if (s is! WmsReady) return;
     final warehouse = s.selectedWarehouseCode;
-    final sku = skuCode.trim();
-    if (warehouse == null || sku.isEmpty) return;
+    final product = productCode.trim();
+    if (warehouse == null || product.isEmpty) return;
 
     emit(s.copyWith(lookingUp: true, lookupMiss: false, message: null));
     try {
-      final inv = await _repository.findInventory(warehouse, sku);
+      final inv = await _repository.findInventory(warehouse, product);
       if (isClosed) return;
       final cur = state as WmsReady;
       if (inv == null) {
@@ -68,16 +70,16 @@ class WmsCubit extends Cubit<WmsState> {
             lookingUp: false,
             inventory: null,
             lookupMiss: true,
-            currentSku: sku,
-            movements: const [],
+            currentSku: product,
+            pickings: const [],
           ),
         );
         return;
       }
-      // 命中后联动近期流水；流水拉取失败不阻塞查询结果展示。
-      var movements = const <StockMovementRecord>[];
+      // 命中后联动近期拣货单；拉取失败不阻塞查询结果展示。
+      var pickings = const <PickingRecord>[];
       try {
-        movements = await _repository.listMovements(warehouse, sku);
+        pickings = await _repository.listPickings();
       } on WmsFailure {
         // 忽略：仅历史区为空。
       }
@@ -88,8 +90,8 @@ class WmsCubit extends Cubit<WmsState> {
           lookingUp: false,
           inventory: inv,
           lookupMiss: false,
-          currentSku: sku,
-          movements: movements,
+          currentSku: product,
+          pickings: pickings,
         ),
       );
     } on WmsFailure {
@@ -99,58 +101,12 @@ class WmsCubit extends Cubit<WmsState> {
     }
   }
 
-  /// 提交流水。[quantity] 恒为正数，方向由 [kind] 决定。
-  Future<void> submitMovement({
-    required MovementKind kind,
-    required int quantity,
-    String? remark,
-  }) async {
-    final s = state;
-    if (s is! WmsReady) return;
-    final inv = s.inventory;
-    if (inv == null) return;
-
-    final delta = kind == MovementKind.outbound ? -quantity : quantity;
-
-    // 客户端守卫：出库不允许超过当前库存（后端状态机不拦截负库存，
-    // 负库存一旦入库账需靠反向流水冲正，代价高）。
-    if (inv.quantity + delta < 0) {
-      emit(s.copyWith(message: 'negativeStock'));
-      return;
-    }
-
-    final draft = StockMovementDraft(
-      warehouseCode: inv.warehouseCode,
-      skuCode: inv.skuCode,
-      kind: kind,
-      delta: delta,
-      quantityBefore: inv.quantity,
-      quantityAfter: inv.quantity + delta,
-      remark: (remark ?? '').isEmpty ? null : remark,
-    );
-
-    emit(s.copyWith(submitting: true, message: null));
-    try {
-      await _repository.submitMovement(draft);
-      if (isClosed) return;
-      final cur = state as WmsReady;
-      emit(cur.copyWith(submitting: false, message: 'submitSuccess'));
-      // 提交成功后刷新库存与流水。
-      await lookupInventory(inv.skuCode);
-    } on WmsFailure {
-      if (isClosed) return;
-      final cur = state as WmsReady;
-      emit(cur.copyWith(submitting: false, message: 'submitFailed'));
-    }
-  }
-
-  /// 库存调拨：源仓=当前选中仓库，SKU=当前查询上下文。
+  /// 内部调拨：源仓=当前选中仓库，productCode=当前查询上下文。
   /// 客户端守卫：目的仓须不同于源仓、数量须为正且不超当前库存
-  /// （后端单事务原子执行，仍有防负库存守卫）。
-  Future<void> transferStock({
+  /// （后端 create→confirm→validate 仍有防负库存守卫）。
+  Future<void> submitInternalTransfer({
     required String toWarehouseCode,
     required int quantity,
-    String? remark,
   }) async {
     final s = state;
     if (s is! WmsReady) return;
@@ -167,45 +123,24 @@ class WmsCubit extends Cubit<WmsState> {
       return;
     }
 
+    final draft = InternalTransferDraft(
+      fromWarehouseCode: from,
+      toWarehouseCode: toWarehouseCode,
+      productCode: inv.productCode,
+      plannedQuantity: quantity,
+    );
+
     emit(s.copyWith(submitting: true, message: null));
     try {
-      await _repository.transferStock(
-        fromWarehouseCode: from,
-        toWarehouseCode: toWarehouseCode,
-        skuCode: inv.skuCode,
-        quantity: quantity,
-        remark: remark,
-      );
+      await _repository.submitInternalTransfer(draft);
       if (isClosed) return;
       final cur = state as WmsReady;
       emit(cur.copyWith(submitting: false, message: 'transferSuccess'));
-      await lookupInventory(inv.skuCode);
+      await lookupInventory(inv.productCode);
     } on WmsFailure {
       if (isClosed) return;
       final cur = state as WmsReady;
       emit(cur.copyWith(submitting: false, message: 'transferFailed'));
-    }
-  }
-
-  /// 冲正流水：等量反向台账，成功后刷新库存与流水。
-  Future<void> reverseMovement(int movementId, String reason) async {
-    final s = state;
-    if (s is! WmsReady) return;
-
-    emit(s.copyWith(submitting: true, message: null));
-    try {
-      await _repository.reverseMovement(movementId, reason);
-      if (isClosed) return;
-      final cur = state as WmsReady;
-      emit(cur.copyWith(submitting: false, message: 'reverseSuccess'));
-      final sku = cur.currentSku;
-      if (sku.isNotEmpty) {
-        await lookupInventory(sku);
-      }
-    } on WmsFailure {
-      if (isClosed) return;
-      final cur = state as WmsReady;
-      emit(cur.copyWith(submitting: false, message: 'reverseFailed'));
     }
   }
 

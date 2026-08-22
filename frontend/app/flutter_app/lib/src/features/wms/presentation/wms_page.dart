@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_wind_erp/generated/l10n.dart';
-import 'package:go_wind_erp/src/features/wms/domain/wms_models.dart';
 import 'package:go_wind_erp/src/features/wms/presentation/wms_cubit.dart';
 import 'package:go_wind_erp/src/features/wms/presentation/wms_state.dart';
 
 /// WMS 扫码作业页。
 ///
-/// 流程：选择仓库 → 输入/扫描 SKU 查库存 → 选择方向（入库/出库）与数量
-/// 提交流水 → 展示近期流水。提交成功后自动刷新库存与流水。
+/// 流程：选择仓库 → 输入/扫描 productCode 查库存量 → 发起内部调拨拣货单
+/// （create→confirm→validate）→ 展示近期拣货单。入库拣货单不再由客户端
+/// 创建——服务层在采购单审批通过后自动生成。
 class WmsPage extends StatefulWidget {
   const WmsPage({super.key});
 
@@ -19,15 +19,10 @@ class WmsPage extends StatefulWidget {
 
 class _WmsPageState extends State<WmsPage> {
   final _skuController = TextEditingController();
-  final _quantityController = TextEditingController();
-  final _remarkController = TextEditingController();
-  MovementKind _kind = MovementKind.inbound;
 
   @override
   void dispose() {
     _skuController.dispose();
-    _quantityController.dispose();
-    _remarkController.dispose();
     super.dispose();
   }
 
@@ -40,14 +35,10 @@ class _WmsPageState extends State<WmsPage> {
         listener: (context, state) {
           if (state is WmsReady && state.message != null) {
             final text = switch (state.message) {
-              'submitSuccess' => loc.submitSuccess,
-              'submitFailed' => loc.submitFailed,
-              'negativeStock' => loc.negativeStock,
-              'lookupFailed' => loc.lookupFailed,
               'transferSuccess' => loc.transferSuccess,
               'transferFailed' => loc.transferFailed,
-              'reverseSuccess' => loc.reverseSuccess,
-              'reverseFailed' => loc.reverseFailed,
+              'negativeStock' => loc.negativeStock,
+              'lookupFailed' => loc.lookupFailed,
               'sameWarehouse' => loc.sameWarehouse,
               _ => state.message!,
             };
@@ -97,11 +88,17 @@ class _WmsPageState extends State<WmsPage> {
           if (state.inventory != null) ...[
             _buildInventoryCard(loc, state),
             const SizedBox(height: 12),
-            _buildMovementForm(loc, state),
+            OutlinedButton.icon(
+              onPressed: state.submitting
+                  ? null
+                  : () => _showTransferDialog(context, loc, state),
+              icon: const Icon(Icons.swap_horiz),
+              label: Text(loc.transferAction),
+            ),
           ],
-          if (state.movements.isNotEmpty) ...[
+          if (state.pickings.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _buildMovements(loc, state),
+            _buildPickings(loc, state),
           ],
         ],
       ),
@@ -126,7 +123,6 @@ class _WmsPageState extends State<WmsPage> {
       onChanged: (code) {
         if (code != null) {
           _skuController.clear();
-          _quantityController.clear();
           context.read<WmsCubit>().selectWarehouse(code);
         }
       },
@@ -178,15 +174,9 @@ class _WmsPageState extends State<WmsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  inv.skuCode,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(width: 8),
-                _statusChip(loc, inv.status),
-              ],
+            Text(
+              inv.productCode,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 4),
             Text('${loc.inventoryQuantity}: ${inv.quantity}'),
@@ -196,102 +186,10 @@ class _WmsPageState extends State<WmsPage> {
     );
   }
 
-  Widget _statusChip(S loc, String status) {
-    final (label, color) = switch (status) {
-      'AVAILABLE' => (loc.statusAvailable, Colors.green),
-      'LOCKED' => (loc.statusLocked, Colors.orange),
-      'QUARANTINED' => (loc.statusQuarantined, Colors.red),
-      _ => (status, Colors.grey),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 12)),
-    );
-  }
-
-  Widget _buildMovementForm(S loc, WmsReady state) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SegmentedButton<MovementKind>(
-              segments: [
-                ButtonSegment(
-                  value: MovementKind.inbound,
-                  label: Text(loc.inbound),
-                  icon: const Icon(Icons.south_west),
-                ),
-                ButtonSegment(
-                  value: MovementKind.outbound,
-                  label: Text(loc.outbound),
-                  icon: const Icon(Icons.north_east),
-                ),
-              ],
-              selected: {_kind},
-              onSelectionChanged: (set) =>
-                  setState(() => _kind = set.first),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _quantityController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: loc.quantityLabel,
-                border: const OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _remarkController,
-              decoration: InputDecoration(
-                labelText: loc.remarkLabel,
-                border: const OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: state.submitting
-                        ? null
-                        : () => _submit(context, state),
-                    child: state.submitting
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(loc.submitMovement),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: state.submitting
-                        ? null
-                        : () => _showTransferDialog(context, loc, state),
-                    icon: const Icon(Icons.swap_horiz),
-                    label: Text(loc.transferAction),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 调拨对话框：目的仓库下拉（排除当前仓）+ 数量 + 备注。
+  /// 内部调拨对话框：目的仓库下拉（排除当前仓）+ 数量。
+  ///
+  /// 提交后由 [WmsCubit.submitInternalTransfer] 走 create→confirm→validate
+  /// 创建 INTERNAL 拣货单；source/dest location 由服务层按仓库推导落库。
   void _showTransferDialog(BuildContext context, S loc, WmsReady state) {
     final inv = state.inventory;
     if (inv == null) {
@@ -307,7 +205,6 @@ class _WmsPageState extends State<WmsPage> {
     }
 
     final qtyController = TextEditingController();
-    final remarkController = TextEditingController();
     var toWarehouse = candidates.first.code;
 
     showDialog<void>(
@@ -346,15 +243,6 @@ class _WmsPageState extends State<WmsPage> {
                   isDense: true,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: remarkController,
-                decoration: InputDecoration(
-                  labelText: loc.remarkLabel,
-                  border: const OutlineInputBorder(),
-                  isDense: true,
-                ),
-              ),
             ],
           ),
           actions: [
@@ -370,10 +258,9 @@ class _WmsPageState extends State<WmsPage> {
                   return;
                 }
                 Navigator.of(dialogContext).pop();
-                context.read<WmsCubit>().transferStock(
+                context.read<WmsCubit>().submitInternalTransfer(
                       toWarehouseCode: toWarehouse,
                       quantity: quantity,
-                      remark: remarkController.text.trim(),
                     );
               },
               child: Text(loc.confirm),
@@ -384,68 +271,7 @@ class _WmsPageState extends State<WmsPage> {
     );
   }
 
-  /// 冲正对话框：填写冲正原因后提交（后端幂等防重复冲正）。
-  void _showReverseDialog(BuildContext context, S loc, StockMovementRecord m) {
-    final reasonController = TextEditingController();
-
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(loc.reverseAction),
-        content: TextField(
-          controller: reasonController,
-          decoration: InputDecoration(
-            labelText: loc.reverseReason,
-            border: const OutlineInputBorder(),
-            isDense: true,
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(loc.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              final reason = reasonController.text.trim();
-              if (reason.isEmpty) {
-                _showSnackBar(dialogContext, loc.reverseReasonRequired);
-                return;
-              }
-              Navigator.of(dialogContext).pop();
-              context
-                  .read<WmsCubit>()
-                  .reverseMovement(m.id, reason);
-            },
-            child: Text(loc.confirm),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submit(BuildContext context, WmsReady state) {
-    final inv = state.inventory;
-    if (inv == null) {
-      _showSnackBar(context, S.of(context).scanSkuFirst);
-      return;
-    }
-    final quantity = int.tryParse(_quantityController.text.trim());
-    if (quantity == null || quantity <= 0) {
-      _showSnackBar(context, S.of(context).quantityInvalid);
-      return;
-    }
-    context.read<WmsCubit>().submitMovement(
-          kind: _kind,
-          quantity: quantity,
-          remark: _remarkController.text.trim(),
-        );
-    _quantityController.clear();
-    _remarkController.clear();
-  }
-
-  Widget _buildMovements(S loc, WmsReady state) {
+  Widget _buildPickings(S loc, WmsReady state) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -457,38 +283,17 @@ class _WmsPageState extends State<WmsPage> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
-          for (final m in state.movements)
+          for (final p in state.pickings)
             ListTile(
               dense: true,
-              leading: Icon(
-                m.delta >= 0 ? Icons.south_west : Icons.north_east,
-                color: m.delta >= 0 ? Colors.green : Colors.red,
-              ),
-              title: Text('${_movementLabel(loc, m.movementType)}  ${m.delta >= 0 ? '+' : ''}${m.delta}'),
-              subtitle: Text('${m.quantityBefore} → ${m.quantityAfter}'),
-              // 冲正入口：仅对有 id 且非零变动的流水开放（冲正幂等标记在
-              // 服务端，重复冲正会被 409 拒绝）。
-              trailing: m.id != 0 && m.delta != 0
-                  ? IconButton(
-                      icon: const Icon(Icons.undo, size: 20),
-                      tooltip: loc.reverseAction,
-                      onPressed: () =>
-                          _showReverseDialog(context, loc, m),
-                    )
-                  : null,
+              leading: const Icon(Icons.swap_horiz, color: Colors.grey),
+              title: Text(p.pickingNumber),
+              subtitle: Text('${p.pickingType} · ${p.derivedState}'),
             ),
         ],
       ),
     );
   }
-
-  String _movementLabel(S loc, String type) => switch (type) {
-        'INBOUND' => loc.inbound,
-        'OUTBOUND' => loc.outbound,
-        'TRANSFER' => 'TRANSFER',
-        'ADJUSTMENT' => 'ADJUSTMENT',
-        _ => type,
-      };
 
   void _showSnackBar(BuildContext context, String text) {
     ScaffoldMessenger.of(context)

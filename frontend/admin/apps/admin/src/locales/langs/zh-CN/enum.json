@@ -240,19 +240,16 @@
     "AZURE": "微软AzureBlob",
     "GOOGLE": "谷歌云存储"
   },
-  "inventory": {
-    "status": {
-      "AVAILABLE": "可用",
-      "LOCKED": "锁定",
-      "QUARANTINED": "隔离"
-    }
-  },
-  "stockMovement": {
-    "movementType": {
-      "INBOUND": "入库",
-      "OUTBOUND": "出库",
-      "TRANSFER": "调拨",
-      "ADJUSTMENT": "调整"
+  "stockPicking": {
+    "pickingType": {
+      "INCOMING": "入库",
+      "INTERNAL": "内部"
+    },
+    "derivedState": {
+      "DRAFT": "草稿",
+      "CONFIRMED": "已确认",
+      "DONE": "已完成",
+      "CANCELLED": "已取消"
     }
   },
   "approval": {

@@ -9,12 +9,10 @@ import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
 import { notification } from 'ant-design-vue';
 
 import {
-  fetchInventoryOverview,
   fetchMovementTrend,
-  inventoryStatusToColor,
-  inventoryStatusToName,
-  type inventoryservicev1_InventoryOverview as InventoryOverview,
+  fetchStockQuantOverview,
   type inventoryservicev1_MovementTrendResponse as MovementTrendResponse,
+  type inventoryservicev1_StockQuantOverview as StockQuantOverview,
 } from '#/api';
 import { $t } from '#/locales';
 
@@ -22,7 +20,7 @@ const chartRef = shallowRef<EchartsUIType>();
 const { renderEcharts } = useEcharts(chartRef);
 
 const loading = ref(true);
-const overview = ref<InventoryOverview>();
+const overview = ref<StockQuantOverview>();
 const trend = ref<MovementTrendResponse>();
 
 const metricCards = [
@@ -49,24 +47,19 @@ const metricCards = [
 ] as const;
 
 const lowStockColumns = [
-  { title: $t('page.inventory.warehouseCode'), dataIndex: 'warehouseCode' },
-  { title: $t('page.inventory.skuCode'), dataIndex: 'skuCode' },
-  { title: $t('page.inventory.quantity'), dataIndex: 'quantity' },
-  {
-    title: $t('page.inventory.status'),
-    dataIndex: 'status',
-    key: 'status',
-  },
+  { title: $t('page.stockQuant.locationId'), dataIndex: 'locationId' },
+  { title: $t('page.stockQuant.productCode'), dataIndex: 'productCode' },
+  { title: $t('page.stockQuant.quantity'), dataIndex: 'quantity' },
 ];
 
 async function loadOverview() {
   loading.value = true;
   try {
-    overview.value = await fetchInventoryOverview({});
+    overview.value = await fetchStockQuantOverview({});
   } catch {
     notification.error({
-      message: $t('ui.notification.operation_failed'),
-    });
+          message: $t('ui.notification.operation_failed'),
+        });
   } finally {
     loading.value = false;
   }
@@ -153,16 +146,11 @@ onMounted(() => {
           :columns="lowStockColumns"
           :data-source="overview?.lowStockItems ?? []"
           :pagination="false"
-          :row-key="(record: any) => `${record.warehouseCode}-${record.skuCode}`"
+          :row-key="(record: any) => `${record.locationId}-${record.productCode}`"
           size="small"
         >
           <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'status'">
-              <a-tag :color="inventoryStatusToColor(record.status)">
-                {{ inventoryStatusToName(record.status) }}
-              </a-tag>
-            </template>
-            <template v-else-if="column.dataIndex === 'quantity'">
+            <template v-if="column.dataIndex === 'quantity'">
               <span class="font-semibold text-red-500">
                 {{ record.quantity }}
               </span>

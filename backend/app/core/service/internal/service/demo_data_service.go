@@ -20,8 +20,8 @@ import (
 
 // DemoDataService 在开发/演示环境下灌入一份最小可用的业务演示数据：
 // 一个演示租户 + 私户管理员（admin/admin），以及该租户下的若干仓库 / 产品 /
-// 库存行 / 跨近 30 日的库存流水（填充看板折线图）。仅当环境变量
-// ERP_DEMO_SEED=true 且演示租户尚不存在时执行，幂等。
+// 库存量行（填充看板）。仅当环境变量 ERP_DEMO_SEED=true 且演示租户尚不存在
+// 时执行，幂等。
 //
 // 禁用方式：不设或设 ERP_DEMO_SEED=任何非 true 值。生产环境务必不置为 true。
 type DemoDataService struct {
@@ -31,8 +31,8 @@ type DemoDataService struct {
 	warehouseService *WarehouseService
 	productService   *ProductService
 	supplierService  *SupplierService
-	inventoryService *InventoryService
-	stockMovementRepo *data.StockMovementRepo
+	stockQuantRepo   *data.StockQuantRepo
+	locationRepo     *data.LocationRepo
 }
 
 func NewDemoDataService(
@@ -41,17 +41,17 @@ func NewDemoDataService(
 	warehouseService *WarehouseService,
 	productService *ProductService,
 	supplierService *SupplierService,
-	inventoryService *InventoryService,
-	stockMovementRepo *data.StockMovementRepo,
+	stockQuantRepo *data.StockQuantRepo,
+	locationRepo *data.LocationRepo,
 ) *DemoDataService {
 	svc := &DemoDataService{
-		log:               ctx.NewLoggerHelper("demo-data/service/core-service"),
-		tenantService:     tenantService,
-		warehouseService:  warehouseService,
-		productService:    productService,
-		supplierService:   supplierService,
-		inventoryService:  inventoryService,
-		stockMovementRepo: stockMovementRepo,
+		log:              ctx.NewLoggerHelper("demo-data/service/core-service"),
+		tenantService:    tenantService,
+		warehouseService: warehouseService,
+		productService:   productService,
+		supplierService:  supplierService,
+		stockQuantRepo:   stockQuantRepo,
+		locationRepo:     locationRepo,
 	}
 	svc.init()
 	return svc
@@ -119,8 +119,7 @@ func (s *DemoDataService) seedTenantAndAdmin(ctx context.Context) error {
 
 func (s *DemoDataService) seedDomain(ctx context.Context) error {
 	// 查到演示租户的 id 后切换为该租户作用域的匿名 viewer，使仓库 / 产品 /
-	// 库存 / 流水按租户隔离写入。TenantService.List 默认走 SystemViewer 仍可
-	// 跨租户列出。
+	// 库存量按租户隔离写入。
 	tenantID, err := s.resolveDemoTenantID(ctx)
 	if err != nil {
 		return err
@@ -178,27 +177,29 @@ func (s *DemoDataService) seedDomain(ctx context.Context) error {
 		}
 	}
 
-	// 库存行：每个仓库 × 第一个产品各一行，初始数量 100。
-	status := inventoryV1.Inventory_AVAILABLE
+	// 库存量：每个仓库的接收位置 × 第一个产品各一行，初始数量 100。
+	// 借鉴 Odoo stock.quant 的 location+product 自然键。仓库创建时已自动
+	// 生成接收位置，这里通过 locationRepo.GetLocationID 取回位置ID。
+	// EnsureForLocation 创建零量行，FindByLocationProduct 取回行ID，
+	// ApplyDelta 累加到初始量（quant 只能通过这两条内部路径写入）。
 	qty := int64(100)
+	sku := "SKU-0001"
 	for w := 0; w < demoWarehouseCount; w++ {
 		whCode := fmt.Sprintf("WH-%02d", w+1)
-		sku := "SKU-0001"
-		if _, err := s.inventoryService.Create(tenantCtx, &inventoryV1.CreateInventoryRequest{
-			Data: &inventoryV1.Inventory{
-				WarehouseCode: &whCode,
-				SkuCode:       &sku,
-				Quantity:      &qty,
-				Status:        &status,
-			},
-		}); err != nil {
-			return fmt.Errorf("seed inventory %s/%s: %w", whCode, sku, err)
+		locID, err := s.locationRepo.GetLocationID(tenantCtx, whCode)
+		if err != nil {
+			return fmt.Errorf("resolve location for %s: %w", whCode, err)
 		}
-	}
-
-	// 库存流水：近 30 日每仓库每产品各若干条，填充看板折线图。
-	if err := s.stockMovementRepo.SeedDemoMovements(tenantCtx, tenantID); err != nil {
-		return fmt.Errorf("seed movements: %w", err)
+		if err := s.stockQuantRepo.EnsureForLocation(tenantCtx, locID, sku); err != nil {
+			return fmt.Errorf("ensure stock_quant %s/%s: %w", whCode, sku, err)
+		}
+		quant, err := s.stockQuantRepo.FindByLocationProduct(tenantCtx, locID, sku)
+		if err != nil {
+			return fmt.Errorf("find stock_quant %s/%s: %w", whCode, sku, err)
+		}
+		if _, err := s.stockQuantRepo.ApplyDelta(tenantCtx, quant.GetId(), qty); err != nil {
+			return fmt.Errorf("seed stock_quant %s/%s: %w", whCode, sku, err)
+		}
 	}
 	return nil
 }
@@ -230,4 +231,3 @@ const (
 	demoProductCount   = 5
 	demoSupplierCount  = 2
 )
-

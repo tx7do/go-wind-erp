@@ -140,18 +140,6 @@ func (f InternalMessageRecipientFunc) Mutate(ctx context.Context, m ent.Mutation
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InternalMessageRecipientMutation", m)
 }
 
-// The InventoryFunc type is an adapter to allow the use of ordinary
-// function as Inventory mutator.
-type InventoryFunc func(context.Context, *ent.InventoryMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f InventoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.InventoryMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InventoryMutation", m)
-}
-
 // The LanguageFunc type is an adapter to allow the use of ordinary
 // function as Language mutator.
 type LanguageFunc func(context.Context, *ent.LanguageMutation) (ent.Value, error)
@@ -464,16 +452,64 @@ func (f RolePermissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RolePermissionMutation", m)
 }
 
-// The StockMovementFunc type is an adapter to allow the use of ordinary
-// function as StockMovement mutator.
-type StockMovementFunc func(context.Context, *ent.StockMovementMutation) (ent.Value, error)
+// The StockLocationFunc type is an adapter to allow the use of ordinary
+// function as StockLocation mutator.
+type StockLocationFunc func(context.Context, *ent.StockLocationMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f StockMovementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.StockMovementMutation); ok {
+func (f StockLocationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockLocationMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockMovementMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockLocationMutation", m)
+}
+
+// The StockMoveFunc type is an adapter to allow the use of ordinary
+// function as StockMove mutator.
+type StockMoveFunc func(context.Context, *ent.StockMoveMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockMoveFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockMoveMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockMoveMutation", m)
+}
+
+// The StockMoveLineFunc type is an adapter to allow the use of ordinary
+// function as StockMoveLine mutator.
+type StockMoveLineFunc func(context.Context, *ent.StockMoveLineMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockMoveLineFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockMoveLineMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockMoveLineMutation", m)
+}
+
+// The StockPickingFunc type is an adapter to allow the use of ordinary
+// function as StockPicking mutator.
+type StockPickingFunc func(context.Context, *ent.StockPickingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockPickingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockPickingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockPickingMutation", m)
+}
+
+// The StockQuantFunc type is an adapter to allow the use of ordinary
+// function as StockQuant mutator.
+type StockQuantFunc func(context.Context, *ent.StockQuantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockQuantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockQuantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockQuantMutation", m)
 }
 
 // The SupplierFunc type is an adapter to allow the use of ordinary

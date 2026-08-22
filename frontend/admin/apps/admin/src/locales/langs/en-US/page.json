@@ -444,42 +444,27 @@
       "create": "Create Warehouse"
     }
   },
-  "inventory": {
-    "moduleName": "Inventory",
-    "warehouseCode": "Warehouse Code",
-    "skuCode": "SKU Code",
-    "quantity": "Quantity",
-    "status": "Status",
-    "button": {
-      "create": "Create Inventory"
-    }
+  "stockQuant": {
+    "moduleName": "Stock Quant",
+    "locationId": "Location ID",
+    "productCode": "Product Code",
+    "quantity": "Quantity"
   },
-  "stockMovement": {
-    "moduleName": "Stock Movement",
-    "warehouseCode": "Warehouse Code",
-    "skuCode": "SKU Code",
-    "delta": "Delta",
-    "movementType": "Movement Type",
-    "quantityBefore": "Quantity Before",
-    "quantityAfter": "Quantity After",
+  "stockPicking": {
+    "moduleName": "Stock Picking",
+    "pickingNumber": "Picking Number",
+    "pickingType": "Picking Type",
+    "derivedState": "Derived State",
+    "productCode": "Product Code",
+    "plannedQuantity": "Planned Quantity",
+    "deleteNotAllowed": "Only draft or cancelled pickings can be deleted",
     "transfer": {
-      "title": "Stock Transfer",
-      "fromWarehouse": "Source Warehouse",
-      "toWarehouse": "Destination Warehouse",
-      "quantity": "Transfer Quantity",
-      "remark": "Remark",
-      "sameWarehouse": "Source and destination warehouses must differ"
-    },
-    "reverse": {
-      "title": "Reverse Movement",
-      "reason": "Reversal Reason",
-      "reasonHint": "Provide a reason for reversing this movement",
-      "confirm": "Confirm Reverse"
+      "title": "Internal Transfer",
+      "remark": "Remark"
     },
     "button": {
-      "create": "Create Movement",
-      "transfer": "Transfer",
-      "reverse": "Reverse"
+      "create": "Create Picking",
+      "transfer": "Transfer"
     }
   },
   "approval": {

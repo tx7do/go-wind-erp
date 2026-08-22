@@ -38,6 +38,8 @@ const (
 	FieldStatus = "status"
 	// FieldTotalAmount holds the string denoting the total_amount field in the database.
 	FieldTotalAmount = "total_amount"
+	// FieldWarehouseCode holds the string denoting the warehouse_code field in the database.
+	FieldWarehouseCode = "warehouse_code"
 	// Table holds the table name of the purchaseorder in the database.
 	Table = "pur_purchase_orders"
 )
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldSupplierCode,
 	FieldStatus,
 	FieldTotalAmount,
+	FieldWarehouseCode,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -181,4 +184,9 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByTotalAmount orders the results by the total_amount field.
 func ByTotalAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotalAmount, opts...).ToFunc()
+}
+
+// ByWarehouseCode orders the results by the warehouse_code field.
+func ByWarehouseCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWarehouseCode, opts...).ToFunc()
 }

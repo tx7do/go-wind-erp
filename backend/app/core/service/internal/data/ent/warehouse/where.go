@@ -114,6 +114,11 @@ func Enable(v bool) predicate.Warehouse {
 	return predicate.Warehouse(sql.FieldEQ(FieldEnable, v))
 }
 
+// ReceivingLocationID applies equality check predicate on the "receiving_location_id" field. It's identical to ReceivingLocationIDEQ.
+func ReceivingLocationID(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldEQ(FieldReceivingLocationID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Warehouse {
 	return predicate.Warehouse(sql.FieldEQ(FieldCreatedAt, v))
@@ -782,6 +787,56 @@ func EnableIsNil() predicate.Warehouse {
 // EnableNotNil applies the NotNil predicate on the "enable" field.
 func EnableNotNil() predicate.Warehouse {
 	return predicate.Warehouse(sql.FieldNotNull(FieldEnable))
+}
+
+// ReceivingLocationIDEQ applies the EQ predicate on the "receiving_location_id" field.
+func ReceivingLocationIDEQ(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldEQ(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDNEQ applies the NEQ predicate on the "receiving_location_id" field.
+func ReceivingLocationIDNEQ(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldNEQ(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDIn applies the In predicate on the "receiving_location_id" field.
+func ReceivingLocationIDIn(vs ...uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldIn(FieldReceivingLocationID, vs...))
+}
+
+// ReceivingLocationIDNotIn applies the NotIn predicate on the "receiving_location_id" field.
+func ReceivingLocationIDNotIn(vs ...uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldNotIn(FieldReceivingLocationID, vs...))
+}
+
+// ReceivingLocationIDGT applies the GT predicate on the "receiving_location_id" field.
+func ReceivingLocationIDGT(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldGT(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDGTE applies the GTE predicate on the "receiving_location_id" field.
+func ReceivingLocationIDGTE(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldGTE(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDLT applies the LT predicate on the "receiving_location_id" field.
+func ReceivingLocationIDLT(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldLT(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDLTE applies the LTE predicate on the "receiving_location_id" field.
+func ReceivingLocationIDLTE(v uint32) predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldLTE(FieldReceivingLocationID, v))
+}
+
+// ReceivingLocationIDIsNil applies the IsNil predicate on the "receiving_location_id" field.
+func ReceivingLocationIDIsNil() predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldIsNull(FieldReceivingLocationID))
+}
+
+// ReceivingLocationIDNotNil applies the NotNil predicate on the "receiving_location_id" field.
+func ReceivingLocationIDNotNil() predicate.Warehouse {
+	return predicate.Warehouse(sql.FieldNotNull(FieldReceivingLocationID))
 }
 
 // And groups predicates with the AND operator between them.

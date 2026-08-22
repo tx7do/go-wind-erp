@@ -122,33 +122,33 @@ func (c *WarehouseServiceHTTPClientImpl) List(ctx context.Context, in *v1.Paging
 	return &out, nil
 }
 
-const OperationInventoryServiceGet = "/app.service.v1.InventoryService/Get"
-const OperationInventoryServiceGetOverview = "/app.service.v1.InventoryService/GetOverview"
-const OperationInventoryServiceList = "/app.service.v1.InventoryService/List"
+const OperationStockQuantServiceGet = "/app.service.v1.StockQuantService/Get"
+const OperationStockQuantServiceGetOverview = "/app.service.v1.StockQuantService/GetOverview"
+const OperationStockQuantServiceList = "/app.service.v1.StockQuantService/List"
 
-type InventoryServiceHTTPServer interface {
-	// Get 查询库存详情
-	Get(context.Context, *v11.GetInventoryRequest) (*v11.Inventory, error)
+type StockQuantServiceHTTPServer interface {
+	// Get 查询库存量详情
+	Get(context.Context, *v11.GetStockQuantRequest) (*v11.StockQuant, error)
 	// GetOverview 库存经营总览（看板聚合）
-	GetOverview(context.Context, *v11.GetInventoryOverviewRequest) (*v11.InventoryOverview, error)
-	// List 查询库存列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListInventoryResponse, error)
+	GetOverview(context.Context, *v11.GetStockQuantOverviewRequest) (*v11.StockQuantOverview, error)
+	// List 查询库存量列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListStockQuantResponse, error)
 }
 
-func RegisterInventoryServiceHTTPServer(s *http.Server, srv InventoryServiceHTTPServer) {
+func RegisterStockQuantServiceHTTPServer(s *http.Server, srv StockQuantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/inventories", _InventoryService_List4_HTTP_Handler(srv))
-	r.GET("/app/v1/inventories/{id}", _InventoryService_Get4_HTTP_Handler(srv))
-	r.GET("/app/v1/inventories:overview", _InventoryService_GetOverview0_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-quants", _StockQuantService_List4_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-quants/{id}", _StockQuantService_Get4_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-quants:overview", _StockQuantService_GetOverview0_HTTP_Handler(srv))
 }
 
-func _InventoryService_List4_HTTP_Handler(srv InventoryServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_List4_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationInventoryServiceList)
+		http.SetOperation(ctx, OperationStockQuantServiceList)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.List(ctx, req.(*v1.PagingRequest))
 		})
@@ -156,75 +156,75 @@ func _InventoryService_List4_HTTP_Handler(srv InventoryServiceHTTPServer) func(c
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.ListInventoryResponse)
+		reply := out.(*v11.ListStockQuantResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _InventoryService_Get4_HTTP_Handler(srv InventoryServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_Get4_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.GetInventoryRequest
+		var in v11.GetStockQuantRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationInventoryServiceGet)
+		http.SetOperation(ctx, OperationStockQuantServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*v11.GetInventoryRequest))
+			return srv.Get(ctx, req.(*v11.GetStockQuantRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.Inventory)
+		reply := out.(*v11.StockQuant)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _InventoryService_GetOverview0_HTTP_Handler(srv InventoryServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_GetOverview0_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.GetInventoryOverviewRequest
+		var in v11.GetStockQuantOverviewRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationInventoryServiceGetOverview)
+		http.SetOperation(ctx, OperationStockQuantServiceGetOverview)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetOverview(ctx, req.(*v11.GetInventoryOverviewRequest))
+			return srv.GetOverview(ctx, req.(*v11.GetStockQuantOverviewRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.InventoryOverview)
+		reply := out.(*v11.StockQuantOverview)
 		return ctx.Result(200, reply)
 	}
 }
 
-type InventoryServiceHTTPClient interface {
-	// Get 查询库存详情
-	Get(ctx context.Context, req *v11.GetInventoryRequest, opts ...http.CallOption) (rsp *v11.Inventory, err error)
+type StockQuantServiceHTTPClient interface {
+	// Get 查询库存量详情
+	Get(ctx context.Context, req *v11.GetStockQuantRequest, opts ...http.CallOption) (rsp *v11.StockQuant, err error)
 	// GetOverview 库存经营总览（看板聚合）
-	GetOverview(ctx context.Context, req *v11.GetInventoryOverviewRequest, opts ...http.CallOption) (rsp *v11.InventoryOverview, err error)
-	// List 查询库存列表
-	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListInventoryResponse, err error)
+	GetOverview(ctx context.Context, req *v11.GetStockQuantOverviewRequest, opts ...http.CallOption) (rsp *v11.StockQuantOverview, err error)
+	// List 查询库存量列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListStockQuantResponse, err error)
 }
 
-type InventoryServiceHTTPClientImpl struct {
+type StockQuantServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewInventoryServiceHTTPClient(client *http.Client) InventoryServiceHTTPClient {
-	return &InventoryServiceHTTPClientImpl{client}
+func NewStockQuantServiceHTTPClient(client *http.Client) StockQuantServiceHTTPClient {
+	return &StockQuantServiceHTTPClientImpl{client}
 }
 
-// Get 查询库存详情
-func (c *InventoryServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetInventoryRequest, opts ...http.CallOption) (*v11.Inventory, error) {
-	var out v11.Inventory
-	pattern := "/app/v1/inventories/{id}"
+// Get 查询库存量详情
+func (c *StockQuantServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetStockQuantRequest, opts ...http.CallOption) (*v11.StockQuant, error) {
+	var out v11.StockQuant
+	pattern := "/app/v1/stock-quants/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationInventoryServiceGet))
+	opts = append(opts, http.Operation(OperationStockQuantServiceGet))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -234,11 +234,11 @@ func (c *InventoryServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetInv
 }
 
 // GetOverview 库存经营总览（看板聚合）
-func (c *InventoryServiceHTTPClientImpl) GetOverview(ctx context.Context, in *v11.GetInventoryOverviewRequest, opts ...http.CallOption) (*v11.InventoryOverview, error) {
-	var out v11.InventoryOverview
-	pattern := "/app/v1/inventories:overview"
+func (c *StockQuantServiceHTTPClientImpl) GetOverview(ctx context.Context, in *v11.GetStockQuantOverviewRequest, opts ...http.CallOption) (*v11.StockQuantOverview, error) {
+	var out v11.StockQuantOverview
+	pattern := "/app/v1/stock-quants:overview"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationInventoryServiceGetOverview))
+	opts = append(opts, http.Operation(OperationStockQuantServiceGetOverview))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -247,12 +247,12 @@ func (c *InventoryServiceHTTPClientImpl) GetOverview(ctx context.Context, in *v1
 	return &out, nil
 }
 
-// List 查询库存列表
-func (c *InventoryServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListInventoryResponse, error) {
-	var out v11.ListInventoryResponse
-	pattern := "/app/v1/inventories"
+// List 查询库存量列表
+func (c *StockQuantServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListStockQuantResponse, error) {
+	var out v11.ListStockQuantResponse
+	pattern := "/app/v1/stock-quants"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationInventoryServiceList))
+	opts = append(opts, http.Operation(OperationStockQuantServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -261,41 +261,45 @@ func (c *InventoryServiceHTTPClientImpl) List(ctx context.Context, in *v1.Paging
 	return &out, nil
 }
 
-const OperationStockMovementServiceCreate = "/app.service.v1.StockMovementService/Create"
-const OperationStockMovementServiceGet = "/app.service.v1.StockMovementService/Get"
-const OperationStockMovementServiceList = "/app.service.v1.StockMovementService/List"
-const OperationStockMovementServiceReverse = "/app.service.v1.StockMovementService/Reverse"
-const OperationStockMovementServiceTransfer = "/app.service.v1.StockMovementService/Transfer"
+const OperationStockPickingServiceCancel = "/app.service.v1.StockPickingService/Cancel"
+const OperationStockPickingServiceConfirm = "/app.service.v1.StockPickingService/Confirm"
+const OperationStockPickingServiceCreate = "/app.service.v1.StockPickingService/Create"
+const OperationStockPickingServiceGet = "/app.service.v1.StockPickingService/Get"
+const OperationStockPickingServiceList = "/app.service.v1.StockPickingService/List"
+const OperationStockPickingServiceValidate = "/app.service.v1.StockPickingService/Validate"
 
-type StockMovementServiceHTTPServer interface {
-	// Create 创建库存流水（扫码入库/出库）
-	Create(context.Context, *v11.CreateStockMovementRequest) (*emptypb.Empty, error)
-	// Get 查询库存流水详情
-	Get(context.Context, *v11.GetStockMovementRequest) (*v11.StockMovement, error)
-	// List 查询库存流水列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListStockMovementResponse, error)
-	// Reverse 冲正库存流水（等量反向台账，幂等防重复冲正）
-	Reverse(context.Context, *v11.ReverseStockMovementRequest) (*emptypb.Empty, error)
-	// Transfer 库存调拨（源仓出、目的仓入，单事务原子执行）
-	Transfer(context.Context, *v11.TransferStockRequest) (*emptypb.Empty, error)
+type StockPickingServiceHTTPServer interface {
+	// Cancel 取消拣货单
+	Cancel(context.Context, *v11.CancelStockPickingRequest) (*emptypb.Empty, error)
+	// Confirm 确认拣货单
+	Confirm(context.Context, *v11.ConfirmStockPickingRequest) (*emptypb.Empty, error)
+	// Create 创建拣货单（扫码调拨）
+	Create(context.Context, *v11.CreateStockPickingRequest) (*emptypb.Empty, error)
+	// Get 查询拣货单详情
+	Get(context.Context, *v11.GetStockPickingRequest) (*v11.StockPicking, error)
+	// List 查询拣货单列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListStockPickingResponse, error)
+	// Validate 校验拣货单
+	Validate(context.Context, *v11.ValidateStockPickingRequest) (*emptypb.Empty, error)
 }
 
-func RegisterStockMovementServiceHTTPServer(s *http.Server, srv StockMovementServiceHTTPServer) {
+func RegisterStockPickingServiceHTTPServer(s *http.Server, srv StockPickingServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/stock-movements", _StockMovementService_List5_HTTP_Handler(srv))
-	r.GET("/app/v1/stock-movements/{id}", _StockMovementService_Get5_HTTP_Handler(srv))
-	r.POST("/app/v1/stock-movements", _StockMovementService_Create0_HTTP_Handler(srv))
-	r.POST("/app/v1/stock-movements:reverse", _StockMovementService_Reverse0_HTTP_Handler(srv))
-	r.POST("/app/v1/stock-movements:transfer", _StockMovementService_Transfer0_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-pickings", _StockPickingService_List5_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-pickings/{id}", _StockPickingService_Get5_HTTP_Handler(srv))
+	r.POST("/app/v1/stock-pickings", _StockPickingService_Create0_HTTP_Handler(srv))
+	r.POST("/app/v1/stock-pickings/{id}:confirm", _StockPickingService_Confirm0_HTTP_Handler(srv))
+	r.POST("/app/v1/stock-pickings/{id}:validate", _StockPickingService_Validate0_HTTP_Handler(srv))
+	r.POST("/app/v1/stock-pickings/{id}:cancel", _StockPickingService_Cancel1_HTTP_Handler(srv))
 }
 
-func _StockMovementService_List5_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_List5_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStockMovementServiceList)
+		http.SetOperation(ctx, OperationStockPickingServiceList)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.List(ctx, req.(*v1.PagingRequest))
 		})
@@ -303,45 +307,45 @@ func _StockMovementService_List5_HTTP_Handler(srv StockMovementServiceHTTPServer
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.ListStockMovementResponse)
+		reply := out.(*v11.ListStockPickingResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _StockMovementService_Get5_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Get5_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.GetStockMovementRequest
+		var in v11.GetStockPickingRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStockMovementServiceGet)
+		http.SetOperation(ctx, OperationStockPickingServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*v11.GetStockMovementRequest))
+			return srv.Get(ctx, req.(*v11.GetStockPickingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.StockMovement)
+		reply := out.(*v11.StockPicking)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _StockMovementService_Create0_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Create0_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.CreateStockMovementRequest
+		var in v11.CreateStockPickingRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStockMovementServiceCreate)
+		http.SetOperation(ctx, OperationStockPickingServiceCreate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Create(ctx, req.(*v11.CreateStockMovementRequest))
+			return srv.Create(ctx, req.(*v11.CreateStockPickingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -352,18 +356,21 @@ func _StockMovementService_Create0_HTTP_Handler(srv StockMovementServiceHTTPServ
 	}
 }
 
-func _StockMovementService_Reverse0_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Confirm0_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.ReverseStockMovementRequest
+		var in v11.ConfirmStockPickingRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStockMovementServiceReverse)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockPickingServiceConfirm)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Reverse(ctx, req.(*v11.ReverseStockMovementRequest))
+			return srv.Confirm(ctx, req.(*v11.ConfirmStockPickingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -374,18 +381,21 @@ func _StockMovementService_Reverse0_HTTP_Handler(srv StockMovementServiceHTTPSer
 	}
 }
 
-func _StockMovementService_Transfer0_HTTP_Handler(srv StockMovementServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Validate0_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.TransferStockRequest
+		var in v11.ValidateStockPickingRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationStockMovementServiceTransfer)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockPickingServiceValidate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Transfer(ctx, req.(*v11.TransferStockRequest))
+			return srv.Validate(ctx, req.(*v11.ValidateStockPickingRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -396,33 +406,60 @@ func _StockMovementService_Transfer0_HTTP_Handler(srv StockMovementServiceHTTPSe
 	}
 }
 
-type StockMovementServiceHTTPClient interface {
-	// Create 创建库存流水（扫码入库/出库）
-	Create(ctx context.Context, req *v11.CreateStockMovementRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	// Get 查询库存流水详情
-	Get(ctx context.Context, req *v11.GetStockMovementRequest, opts ...http.CallOption) (rsp *v11.StockMovement, err error)
-	// List 查询库存流水列表
-	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListStockMovementResponse, err error)
-	// Reverse 冲正库存流水（等量反向台账，幂等防重复冲正）
-	Reverse(ctx context.Context, req *v11.ReverseStockMovementRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	// Transfer 库存调拨（源仓出、目的仓入，单事务原子执行）
-	Transfer(ctx context.Context, req *v11.TransferStockRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+func _StockPickingService_Cancel1_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CancelStockPickingRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockPickingServiceCancel)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Cancel(ctx, req.(*v11.CancelStockPickingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
 }
 
-type StockMovementServiceHTTPClientImpl struct {
+type StockPickingServiceHTTPClient interface {
+	// Cancel 取消拣货单
+	Cancel(ctx context.Context, req *v11.CancelStockPickingRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Confirm 确认拣货单
+	Confirm(ctx context.Context, req *v11.ConfirmStockPickingRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Create 创建拣货单（扫码调拨）
+	Create(ctx context.Context, req *v11.CreateStockPickingRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Get 查询拣货单详情
+	Get(ctx context.Context, req *v11.GetStockPickingRequest, opts ...http.CallOption) (rsp *v11.StockPicking, err error)
+	// List 查询拣货单列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListStockPickingResponse, err error)
+	// Validate 校验拣货单
+	Validate(ctx context.Context, req *v11.ValidateStockPickingRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+}
+
+type StockPickingServiceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewStockMovementServiceHTTPClient(client *http.Client) StockMovementServiceHTTPClient {
-	return &StockMovementServiceHTTPClientImpl{client}
+func NewStockPickingServiceHTTPClient(client *http.Client) StockPickingServiceHTTPClient {
+	return &StockPickingServiceHTTPClientImpl{client}
 }
 
-// Create 创建库存流水（扫码入库/出库）
-func (c *StockMovementServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateStockMovementRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+// Cancel 取消拣货单
+func (c *StockPickingServiceHTTPClientImpl) Cancel(ctx context.Context, in *v11.CancelStockPickingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/app/v1/stock-movements"
+	pattern := "/app/v1/stock-pickings/{id}:cancel"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationStockMovementServiceCreate))
+	opts = append(opts, http.Operation(OperationStockPickingServiceCancel))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -431,40 +468,12 @@ func (c *StockMovementServiceHTTPClientImpl) Create(ctx context.Context, in *v11
 	return &out, nil
 }
 
-// Get 查询库存流水详情
-func (c *StockMovementServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetStockMovementRequest, opts ...http.CallOption) (*v11.StockMovement, error) {
-	var out v11.StockMovement
-	pattern := "/app/v1/stock-movements/{id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationStockMovementServiceGet))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// List 查询库存流水列表
-func (c *StockMovementServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListStockMovementResponse, error) {
-	var out v11.ListStockMovementResponse
-	pattern := "/app/v1/stock-movements"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationStockMovementServiceList))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// Reverse 冲正库存流水（等量反向台账，幂等防重复冲正）
-func (c *StockMovementServiceHTTPClientImpl) Reverse(ctx context.Context, in *v11.ReverseStockMovementRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+// Confirm 确认拣货单
+func (c *StockPickingServiceHTTPClientImpl) Confirm(ctx context.Context, in *v11.ConfirmStockPickingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/app/v1/stock-movements:reverse"
+	pattern := "/app/v1/stock-pickings/{id}:confirm"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationStockMovementServiceReverse))
+	opts = append(opts, http.Operation(OperationStockPickingServiceConfirm))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -473,12 +482,54 @@ func (c *StockMovementServiceHTTPClientImpl) Reverse(ctx context.Context, in *v1
 	return &out, nil
 }
 
-// Transfer 库存调拨（源仓出、目的仓入，单事务原子执行）
-func (c *StockMovementServiceHTTPClientImpl) Transfer(ctx context.Context, in *v11.TransferStockRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+// Create 创建拣货单（扫码调拨）
+func (c *StockPickingServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateStockPickingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/app/v1/stock-movements:transfer"
+	pattern := "/app/v1/stock-pickings"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationStockMovementServiceTransfer))
+	opts = append(opts, http.Operation(OperationStockPickingServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get 查询拣货单详情
+func (c *StockPickingServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetStockPickingRequest, opts ...http.CallOption) (*v11.StockPicking, error) {
+	var out v11.StockPicking
+	pattern := "/app/v1/stock-pickings/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStockPickingServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// List 查询拣货单列表
+func (c *StockPickingServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListStockPickingResponse, error) {
+	var out v11.ListStockPickingResponse
+	pattern := "/app/v1/stock-pickings"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStockPickingServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Validate 校验拣货单
+func (c *StockPickingServiceHTTPClientImpl) Validate(ctx context.Context, in *v11.ValidateStockPickingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/app/v1/stock-pickings/{id}:validate"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationStockPickingServiceValidate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
