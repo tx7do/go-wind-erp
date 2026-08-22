@@ -7,7 +7,10 @@ import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60_000,
+      // 列表/详情查询一律不缓存：staleTime=0 使数据立即过期、每次挂载都打后端；
+      // gcTime=0 在查询失去订阅时立刻回收缓存对象，避免保留默认 5 分钟的历史数据。
+      staleTime: 0,
+      gcTime: 0,
       retry: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
