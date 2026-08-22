@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -71,29 +70,41 @@ func (r *StockMoveLineRepo) CreateTx(
 	return nil
 }
 
-// MovementTrend 近 30 日每日执行记录条数（看板折线图）。按 DATE(created_at)
-// 分组计数，无记录的日期补 0。
+// MovementTrend 近 30 日每日执行记录条数（看板折线图）。
+//
+// 与 aging report 相同的"SQL 端按原始列分组、客户端按日期分桶"模式——
+// 不在 SQL 中使用任何日期函数（DATE() / DATE_SUB / CURDATE 等均为
+// MySQL 专有，PostgreSQL 不兼容），从而保证跨数据库可移植。
+//
+// SQL 端：WHERE created_at >= cutoff（Go 计算的时间戳，经 ent 谓词传递），
+// GROUP BY created_at，COUNT(*)。每行返回一个原始 timestamp + count。
+// 客户端：将 timestamp 格式化为 "2006-01-02"，映射到 30 天完整日期序列，
+// 无记录的日期补 0。
 func (r *StockMoveLineRepo) MovementTrend(ctx context.Context) ([]*inventoryV1.MovementTrendPoint, error) {
+	cutoff := time.Now().AddDate(0, 0, -30)
+
 	var rows []struct {
-		Date  string `sql:"date"`
-		Count int64  `sql:"count"`
+		CreatedAt *time.Time `sql:"created_at"`
+		Count     int64      `sql:"count"`
 	}
 	err := r.entClient.Client().StockMoveLine.Query().
-		Modify(func(s *sql.Selector) {
-			s.Where(sql.ExprP("created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"))
-			s.GroupBy("DATE(" + s.C(stockmoveline.FieldCreatedAt) + ")")
-			s.Select("DATE(" + s.C(stockmoveline.FieldCreatedAt) + ") as date", "COUNT(*) as count")
-		}).
+		Where(stockmoveline.CreatedAtGTE(cutoff)).
+		GroupBy(stockmoveline.FieldCreatedAt).
+		Aggregate(ent.Count()).
 		Scan(ctx, &rows)
 	if err != nil {
 		r.log.Errorf("movement trend query failed: %s", err.Error())
-		return nil, inventoryV1.ErrorInternalServerError("movement trend query failed")
+		return nil, inventoryV1.ErrorInternalServerError("movement trend failed")
 	}
 
 	// 将查询结果映射到 30 天的完整日期序列，无记录的日期补 0。
 	countByDate := make(map[string]int64, len(rows))
 	for _, row := range rows {
-		countByDate[row.Date] = row.Count
+		if row.CreatedAt == nil {
+			continue
+		}
+		date := row.CreatedAt.Format("2006-01-02")
+		countByDate[date] = row.Count
 	}
 
 	now := time.Now()
