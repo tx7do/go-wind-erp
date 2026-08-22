@@ -3,7 +3,6 @@ import type {
   inventoryservicev1_GetStockQuantOverviewRequest,
   inventoryservicev1_GetStockQuantRequest,
   inventoryservicev1_ListStockQuantResponse,
-  inventoryservicev1_MovementTrendResponse,
   inventoryservicev1_StockQuant,
   inventoryservicev1_StockQuantOverview,
 } from '#/api/generated/admin/service/v1';
