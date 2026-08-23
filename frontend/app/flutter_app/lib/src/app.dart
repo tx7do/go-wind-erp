@@ -16,14 +16,14 @@ import 'package:go_wind_erp/src/core/utilities/logger.dart' show debug;
 import 'app_router/app_router.dart' as pages;
 
 /// 应用程序
-class CMSApp extends StatefulWidget {
-  const CMSApp({super.key});
+class ERPApp extends StatefulWidget {
+  const ERPApp({super.key});
 
   @override
-  State<CMSApp> createState() => _CMSAppState();
+  State<ERPApp> createState() => _ERPAppState();
 }
 
-class _CMSAppState extends State<CMSApp> {
+class _ERPAppState extends State<ERPApp> {
   @override
   void initState() {
     super.initState();

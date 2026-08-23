@@ -1,6 +1,6 @@
-# CMS Flutter App
+# ERP Flutter App
 
-A CMS Flutter project.
+A ERP Flutter project.
 
 ## Flutter 常用命令
 

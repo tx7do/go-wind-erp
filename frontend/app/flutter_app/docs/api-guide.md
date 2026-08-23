@@ -1,6 +1,6 @@
 # API 层开发指南
 
-本文档面向二开人员，介绍 GoWind CMS Flutter 端的 API 架构设计、代码生成流程、Service 编写规范和分页查询机制。
+本文档面向二开人员，介绍 GoWind ERP Flutter 端的 API 架构设计、代码生成流程、Service 编写规范和分页查询机制。
 
 ---
 
@@ -11,7 +11,7 @@
 │  UI 层（Page / Widget）                                  │
 │  调用 Service 方法，处理返回数据                            │
 ├─────────────────────────────────────────────────────────┤
-│  Service 层（lib/src/features/cms/services/）             │
+│  Service 层（lib/src/features/erp/services/）             │
 │  业务封装，异常处理，typedef 短类名                         │
 │  继承 BaseService → handleDioError()                     │
 ├─────────────────────────────────────────────────────────┤
@@ -118,7 +118,7 @@ getIt.registerLazySingleton<Dio>(() => createDio());
 
 ```env
 # .dev.env
-API_BASE_URL=https://api.cms.gowind.cloud
+API_BASE_URL=https://api.erp.gowind.cloud
 CONNECTION_TIMEOUT=3000
 RECEIVE_TIMEOUT=3000
 ```
@@ -154,7 +154,7 @@ api.userProfileService // UserProfileServiceClient
 以 `PostService` 为例：
 
 ```dart
-// lib/src/features/cms/services/post_service.dart
+// lib/src/features/erp/services/post_service.dart
 
 // ① import 生成模型，用 typedef 定义短类名
 typedef Post = ContentServiceV1Post;
@@ -343,7 +343,7 @@ registerInterceptor(AuthenticationInterceptor(
 
 ## 7. 文件传输
 
-文件：`lib/src/features/cms/services/file_transfer.dart`
+文件：`lib/src/features/erp/services/file_transfer.dart`
 
 支持两种上传模式：
 
@@ -388,7 +388,7 @@ final response = await fileService.uploadFilePresigned(
 2. **检查生成产物** — 确认 `lib/generated/api/` 下有对应的 ServiceClient 和 Model
 
 3. **新建或更新 Service**
-   - 在 `lib/src/features/cms/services/` 下新建或编辑 Service 文件
+   - 在 `lib/src/features/erp/services/` 下新建或编辑 Service 文件
    - 继承 `BaseService`
    - 顶部添加 `typedef` 短类名
    - 实现 CRUD 方法，统一 `try-catch + handleDioError`

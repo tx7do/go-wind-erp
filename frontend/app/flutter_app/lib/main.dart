@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-import 'package:go_wind_erp/src/app.dart' show CMSApp;
+import 'package:go_wind_erp/src/app.dart' show ERPApp;
 import 'package:go_wind_erp/src/init.dart' show init;
 import 'package:go_wind_erp/src/core/session/session_manager.dart'
     show SessionManager;
@@ -30,7 +30,7 @@ void run() {
   runApp(
     MultiBlocProvider(
       providers: [BlocProvider(create: (_) => AppThemeCubit())],
-      child: const CMSApp(),
+      child: const ERPApp(),
     ),
   );
 }

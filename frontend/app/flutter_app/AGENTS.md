@@ -16,9 +16,9 @@
 
 ```
 lib/
-├── main.dart                        # 入口：init() + SessionManager.start() + MultiBlocProvider(AppThemeCubit) → CMSApp
+├── main.dart                        # 入口：init() + SessionManager.start() + MultiBlocProvider(AppThemeCubit) → ERPApp
 ├── src/
-│   ├── app.dart                     # CMSApp：ScreenUtilInit + MaterialApp.router（routerConfig=createAppRouter）
+│   ├── app.dart                     # ERPApp：ScreenUtilInit + MaterialApp.router（routerConfig=createAppRouter）
 │   ├── init.dart                    # 应用初始化（见下文“初始化序列”）
 │   ├── init_thirdparty_plugins.dart # 第三方插件初始化（SharedPreferences 等）
 │   ├── app/
@@ -94,7 +94,7 @@ ResponsiveLayout(
 
 `ResponsiveUtils`（`core/utils/responsive_utils.dart` —— **注意是 `utils/` 不是 `utilities/`**）提供 `isMobile` / `isTablet` / `isWideScreen` / `gridColumns` / `postGridColumns` / `categoryGridColumns` / `contentMaxWidth` / `padding` / `horizontalPadding` / `fontSize` / `spacing` 等静态方法。断点常量集中在 `core/constants/breakpoints.dart`（`mobile=600`、`tablet=1024`、`webContentMaxWidth=1140`、`webSidebarWidth=260`、`webContentPadding=32`）。
 
-`ScreenUtil` 在 `CMSApp.build` 中以 `designSize: Breakpoints.designSize`（`Size(375, 812)`）初始化；Web 端在 builder 内将 designSize 重设为当前视窗尺寸（1:1），因此 **Web 端禁止 `.w`/`.h`/`.sp`**（始终 1:1，等同固定值），手机端可用。
+`ScreenUtil` 在 `ERPApp.build` 中以 `designSize: Breakpoints.designSize`（`Size(375, 812)`）初始化；Web 端在 builder 内将 designSize 重设为当前视窗尺寸（1:1），因此 **Web 端禁止 `.w`/`.h`/`.sp`**（始终 1:1，等同固定值），手机端可用。
 
 ### 传输层（Dio + UnifiedAuthInterceptor）
 
@@ -115,7 +115,7 @@ Dio 在 `core/transport/init.dart` 注册为 lazy singleton，由 `core/transpor
 
 ### 主题系统（Material 3 + ColorScheme.fromSeed）
 
-`AppThemeCubit`（`core/themes/cubit/app_theme_cubit.dart`）管理 `themeMode`（light/dark/system）、`seedColor`、`locale` 三个状态，由 `MultiBlocProvider` 在 `main.dart` 顶层注入。light/dark 主题在 `core/themes/light_theme.dart` / `dark_theme.dart` 中用 `ColorScheme.fromSeed` 生成。`CMSApp.build` 通过 `context.watch<AppThemeCubit>()` 读取 `themeMode` / `currentLocale` / `seedColor` 传给 `MaterialApp.router`。
+`AppThemeCubit`（`core/themes/cubit/app_theme_cubit.dart`）管理 `themeMode`（light/dark/system）、`seedColor`、`locale` 三个状态，由 `MultiBlocProvider` 在 `main.dart` 顶层注入。light/dark 主题在 `core/themes/light_theme.dart` / `dark_theme.dart` 中用 `ColorScheme.fromSeed` 生成。`ERPApp.build` 通过 `context.watch<AppThemeCubit>()` 读取 `themeMode` / `currentLocale` / `seedColor` 传给 `MaterialApp.router`。
 
 > 仅有 **一个** 预设种子色常量 `kDefaultSeedColor = Color(0xFF3A7CA5)`（`light_theme.dart`）。运行时种子色由用户经 `modifySeedColor` 选择，作为 `int` 持久化到 SharedPreferences 的 `SEED_COLOR` 键；主题模式持久化到 `USER_PREFERENCE` 键（经 `UserPreferenceCache`）。**不存在** “8 种预设主题色” 数组。
 
@@ -145,7 +145,7 @@ flutter_intl:
 Text(context.loc.appName)              // 获取翻译
 ```
 
-配置的两个 locale：`zh_CN`、`en_US`。`S` 类由 `AppLocalizationDelegate`（`S.delegate`）加载，在 `CMSApp._buildMaterialApp` 中注册到 `MaterialApp.router(localizationsDelegates: [..., S.delegate])`。
+配置的两个 locale：`zh_CN`、`en_US`。`S` 类由 `AppLocalizationDelegate`（`S.delegate`）加载，在 `ERPApp._buildMaterialApp` 中注册到 `MaterialApp.router(localizationsDelegates: [..., S.delegate])`。
 
 ### 初始化序列（init.dart）
 
@@ -204,7 +204,7 @@ NTP_HOST="time.google.com"
 SENTRY_DSN="https://ingest.sentry.io/"
 ```
 
-> 配置产物注记：生产 `.env` 的 `API_BASE_URL` / `SSE_URL` 仍指向历史 `*.cms.gowind.cloud` 子域。这是运行时配置遗留 —— feature 源码中无 `cms` 字样（`grep -rin cms lib/src/features/` 零命中），但部署前需确认这两个 URL 已切到 ERP 后端。
+> 配置产物注记：生产 `.env` 的 `API_BASE_URL` / `SSE_URL` 仍指向历史 `*.erp.gowind.cloud` 子域。这是运行时配置遗留 —— feature 源码中无 `erp` 字样（`grep -rin erp lib/src/features/` 零命中），但部署前需确认这两个 URL 已切到 ERP 后端。
 
 ## 新增业务模块 Checklist
 
