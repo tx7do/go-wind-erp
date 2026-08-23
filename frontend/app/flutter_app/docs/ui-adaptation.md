@@ -66,9 +66,9 @@ class Breakpoints {
 
 ```dart
 ResponsiveLayout(
-  mobileBody: HomeMobileView(),   // < 600dp
-  tabletBody: SomeTabletView(),   // 600~1024dp（可选，缺省降级为 webBody）
-  webBody: HomeWebView(),         // >= 600dp
+  mobileBody: _buildMobileView(),   // < 600dp
+  tabletBody: _buildTabletView(),   // 600~1024dp（可选，缺省降级为 webBody）
+  webBody: _buildWebView(),         // >= 600dp
 );
 ```
 
@@ -241,56 +241,41 @@ fontWeight: FontWeight.bold   // → Bold (700)
 
 ## 7. 典型页面适配示例
 
-### 7.1 首页（HomePage）
+### 7.1 响应式布局分发（ResponsiveLayout）
+
+`ResponsiveLayout` 用于「整页级」双视图分发——内部按断点在 `mobileBody` / `webBody`（可选 `tabletBody`）之间二选一，调用方无需手写 `isMobile` 判断。
 
 ```dart
-// 直接使用 ResponsiveLayout 分发
-class HomePage extends StatelessWidget {
-  Widget build(BuildContext context) {
-    return ResponsiveLayout(
-      mobileBody: HomeMobileView(),  // NestedScrollView + TabBarView
-      webBody: HomeWebView(),        // 顶部导航 + 左右双栏
-    );
-  }
-}
+// 分发由 ResponsiveLayout 内部完成，调用方只提供两套视图
+ResponsiveLayout(
+  mobileBody: _buildMobileView(),
+  webBody: _buildWebView(),
+);
 ```
 
-### 7.2 文章详情页（PostDetailPage）
+> 现状：`ResponsiveLayout` 作为共享基础设施存在，但当前四个 feature 模块（auth / dashboard / approval / wms）的页面均为移动端定向单布局，未对任何页面调用它做 mobile/web 分发。其用途是为未来 web 端扩展预留。
 
-同一组件内部通过 `isMobile` 参数区分：
+### 7.2 组件内三元条件（实际用法）
 
-```dart
-Widget _buildView(BuildContext context, {required bool isMobile}) {
-  return Scaffold(
-    body: Column(
-      children: [
-        Expanded(
-          child: isMobile
-              ? _buildMobileBody(context, post, comments)
-              : _buildWebBody(context, post, comments),
-        ),
-        _CommentInputBar(isMobile: isMobile),
-      ],
-    ),
-  );
-}
-```
-
-### 7.3 内容卡片（PostCard）
+当前实际在用的是「组件内 `isMobile` 三元条件」模式——同一 `build` 方法内，对每个尺寸属性（`padding`、`fontSize`、`borderRadius`、`width`/`height` 等）用 `ResponsiveUtils.isMobile(context)` 分流：手机端值带 ScreenUtil 后缀（`.w`/`.h`/`.sp`/`.r`），宽屏端用固定 `double` 值。以登录页（`features/auth/presentation/login_page.dart`）为例，这是该模式的真实落地：
 
 ```dart
-// 三元条件贯穿每个尺寸属性
-Container(
-  padding: EdgeInsets.all(isMobile ? 16.w : 16),
-  child: Column(
-    children: [
-      Image(height: isMobile ? 140.h : 140),
-      SizedBox(height: isMobile ? 12.h : 12),
-      Text(style: TextStyle(fontSize: isMobile ? 14.sp : 14)),
-    ],
-  ),
+final isMobile = ResponsiveUtils.isMobile(context);
+
+// 间距 / 尺寸 / 圆角：手机端带后缀，宽屏端固定值
+EdgeInsets.symmetric(
+  horizontal: isMobile ? 24.w : 48,
+  vertical: isMobile ? 32.h : 48,
 )
+
+// 内容区最大宽度：手机端不限，宽屏端收窄居中
+BoxConstraints(maxWidth: isMobile ? double.infinity : 420)
+
+// 圆角半径
+BorderRadius.circular(isMobile ? 20.r : 24)
 ```
+
+这一模式贯穿登录页的每个尺寸属性，是 §4.1 所述三元条件策略的实际应用。注意：登录页未使用 `ResponsiveLayout` 分发，而是单 `build` 方法内对每个属性单独分流——这是当前 App 的主流适配方式。
 
 ---
 

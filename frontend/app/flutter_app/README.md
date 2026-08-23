@@ -1,6 +1,6 @@
 # ERP Flutter App
 
-A ERP Flutter project.
+An ERP Flutter project.
 
 ## Flutter 常用命令
 

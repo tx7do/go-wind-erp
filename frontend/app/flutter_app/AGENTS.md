@@ -49,7 +49,7 @@ lib/
 | `domain/` | sealed failure 类型 + 值对象模型 + 仓储抽象接口 | `*_failure.dart`、`*_models.dart`、`*_repository.dart` |
 | `presentation/` | Cubit（viewmodel）+ sealed State + Page widget | `*_cubit.dart`、`*_state.dart`、`*_page.dart` |
 
-> 仓储实现与抽象接口分离：`domain/*_repository.dart` 定义抽象 `XxxRepository`，`data/*_repository_impl.dart` 提供实现并通过 `createXxxRepositoryImpl()` 工厂注入。Cubit 只依赖抽象接口，不直接接触 `ServiceClient`。Feature 仓储当前消费的 ServiceClient：`ApprovalRequestServiceClient`、`AuthenticationServiceClient`、`InventoryServiceClient`、`StockMovementServiceClient`、`WarehouseServiceClient`（其余如 `PayableServiceClient` / `PaymentServiceClient` / `PurchaseOrderServiceClient` / `FileTransferServiceClient` / `UserProfileServiceClient` 已生成但尚未被任何 feature 消费）。
+> 仓储实现与抽象接口分离：`domain/*_repository.dart` 定义抽象 `XxxRepository`，`data/*_repository_impl.dart` 提供实现并通过 `createXxxRepositoryImpl()` 工厂注入。Cubit 只依赖抽象接口，不直接接触 `ServiceClient`。Feature 仓储当前消费的 ServiceClient：`ApprovalRequestServiceClient`、`AuthenticationServiceClient`、`StockQuantServiceClient`、`StockPickingServiceClient`、`WarehouseServiceClient`（其余如 `PayableServiceClient` / `PaymentServiceClient` / `PurchaseOrderServiceClient` / `FileTransferServiceClient` / `UserProfileServiceClient` 已生成但尚未被任何 feature 消费）。
 
 ### 路由（GoRouter + 鉴权守卫）
 
@@ -204,7 +204,7 @@ NTP_HOST="time.google.com"
 SENTRY_DSN="https://ingest.sentry.io/"
 ```
 
-> 配置产物注记：生产 `.env` 的 `API_BASE_URL` / `SSE_URL` 仍指向历史 `*.erp.gowind.cloud` 子域。这是运行时配置遗留 —— feature 源码中无 `erp` 字样（`grep -rin erp lib/src/features/` 零命中），但部署前需确认这两个 URL 已切到 ERP 后端。
+> 配置产物注记：开发 `.dev.env` 的 `API_BASE_URL` 指向本地 app BFF（Android 模拟器以 `10.0.2.2` 访问宿主 `6700` 端口）；生产 `.env` 的 `API_BASE_URL` / `SSE_URL` 指向 `api.erp.gowind.cloud`（该文件 gitignored，不在版本控制中）。feature 源码中无 `cms` 字样（`grep -rin cms lib/src/features/` 零命中）。
 
 ## 新增业务模块 Checklist
 
