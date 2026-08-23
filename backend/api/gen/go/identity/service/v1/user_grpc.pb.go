@@ -33,6 +33,10 @@ const (
 	UserService_ListUserIDsByOrgUnitIDs_FullMethodName  = "/identity.service.v1.UserService/ListUserIDsByOrgUnitIDs"
 	UserService_ListUserPositionIDs_FullMethodName      = "/identity.service.v1.UserService/ListUserPositionIDs"
 	UserService_ListUserIDsByPositionIDs_FullMethodName = "/identity.service.v1.UserService/ListUserIDsByPositionIDs"
+	UserService_UploadAvatar_FullMethodName             = "/identity.service.v1.UserService/UploadAvatar"
+	UserService_DeleteAvatar_FullMethodName             = "/identity.service.v1.UserService/DeleteAvatar"
+	UserService_BindContact_FullMethodName              = "/identity.service.v1.UserService/BindContact"
+	UserService_VerifyContact_FullMethodName            = "/identity.service.v1.UserService/VerifyContact"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -65,6 +69,14 @@ type UserServiceClient interface {
 	ListUserPositionIDs(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*ListUserPositionIDsResponse, error)
 	// 根据职位ID列表获取用户ID列表
 	ListUserIDsByPositionIDs(ctx context.Context, in *ListUserIDsByPositionIDsRequest, opts ...grpc.CallOption) (*ListUserIDsResponse, error)
+	// 上传当前用户头像（落 MinIO 后将 URL 写回 user.avatar）
+	UploadAvatar(ctx context.Context, in *UploadAvatarRequest, opts ...grpc.CallOption) (*UploadAvatarResponse, error)
+	// 删除当前用户头像（清空 user.avatar）
+	DeleteAvatar(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 校验联系方式的验证码，通过后写入 user.mobile/email
+	BindContact(ctx context.Context, in *BindContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 向手机/邮箱发送验证码并建立会话
+	VerifyContact(ctx context.Context, in *VerifyContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userServiceClient struct {
@@ -195,6 +207,46 @@ func (c *userServiceClient) ListUserIDsByPositionIDs(ctx context.Context, in *Li
 	return out, nil
 }
 
+func (c *userServiceClient) UploadAvatar(ctx context.Context, in *UploadAvatarRequest, opts ...grpc.CallOption) (*UploadAvatarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadAvatarResponse)
+	err := c.cc.Invoke(ctx, UserService_UploadAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteAvatar(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserService_DeleteAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) BindContact(ctx context.Context, in *BindContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserService_BindContact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) VerifyContact(ctx context.Context, in *VerifyContactRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserService_VerifyContact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -225,6 +277,14 @@ type UserServiceServer interface {
 	ListUserPositionIDs(context.Context, *GetUserRequest) (*ListUserPositionIDsResponse, error)
 	// 根据职位ID列表获取用户ID列表
 	ListUserIDsByPositionIDs(context.Context, *ListUserIDsByPositionIDsRequest) (*ListUserIDsResponse, error)
+	// 上传当前用户头像（落 MinIO 后将 URL 写回 user.avatar）
+	UploadAvatar(context.Context, *UploadAvatarRequest) (*UploadAvatarResponse, error)
+	// 删除当前用户头像（清空 user.avatar）
+	DeleteAvatar(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// 校验联系方式的验证码，通过后写入 user.mobile/email
+	BindContact(context.Context, *BindContactRequest) (*emptypb.Empty, error)
+	// 向手机/邮箱发送验证码并建立会话
+	VerifyContact(context.Context, *VerifyContactRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -270,6 +330,18 @@ func (UnimplementedUserServiceServer) ListUserPositionIDs(context.Context, *GetU
 }
 func (UnimplementedUserServiceServer) ListUserIDsByPositionIDs(context.Context, *ListUserIDsByPositionIDsRequest) (*ListUserIDsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserIDsByPositionIDs not implemented")
+}
+func (UnimplementedUserServiceServer) UploadAvatar(context.Context, *UploadAvatarRequest) (*UploadAvatarResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteAvatar(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) BindContact(context.Context, *BindContactRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method BindContact not implemented")
+}
+func (UnimplementedUserServiceServer) VerifyContact(context.Context, *VerifyContactRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method VerifyContact not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -508,6 +580,78 @@ func _UserService_ListUserIDsByPositionIDs_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UploadAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadAvatarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UploadAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UploadAvatar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UploadAvatar(ctx, req.(*UploadAvatarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeleteAvatar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteAvatar(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_BindContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BindContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_BindContact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BindContact(ctx, req.(*BindContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_VerifyContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).VerifyContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_VerifyContact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).VerifyContact(ctx, req.(*VerifyContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -562,6 +706,22 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserIDsByPositionIDs",
 			Handler:    _UserService_ListUserIDsByPositionIDs_Handler,
+		},
+		{
+			MethodName: "UploadAvatar",
+			Handler:    _UserService_UploadAvatar_Handler,
+		},
+		{
+			MethodName: "DeleteAvatar",
+			Handler:    _UserService_DeleteAvatar_Handler,
+		},
+		{
+			MethodName: "BindContact",
+			Handler:    _UserService_BindContact_Handler,
+		},
+		{
+			MethodName: "VerifyContact",
+			Handler:    _UserService_VerifyContact_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

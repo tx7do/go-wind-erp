@@ -181,6 +181,50 @@ func (s *redactedUserServiceServer) ListUserIDsByPositionIDs(ctx context.Context
 	return res, err
 }
 
+// UploadAvatar is the redacted wrapper for the actual UserServiceServer.UploadAvatar method
+// Unary RPC
+func (s *redactedUserServiceServer) UploadAvatar(ctx context.Context, in *UploadAvatarRequest) (*UploadAvatarResponse, error) {
+	res, err := s.srv.UploadAvatar(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// DeleteAvatar is the redacted wrapper for the actual UserServiceServer.DeleteAvatar method
+// Unary RPC
+func (s *redactedUserServiceServer) DeleteAvatar(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
+	res, err := s.srv.DeleteAvatar(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// BindContact is the redacted wrapper for the actual UserServiceServer.BindContact method
+// Unary RPC
+func (s *redactedUserServiceServer) BindContact(ctx context.Context, in *BindContactRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.BindContact(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// VerifyContact is the redacted wrapper for the actual UserServiceServer.VerifyContact method
+// Unary RPC
+func (s *redactedUserServiceServer) VerifyContact(ctx context.Context, in *VerifyContactRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.VerifyContact(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Ensure User implements the Redactor interface at compile time.
 var _ redact.Redactor = (*User)(nil)
 

@@ -1,26 +1,40 @@
 package service
 
 import (
+	"bytes"
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"io"
+	"math/big"
+	"net/http"
+	"path"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/uuid"
+	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"github.com/tx7do/go-utils/trans"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/sliceutil"
-	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-erp/app/core/service/internal/data"
 
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
+	storageV1 "go-wind-erp/api/gen/go/storage/service/v1"
 
 	"go-wind-erp/pkg/constants"
+	"go-wind-erp/pkg/netutil"
+	"go-wind-erp/pkg/oss"
 	appViewer "go-wind-erp/pkg/entgo/viewer"
 )
 
@@ -53,6 +67,12 @@ type UserService struct {
 	tenantRepo   *data.TenantRepo
 
 	membershipRepo *data.MembershipRepo
+
+	// 头像上传（MinIO + file 元数据）与联系方式验证码所需依赖。
+	mc                *oss.MinIOClient
+	fileRepo          *data.FileRepo
+	contactCodeCache  *data.ContactCodeCache
+	contactCodeSender ContactCodeSender
 }
 
 func NewUserService(
@@ -64,6 +84,10 @@ func NewUserService(
 	orgUnitRepo *data.OrgUnitRepo,
 	tenantRepo *data.TenantRepo,
 	membershipRepo *data.MembershipRepo,
+	mc *oss.MinIOClient,
+	fileRepo *data.FileRepo,
+	contactCodeCache *data.ContactCodeCache,
+	contactCodeSender ContactCodeSender,
 ) *UserService {
 	svc := &UserService{
 		log:                ctx.NewLoggerHelper("user/service/core-service"),
@@ -74,6 +98,10 @@ func NewUserService(
 		orgUnitRepo:        orgUnitRepo,
 		tenantRepo:         tenantRepo,
 		membershipRepo:     membershipRepo,
+		mc:                  mc,
+		fileRepo:            fileRepo,
+		contactCodeCache:    contactCodeCache,
+		contactCodeSender:   contactCodeSender,
 	}
 
 	svc.init()
@@ -610,4 +638,260 @@ func (s *UserService) createDefaultUser(ctx context.Context) error {
 	}
 
 	return err
+}
+
+// parseAvatarKey 将 MinIO 对象 key 拆分为目录/文件名/扩展名，与
+// FileTransferService.parseKey 行为一致。
+func parseAvatarKey(key string) (folder, filename, ext string) {
+	folder = "/"
+	if key == "" {
+		return
+	}
+	idx := strings.LastIndex(key, "/")
+	var name string
+	if idx >= 0 {
+		folder = key[:idx]
+		name = key[idx+1:]
+	} else {
+		name = key
+	}
+	if dot := strings.LastIndex(name, "."); dot >= 0 {
+		ext = name[dot+1:]
+		name = name[:dot]
+	}
+	_ = path.Clean(folder)
+	return folder, name, ext
+}
+
+// recordAvatarAsset 将 MinIO 上传结果落库为 file 元数据记录，与
+// FileTransferService.recordFile 行为一致。
+func (s *UserService) recordAvatarAsset(
+	ctx context.Context,
+	tenantID, userID uint32,
+	sourceFileName string,
+	info minio.UploadInfo,
+	downloadUrl string,
+) error {
+	dir, fileName, ext := parseAvatarKey(info.Key)
+	if _, err := s.fileRepo.Create(ctx, &storageV1.CreateFileRequest{
+		Data: &storageV1.File{
+			Provider:      trans.Ptr(storageV1.OSSProvider_MINIO),
+			BucketName:    trans.Ptr(info.Bucket),
+			SaveFileName:  trans.Ptr(fileName + "." + ext),
+			FileDirectory: trans.Ptr(dir),
+			FileName:      trans.Ptr(sourceFileName),
+			Extension:     trans.Ptr(ext),
+			FileGuid:      trans.Ptr(uuid.New().String()),
+			Size:          trans.Ptr(uint64(info.Size)),
+			LinkUrl:       trans.Ptr(downloadUrl),
+			CreatedBy:     trans.Ptr(userID),
+			TenantId:      trans.Ptr(tenantID),
+		},
+	}); err != nil {
+		s.log.Errorf("Failed to create avatar file record: %v", err)
+		return err
+	}
+	return nil
+}
+
+// fetchAvatarBytes 从 oneof（base64 或远端 URL）取出头像字节流。
+func (s *UserService) fetchAvatarBytes(ctx context.Context, req *identityV1.UploadAvatarRequest) ([]byte, error) {
+	switch src := req.GetSource().(type) {
+	case *identityV1.UploadAvatarRequest_ImageBase64:
+		raw, err := base64.StdEncoding.DecodeString(src.ImageBase64)
+		if err != nil {
+			return nil, identityV1.ErrorBadRequest("invalid base64 avatar data")
+		}
+		return raw, nil
+	case *identityV1.UploadAvatarRequest_ImageUrl:
+		parsed, err := netutil.ValidateURL(src.ImageUrl)
+		if err != nil {
+			return nil, identityV1.ErrorBadRequest("%s", err)
+		}
+		httpReq, err := http.NewRequestWithContext(ctx, "GET", parsed.String(), nil)
+		if err != nil {
+			return nil, identityV1.ErrorBadRequest("%s", err)
+		}
+		client := netutil.SafeHTTPClient()
+		resp, err := client.Do(httpReq)
+		if err != nil {
+			return nil, identityV1.ErrorBadRequest("%s", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			return nil, identityV1.ErrorBadRequest("unexpected status fetching avatar: %s", resp.Status)
+		}
+		data, err := io.ReadAll(netutil.LimitReader(resp.Body))
+		if err != nil {
+			return nil, identityV1.ErrorBadRequest("%s", err)
+		}
+		return data, nil
+	default:
+		return nil, identityV1.ErrorBadRequest("unknown avatar source")
+	}
+}
+
+// UploadAvatar 将当前操作人的头像上传至 MinIO，落 file 元数据后把
+// 下载 URL 写回 user.avatar 字段。
+func (s *UserService) UploadAvatar(ctx context.Context, req *identityV1.UploadAvatarRequest) (*identityV1.UploadAvatarResponse, error) {
+	uid, hasUser := viewerUserIDFromContext(ctx)
+	tid := uint32(0)
+	hasTenant := false
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		tid = uint32(vc.TenantID())
+		hasTenant = tid != 0
+	}
+	if !hasTenant || !hasUser {
+		return nil, identityV1.ErrorBadRequest("missing operator identity")
+	}
+
+	data, err := s.fetchAvatarBytes(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, identityV1.ErrorBadRequest("empty avatar data")
+	}
+
+	mime := http.DetectContentType(data)
+	bucket := oss.ContentTypeToBucketName(mime)
+	object := oss.EnsureObjectName("", "avatar", mime, oss.GenerateFileNameTypeUUID)
+	reader := bytes.NewReader(data)
+
+	info, _, downloadUrl, err := s.mc.UploadFile(ctx, bucket, object, mime, reader, int64(len(data)))
+	if err != nil {
+		return nil, err
+	}
+	if err = s.recordAvatarAsset(ctx, tid, uid, "avatar", info, downloadUrl); err != nil {
+		return nil, err
+	}
+
+	// 将 URL 写回当前用户 avatar 字段。
+	if err = s.userRepo.Update(ctx, &identityV1.UpdateUserRequest{
+		Id:   uid,
+		Data: &identityV1.User{Avatar: trans.Ptr(downloadUrl)},
+		UpdateMask: &fieldmaskpb.FieldMask{
+			Paths: []string{"avatar"},
+		},
+	}); err != nil {
+		return nil, err
+	}
+
+	return &identityV1.UploadAvatarResponse{Url: downloadUrl}, nil
+}
+
+// DeleteAvatar 清空当前操作人的 user.avatar 字段。
+func (s *UserService) DeleteAvatar(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+	uid, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, identityV1.ErrorBadRequest("missing operator identity")
+	}
+	// avatar 在 mask 中且 Data 中为 nil → 落 NULL。
+	if err := s.userRepo.Update(ctx, &identityV1.UpdateUserRequest{
+		Id:         uid,
+		Data:       &identityV1.User{},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"avatar"}},
+	}); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// VerifyContact 向手机号/邮箱发送验证码并建立会话。
+func (s *UserService) VerifyContact(ctx context.Context, req *identityV1.VerifyContactRequest) (*emptypb.Empty, error) {
+	dest := ""
+	switch c := req.GetContact().(type) {
+	case *identityV1.VerifyContactRequest_Phone:
+		if c.Phone == nil {
+			return nil, identityV1.ErrorBadRequest("missing phone verification payload")
+		}
+		dest = c.Phone.GetPhone()
+	case *identityV1.VerifyContactRequest_Email:
+		if c.Email == nil {
+			return nil, identityV1.ErrorBadRequest("missing email verification payload")
+		}
+		dest = c.Email.GetEmail()
+	default:
+		return nil, identityV1.ErrorBadRequest("unknown contact type")
+	}
+	if dest == "" {
+		return nil, identityV1.ErrorBadRequest("empty contact destination")
+	}
+
+	code, err := generateNumericCode(6)
+	if err != nil {
+		return nil, err
+	}
+	if err = s.contactCodeCache.Store(ctx, dest, code); err != nil {
+		return nil, err
+	}
+	if err = s.contactCodeSender.Send(ctx, dest, code); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// BindContact 校验验证码，通过后写入 user.mobile/email 字段。
+func (s *UserService) BindContact(ctx context.Context, req *identityV1.BindContactRequest) (*emptypb.Empty, error) {
+	uid, hasUser := viewerUserIDFromContext(ctx)
+	if !hasUser {
+		return nil, identityV1.ErrorBadRequest("missing operator identity")
+	}
+
+	var dest, code, field string
+	switch c := req.GetContact().(type) {
+	case *identityV1.BindContactRequest_Phone:
+		if c.Phone == nil {
+			return nil, identityV1.ErrorBadRequest("missing phone bind payload")
+		}
+		dest = c.Phone.GetPhone()
+		code = c.Phone.GetCode()
+		field = "mobile"
+	case *identityV1.BindContactRequest_Email:
+		if c.Email == nil {
+			return nil, identityV1.ErrorBadRequest("missing email bind payload")
+		}
+		dest = c.Email.GetEmail()
+		code = c.Email.GetVerificationCode()
+		field = "email"
+	default:
+		return nil, identityV1.ErrorBadRequest("unknown contact type")
+	}
+	if dest == "" || code == "" {
+		return nil, identityV1.ErrorBadRequest("empty contact or code")
+	}
+	if !s.contactCodeCache.Verify(ctx, dest, code) {
+		return nil, identityV1.ErrorBadRequest("verification code invalid or expired")
+	}
+
+	// 校验通过：写回对应字段。
+	data := &identityV1.User{}
+	if field == "mobile" {
+		data.Mobile = trans.Ptr(dest)
+	} else {
+		data.Email = trans.Ptr(dest)
+	}
+	if err := s.userRepo.Update(ctx, &identityV1.UpdateUserRequest{
+		Id:         uid,
+		Data:       data,
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{field}},
+	}); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
+// generateNumericCode 生成定长数字验证码。
+func generateNumericCode(length int) (string, error) {
+	const digits = "0123456789"
+	max := big.NewInt(int64(len(digits)))
+	b := make([]byte, length)
+	for i := range b {
+		n, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return "", err
+		}
+		b[i] = digits[n.Int64()]
+	}
+	return string(b), nil
 }

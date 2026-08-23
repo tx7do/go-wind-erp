@@ -62,4 +62,7 @@ var ProviderSet = wire.NewSet(
 	service.NewDataAccessAuditLogService,
 	service.NewOperationAuditLogService,
 	service.NewFileTransferService,
+
+	service.NewLoggingContactSender,
+	wire.Bind(new(service.ContactCodeSender), new(*service.LoggingContactSender)),
 )

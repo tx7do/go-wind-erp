@@ -96,22 +96,22 @@ func (s *UserProfileService) ChangePassword(ctx context.Context, req *identityV1
 	})
 }
 
-// UploadAvatar 上传头像 — 尚未实现
-func (s *UserProfileService) UploadAvatar(_ context.Context, _ *identityV1.UploadAvatarRequest) (*identityV1.UploadAvatarResponse, error) {
-	return nil, appV1.ErrorNotImplemented("avatar upload is not implemented")
+// UploadAvatar 上传当前用户头像（委派核心 UserService，核心负责 MinIO 上传 + 写回 user.avatar）。
+func (s *UserProfileService) UploadAvatar(ctx context.Context, req *identityV1.UploadAvatarRequest) (*identityV1.UploadAvatarResponse, error) {
+	return s.userServiceClient.UploadAvatar(ctx, req)
 }
 
-// DeleteAvatar 删除头像 — 尚未实现
-func (s *UserProfileService) DeleteAvatar(_ context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, appV1.ErrorNotImplemented("avatar deletion is not implemented")
+// DeleteAvatar 删除当前用户头像（委派核心 UserService 清空 user.avatar）。
+func (s *UserProfileService) DeleteAvatar(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
+	return s.userServiceClient.DeleteAvatar(ctx, req)
 }
 
-// BindContact 绑定手机号码/邮箱 — 尚未实现
-func (s *UserProfileService) BindContact(_ context.Context, _ *identityV1.BindContactRequest) (*emptypb.Empty, error) {
-	return nil, appV1.ErrorNotImplemented("contact binding is not implemented")
+// BindContact 绑定手机号码/邮箱（委派核心 UserService：校验验证码后写回 user.mobile/email）。
+func (s *UserProfileService) BindContact(ctx context.Context, req *identityV1.BindContactRequest) (*emptypb.Empty, error) {
+	return s.userServiceClient.BindContact(ctx, req)
 }
 
-// VerifyContact 验证手机号码/邮箱 — 尚未实现
-func (s *UserProfileService) VerifyContact(_ context.Context, _ *identityV1.VerifyContactRequest) (*emptypb.Empty, error) {
-	return nil, appV1.ErrorNotImplemented("contact verification is not implemented")
+// VerifyContact 验证手机号码/邮箱（委派核心 UserService：发送验证码并建立会话）。
+func (s *UserProfileService) VerifyContact(ctx context.Context, req *identityV1.VerifyContactRequest) (*emptypb.Empty, error) {
+	return s.userServiceClient.VerifyContact(ctx, req)
 }

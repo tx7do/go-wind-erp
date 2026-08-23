@@ -30,6 +30,7 @@ var ProviderSet = wire.NewSet(
 	data.NewAuthenticatorConfig,
 	data.NewAuthenticator,
 	data.NewUserTokenCache,
+	data.NewContactCodeCache,
 
 	data.NewPasswordCrypto,
 

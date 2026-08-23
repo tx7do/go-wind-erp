@@ -46,6 +46,18 @@ service UserService {
   rpc ListUserPositionIDs(GetUserRequest) returns (ListUserPositionIDsResponse) {}
   // 根据职位ID列表获取用户ID列表
   rpc ListUserIDsByPositionIDs(ListUserIDsByPositionIDsRequest) returns (ListUserIDsResponse) {}
+
+  // 上传当前用户头像（落 MinIO 后将 URL 写回 user.avatar）
+  rpc UploadAvatar (UploadAvatarRequest) returns (UploadAvatarResponse) {}
+
+  // 删除当前用户头像（清空 user.avatar）
+  rpc DeleteAvatar (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  // 校验联系方式的验证码，通过后写入 user.mobile/email
+  rpc BindContact (BindContactRequest) returns (google.protobuf.Empty) {}
+
+  // 向手机/邮箱发送验证码并建立会话
+  rpc VerifyContact (VerifyContactRequest) returns (google.protobuf.Empty) {}
 }
 
 // 用户

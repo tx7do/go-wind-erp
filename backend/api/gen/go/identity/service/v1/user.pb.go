@@ -2248,7 +2248,7 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\x1fListUserIDsByPositionIDsRequest\x127\n" +
 	"\fposition_ids\x18\x01 \x03(\rB\x14\xbaG\x11\x92\x02\x0e职位ID列表R\vpositionIds\x12`\n" +
 	"\x0fexclude_expired\x18\x02 \x01(\bB2\xbaG/\x92\x02,是否排除过期用户，默认值：falseH\x00R\x0eexcludeExpired\x88\x01\x01B\x12\n" +
-	"\x10_exclude_expired2\xfe\b\n" +
+	"\x10_exclude_expired2\xcf\v\n" +
 	"\vUserService\x12J\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a%.identity.service.v1.ListUserResponse\"\x00\x12L\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a&.identity.service.v1.CountUserResponse\"\x00\x12G\n" +
@@ -2262,7 +2262,11 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\x12ListUserOrgUintIDs\x12#.identity.service.v1.GetUserRequest\x1a/.identity.service.v1.ListUserOrgUintIDsResponse\"\x00\x12z\n" +
 	"\x17ListUserIDsByOrgUnitIDs\x123.identity.service.v1.ListUserIDsByOrgUnitIDsRequest\x1a(.identity.service.v1.ListUserIDsResponse\"\x00\x12n\n" +
 	"\x13ListUserPositionIDs\x12#.identity.service.v1.GetUserRequest\x1a0.identity.service.v1.ListUserPositionIDsResponse\"\x00\x12|\n" +
-	"\x18ListUserIDsByPositionIDs\x124.identity.service.v1.ListUserIDsByPositionIDsRequest\x1a(.identity.service.v1.ListUserIDsResponse\"\x00B\xc9\x01\n" +
+	"\x18ListUserIDsByPositionIDs\x124.identity.service.v1.ListUserIDsByPositionIDsRequest\x1a(.identity.service.v1.ListUserIDsResponse\"\x00\x12e\n" +
+	"\fUploadAvatar\x12(.identity.service.v1.UploadAvatarRequest\x1a).identity.service.v1.UploadAvatarResponse\"\x00\x12@\n" +
+	"\fDeleteAvatar\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12P\n" +
+	"\vBindContact\x12'.identity.service.v1.BindContactRequest\x1a\x16.google.protobuf.Empty\"\x00\x12T\n" +
+	"\rVerifyContact\x12).identity.service.v1.VerifyContactRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc9\x01\n" +
 	"\x17com.identity.service.v1B\tUserProtoP\x01Z5go-wind-erp/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
 
 var (
@@ -2344,20 +2348,28 @@ var file_identity_service_v1_user_proto_depIdxs = []int32{
 	26, // 26: identity.service.v1.UserService.ListUserIDsByOrgUnitIDs:input_type -> identity.service.v1.ListUserIDsByOrgUnitIDsRequest
 	4,  // 27: identity.service.v1.UserService.ListUserPositionIDs:input_type -> identity.service.v1.GetUserRequest
 	28, // 28: identity.service.v1.UserService.ListUserIDsByPositionIDs:input_type -> identity.service.v1.ListUserIDsByPositionIDsRequest
-	3,  // 29: identity.service.v1.UserService.List:output_type -> identity.service.v1.ListUserResponse
-	23, // 30: identity.service.v1.UserService.Count:output_type -> identity.service.v1.CountUserResponse
-	2,  // 31: identity.service.v1.UserService.Get:output_type -> identity.service.v1.User
-	2,  // 32: identity.service.v1.UserService.Create:output_type -> identity.service.v1.User
-	11, // 33: identity.service.v1.UserService.BatchCreate:output_type -> identity.service.v1.BatchCreateUsersResponse
-	32, // 34: identity.service.v1.UserService.Update:output_type -> google.protobuf.Empty
-	32, // 35: identity.service.v1.UserService.Delete:output_type -> google.protobuf.Empty
-	9,  // 36: identity.service.v1.UserService.UserExists:output_type -> identity.service.v1.UserExistsResponse
-	24, // 37: identity.service.v1.UserService.ListUserOrgUintIDs:output_type -> identity.service.v1.ListUserOrgUintIDsResponse
-	27, // 38: identity.service.v1.UserService.ListUserIDsByOrgUnitIDs:output_type -> identity.service.v1.ListUserIDsResponse
-	25, // 39: identity.service.v1.UserService.ListUserPositionIDs:output_type -> identity.service.v1.ListUserPositionIDsResponse
-	27, // 40: identity.service.v1.UserService.ListUserIDsByPositionIDs:output_type -> identity.service.v1.ListUserIDsResponse
-	29, // [29:41] is the sub-list for method output_type
-	17, // [17:29] is the sub-list for method input_type
+	15, // 29: identity.service.v1.UserService.UploadAvatar:input_type -> identity.service.v1.UploadAvatarRequest
+	32, // 30: identity.service.v1.UserService.DeleteAvatar:input_type -> google.protobuf.Empty
+	17, // 31: identity.service.v1.UserService.BindContact:input_type -> identity.service.v1.BindContactRequest
+	20, // 32: identity.service.v1.UserService.VerifyContact:input_type -> identity.service.v1.VerifyContactRequest
+	3,  // 33: identity.service.v1.UserService.List:output_type -> identity.service.v1.ListUserResponse
+	23, // 34: identity.service.v1.UserService.Count:output_type -> identity.service.v1.CountUserResponse
+	2,  // 35: identity.service.v1.UserService.Get:output_type -> identity.service.v1.User
+	2,  // 36: identity.service.v1.UserService.Create:output_type -> identity.service.v1.User
+	11, // 37: identity.service.v1.UserService.BatchCreate:output_type -> identity.service.v1.BatchCreateUsersResponse
+	32, // 38: identity.service.v1.UserService.Update:output_type -> google.protobuf.Empty
+	32, // 39: identity.service.v1.UserService.Delete:output_type -> google.protobuf.Empty
+	9,  // 40: identity.service.v1.UserService.UserExists:output_type -> identity.service.v1.UserExistsResponse
+	24, // 41: identity.service.v1.UserService.ListUserOrgUintIDs:output_type -> identity.service.v1.ListUserOrgUintIDsResponse
+	27, // 42: identity.service.v1.UserService.ListUserIDsByOrgUnitIDs:output_type -> identity.service.v1.ListUserIDsResponse
+	25, // 43: identity.service.v1.UserService.ListUserPositionIDs:output_type -> identity.service.v1.ListUserPositionIDsResponse
+	27, // 44: identity.service.v1.UserService.ListUserIDsByPositionIDs:output_type -> identity.service.v1.ListUserIDsResponse
+	16, // 45: identity.service.v1.UserService.UploadAvatar:output_type -> identity.service.v1.UploadAvatarResponse
+	32, // 46: identity.service.v1.UserService.DeleteAvatar:output_type -> google.protobuf.Empty
+	32, // 47: identity.service.v1.UserService.BindContact:output_type -> google.protobuf.Empty
+	32, // 48: identity.service.v1.UserService.VerifyContact:output_type -> google.protobuf.Empty
+	33, // [33:49] is the sub-list for method output_type
+	17, // [17:33] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name
 	17, // [17:17] is the sub-list for extension extendee
 	0,  // [0:17] is the sub-list for field type_name
