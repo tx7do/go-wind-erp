@@ -9,7 +9,20 @@ TRUNCATE TABLE public.sys_org_units,
                public.sys_login_policies,
                public.sys_dict_types,
                public.sys_dict_entries,
-               public.internal_message_categories
+               public.internal_message_categories,
+               public.inv_warehouses,
+               public.inv_stock_locations,
+               public.inv_stock_quants,
+               public.inv_stock_pickings,
+               public.inv_stock_moves,
+               public.inv_stock_move_lines,
+               public.prd_products,
+               public.pur_suppliers,
+               public.pur_purchase_orders,
+               public.pur_purchase_order_items,
+               public.fin_payables,
+               public.fin_payments,
+               public.apr_approval_requests
 RESTART IDENTITY CASCADE;
 
 -- ----------------------------
@@ -116,13 +129,14 @@ SELECT setval('sys_login_policies_id_seq', (SELECT MAX(id) FROM sys_login_polici
 -- 插入 sys_dict_types 字典类型
 -- ----------------------------
 INSERT INTO public.sys_dict_types (
-    id, type_code, sort_order, is_enabled, created_at, updated_at
+    id, type_code, type_name, sort_order, is_enabled, created_at, updated_at
 ) VALUES
-      (1, 'USER_STATUS', 10, true, now(), now()),
-      (2, 'DEVICE_TYPE', 20, true, now(), now()),
-      (3, 'ORDER_STATUS', 30, true, now(), now()),
-      (4, 'GENDER', 40, true, now(), now()),
-      (5, 'PAYMENT_METHOD', 50, true, now(), now())
+      (1, 'USER_STATUS', '用户状态', 10, true, now(), now()),
+      (2, 'DEVICE_TYPE', '设备类型', 20, true, now(), now()),
+      (3, 'ORDER_STATUS', '订单状态', 30, true, now(), now()),
+      (4, 'GENDER', '性别', 40, true, now(), now()),
+      (5, 'PAYMENT_METHOD', '支付方式', 50, true, now(), now()),
+      (6, 'APPROVAL_BIZ_TYPE', '审批业务类型', 60, true, now(), now())
 ;
 SELECT setval('sys_dict_types_id_seq', (SELECT MAX(id) FROM sys_dict_types));
 
@@ -154,7 +168,11 @@ INSERT INTO public.sys_dict_entries (
       (15, 5, 'ALIPAY', 1, 1, true, now(), now(), 0),
       (16, 5, 'WECHAT', 2, 2, true, now(), now(), 0),
       (17, 5, 'UNIONPAY', 3, 3, true, now(), now(), 0),
-      (18, 5, 'CASH', 4, 4, false, now(), now(), 0)
+      (18, 5, 'CASH', 4, 4, false, now(), now(), 0),
+      -- 审批业务类型（审批单 biz_type 的展示标签来源）
+      (19, 6, 'PURCHASE_ORDER', 0, 1, true, now(), now(), 0),
+      (20, 6, 'REPLENISHMENT', 0, 2, true, now(), now(), 0),
+      (21, 6, 'PAYMENT', 0, 3, true, now(), now(), 0)
 ;
 SELECT setval('sys_dict_entries_id_seq', (SELECT MAX(id) FROM sys_dict_entries));
 
@@ -187,6 +205,10 @@ INSERT INTO public.sys_dict_entry_i18n (
       (16, 'zh-CN', '微信支付', '需绑定微信', 2, 0, now(), now()),
       (17, 'zh-CN', '银联支付', '支持信用卡、储蓄卡', 3, 0, now(), now()),
       (18, 'zh-CN', '现金支付', '线下支付，已废弃（2025-01停用）', 4, 0, now(), now()),
+      -- 审批业务类型
+      (19, 'zh-CN', '采购订单', '采购单提交的审批请求', 1, 0, now(), now()),
+      (20, 'zh-CN', '补货', '库存补货触发的审批请求', 2, 0, now(), now()),
+      (21, 'zh-CN', '付款', '财务付款触发的审批请求', 3, 0, now(), now()),
 
       -- User Status
       (1, 'en-US', 'Normal', 'User can log in and operate normally', 1, 0, now(), now()),
@@ -214,7 +236,12 @@ INSERT INTO public.sys_dict_entry_i18n (
       (15, 'en-US', 'Alipay', 'Supports Huabei and Yu’ebao', 1, 0, now(), now()),
       (16, 'en-US', 'WeChat Pay', 'Requires WeChat account binding', 2, 0, now(), now()),
       (17, 'en-US', 'UnionPay', 'Supports credit and debit cards', 3, 0, now(), now()),
-      (18, 'en-US', 'Cash', 'Offline payment; deprecated as of Jan 2025', 4, 0, now(), now())
+      (18, 'en-US', 'Cash', 'Offline payment; deprecated as of Jan 2025', 4, 0, now(), now()),
+
+      -- Approval Business Type
+      (19, 'en-US', 'Purchase Order', 'Approval request submitted by a purchase order', 1, 0, now(), now()),
+      (20, 'en-US', 'Replenishment', 'Approval request triggered by inventory replenishment', 2, 0, now(), now()),
+      (21, 'en-US', 'Payment', 'Approval request triggered by finance payment', 3, 0, now(), now())
 ;
 SELECT setval('sys_dict_entry_i18n_id_seq', (SELECT MAX(id) FROM sys_dict_entry_i18n));
 
@@ -249,5 +276,127 @@ VALUES
     (403, 'user_permission_changed', '权限变更', '账号角色或功能权限调整通知', 17, true, NOW())
 ;
 SELECT setval('internal_message_categories_id_seq', (SELECT MAX(id) FROM internal_message_categories));
+
+
+-- ============================================================
+-- ERP 演示数据（仓库/库位/库存/拣货/移动 + 采购/应付/付款/审批）
+-- ============================================================
+-- ----------------------------
+-- inv_warehouses — 仓库（含收货库位软引用）
+-- ----------------------------
+INSERT INTO inv_warehouses (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, location, enable, receiving_location_id) VALUES
+    (1, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'WH-BJ', '北京中心仓', '北京市朝阳区', true, 1),
+    (2, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'WH-SH', '上海区域仓', '上海市浦东新区', true, 2)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_warehouses','id'), COALESCE((SELECT MAX(id) FROM inv_warehouses),1), true);
+-- ----------------------------
+-- inv_stock_locations — 库位（INTERNAL 仓库内 / SUPPLIER 入库源）
+-- ----------------------------
+INSERT INTO inv_stock_locations (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, name, parent_id, path, usage, warehouse_code) VALUES
+    (1, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-收货暂存区', NULL, '/1/', 'INTERNAL', 'WH-BJ'),
+    (2, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-收货暂存区', NULL, '/2/', 'INTERNAL', 'WH-SH'),
+    (3, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-存储区A', NULL, '/3/', 'INTERNAL', 'WH-BJ'),
+    (4, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-存储区A', NULL, '/4/', 'INTERNAL', 'WH-SH'),
+    (5, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-001', NULL, '/5/', 'SUPPLIER', NULL),
+    (6, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-002', NULL, '/6/', 'SUPPLIER', NULL)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_stock_locations','id'), COALESCE((SELECT MAX(id) FROM inv_stock_locations),1), true);
+-- ----------------------------
+-- inv_stock_quants — 库存量（按 库位×产品 唯一）
+-- ----------------------------
+INSERT INTO inv_stock_quants (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, location_id, product_code, quantity) VALUES
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 1000),
+    (2, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 4, 'SKU-A003', 50),
+    (3, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 3, 'SKU-A002', 200)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_stock_quants','id'), COALESCE((SELECT MAX(id) FROM inv_stock_quants),1), true);
+-- ----------------------------
+-- inv_stock_pickings — 拣货单（INCOMING 入库 / INTERNAL 调拨）
+-- ----------------------------
+INSERT INTO inv_stock_pickings (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_number, picking_type, source_location_id, destination_location_id, purchase_order_id, partner_code) VALUES
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-IN-2026-0001', 'INCOMING', 5, 1, 1, 'SUP-001'),
+    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-TR-2026-0002', 'INTERNAL', 1, 3, 0, NULL)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_stock_pickings','id'), COALESCE((SELECT MAX(id) FROM inv_stock_pickings),1), true);
+-- ----------------------------
+-- inv_stock_moves — 库存移动计划（DONE/DRAFT 等多状态）
+-- ----------------------------
+INSERT INTO inv_stock_moves (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_id, product_code, source_location_id, destination_location_id, planned_quantity, state, purchase_order_item_id) VALUES
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 5, 1, 1000, 'DONE', 1),
+    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 2, 'SKU-A001', 1, 3, 1000, 'DRAFT', 0)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_stock_moves','id'), COALESCE((SELECT MAX(id) FROM inv_stock_moves),1), true);
+-- ----------------------------
+-- inv_stock_move_lines — 库存移动执行记录（仅 DONE 移动有）
+-- ----------------------------
+INSERT INTO inv_stock_move_lines (id, created_at, created_by, updated_by, deleted_by, remark, tenant_id, move_id, picking_id, product_code, source_location_id, destination_location_id, executed_quantity) VALUES
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, 1, 1, 1, 'SKU-A001', 5, 1, 1000)
+;
+SELECT setval(pg_get_serial_sequence('public.inv_stock_move_lines','id'), COALESCE((SELECT MAX(id) FROM inv_stock_move_lines),1), true);
+-- ----------------------------
+-- prd_products — 产品（SKU）
+-- ----------------------------
+INSERT INTO prd_products (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, spec, unit, enable) VALUES
+    (1, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A001', 'M8不锈钢内六角螺栓', 'M8×30mm', '个', true),
+    (2, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A002', '贴片电阻 10kΩ', '0805 1%精度', '个', true),
+    (3, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A003', 'PVC绝缘穿线管', 'DN20', '米', true)
+;
+SELECT setval(pg_get_serial_sequence('public.prd_products','id'), COALESCE((SELECT MAX(id) FROM prd_products),1), true);
+-- ----------------------------
+-- pur_suppliers — 供应商（含禁用）
+-- ----------------------------
+INSERT INTO pur_suppliers (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, contact, phone, enable) VALUES
+    (1, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-001', '华东五金供货商', '张铭', '13800000001', true),
+    (2, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-002', '南方电子元件厂', '李锐', '13800000002', true),
+    (3, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-003', '北方建材批发站', '王磊', '13800000003', false)
+;
+SELECT setval(pg_get_serial_sequence('public.pur_suppliers','id'), COALESCE((SELECT MAX(id) FROM pur_suppliers),1), true);
+-- ----------------------------
+-- pur_purchase_orders — 采购单（多状态）
+-- ----------------------------
+INSERT INTO pur_purchase_orders (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, po_number, supplier_code, status, total_amount, warehouse_code) VALUES
+    (1, now() - interval '10 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0001', 'SUP-001', 'APPROVED', 5000, 'WH-BJ'),
+    (2, now() - interval '8 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0002', 'SUP-002', 'DRAFT', 1000, 'WH-SH'),
+    (3, now() - interval '15 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0003', 'SUP-001', 'CANCELLED', 300, 'WH-BJ'),
+    (4, now() - interval '2 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0004', 'SUP-002', 'SUBMITTED', 1600, 'WH-SH')
+;
+SELECT setval(pg_get_serial_sequence('public.pur_purchase_orders','id'), COALESCE((SELECT MAX(id) FROM pur_purchase_orders),1), true);
+-- ----------------------------
+-- pur_purchase_order_items — 采购单明细
+-- ----------------------------
+INSERT INTO pur_purchase_order_items (id, created_at, remark, tenant_id, po_id, sku_code, quantity, unit_price, amount, received_quantity) VALUES
+    (1, now() - interval '10 days', NULL, 1, 1, 'SKU-A001', 1000, 5, 5000, 1000),
+    (2, now() - interval '8 days', NULL, 1, 2, 'SKU-A002', 500, 2, 1000, 0),
+    (3, now() - interval '15 days', NULL, 1, 3, 'SKU-A003', 100, 3, 300, 0),
+    (4, now() - interval '2 days', NULL, 1, 4, 'SKU-A002', 800, 2, 1600, 0)
+;
+SELECT setval(pg_get_serial_sequence('public.pur_purchase_order_items','id'), COALESCE((SELECT MAX(id) FROM pur_purchase_order_items),1), true);
+-- ----------------------------
+-- fin_payables — 应付单（PENDING/SETTLED/CANCELLED）
+-- ----------------------------
+INSERT INTO fin_payables (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, payable_number, po_ref, supplier_code, amount, paid_amount, due_date, status) VALUES
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0001', 'PO-2026-0001', 'SUP-001', 5000, 0, now() + interval '30 days', 'PENDING'),
+    (2, now() - interval '40 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0002', 'PO-2025-8812', 'SUP-002', 1000, 1000, now() - interval '5 days', 'SETTLED'),
+    (3, now() - interval '15 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0003', 'PO-2026-0003', 'SUP-001', 300, 0, now() + interval '15 days', 'CANCELLED')
+;
+SELECT setval(pg_get_serial_sequence('public.fin_payables','id'), COALESCE((SELECT MAX(id) FROM fin_payables),1), true);
+-- ----------------------------
+-- fin_payments — 付款（APPLIED/PENDING/REJECTED）
+-- ----------------------------
+INSERT INTO fin_payments (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, payment_number, payable_id, amount, method, status) VALUES
+    (1, now() - interval '38 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0001', 2, 1000, 'BANK_TRANSFER', 'APPLIED'),
+    (2, now() - interval '1 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0002', 1, 2000, 'BANK_TRANSFER', 'PENDING'),
+    (3, now() - interval '3 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0003', 1, 500, 'CHECK', 'REJECTED')
+;
+SELECT setval(pg_get_serial_sequence('public.fin_payments','id'), COALESCE((SELECT MAX(id) FROM fin_payments),1), true);
+-- ----------------------------
+-- apr_approval_requests — 审批请求（APPROVED/PENDING/REJECTED）
+-- ----------------------------
+INSERT INTO apr_approval_requests (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, title, biz_type, biz_ref, summary, status, applicant_id, approver_id, comment) VALUES
+    (1, now() - interval '10 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-0001 审批', 'PURCHASE_ORDER', 'PO-2026-0001', '向 SUP-001 采购 M8 不锈钢内六角螺栓 1000 件，金额 50.00 元', 'APPROVED', 2, 2, '金额在授权范围内，同意'),
+    (2, now() - interval '2 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-0004 审批', 'PURCHASE_ORDER', 'PO-2026-0004', '向 SUP-002 采购贴片电阻 800 件，金额 16.00 元', 'PENDING', 2, NULL, ''),
+    (3, now() - interval '20 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-9999 审批', 'PURCHASE_ORDER', 'PO-2026-9999', '大额紧急采购申请', 'REJECTED', 2, 2, '超出单笔采购限额，需总监复核后重新提交')
+;
+SELECT setval(pg_get_serial_sequence('public.apr_approval_requests','id'), COALESCE((SELECT MAX(id) FROM apr_approval_requests),1), true);
 
 COMMIT;

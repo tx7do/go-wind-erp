@@ -18,11 +18,11 @@ import (
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 )
 
-// 采购审批联动约定：审批单 biz_type 固定为 "purchase_order"，
-// biz_ref 形如 "purchase_order:{poId}"。审批中心通过/驳回时按此回写采购单状态。
+// 采购审批联动约定：审批单 biz_type 固定为 "PURCHASE_ORDER"，
+// biz_ref 形如 "PURCHASE_ORDER:{poId}"。审批中心通过/驳回时按此回写采购单状态。
 const (
-	poApprovalBizType = "purchase_order"
-	poApprovalBizRef  = "purchase_order:%d"
+	poApprovalBizType = "PURCHASE_ORDER"
+	poApprovalBizRef  = "PURCHASE_ORDER:%d"
 )
 
 // PurchaseOrderService 采购单服务

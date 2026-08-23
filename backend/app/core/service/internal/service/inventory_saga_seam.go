@@ -13,11 +13,11 @@ import (
 // inv:low_stock_threshold 按租户覆盖）。GetOverview 的缺省与之同源。
 const defaultLowStockThreshold int64 = 10
 
-// replenishment 审批联动约定：biz_type="replenishment"，
-// biz_ref="replenishment:{warehouseCode}:{skuCode}"。
+// replenishment 审批联动约定：biz_type="REPLENISHMENT"，
+// biz_ref="REPLENISHMENT:{warehouseCode}:{skuCode}"。
 const (
-	replenishmentBizType = "replenishment"
-	replenishmentBizRef  = "replenishment:%s:%s"
+	replenishmentBizType = "REPLENISHMENT"
+	replenishmentBizRef  = "REPLENISHMENT:%s:%s"
 )
 
 // stockEvent 出库事件（SAGA 反应的输入）。

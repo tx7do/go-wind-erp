@@ -39,12 +39,12 @@ type ApprovalRequestService struct {
 
 	approvalRequestRepo *data.ApprovalRequestRepo
 
-	// 采购联动：biz_type=purchase_order 的审批通过/驳回时回写采购单状态。
+	// 采购联动：biz_type=PURCHASE_ORDER 的审批通过/驳回时回写采购单状态。
 	// 经 PurchaseOrderService 动作走单一通路（自审守卫、应付生成等
 	// 服务层逻辑全部生效），而非直连 repo 绕过。
 	purchaseOrderService *PurchaseOrderService
 
-	// 付款联动：biz_type=payment 的审批通过/拒绝时驱动付款入账。
+	// 付款联动：biz_type=PAYMENT 的审批通过/拒绝时驱动付款入账。
 	paymentService *PaymentService
 
 	// 审结站内信通知（申请人）。
@@ -203,9 +203,9 @@ func (s *ApprovalRequestService) syncBusiness(
 	}
 }
 
-// syncReplenishment 对 biz_type=replenishment 的审批，通过后自动创建
+// syncReplenishment 对 biz_type=REPLENISHMENT 的审批，通过后自动创建
 // 草稿采购单（供应商史缺失时不建单，仅记录——建议单仍留痕）并通知
-// 申请人草稿已就绪。biz_ref 形如 "replenishment:{warehouse}:{sku}"。
+// 申请人草稿已就绪。biz_ref 形如 "REPLENISHMENT:{warehouse}:{sku}"。
 func (s *ApprovalRequestService) syncReplenishment(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
@@ -215,7 +215,7 @@ func (s *ApprovalRequestService) syncReplenishment(
 		return
 	}
 
-	raw := strings.TrimPrefix(old.GetBizRef(), "replenishment:")
+	raw := strings.TrimPrefix(old.GetBizRef(), "REPLENISHMENT:")
 	parts := strings.SplitN(raw, ":", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		s.log.Errorf("parse replenishment ref failed: %s", old.GetBizRef())
@@ -234,14 +234,14 @@ func (s *ApprovalRequestService) syncReplenishment(
 	}
 }
 
-// syncPayment 对 biz_type=payment 的审批，驱动付款入账/拒绝。
-// biz_ref 形如 "payment:{id}"。
+// syncPayment 对 biz_type=PAYMENT 的审批，驱动付款入账/拒绝。
+// biz_ref 形如 "PAYMENT:{id}"。
 func (s *ApprovalRequestService) syncPayment(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
 ) {
-	raw := strings.TrimPrefix(old.GetBizRef(), "payment:")
+	raw := strings.TrimPrefix(old.GetBizRef(), "PAYMENT:")
 	paymentID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse payment ref failed: %s", old.GetBizRef())
@@ -260,17 +260,17 @@ func (s *ApprovalRequestService) syncPayment(
 	}
 }
 
-// syncPurchaseOrder 对 biz_type=purchase_order 的审批，将其结果同步到
-// 采购单（SUBMITTED→APPROVED/REJECTED）。biz_ref 形如 "purchase_order:{id}"。
+// syncPurchaseOrder 对 biz_type=PURCHASE_ORDER 的审批，将其结果同步到
+// 采购单（SUBMITTED→APPROVED/REJECTED）。biz_ref 形如 "PURCHASE_ORDER:{id}"。
 func (s *ApprovalRequestService) syncPurchaseOrder(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
 ) {
-	if old.GetBizType() != "purchase_order" {
+	if old.GetBizType() != "PURCHASE_ORDER" {
 		return
 	}
-	raw := strings.TrimPrefix(old.GetBizRef(), "purchase_order:")
+	raw := strings.TrimPrefix(old.GetBizRef(), "PURCHASE_ORDER:")
 	poID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse purchase order ref failed: %s", old.GetBizRef())

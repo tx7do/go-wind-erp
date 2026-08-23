@@ -16,10 +16,10 @@ import (
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 )
 
-// 付款审批联动约定：biz_type="payment"，biz_ref="payment:{id}"。
+// 付款审批联动约定：biz_type="PAYMENT"，biz_ref="PAYMENT:{id}"。
 const (
-	paymentApprovalBizType = "payment"
-	paymentApprovalBizRef  = "payment:%d"
+	paymentApprovalBizType = "PAYMENT"
+	paymentApprovalBizRef  = "PAYMENT:%d"
 )
 
 // PaymentService 付款服务（Create=提交付款申请，经审批后入账）
@@ -66,7 +66,7 @@ func (s *PaymentService) Get(ctx context.Context, req *financeV1.GetPaymentReque
 }
 
 // Create 提交付款申请：落 PENDING 付款记录并自动生成审批单
-// （biz_type="payment"，biz_ref="payment:{id}"）。审批通过后经
+// （biz_type="PAYMENT"，biz_ref="PAYMENT:{id}"）。审批通过后经
 // [ApplyApproved] 真正入账（累计应付单）；驳回则 [RejectApplied]。
 // 预校验仅做只读检查（防呆）；权威的防超付/状态守卫在入账时原子执行。
 func (s *PaymentService) Create(ctx context.Context, req *financeV1.CreatePaymentRequest) (*emptypb.Empty, error) {

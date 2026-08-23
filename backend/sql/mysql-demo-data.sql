@@ -13,6 +13,19 @@ TRUNCATE TABLE sys_login_policies AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_dict_types AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_dict_entries AUTO_INCREMENT = 1;
 TRUNCATE TABLE internal_message_categories AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_warehouses AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_stock_locations AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_stock_quants AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_stock_pickings AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_stock_moves AUTO_INCREMENT = 1;
+TRUNCATE TABLE inv_stock_move_lines AUTO_INCREMENT = 1;
+TRUNCATE TABLE prd_products AUTO_INCREMENT = 1;
+TRUNCATE TABLE pur_suppliers AUTO_INCREMENT = 1;
+TRUNCATE TABLE pur_purchase_orders AUTO_INCREMENT = 1;
+TRUNCATE TABLE pur_purchase_order_items AUTO_INCREMENT = 1;
+TRUNCATE TABLE fin_payables AUTO_INCREMENT = 1;
+TRUNCATE TABLE fin_payments AUTO_INCREMENT = 1;
+TRUNCATE TABLE apr_approval_requests AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_tenants AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_users AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_user_credentials AUTO_INCREMENT = 1;
@@ -115,7 +128,8 @@ VALUES
     (2, 'DEVICE_TYPE', '设备类型', 20, 'IoT平台接入的设备品类，新增需同步至设备接入模块', true, NOW()),
     (3, 'ORDER_STATUS', '订单状态', 30, '电商订单的全生命周期状态', true, NOW()),
     (4, 'GENDER', '性别', 40, '用户性别枚举，默认未知', true, NOW()),
-    (5, 'PAYMENT_METHOD', '支付方式', 50, '支持的支付渠道，含第三方支付和自有渠道', true, NOW());
+    (5, 'PAYMENT_METHOD', '支付方式', 50, '支持的支付渠道，含第三方支付和自有渠道', true, NOW()),
+    (6, 'APPROVAL_BIZ_TYPE', '审批业务类型', 60, '审批单 biz_type 的展示标签来源', true, NOW());
 ALTER TABLE sys_dict_types AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_dict_types);
 
 -- 字典条目
@@ -143,7 +157,11 @@ VALUES
     (15, 5, 'ALIPAY', '支付宝', 1, 1, '支持花呗、余额宝', true, NOW()),
     (16, 5, 'WECHAT', '微信支付', 2, 2, '需绑定微信', true, NOW()),
     (17, 5, 'UNIONPAY', '银联支付', 3, 3, '支持信用卡、储蓄卡', true, NOW()),
-    (18, 5, 'CASH', '现金支付', 4, 4, '线下支付，已废弃（2025-01停用）', false, NOW());
+    (18, 5, 'CASH', '现金支付', 4, 4, '线下支付，已废弃（2025-01停用）', false, NOW()),
+    -- 审批业务类型（审批单 biz_type 的展示标签来源）
+    (19, 6, 'PURCHASE_ORDER', '采购订单', 0, 1, '采购单提交的审批请求', true, NOW()),
+    (20, 6, 'REPLENISHMENT', '补货', 0, 2, '库存补货触发的审批请求', true, NOW()),
+    (21, 6, 'PAYMENT', '付款', 0, 3, '财务付款触发的审批请求', true, NOW());
 ALTER TABLE sys_dict_entries AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_dict_entries);
 
 -- 站内信分类（扁平结构，无树形层级）
@@ -173,6 +191,128 @@ VALUES
 ALTER TABLE internal_message_categories AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM internal_message_categories);
 
 -- 提交事务+恢复外键检查
+
+-- ============================================================
+-- ERP 演示数据（仓库/库位/库存/拣货/移动 + 采购/应付/付款/审批）
+-- ============================================================
+-- ----------------------------
+-- inv_warehouses — 仓库（含收货库位软引用）
+-- ----------------------------
+INSERT INTO inv_warehouses (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, location, enable, receiving_location_id) VALUES
+    (1, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'WH-BJ', '北京中心仓', '北京市朝阳区', true, 1),
+    (2, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'WH-SH', '上海区域仓', '上海市浦东新区', true, 2)
+;
+ALTER TABLE inv_warehouses AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_warehouses);
+-- ----------------------------
+-- inv_stock_locations — 库位（INTERNAL 仓库内 / SUPPLIER 入库源）
+-- ----------------------------
+INSERT INTO inv_stock_locations (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, name, parent_id, path, usage, warehouse_code) VALUES
+    (1, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-收货暂存区', NULL, '/1/', 'INTERNAL', 'WH-BJ'),
+    (2, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-收货暂存区', NULL, '/2/', 'INTERNAL', 'WH-SH'),
+    (3, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-存储区A', NULL, '/3/', 'INTERNAL', 'WH-BJ'),
+    (4, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-存储区A', NULL, '/4/', 'INTERNAL', 'WH-SH'),
+    (5, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-001', NULL, '/5/', 'SUPPLIER', NULL),
+    (6, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-002', NULL, '/6/', 'SUPPLIER', NULL)
+;
+ALTER TABLE inv_stock_locations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_locations);
+-- ----------------------------
+-- inv_stock_quants — 库存量（按 库位×产品 唯一）
+-- ----------------------------
+INSERT INTO inv_stock_quants (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, location_id, product_code, quantity) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 9 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 1000),
+    (2, DATE_SUB(NOW(), INTERVAL 30 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 4, 'SKU-A003', 50),
+    (3, DATE_SUB(NOW(), INTERVAL 30 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 3, 'SKU-A002', 200)
+;
+ALTER TABLE inv_stock_quants AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_quants);
+-- ----------------------------
+-- inv_stock_pickings — 拣货单（INCOMING 入库 / INTERNAL 调拨）
+-- ----------------------------
+INSERT INTO inv_stock_pickings (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_number, picking_type, source_location_id, destination_location_id, purchase_order_id, partner_code) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 9 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-IN-2026-0001', 'INCOMING', 5, 1, 1, 'SUP-001'),
+    (2, DATE_SUB(NOW(), INTERVAL 6 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-TR-2026-0002', 'INTERNAL', 1, 3, 0, NULL)
+;
+ALTER TABLE inv_stock_pickings AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_pickings);
+-- ----------------------------
+-- inv_stock_moves — 库存移动计划（DONE/DRAFT 等多状态）
+-- ----------------------------
+INSERT INTO inv_stock_moves (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_id, product_code, source_location_id, destination_location_id, planned_quantity, state, purchase_order_item_id) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 9 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 5, 1, 1000, 'DONE', 1),
+    (2, DATE_SUB(NOW(), INTERVAL 6 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 2, 'SKU-A001', 1, 3, 1000, 'DRAFT', 0)
+;
+ALTER TABLE inv_stock_moves AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_moves);
+-- ----------------------------
+-- inv_stock_move_lines — 库存移动执行记录（仅 DONE 移动有）
+-- ----------------------------
+INSERT INTO inv_stock_move_lines (id, created_at, created_by, updated_by, deleted_by, remark, tenant_id, move_id, picking_id, product_code, source_location_id, destination_location_id, executed_quantity) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 9 DAY), NULL, NULL, NULL, NULL, 1, 1, 1, 'SKU-A001', 5, 1, 1000)
+;
+ALTER TABLE inv_stock_move_lines AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_move_lines);
+-- ----------------------------
+-- prd_products — 产品（SKU）
+-- ----------------------------
+INSERT INTO prd_products (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, spec, unit, enable) VALUES
+    (1, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A001', 'M8不锈钢内六角螺栓', 'M8×30mm', '个', true),
+    (2, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A002', '贴片电阻 10kΩ', '0805 1%精度', '个', true),
+    (3, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SKU-A003', 'PVC绝缘穿线管', 'DN20', '米', true)
+;
+ALTER TABLE prd_products AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM prd_products);
+-- ----------------------------
+-- pur_suppliers — 供应商（含禁用）
+-- ----------------------------
+INSERT INTO pur_suppliers (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, code, name, contact, phone, enable) VALUES
+    (1, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-001', '华东五金供货商', '张铭', '13800000001', true),
+    (2, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-002', '南方电子元件厂', '李锐', '13800000002', true),
+    (3, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'SUP-003', '北方建材批发站', '王磊', '13800000003', false)
+;
+ALTER TABLE pur_suppliers AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM pur_suppliers);
+-- ----------------------------
+-- pur_purchase_orders — 采购单（多状态）
+-- ----------------------------
+INSERT INTO pur_purchase_orders (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, po_number, supplier_code, status, total_amount, warehouse_code) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 10 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0001', 'SUP-001', 'APPROVED', 5000, 'WH-BJ'),
+    (2, DATE_SUB(NOW(), INTERVAL 8 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0002', 'SUP-002', 'DRAFT', 1000, 'WH-SH'),
+    (3, DATE_SUB(NOW(), INTERVAL 15 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0003', 'SUP-001', 'CANCELLED', 300, 'WH-BJ'),
+    (4, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PO-2026-0004', 'SUP-002', 'SUBMITTED', 1600, 'WH-SH')
+;
+ALTER TABLE pur_purchase_orders AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM pur_purchase_orders);
+-- ----------------------------
+-- pur_purchase_order_items — 采购单明细
+-- ----------------------------
+INSERT INTO pur_purchase_order_items (id, created_at, remark, tenant_id, po_id, sku_code, quantity, unit_price, amount, received_quantity) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 10 DAY), NULL, 1, 1, 'SKU-A001', 1000, 5, 5000, 1000),
+    (2, DATE_SUB(NOW(), INTERVAL 8 DAY), NULL, 1, 2, 'SKU-A002', 500, 2, 1000, 0),
+    (3, DATE_SUB(NOW(), INTERVAL 15 DAY), NULL, 1, 3, 'SKU-A003', 100, 3, 300, 0),
+    (4, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL, 1, 4, 'SKU-A002', 800, 2, 1600, 0)
+;
+ALTER TABLE pur_purchase_order_items AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM pur_purchase_order_items);
+-- ----------------------------
+-- fin_payables — 应付单（PENDING/SETTLED/CANCELLED）
+-- ----------------------------
+INSERT INTO fin_payables (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, payable_number, po_ref, supplier_code, amount, paid_amount, due_date, status) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 9 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0001', 'PO-2026-0001', 'SUP-001', 5000, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), 'PENDING'),
+    (2, DATE_SUB(NOW(), INTERVAL 40 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0002', 'PO-2025-8812', 'SUP-002', 1000, 1000, DATE_SUB(NOW(), INTERVAL 5 DAY), 'SETTLED'),
+    (3, DATE_SUB(NOW(), INTERVAL 15 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'AP-2026-0003', 'PO-2026-0003', 'SUP-001', 300, 0, DATE_ADD(NOW(), INTERVAL 15 DAY), 'CANCELLED')
+;
+ALTER TABLE fin_payables AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM fin_payables);
+-- ----------------------------
+-- fin_payments — 付款（APPLIED/PENDING/REJECTED）
+-- ----------------------------
+INSERT INTO fin_payments (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, payment_number, payable_id, amount, method, status) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 38 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0001', 2, 1000, 'BANK_TRANSFER', 'APPLIED'),
+    (2, DATE_SUB(NOW(), INTERVAL 1 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0002', 1, 2000, 'BANK_TRANSFER', 'PENDING'),
+    (3, DATE_SUB(NOW(), INTERVAL 3 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PAY-2026-0003', 1, 500, 'CHECK', 'REJECTED')
+;
+ALTER TABLE fin_payments AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM fin_payments);
+-- ----------------------------
+-- apr_approval_requests — 审批请求（APPROVED/PENDING/REJECTED）
+-- ----------------------------
+INSERT INTO apr_approval_requests (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, title, biz_type, biz_ref, summary, status, applicant_id, approver_id, comment) VALUES
+    (1, DATE_SUB(NOW(), INTERVAL 10 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-0001 审批', 'PURCHASE_ORDER', 'PO-2026-0001', '向 SUP-001 采购 M8 不锈钢内六角螺栓 1000 件，金额 50.00 元', 'APPROVED', 2, 2, '金额在授权范围内，同意'),
+    (2, DATE_SUB(NOW(), INTERVAL 2 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-0004 审批', 'PURCHASE_ORDER', 'PO-2026-0004', '向 SUP-002 采购贴片电阻 800 件，金额 16.00 元', 'PENDING', 2, NULL, ''),
+    (3, DATE_SUB(NOW(), INTERVAL 20 DAY), NULL, NULL, NULL, NULL, NULL, NULL, 1, '采购单 PO-2026-9999 审批', 'PURCHASE_ORDER', 'PO-2026-9999', '大额紧急采购申请', 'REJECTED', 2, 2, '超出单笔采购限额，需总监复核后重新提交')
+;
+ALTER TABLE apr_approval_requests AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM apr_approval_requests);
+
 COMMIT;
 SET FOREIGN_KEY_CHECKS = 1;
 
