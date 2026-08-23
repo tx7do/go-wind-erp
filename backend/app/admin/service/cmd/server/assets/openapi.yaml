@@ -8738,6 +8738,12 @@ components:
                 remark:
                     type: string
                     description: 备注
+                fromWarehouseCode:
+                    type: string
+                    description: 调拨源仓库编码
+                toWarehouseCode:
+                    type: string
+                    description: 调拨目的仓库编码
                 tenantId:
                     type: integer
                     description: 租户ID，0代表系统全局
