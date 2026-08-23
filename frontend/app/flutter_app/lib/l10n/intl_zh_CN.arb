@@ -81,5 +81,11 @@
   "approvalCancel": "撤销",
   "approvalCancelConfirm": "确定撤销该审批请求吗？",
   "approvalComment": "审批意见",
-  "approvalActionRejected": "操作被拒绝：状态已变更或无权限"
+  "approvalActionRejected": "操作被拒绝：状态已变更或无权限",
+  "pickingTypeIncoming": "入库",
+  "pickingTypeInternal": "内部调拨",
+  "pickingStateDraft": "草稿",
+  "pickingStateConfirmed": "已确认",
+  "pickingStateDone": "已完成",
+  "pickingStateCancelled": "已取消"
 }

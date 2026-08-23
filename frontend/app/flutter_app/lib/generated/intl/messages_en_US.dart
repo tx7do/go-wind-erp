@@ -101,6 +101,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "pickWarehouseFirst": MessageLookupByLibrary.simpleMessage(
       "Select a warehouse first",
     ),
+    "pickingStateCancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
+    "pickingStateConfirmed": MessageLookupByLibrary.simpleMessage("Confirmed"),
+    "pickingStateDone": MessageLookupByLibrary.simpleMessage("Done"),
+    "pickingStateDraft": MessageLookupByLibrary.simpleMessage("Draft"),
+    "pickingTypeIncoming": MessageLookupByLibrary.simpleMessage("Inbound"),
+    "pickingTypeInternal": MessageLookupByLibrary.simpleMessage(
+      "Internal Transfer",
+    ),
     "quantityInvalid": MessageLookupByLibrary.simpleMessage(
       "Enter a positive whole number",
     ),

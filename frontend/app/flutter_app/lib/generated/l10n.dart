@@ -548,6 +548,51 @@ class S {
       args: [],
     );
   }
+
+  /// `入库`
+  String get pickingTypeIncoming {
+    return Intl.message('入库', name: 'pickingTypeIncoming', desc: '', args: []);
+  }
+
+  /// `内部调拨`
+  String get pickingTypeInternal {
+    return Intl.message(
+      '内部调拨',
+      name: 'pickingTypeInternal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `草稿`
+  String get pickingStateDraft {
+    return Intl.message('草稿', name: 'pickingStateDraft', desc: '', args: []);
+  }
+
+  /// `已确认`
+  String get pickingStateConfirmed {
+    return Intl.message(
+      '已确认',
+      name: 'pickingStateConfirmed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `已完成`
+  String get pickingStateDone {
+    return Intl.message('已完成', name: 'pickingStateDone', desc: '', args: []);
+  }
+
+  /// `已取消`
+  String get pickingStateCancelled {
+    return Intl.message(
+      '已取消',
+      name: 'pickingStateCancelled',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

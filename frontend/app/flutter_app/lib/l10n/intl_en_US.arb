@@ -81,5 +81,11 @@
   "approvalCancel": "Cancel Request",
   "approvalCancelConfirm": "Cancel this approval request?",
   "approvalComment": "Comment",
-  "approvalActionRejected": "Rejected: state changed or no permission"
+  "approvalActionRejected": "Rejected: state changed or no permission",
+  "pickingTypeIncoming": "Inbound",
+  "pickingTypeInternal": "Internal Transfer",
+  "pickingStateDraft": "Draft",
+  "pickingStateConfirmed": "Confirmed",
+  "pickingStateDone": "Done",
+  "pickingStateCancelled": "Cancelled"
 }

@@ -288,11 +288,35 @@ class _WmsPageState extends State<WmsPage> {
               dense: true,
               leading: const Icon(Icons.swap_horiz, color: Colors.grey),
               title: Text(p.pickingNumber),
-              subtitle: Text('${p.pickingType} · ${p.derivedState}'),
+              subtitle: Text(_pickingSubtitle(loc, p.pickingType, p.derivedState)),
             ),
         ],
       ),
     );
+  }
+
+  /// 将拣货单类型/派生态的原始枚举值映射为本地化文案，未知值返回空串。
+  String _pickingTypeLabel(S loc, String raw) => switch (raw) {
+        'INCOMING' => loc.pickingTypeIncoming,
+        'INTERNAL' => loc.pickingTypeInternal,
+        _ => '',
+      };
+
+  String _pickingStateLabel(S loc, String raw) => switch (raw) {
+        'DRAFT' => loc.pickingStateDraft,
+        'CONFIRMED' => loc.pickingStateConfirmed,
+        'DONE' => loc.pickingStateDone,
+        'CANCELLED' => loc.pickingStateCancelled,
+        _ => '',
+      };
+
+  String _pickingSubtitle(S loc, String typeRaw, String stateRaw) {
+    final parts = <String>[];
+    final type = _pickingTypeLabel(loc, typeRaw);
+    if (type.isNotEmpty) parts.add(type);
+    final state = _pickingStateLabel(loc, stateRaw);
+    if (state.isNotEmpty) parts.add(state);
+    return parts.join(' · ');
   }
 
   void _showSnackBar(BuildContext context, String text) {
