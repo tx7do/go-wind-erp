@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "dict/service/v1/dict_entry.proto";
+
+// 字典条目只读查询服务（移动端：按类型编码查询启用项的本地化标签，用于
+// 将后端编码值（如审批单 biz_type）解析为展示文案；不暴露增删改）。
+service DictEntryLookup {
+  // 按类型编码查询启用的字典条目（含当前语言翻译）
+  rpc ListByTypeCode(dict.service.v1.ListDictEntryByTypeCodeRequest) returns (dict.service.v1.ListDictEntryByTypeCodeResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/dict/entries/by-type-code"
+    };
+  }
+}

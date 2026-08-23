@@ -28,6 +28,8 @@ var ProviderSet = wire.NewSet(
 
 	service.NewApprovalRequestService,
 
+	service.NewDictEntryLookup,
+
 	service.NewPurchaseOrderService,
 
 	service.NewPayableService,

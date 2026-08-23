@@ -1490,6 +1490,373 @@ enum AuthenticationServiceV1TokenType {
   String toString() => value;
 }
 
+/// 字典条目只读查询服务（移动端：按类型编码查询启用项的本地化标签，用于
+/// 将后端编码值（如审批单 biz_type）解析为展示文案；不暴露增删改）。
+class DictEntryLookupClient {
+  final ClientTransport _transport;
+
+  DictEntryLookupClient(this._transport);
+
+  /// 按类型编码查询启用的字典条目（含当前语言翻译）
+  Future<DictServiceV1ListDictEntryByTypeCodeResponse> listByTypeCode(DictServiceV1ListDictEntryByTypeCodeRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/dict/entries/by-type-code';
+    final queryParams = <String>[];
+    if (request.typeCode != null) {
+      queryParams.add('typeCode=${Uri.encodeComponent(request.typeCode!.toString())}');
+    }
+    if (request.local != null) {
+      queryParams.add('local=${Uri.encodeComponent(request.local!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'DictEntryLookup',
+      method: 'ListByTypeCode',
+    ), headers: headers);
+    return DictServiceV1ListDictEntryByTypeCodeResponse.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+class DictServiceV1ListDictEntryByTypeCodeRequest {
+  String? local;
+  String? typeCode;
+
+  DictServiceV1ListDictEntryByTypeCodeRequest({
+    this.local,
+    this.typeCode,
+  });
+
+  factory DictServiceV1ListDictEntryByTypeCodeRequest.fromJson(Map<String, dynamic> json) {
+    return DictServiceV1ListDictEntryByTypeCodeRequest(
+      local: json['local'] as String?,
+      typeCode: json['typeCode'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (local != null) json['local'] = local;
+    if (typeCode != null) json['typeCode'] = typeCode;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'DictServiceV1ListDictEntryByTypeCodeRequest(local: $local, typeCode: $typeCode)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is DictServiceV1ListDictEntryByTypeCodeRequest &&
+      runtimeType == other.runtimeType
+      && local == other.local
+      && typeCode == other.typeCode
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    local,
+    typeCode,
+  ]);
+
+  DictServiceV1ListDictEntryByTypeCodeRequest copyWith({
+    String? local,
+    String? typeCode,
+  }) {
+    return DictServiceV1ListDictEntryByTypeCodeRequest(
+      local: local ?? this.local,
+      typeCode: typeCode ?? this.typeCode,
+    );
+  }
+}
+
+class DictServiceV1ListDictEntryByTypeCodeResponse {
+  List<DictServiceV1DictEntry>? items;
+
+  DictServiceV1ListDictEntryByTypeCodeResponse({
+    this.items,
+  });
+
+  factory DictServiceV1ListDictEntryByTypeCodeResponse.fromJson(Map<String, dynamic> json) {
+    return DictServiceV1ListDictEntryByTypeCodeResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => DictServiceV1DictEntry.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'DictServiceV1ListDictEntryByTypeCodeResponse(items: $items)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is DictServiceV1ListDictEntryByTypeCodeResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+  ]);
+
+  DictServiceV1ListDictEntryByTypeCodeResponse copyWith({
+    List<DictServiceV1DictEntry>? items,
+  }) {
+    return DictServiceV1ListDictEntryByTypeCodeResponse(
+      items: items ?? this.items,
+    );
+  }
+}
+
+/// 字典项
+class DictServiceV1DictEntry {
+  String? createdAt;
+  int? createdBy;
+  DictServiceV1DictEntryI18n? currentI18n;
+  String? deletedAt;
+  int? deletedBy;
+  String? entryValue;
+  Map<String, DictServiceV1DictEntryI18n>? i18n;
+  int? id;
+  bool? isEnabled;
+  int? numericValue;
+  int? sortOrder;
+  int? tenantId;
+  String? tenantName;
+  int? typeId;
+  String? updatedAt;
+  int? updatedBy;
+
+  DictServiceV1DictEntry({
+    this.createdAt,
+    this.createdBy,
+    this.currentI18n,
+    this.deletedAt,
+    this.deletedBy,
+    this.entryValue,
+    this.i18n,
+    this.id,
+    this.isEnabled,
+    this.numericValue,
+    this.sortOrder,
+    this.tenantId,
+    this.tenantName,
+    this.typeId,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory DictServiceV1DictEntry.fromJson(Map<String, dynamic> json) {
+    return DictServiceV1DictEntry(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      currentI18n: json['currentI18n'] != null ? DictServiceV1DictEntryI18n.fromJson(json['currentI18n'] as Map<String, dynamic>) : null,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      entryValue: json['entryValue'] as String?,
+      i18n: (json['i18n'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, DictServiceV1DictEntryI18n.fromJson(v as Map<String, dynamic>))),
+      id: json['id'] as int?,
+      isEnabled: json['isEnabled'] as bool?,
+      numericValue: json['numericValue'] as int?,
+      sortOrder: json['sortOrder'] as int?,
+      tenantId: json['tenantId'] as int?,
+      tenantName: json['tenantName'] as String?,
+      typeId: json['typeId'] as int?,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (currentI18n != null) json['currentI18n'] = currentI18n!.toJson();
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (entryValue != null) json['entryValue'] = entryValue;
+    if (i18n != null) json['i18n'] = i18n!.map((k, v) => MapEntry(k, v.toJson()));
+    if (id != null) json['id'] = id;
+    if (isEnabled != null) json['isEnabled'] = isEnabled;
+    if (numericValue != null) json['numericValue'] = numericValue;
+    if (sortOrder != null) json['sortOrder'] = sortOrder;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantName != null) json['tenantName'] = tenantName;
+    if (typeId != null) json['typeId'] = typeId;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'DictServiceV1DictEntry(createdAt: $createdAt, createdBy: $createdBy, currentI18n: $currentI18n, deletedAt: $deletedAt, deletedBy: $deletedBy, entryValue: $entryValue, i18n: $i18n, id: $id, isEnabled: $isEnabled, numericValue: $numericValue, sortOrder: $sortOrder, tenantId: $tenantId, tenantName: $tenantName, typeId: $typeId, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is DictServiceV1DictEntry &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && currentI18n == other.currentI18n
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && entryValue == other.entryValue
+      && i18n == other.i18n
+      && id == other.id
+      && isEnabled == other.isEnabled
+      && numericValue == other.numericValue
+      && sortOrder == other.sortOrder
+      && tenantId == other.tenantId
+      && tenantName == other.tenantName
+      && typeId == other.typeId
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    currentI18n,
+    deletedAt,
+    deletedBy,
+    entryValue,
+    i18n,
+    id,
+    isEnabled,
+    numericValue,
+    sortOrder,
+    tenantId,
+    tenantName,
+    typeId,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  DictServiceV1DictEntry copyWith({
+    String? createdAt,
+    int? createdBy,
+    DictServiceV1DictEntryI18n? currentI18n,
+    String? deletedAt,
+    int? deletedBy,
+    String? entryValue,
+    Map<String, DictServiceV1DictEntryI18n>? i18n,
+    int? id,
+    bool? isEnabled,
+    int? numericValue,
+    int? sortOrder,
+    int? tenantId,
+    String? tenantName,
+    int? typeId,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return DictServiceV1DictEntry(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      currentI18n: currentI18n ?? this.currentI18n,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      entryValue: entryValue ?? this.entryValue,
+      i18n: i18n ?? this.i18n,
+      id: id ?? this.id,
+      isEnabled: isEnabled ?? this.isEnabled,
+      numericValue: numericValue ?? this.numericValue,
+      sortOrder: sortOrder ?? this.sortOrder,
+      tenantId: tenantId ?? this.tenantId,
+      tenantName: tenantName ?? this.tenantName,
+      typeId: typeId ?? this.typeId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+}
+
+/// 字典项多语言信息
+class DictServiceV1DictEntryI18n {
+  String? description;
+  String? entryLabel;
+  String? languageCode;
+  String? languageName;
+
+  DictServiceV1DictEntryI18n({
+    this.description,
+    this.entryLabel,
+    this.languageCode,
+    this.languageName,
+  });
+
+  factory DictServiceV1DictEntryI18n.fromJson(Map<String, dynamic> json) {
+    return DictServiceV1DictEntryI18n(
+      description: json['description'] as String?,
+      entryLabel: json['entryLabel'] as String?,
+      languageCode: json['languageCode'] as String?,
+      languageName: json['languageName'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (description != null) json['description'] = description;
+    if (entryLabel != null) json['entryLabel'] = entryLabel;
+    if (languageCode != null) json['languageCode'] = languageCode;
+    if (languageName != null) json['languageName'] = languageName;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'DictServiceV1DictEntryI18n(description: $description, entryLabel: $entryLabel, languageCode: $languageCode, languageName: $languageName)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is DictServiceV1DictEntryI18n &&
+      runtimeType == other.runtimeType
+      && description == other.description
+      && entryLabel == other.entryLabel
+      && languageCode == other.languageCode
+      && languageName == other.languageName
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    description,
+    entryLabel,
+    languageCode,
+    languageName,
+  ]);
+
+  DictServiceV1DictEntryI18n copyWith({
+    String? description,
+    String? entryLabel,
+    String? languageCode,
+    String? languageName,
+  }) {
+    return DictServiceV1DictEntryI18n(
+      description: description ?? this.description,
+      entryLabel: entryLabel ?? this.entryLabel,
+      languageCode: languageCode ?? this.languageCode,
+      languageName: languageName ?? this.languageName,
+    );
+  }
+}
+
 /// 文件传输服务
 class FileTransferServiceClient {
   final ClientTransport _transport;
@@ -6009,6 +6376,7 @@ class ApiClient {
 
   ApprovalRequestServiceClient? _approvalRequestService;
   AuthenticationServiceClient? _authenticationService;
+  DictEntryLookupClient? _dictEntryLookup;
   FileTransferServiceClient? _fileTransferService;
   PayableServiceClient? _payableService;
   PaymentServiceClient? _paymentService;
@@ -6028,6 +6396,11 @@ class ApiClient {
   AuthenticationServiceClient get authenticationService {
     _authenticationService ??= AuthenticationServiceClient(_transport);
     return _authenticationService!;
+  }
+
+  DictEntryLookupClient get dictEntryLookup {
+    _dictEntryLookup ??= DictEntryLookupClient(_transport);
+    return _dictEntryLookup!;
   }
 
   FileTransferServiceClient get fileTransferService {
@@ -6074,6 +6447,7 @@ class ApiClient {
   void dispose() {
     _approvalRequestService = null;
     _authenticationService = null;
+    _dictEntryLookup = null;
     _fileTransferService = null;
     _payableService = null;
     _paymentService = null;

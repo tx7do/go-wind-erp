@@ -26,6 +26,10 @@ import 'package:go_wind_erp/src/features/dashboard/data/dashboard_repository_imp
     show createDashboardRepositoryImpl;
 import 'package:go_wind_erp/src/features/dashboard/domain/dashboard_repository.dart'
     show DashboardRepository;
+import 'package:go_wind_erp/src/features/dict/data/dict_repository_impl.dart'
+    show createDictRepositoryImpl;
+import 'package:go_wind_erp/src/features/dict/domain/dict_repository.dart'
+    show DictRepository;
 import 'package:go_wind_erp/src/features/wms/data/wms_repository_impl.dart'
     show createWmsRepositoryImpl;
 import 'package:go_wind_erp/src/features/wms/domain/wms_repository.dart'
@@ -65,6 +69,9 @@ void _initTransport() {
   );
   getIt.registerLazySingleton<DashboardRepository>(
     () => createDashboardRepositoryImpl(),
+  );
+  getIt.registerLazySingleton<DictRepository>(
+    () => createDictRepositoryImpl(),
   );
   getIt.registerLazySingleton<WmsRepository>(
     () => createWmsRepositoryImpl(),

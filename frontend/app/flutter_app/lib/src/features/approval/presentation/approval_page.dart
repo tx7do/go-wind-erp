@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:go_wind_erp/generated/l10n.dart';
 import 'package:go_wind_erp/src/features/approval/domain/approval_models.dart';
 import 'package:go_wind_erp/src/features/approval/presentation/approval_cubit.dart';
+import 'package:go_wind_erp/src/features/dict/domain/dict_failure.dart';
+import 'package:go_wind_erp/src/features/dict/domain/dict_label_resolver.dart';
+import 'package:go_wind_erp/src/features/dict/domain/dict_models.dart';
+import 'package:go_wind_erp/src/features/dict/domain/dict_repository.dart';
 
 /// 审批中心页。
 ///
@@ -17,59 +22,112 @@ class ApprovalPage extends StatelessWidget {
     final loc = S.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(loc.navApproval)),
-      body: BlocBuilder<ApprovalCubit, ApprovalState>(
-        builder: (context, state) {
-          if (state is ApprovalReady) {
-            return Column(
-              children: [
-                _buildFilterChips(context, loc, state),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () => context.read<ApprovalCubit>().refresh(),
-                    child: state.requests.isEmpty
-                        ? ListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(24),
-                                child: Center(child: Text(loc.approvalEmpty)),
-                              ),
-                            ],
-                          )
-                        : ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: state.requests.length,
-                            itemBuilder: (_, i) => _buildTile(
-                              context,
-                              loc,
-                              state.requests[i],
-                              state.acting,
+      body: const _ApprovalBody(),
+    );
+  }
+}
+
+/// 审批列表主体。
+///
+/// 在 [initState] 拉取一次 `APPROVAL_BIZ_TYPE` 字典条目（条目内含全量 i18n
+/// 标签，按 typeCode 进程内缓存），后续 [build] 中对 bizType 的标签解析为
+/// 同步操作——经 [DictLabelResolver.labelByValue] 用当前 locale 从已缓存
+/// 条目取展示文案，未命中返回空串。locale 变化会触发 rebuild，标签随之
+/// 刷新，无需重新拉取字典。
+class _ApprovalBody extends StatefulWidget {
+  const _ApprovalBody();
+
+  @override
+  State<_ApprovalBody> createState() => _ApprovalBodyState();
+}
+
+class _ApprovalBodyState extends State<_ApprovalBody> {
+  List<DictEntryInfo> _dictEntries = const [];
+  bool _dictLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDictEntries();
+  }
+
+  Future<void> _loadDictEntries() async {
+    try {
+      final entries = await GetIt.instance<DictRepository>()
+          .listByTypeCode('APPROVAL_BIZ_TYPE');
+      if (!mounted) return;
+      setState(() {
+        _dictEntries = entries;
+        _dictLoaded = true;
+      });
+    } on DictFailure {
+      if (!mounted) return;
+      setState(() {
+        _dictEntries = const [];
+        _dictLoaded = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = S.of(context);
+    if (!_dictLoaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return BlocBuilder<ApprovalCubit, ApprovalState>(
+      builder: (context, state) {
+        if (state is ApprovalReady) {
+          return Column(
+            children: [
+              _buildFilterChips(context, loc, state),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () => context.read<ApprovalCubit>().refresh(),
+                  child: state.requests.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Center(child: Text(loc.approvalEmpty)),
                             ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: state.requests.length,
+                          itemBuilder: (_, i) => _buildTile(
+                            context,
+                            loc,
+                            state.requests[i],
+                            _dictEntries,
+                            state.acting,
                           ),
-                  ),
+                        ),
+                ),
+              ),
+            ],
+          );
+        }
+        if (state is ApprovalFailureState) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(loc.loadFailed),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () =>
+                      context.read<ApprovalCubit>().load(ApprovalFilter.all),
+                  child: Text(loc.retry),
                 ),
               ],
-            );
-          }
-          if (state is ApprovalFailureState) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(loc.loadFailed),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: () =>
-                        context.read<ApprovalCubit>().load(ApprovalFilter.all),
-                    child: Text(loc.retry),
-                  ),
-                ],
-              ),
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 
@@ -103,9 +161,25 @@ class ApprovalPage extends StatelessWidget {
     BuildContext context,
     S loc,
     ApprovalInfo item,
+    List<DictEntryInfo> dictEntries,
     bool acting,
   ) {
     final isPending = item.status == 'PENDING';
+    final bizTypeLabel = DictLabelResolver.labelByValue(
+      item.bizType,
+      dictEntries,
+      Localizations.localeOf(context),
+    );
+    final parts = <String>[];
+    if (bizTypeLabel.isNotEmpty) parts.add(bizTypeLabel);
+    final ref = item.bizRef.trim();
+    if (ref.isNotEmpty) parts.add(ref);
+    final summary = item.summary.trim();
+    final subtitleText = parts.isEmpty
+        ? summary
+        : summary.isEmpty
+            ? parts.join(' · ')
+            : '${parts.join(' · ')}\n$summary';
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
@@ -118,7 +192,7 @@ class ApprovalPage extends StatelessWidget {
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            '${item.bizType} · ${item.bizRef}\n${item.summary}',
+            subtitleText,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -187,7 +261,7 @@ class ApprovalPage extends StatelessWidget {
       'APPROVED' => (loc.approvalStatusApproved, Colors.green),
       'REJECTED' => (loc.approvalStatusRejected, Colors.red),
       'CANCELLED' => (loc.approvalStatusCancelled, Colors.grey),
-      _ => (status, Colors.grey),
+      _ => ('', Colors.grey),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

@@ -19,6 +19,7 @@ import (
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
+	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
@@ -200,6 +201,15 @@ func NewApprovalRequestServiceClient(ctx *bootstrap.Context, r registry.Discover
 	}
 
 	return approvalV1.NewApprovalRequestServiceClient(cli)
+}
+
+func NewDictEntryServiceClient(ctx *bootstrap.Context, r registry.Discovery) dictV1.DictEntryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return dictV1.NewDictEntryServiceClient(cli)
 }
 
 func NewPurchaseOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) procurementV1.PurchaseOrderServiceClient {
