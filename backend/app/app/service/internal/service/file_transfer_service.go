@@ -196,8 +196,8 @@ func (s *FileTransferService) presignedUploadFile(ctx context.Context, req *stor
 	return nil, storageV1.ErrorUploadFailed("presigned upload is not implemented, use direct upload instead")
 }
 
-// UploadFile 上传文件
-func (s *FileTransferService) UploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
+// uploadFile 上传文件的共享分发逻辑，POST 与 PUT 两种入口最终都汇入此处。
+func (s *FileTransferService) uploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
 	switch req.Source.(type) {
 	case *storageV1.UploadFileRequest_File:
 		return s.directUploadFile(ctx, req)
@@ -208,6 +208,16 @@ func (s *FileTransferService) UploadFile(ctx context.Context, req *storageV1.Upl
 	default:
 		return nil, storageV1.ErrorUploadFailed("unknown upload source")
 	}
+}
+
+// PostUploadFile 上传文件 POST 方式
+func (s *FileTransferService) PostUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
+	return s.uploadFile(ctx, req)
+}
+
+// PutUploadFile 上传文件 PUT 方式
+func (s *FileTransferService) PutUploadFile(ctx context.Context, req *storageV1.UploadFileRequest) (*storageV1.UploadFileResponse, error) {
+	return s.uploadFile(ctx, req)
 }
 
 // downloadFileFromURL 从指定的 URL 下载文件内容
