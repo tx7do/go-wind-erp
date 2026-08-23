@@ -30,7 +30,7 @@ async function viteLicensePlugin(
       handler: (_options: NormalizedOutputOptions, bundle: OutputBundle) => {
         const date = dateUtil().format('YYYY-MM-DD ');
         const copyrightText = `/*!
-  * GoWind CMS
+  * GoWind ERP
   * Version: ${version}
   * Author: tx7do
   * Copyright (C) 2026 GoWind
