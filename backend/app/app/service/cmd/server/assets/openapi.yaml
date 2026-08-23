@@ -263,132 +263,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
-    /app/v1/inventories:
-        get:
-            tags:
-                - InventoryService
-            description: 查询库存列表
-            operationId: InventoryService_List
-            parameters:
-                - name: page
-                  in: query
-                  description: 当前页码（从1开始，默认1）
-                  schema:
-                    type: integer
-                    format: uint32
-                - name: pageSize
-                  in: query
-                  description: 每页条数（默认10，建议设置上限如100）
-                  schema:
-                    type: integer
-                    format: uint32
-                - name: offset
-                  in: query
-                  description: 跳过的记录数（从0开始，默认0）
-                  schema:
-                    type: string
-                - name: limit
-                  in: query
-                  description: 最多返回的记录数（默认10，建议设置上限如100）
-                  schema:
-                    type: integer
-                    format: uint32
-                - name: token
-                  in: query
-                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
-                  schema:
-                    type: string
-                - name: noPaging
-                  in: query
-                  description: 是否不分页，如果为true，则page和pageSize参数无效。
-                  schema:
-                    type: boolean
-                - name: query
-                  in: query
-                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
-                  schema:
-                    type: string
-                - name: filter
-                  in: query
-                  description: Google AIP规范字符串过滤条件
-                  schema:
-                    type: string
-                - name: filterExpr.type
-                  in: query
-                  description: 过滤表达式类型
-                  schema:
-                    enum:
-                        - EXPR_TYPE_UNSPECIFIED
-                        - AND
-                        - OR
-                    type: string
-                    format: enum
-                - name: orderBy
-                  in: query
-                  description: 排序条件
-                  schema:
-                    type: string
-                - name: fieldMask
-                  in: query
-                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
-                  schema:
-                    type: string
-                    format: field-mask
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/inventory.service.v1.ListInventoryResponse'
-    /app/v1/inventories/{id}:
-        get:
-            tags:
-                - InventoryService
-            description: 查询库存详情
-            operationId: InventoryService_Get
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: uint32
-                - name: viewMask
-                  in: query
-                  schema:
-                    type: string
-                    format: field-mask
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/inventory.service.v1.Inventory'
-    /app/v1/inventories:overview:
-        get:
-            tags:
-                - InventoryService
-            description: 库存经营总览（看板聚合）
-            operationId: InventoryService_GetOverview
-            parameters:
-                - name: lowStockThreshold
-                  in: query
-                  schema:
-                    type: string
-                - name: lowStockLimit
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/inventory.service.v1.InventoryOverview'
     /app/v1/login:
         post:
             tags:
@@ -856,12 +730,12 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
-    /app/v1/stock-movements:
+    /app/v1/stock-pickings:
         get:
             tags:
-                - StockMovementService
-            description: 查询库存流水列表
-            operationId: StockMovementService_List
+                - StockPickingService
+            description: 查询拣货单列表
+            operationId: StockPickingService_List
             parameters:
                 - name: page
                   in: query
@@ -933,28 +807,28 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/inventory.service.v1.ListStockMovementResponse'
+                                $ref: '#/components/schemas/inventory.service.v1.ListStockPickingResponse'
         post:
             tags:
-                - StockMovementService
-            description: 创建库存流水（扫码入库/出库）
-            operationId: StockMovementService_Create
+                - StockPickingService
+            description: 创建拣货单（扫码调拨）
+            operationId: StockPickingService_Create
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/inventory.service.v1.CreateStockMovementRequest'
+                            $ref: '#/components/schemas/inventory.service.v1.CreateStockPickingRequest'
                 required: true
             responses:
                 "200":
                     description: OK
                     content: {}
-    /app/v1/stock-movements/{id}:
+    /app/v1/stock-pickings/{id}:
         get:
             tags:
-                - StockMovementService
-            description: 查询库存流水详情
-            operationId: StockMovementService_Get
+                - StockPickingService
+            description: 查询拣货单详情
+            operationId: StockPickingService_Get
             parameters:
                 - name: id
                   in: path
@@ -973,39 +847,202 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/inventory.service.v1.StockMovement'
-    /app/v1/stock-movements:reverse:
+                                $ref: '#/components/schemas/inventory.service.v1.StockPicking'
+    /app/v1/stock-pickings/{id}:cancel:
         post:
             tags:
-                - StockMovementService
-            description: 冲正库存流水（等量反向台账，幂等防重复冲正）
-            operationId: StockMovementService_Reverse
+                - StockPickingService
+            description: 取消拣货单
+            operationId: StockPickingService_Cancel
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/inventory.service.v1.ReverseStockMovementRequest'
+                            $ref: '#/components/schemas/inventory.service.v1.CancelStockPickingRequest'
                 required: true
             responses:
                 "200":
                     description: OK
                     content: {}
-    /app/v1/stock-movements:transfer:
+    /app/v1/stock-pickings/{id}:confirm:
         post:
             tags:
-                - StockMovementService
-            description: 库存调拨（源仓出、目的仓入，单事务原子执行）
-            operationId: StockMovementService_Transfer
+                - StockPickingService
+            description: 确认拣货单
+            operationId: StockPickingService_Confirm
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/inventory.service.v1.TransferStockRequest'
+                            $ref: '#/components/schemas/inventory.service.v1.ConfirmStockPickingRequest'
                 required: true
             responses:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/stock-pickings/{id}:validate:
+        post:
+            tags:
+                - StockPickingService
+            description: 校验拣货单
+            operationId: StockPickingService_Validate
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.ValidateStockPickingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/stock-quants:
+        get:
+            tags:
+                - StockQuantService
+            description: 查询库存量列表
+            operationId: StockQuantService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/inventory.service.v1.ListStockQuantResponse'
+    /app/v1/stock-quants/{id}:
+        get:
+            tags:
+                - StockQuantService
+            description: 查询库存量详情
+            operationId: StockQuantService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/inventory.service.v1.StockQuant'
+    /app/v1/stock-quants:overview:
+        get:
+            tags:
+                - StockQuantService
+            description: 库存经营总览（看板聚合）
+            operationId: StockQuantService_GetOverview
+            parameters:
+                - name: lowStockThreshold
+                  in: query
+                  schema:
+                    type: string
+                - name: lowStockLimit
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/inventory.service.v1.StockQuantOverview'
     /app/v1/warehouses:
         get:
             tags:
@@ -1747,36 +1784,93 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
-        inventory.service.v1.CreateStockMovementRequest:
+        inventory.service.v1.CancelStockPickingRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: ID
+                    format: uint32
+        inventory.service.v1.ConfirmStockPickingRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: ID
+                    format: uint32
+        inventory.service.v1.CreateStockPickingRequest:
             type: object
             properties:
                 data:
-                    $ref: '#/components/schemas/inventory.service.v1.StockMovement'
-            description: 创建库存流水 - 请求
-        inventory.service.v1.Inventory:
+                    $ref: '#/components/schemas/inventory.service.v1.StockPicking'
+        inventory.service.v1.ListStockPickingResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.StockPicking'
+                total:
+                    type: string
+        inventory.service.v1.ListStockQuantResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.StockQuant'
+                total:
+                    type: string
+        inventory.service.v1.ListWarehouseResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.Warehouse'
+                total:
+                    type: string
+            description: 查询仓库列表 - 回应
+        inventory.service.v1.StockMove:
             type: object
             properties:
                 id:
                     type: integer
-                    description: 库存ID
+                    description: 移动ID
                     format: uint32
-                warehouseCode:
+                pickingId:
+                    type: integer
+                    description: 所属拣货单ID
+                    format: uint32
+                productCode:
                     type: string
-                    description: 所属仓库编码
-                skuCode:
+                    description: 产品编码
+                sourceLocationId:
+                    type: integer
+                    description: 源位置ID
+                    format: uint32
+                destinationLocationId:
+                    type: integer
+                    description: 目的位置ID
+                    format: uint32
+                plannedQuantity:
                     type: string
-                    description: SKU编码
-                quantity:
-                    type: string
-                    description: 库存数量
-                status:
+                    description: 计划数量
+                state:
                     enum:
-                        - AVAILABLE
-                        - LOCKED
-                        - QUARANTINED
+                        - DRAFT
+                        - CONFIRMED
+                        - DONE
+                        - CANCELLED
                     type: string
-                    description: 库存状态
+                    description: 移动状态
                     format: enum
+                purchaseOrderItemId:
+                    type: integer
+                    description: 关联采购明细ID（仅入库）
+                    format: uint32
                 remark:
                     type: string
                     description: 备注
@@ -1808,8 +1902,141 @@ components:
                     type: string
                     description: 删除时间
                     format: date-time
-            description: 库存
-        inventory.service.v1.InventoryOverview:
+            description: 库存移动计划（借鉴 Odoo stock.move 的计划角色）
+        inventory.service.v1.StockPicking:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 拣货单ID
+                    format: uint32
+                pickingNumber:
+                    type: string
+                    description: 拣货单号（服务端生成）
+                pickingType:
+                    enum:
+                        - INCOMING
+                        - INTERNAL
+                    type: string
+                    description: 拣货类型
+                    format: enum
+                derivedState:
+                    enum:
+                        - DRAFT
+                        - CONFIRMED
+                        - DONE
+                        - CANCELLED
+                    type: string
+                    description: 派生态（从子 moves 聚合，不存储）
+                    format: enum
+                purchaseOrderId:
+                    type: integer
+                    description: 关联采购单ID（仅入库）
+                    format: uint32
+                partnerCode:
+                    type: string
+                    description: 交易方编码
+                sourceLocationId:
+                    type: integer
+                    description: 源位置ID（服务端推导）
+                    format: uint32
+                destinationLocationId:
+                    type: integer
+                    description: 目的位置ID（服务端推导）
+                    format: uint32
+                moves:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.StockMove'
+                    description: 子移动计划列表
+                remark:
+                    type: string
+                    description: 备注
+                fromWarehouseCode:
+                    type: string
+                    description: 调拨源仓库编码
+                toWarehouseCode:
+                    type: string
+                    description: 调拨目的仓库编码
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 拣货单（借鉴 Odoo stock.picking：一等文档，生命周期从子 moves 派生）
+        inventory.service.v1.StockQuant:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 库存量ID
+                    format: uint32
+                locationId:
+                    type: integer
+                    description: 所在位置ID
+                    format: uint32
+                productCode:
+                    type: string
+                    description: 产品编码
+                quantity:
+                    type: string
+                    description: 在手数量
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
+        inventory.service.v1.StockQuantOverview:
             type: object
             properties:
                 warehouseCount:
@@ -1823,133 +2050,21 @@ components:
                     description: 库存总量（所有 SKU 数量之和）
                 movementCount:
                     type: string
-                    description: 库存流水总条数
+                    description: 库存执行记录总条数
                 lowStockItems:
                     type: array
                     items:
-                        $ref: '#/components/schemas/inventory.service.v1.Inventory'
+                        $ref: '#/components/schemas/inventory.service.v1.StockQuant'
                     description: 低库存清单（按数量升序）
             description: 库存经营总览 - 回应
-        inventory.service.v1.ListInventoryResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/inventory.service.v1.Inventory'
-                total:
-                    type: string
-            description: 查询库存列表 - 回应
-        inventory.service.v1.ListStockMovementResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/inventory.service.v1.StockMovement'
-                total:
-                    type: string
-            description: 查询库存流水列表 - 回应
-        inventory.service.v1.ListWarehouseResponse:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/inventory.service.v1.Warehouse'
-                total:
-                    type: string
-            description: 查询仓库列表 - 回应
-        inventory.service.v1.ReverseStockMovementRequest:
+        inventory.service.v1.ValidateStockPickingRequest:
             type: object
             properties:
                 id:
                     readOnly: true
                     type: integer
-                    description: 被冲正的流水ID
+                    description: ID
                     format: uint32
-                reason:
-                    type: string
-                    description: 冲正原因
-            description: 冲正库存流水 - 请求
-        inventory.service.v1.StockMovement:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: 流水ID
-                    format: uint32
-                warehouseCode:
-                    type: string
-                    description: 涉及仓库编码
-                skuCode:
-                    type: string
-                    description: 涉及SKU编码
-                delta:
-                    type: string
-                    description: 数量变化量，正为入、负为出
-                movementType:
-                    enum:
-                        - INBOUND
-                        - OUTBOUND
-                        - TRANSFER
-                        - ADJUSTMENT
-                    type: string
-                    description: 流水类型
-                    format: enum
-                poId:
-                    type: integer
-                    description: 关联采购单ID（入库收货时回写采购单收货量）
-                    format: uint32
-                quantityBefore:
-                    type: string
-                    description: 操作前数量（服务端计算）
-                quantityAfter:
-                    type: string
-                    description: 操作后数量（服务端计算）
-                remark:
-                    type: string
-                    description: 备注
-                tenantId:
-                    type: integer
-                    description: 租户ID，0代表系统全局
-                    format: uint32
-                createdBy:
-                    type: integer
-                    description: 创建者用户ID
-                    format: uint32
-                deletedBy:
-                    type: integer
-                    description: 删除者用户ID
-                    format: uint32
-                createdAt:
-                    type: string
-                    description: 创建时间
-                    format: date-time
-                deletedAt:
-                    type: string
-                    description: 删除时间
-                    format: date-time
-            description: 库存流水
-        inventory.service.v1.TransferStockRequest:
-            type: object
-            properties:
-                fromWarehouseCode:
-                    type: string
-                    description: 源仓库编码
-                toWarehouseCode:
-                    type: string
-                    description: 目的仓库编码
-                skuCode:
-                    type: string
-                    description: SKU编码
-                quantity:
-                    type: string
-                    description: 调拨数量（正数）
-                remark:
-                    type: string
-                    description: 备注
-            description: 库存调拨 - 请求（源仓出、目的仓入，两笔流水同备注关联）
         inventory.service.v1.Warehouse:
             type: object
             properties:
@@ -1966,6 +2081,10 @@ components:
                 location:
                     type: string
                     description: 仓库地址
+                receivingLocationId:
+                    type: integer
+                    description: 接收位置ID（系统生成）
+                    format: uint32
                 enable:
                     type: boolean
                     description: 启用/禁用仓库
@@ -2037,6 +2156,9 @@ components:
                 totalAmount:
                     type: string
                     description: 采购总额（分，服务端按明细计算）
+                warehouseCode:
+                    type: string
+                    description: 收货仓库编码
                 items:
                     type: array
                     items:
@@ -2221,8 +2343,6 @@ tags:
       description: 用户前台登录认证服务
     - name: FileTransferService
       description: 文件传输服务
-    - name: InventoryService
-      description: 库存服务（移动端只读：按仓库/SKU 查询库存）
     - name: PayableService
       description: 应付单服务（移动端只读：财务/管理层查询应付款进度）
     - name: PaymentService
@@ -2231,8 +2351,10 @@ tags:
       description: |-
         采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
          发起与维护在 PC 端完成）
-    - name: StockMovementService
-      description: 库存流水服务（移动端：扫码记录出入库流水）
+    - name: StockPickingService
+      description: 拣货单服务（移动端：扫码创建调拨拣货单，确认与校验）
+    - name: StockQuantService
+      description: 库存量服务（移动端只读：按仓库/SKU 查询库存）
     - name: UserProfileService
       description: 用户个人资料服务
     - name: WarehouseService
