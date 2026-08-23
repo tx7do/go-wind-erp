@@ -422,7 +422,7 @@ YAML 多文件，放 `configs/`（`server.yaml` / `data.yaml` / `client.yaml` / 
 data:
   database:
     driver: "postgres"
-    source: "host=postgres port=5432 user=postgres password=*** dbname=gwc sslmode=disable"
+    source: "host=postgres port=5432 user=postgres password=*** dbname=go_wind_erp sslmode=disable"
     migrate: true
   redis:
     addr: "redis:6379"

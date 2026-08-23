@@ -25,10 +25,10 @@ var File_app_service_v1_app_doc_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_app_doc_proto_rawDesc = "" +
 	"\n" +
-	"\x1capp/service/v1/app_doc.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.protoB\xae\x06\xbaG\x82\x05\x12\xca\x01\n" +
-	"\x1aGoWind Content Hub App API\x12\x1aGoWind Content Hub App API\"B\n" +
-	"\x05tx7do\x12$https://github.com/tx7do/go-wind-cms\x1a\x13yanglinbo@gmail.com*G\n" +
-	"\vMIT License\x128https://github.com/tx7do/go-wind-cms/blob/master/LICENSE2\x031.0*\x96\x03\n" +
+	"\x1capp/service/v1/app_doc.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.protoB\x9e\x06\xbaG\xf2\x04\x12\xba\x01\n" +
+	"\x12GoWind ERP App API\x12\x12GoWind ERP App API\"B\n" +
+	"\x05tx7do\x12$https://github.com/tx7do/go-wind-erp\x1a\x13yanglinbo@gmail.com*G\n" +
+	"\vMIT License\x128https://github.com/tx7do/go-wind-erp/blob/master/LICENSE2\x031.0*\x96\x03\n" +
 	"\xd4\x01\n" +
 	"\xd1\x01\n" +
 	"\fKratosStatus\x12\xc0\x01\n" +

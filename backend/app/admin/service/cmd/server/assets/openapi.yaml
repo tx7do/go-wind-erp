@@ -3,15 +3,15 @@
 
 openapi: 3.0.3
 info:
-    title: GoWind Content Hub Admin API
-    description: GoWind Content Hub Admin API
+    title: GoWind ERP Admin API
+    description: GoWind ERP Admin API
     contact:
         name: tx7do
-        url: https://github.com/tx7do/go-wind-cms
+        url: https://github.com/tx7do/go-wind-erp
         email: yanglinbo@gmail.com
     license:
         name: MIT License
-        url: https://github.com/tx7do/go-wind-cms/blob/master/LICENSE
+        url: https://github.com/tx7do/go-wind-erp/blob/master/LICENSE
     version: "1.0"
 paths:
     /admin/v1/api-audit-logs:
