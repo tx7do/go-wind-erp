@@ -242,14 +242,14 @@
   },
   "stockPicking": {
     "pickingType": {
-      "INCOMING": "入库",
-      "INTERNAL": "内部"
+      "Incoming": "入库",
+      "Internal": "内部"
     },
     "derivedState": {
-      "DRAFT": "草稿",
-      "CONFIRMED": "已确认",
-      "DONE": "已完成",
-      "CANCELLED": "已取消"
+      "Draft": "草稿",
+      "Confirmed": "已确认",
+      "Done": "已完成",
+      "Cancelled": "已取消"
     }
   },
   "approval": {

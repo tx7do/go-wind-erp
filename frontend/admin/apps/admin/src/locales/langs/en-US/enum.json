@@ -242,14 +242,14 @@
   },
   "stockPicking": {
     "pickingType": {
-      "INCOMING": "Incoming",
-      "INTERNAL": "Internal"
+      "Incoming": "Incoming",
+      "Internal": "Internal"
     },
     "derivedState": {
-      "DRAFT": "Draft",
-      "CONFIRMED": "Confirmed",
-      "DONE": "Done",
-      "CANCELLED": "Cancelled"
+      "Draft": "Draft",
+      "Confirmed": "Confirmed",
+      "Done": "Done",
+      "Cancelled": "Cancelled"
     }
   },
   "approval": {
