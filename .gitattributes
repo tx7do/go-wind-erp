@@ -1,0 +1,16 @@
+# Git attribute rules for go-wind-erp.
+# Generated code is checked in with LF line endings and must stay that way;
+# without these rules, checkouts on CRLF platforms (Windows) rewrite the files
+# on disk, producing phantom diffs that mask real changes.
+
+# Generated Go stubs (buf).
+/backend/api/gen/go/**/*.go text eol=lf
+
+# Generated ent code.
+/backend/app/core/service/internal/data/ent/**/*.go text eol=lf
+
+# Wire-generated wiring.
+/backend/app/**/wire_gen.go text eol=lf
+
+# Bundled OpenAPI specs are generated.
+/backend/app/**/assets/openapi.yaml text eol=lf
