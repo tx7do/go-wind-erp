@@ -83,5 +83,10 @@
     "moduleName": "Sales Management",
     "salesOrder": "Sales Orders",
     "customer": "Customer Management"
+  },
+  "billing": {
+    "moduleName": "Subscription & Pricing",
+    "subscription": "My Subscription",
+    "plan": "Plan Management"
   }
 }

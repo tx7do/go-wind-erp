@@ -831,6 +831,30 @@ func (f PermissionPolicyMutationRuleFunc) EvalMutation(ctx context.Context, m en
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PermissionPolicyMutation", m)
 }
 
+// The PlanQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PlanQueryRuleFunc func(context.Context, *ent.PlanQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PlanQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PlanQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PlanQuery", q)
+}
+
+// The PlanMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PlanMutationRuleFunc func(context.Context, *ent.PlanMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PlanMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PlanMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PlanMutation", m)
+}
+
 // The PolicyEvaluationLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PolicyEvaluationLogQueryRuleFunc func(context.Context, *ent.PolicyEvaluationLogQuery) error
@@ -1239,6 +1263,30 @@ func (f StockQuantMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockQuantMutation", m)
 }
 
+// The SubscriptionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SubscriptionQueryRuleFunc func(context.Context, *ent.SubscriptionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SubscriptionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SubscriptionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SubscriptionQuery", q)
+}
+
+// The SubscriptionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SubscriptionMutationRuleFunc func(context.Context, *ent.SubscriptionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SubscriptionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SubscriptionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SubscriptionMutation", m)
+}
+
 // The SupplierQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SupplierQueryRuleFunc func(context.Context, *ent.SupplierQuery) error
@@ -1550,6 +1598,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PermissionPolicyQuery:
 		return q.Filter(), nil
+	case *ent.PlanQuery:
+		return q.Filter(), nil
 	case *ent.PolicyEvaluationLogQuery:
 		return q.Filter(), nil
 	case *ent.PositionQuery:
@@ -1583,6 +1633,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.StockPickingQuery:
 		return q.Filter(), nil
 	case *ent.StockQuantQuery:
+		return q.Filter(), nil
+	case *ent.SubscriptionQuery:
 		return q.Filter(), nil
 	case *ent.SupplierQuery:
 		return q.Filter(), nil
@@ -1669,6 +1721,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.PermissionPolicyMutation:
 		return m.Filter(), nil
+	case *ent.PlanMutation:
+		return m.Filter(), nil
 	case *ent.PolicyEvaluationLogMutation:
 		return m.Filter(), nil
 	case *ent.PositionMutation:
@@ -1702,6 +1756,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.StockPickingMutation:
 		return m.Filter(), nil
 	case *ent.StockQuantMutation:
+		return m.Filter(), nil
+	case *ent.SubscriptionMutation:
 		return m.Filter(), nil
 	case *ent.SupplierMutation:
 		return m.Filter(), nil

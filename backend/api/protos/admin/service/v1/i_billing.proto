@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+
+import "billing/service/v1/billing.proto";
+
+// 计费服务（租户自助 HTTP 绑定）
+service BillingService {
+  // 查询当前租户订阅 + 用量 + 限额
+  rpc GetMySubscription (google.protobuf.Empty) returns (billing.service.v1.SubscriptionUsage) {
+    option (google.api.http) = {
+      get: "/admin/v1/billing/my-subscription"
+    };
+  }
+
+  // 公开套餐列表（定价页）
+  rpc ListPlans (pagination.PagingRequest) returns (billing.service.v1.ListPlanResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/billing/plans"
+    };
+  }
+
+  // 切换套餐
+  rpc ChangePlan (billing.service.v1.ChangePlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/billing:change-plan"
+      body: "*"
+    };
+  }
+
+  // 续费（延长30天）
+  rpc Renew (google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/billing:renew"
+      body: "*"
+    };
+  }
+}
+
+// 套餐管理服务（平台管理员）
+service PlanAdminService {
+  rpc List (pagination.PagingRequest) returns (billing.service.v1.ListPlanResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/plans"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (billing.service.v1.CountPlanResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/plans:count"
+    };
+  }
+
+  rpc Get (billing.service.v1.GetPlanRequest) returns (billing.service.v1.Plan) {
+    option (google.api.http) = {
+      get: "/admin/v1/plans/{id}"
+    };
+  }
+
+  rpc Create (billing.service.v1.CreatePlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/plans"
+      body: "*"
+    };
+  }
+
+  rpc Update (billing.service.v1.UpdatePlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/plans/{data.id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (billing.service.v1.DeletePlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/plans/{id}"
+    };
+  }
+}

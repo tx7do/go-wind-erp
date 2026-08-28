@@ -126,6 +126,9 @@ func NewRestServer(
 	receiptService *service.ReceiptService,
 	financeReportService *service.FinanceReportService,
 
+	billingService *service.BillingService,
+	planAdminService *service.PlanAdminService,
+
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
 
@@ -190,6 +193,9 @@ func NewRestServer(
 	adminV1.RegisterReceivableServiceHTTPServer(srv, receivableService)
 	adminV1.RegisterReceiptServiceHTTPServer(srv, receiptService)
 	adminV1.RegisterFinanceReportServiceHTTPServer(srv, financeReportService)
+
+	adminV1.RegisterBillingServiceHTTPServer(srv, billingService)
+	adminV1.RegisterPlanAdminServiceHTTPServer(srv, planAdminService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

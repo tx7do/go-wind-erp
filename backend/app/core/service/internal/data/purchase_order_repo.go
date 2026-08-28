@@ -679,6 +679,14 @@ func (r *PurchaseOrderRepo) ApplyReceiptReturnTx(
 	return poID, unitPrice, nil
 }
 
+// CountTenantSince 计租户自某时刻起创建的单据数（计费守卫的月配额计量）。
+func (r *PurchaseOrderRepo) CountTenantSince(ctx context.Context, tenantID uint32, since time.Time) (int, error) {
+	return r.entClient.Client().PurchaseOrder.Query().
+		Where(purchaseorder.TenantIDEQ(tenantID)).
+		Where(purchaseorder.CreatedAtGTE(since)).
+		Count(ctx)
+}
+
 // Delete 删除采购单及其明细。
 func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.DeletePurchaseOrderRequest) error {
 	if req == nil {

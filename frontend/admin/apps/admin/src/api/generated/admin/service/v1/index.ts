@@ -1406,6 +1406,607 @@ export type authenticationservicev1_VerifyCaptchaResponse = {
   valid: boolean | undefined;
 };
 
+// 计费服务（租户自助 HTTP 绑定）
+export interface BillingService {
+  // 查询当前租户订阅 + 用量 + 限额
+  GetMySubscription(
+    request: wellKnownEmpty,
+  ): Promise<billingservicev1_SubscriptionUsage>;
+  // 公开套餐列表（定价页）
+  ListPlans(
+    request: pagination_PagingRequest,
+  ): Promise<billingservicev1_ListPlanResponse>;
+  // 切换套餐
+  ChangePlan(
+    request: billingservicev1_ChangePlanRequest,
+  ): Promise<wellKnownEmpty>;
+  // 续费（延长30天）
+  Renew(
+    request: wellKnownEmpty,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createBillingServiceClient(
+  transport: ClientTransport,
+): BillingService {
+  return {
+    GetMySubscription(_request) {
+      const path = `admin/v1/billing/my-subscription`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'BillingService',
+        method: 'GetMySubscription',
+      }) as Promise<billingservicev1_SubscriptionUsage>;
+    },
+    ListPlans(request) {
+      const path = `admin/v1/billing/plans`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'BillingService',
+        method: 'ListPlans',
+      }) as Promise<billingservicev1_ListPlanResponse>;
+    },
+    ChangePlan(request) {
+      const path = `admin/v1/billing:change-plan`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BillingService',
+        method: 'ChangePlan',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Renew(request) {
+      const path = `admin/v1/billing:renew`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'BillingService',
+        method: 'Renew',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 订阅用量视图（当前套餐 + 实时计量 + 限额，前端进度条数据源）
+export type billingservicev1_SubscriptionUsage = {
+  expired?: boolean;
+  orderCountMonth?: number;
+  plan?: billingservicev1_Plan;
+  subscription?: billingservicev1_Subscription;
+  userCount?: number;
+};
+
+// 租户订阅（每租户一条当前订阅）
+export type billingservicev1_Subscription = {
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL, OUTPUT_ONLY
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  periodEnd?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  periodStart?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  planCode?: string;
+  //
+  // Behaviors: OPTIONAL
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: billingservicev1_Subscription_Status;
+  //
+  // Behaviors: OPTIONAL
+  tenantId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL, OUTPUT_ONLY
+  updatedBy?: number;
+};
+
+// 订阅状态（过期由守卫按 period_end 动态判断，status 仅记录）
+export type billingservicev1_Subscription_Status =
+  | 'ACTIVE'
+  | 'CANCELLED'
+  | 'EXPIRED';
+// 套餐（透明定价的全局目录，平台级）
+export type billingservicev1_Plan = {
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  //
+  // Behaviors: OUTPUT_ONLY
+  createdAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL, OUTPUT_ONLY
+  createdBy?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  deletedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  description?: string;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  maxOrdersMonthly?: number;
+  //
+  // Behaviors: OPTIONAL
+  maxUsers?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  //
+  // Behaviors: OPTIONAL
+  priceCents?: number;
+  //
+  // Behaviors: OPTIONAL
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  sortOrder?: number;
+  //
+  // Behaviors: OPTIONAL
+  status?: billingservicev1_Plan_Status;
+  //
+  // Behaviors: OPTIONAL
+  tenantId?: number;
+  //
+  // Behaviors: OUTPUT_ONLY
+  updatedAt?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL, OUTPUT_ONLY
+  updatedBy?: number;
+};
+
+// 套餐状态
+export type billingservicev1_Plan_Status =
+  | 'OFF'
+  | 'ON';
+export type billingservicev1_ListPlanResponse = {
+  items: billingservicev1_Plan[] | undefined;
+  total: number | undefined;
+};
+
+export type billingservicev1_ChangePlanRequest = {
+  planCode: string | undefined;
+};
+
+// 套餐管理服务（平台管理员）
+export interface PlanAdminService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<billingservicev1_ListPlanResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<billingservicev1_CountPlanResponse>;
+  Get(
+    request: billingservicev1_GetPlanRequest,
+  ): Promise<billingservicev1_Plan>;
+  Create(
+    request: billingservicev1_CreatePlanRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: billingservicev1_UpdatePlanRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: billingservicev1_DeletePlanRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPlanAdminServiceClient(
+  transport: ClientTransport,
+): PlanAdminService {
+  return {
+    List(request) {
+      const path = `admin/v1/plans`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanAdminService',
+        method: 'List',
+      }) as Promise<billingservicev1_ListPlanResponse>;
+    },
+    Count(request) {
+      const path = `admin/v1/plans:count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanAdminService',
+        method: 'Count',
+      }) as Promise<billingservicev1_CountPlanResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/plans/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PlanAdminService',
+        method: 'Get',
+      }) as Promise<billingservicev1_Plan>;
+    },
+    Create(request) {
+      const path = `admin/v1/plans`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PlanAdminService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.data?.id === undefined || request.data?.id === null) {
+        throw new Error('missing required field request.data.id');
+      }
+      const path = `admin/v1/plans/${request.data.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PlanAdminService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/plans/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PlanAdminService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type billingservicev1_CountPlanResponse = {
+  count: number | undefined;
+};
+
+export type billingservicev1_GetPlanRequest = {
+  id?: number;
+};
+
+export type billingservicev1_CreatePlanRequest = {
+  data: billingservicev1_Plan | undefined;
+};
+
+export type billingservicev1_UpdatePlanRequest = {
+  data: billingservicev1_Plan | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type billingservicev1_DeletePlanRequest = {
+  id?: number;
+};
+
 // 数据访问审计日志管理服务
 export interface DataAccessAuditLogService {
   // 查询数据访问审计日志列表
@@ -11188,6 +11789,7 @@ export class ApiClient {
   private _apiService?: ApiService;
   private _approvalRequestService?: ApprovalRequestService;
   private _authenticationService?: AuthenticationService;
+  private _billingService?: BillingService;
   private _customerService?: CustomerService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
@@ -11210,6 +11812,7 @@ export class ApiClient {
   private _permissionAuditLogService?: PermissionAuditLogService;
   private _permissionGroupService?: PermissionGroupService;
   private _permissionService?: PermissionService;
+  private _planAdminService?: PlanAdminService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _productService?: ProductService;
@@ -11250,6 +11853,10 @@ export class ApiClient {
 
   get authenticationService(): AuthenticationService {
     return this._authenticationService ??= createAuthenticationServiceClient(this._transport);
+  }
+
+  get billingService(): BillingService {
+    return this._billingService ??= createBillingServiceClient(this._transport);
   }
 
   get customerService(): CustomerService {
@@ -11338,6 +11945,10 @@ export class ApiClient {
 
   get permissionService(): PermissionService {
     return this._permissionService ??= createPermissionServiceClient(this._transport);
+  }
+
+  get planAdminService(): PlanAdminService {
+    return this._planAdminService ??= createPlanAdminServiceClient(this._transport);
   }
 
   get policyEvaluationLogService(): PolicyEvaluationLogService {

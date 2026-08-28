@@ -35,6 +35,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionmenu"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-erp/app/core/service/internal/data/ent/plan"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
 	"go-wind-erp/app/core/service/internal/data/ent/product"
@@ -53,6 +54,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
 	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
 	"go-wind-erp/app/core/service/internal/data/ent/stockquant"
+	"go-wind-erp/app/core/service/internal/data/ent/subscription"
 	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
@@ -1036,6 +1038,56 @@ func init() {
 	permissionpolicyDescID := permissionpolicyMixinFields0[0].Descriptor()
 	// permissionpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	permissionpolicy.IDValidator = permissionpolicyDescID.Validators[0].(func(uint32) error)
+	planMixin := schema.Plan{}.Mixin()
+	plan.Policy = privacy.NewPolicies(planMixin[5], schema.Plan{})
+	plan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := plan.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	planMixinInters2 := planMixin[2].Interceptors()
+	plan.Interceptors[0] = planMixinInters2[0]
+	planMixinFields0 := planMixin[0].Fields()
+	_ = planMixinFields0
+	planMixinFields5 := planMixin[5].Fields()
+	_ = planMixinFields5
+	planMixinFields6 := planMixin[6].Fields()
+	_ = planMixinFields6
+	planMixinFields7 := planMixin[7].Fields()
+	_ = planMixinFields7
+	planFields := schema.Plan{}.Fields()
+	_ = planFields
+	// planDescTenantID is the schema descriptor for tenant_id field.
+	planDescTenantID := planMixinFields5[0].Descriptor()
+	// plan.DefaultTenantID holds the default value on creation for the tenant_id field.
+	plan.DefaultTenantID = planDescTenantID.Default.(uint32)
+	// planDescSortOrder is the schema descriptor for sort_order field.
+	planDescSortOrder := planMixinFields6[0].Descriptor()
+	// plan.DefaultSortOrder holds the default value on creation for the sort_order field.
+	plan.DefaultSortOrder = planDescSortOrder.Default.(uint32)
+	// planDescCode is the schema descriptor for code field.
+	planDescCode := planFields[0].Descriptor()
+	// plan.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	plan.CodeValidator = planDescCode.Validators[0].(func(string) error)
+	// planDescPriceCents is the schema descriptor for price_cents field.
+	planDescPriceCents := planFields[3].Descriptor()
+	// plan.DefaultPriceCents holds the default value on creation for the price_cents field.
+	plan.DefaultPriceCents = planDescPriceCents.Default.(int64)
+	// planDescMaxUsers is the schema descriptor for max_users field.
+	planDescMaxUsers := planFields[4].Descriptor()
+	// plan.DefaultMaxUsers holds the default value on creation for the max_users field.
+	plan.DefaultMaxUsers = planDescMaxUsers.Default.(int64)
+	// planDescMaxOrdersMonthly is the schema descriptor for max_orders_monthly field.
+	planDescMaxOrdersMonthly := planFields[5].Descriptor()
+	// plan.DefaultMaxOrdersMonthly holds the default value on creation for the max_orders_monthly field.
+	plan.DefaultMaxOrdersMonthly = planDescMaxOrdersMonthly.Default.(int64)
+	// planDescID is the schema descriptor for id field.
+	planDescID := planMixinFields0[0].Descriptor()
+	// plan.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	plan.IDValidator = planDescID.Validators[0].(func(uint32) error)
 	policyevaluationlogMixin := schema.PolicyEvaluationLog{}.Mixin()
 	policyevaluationlog.Policy = privacy.NewPolicies(policyevaluationlogMixin[2], schema.PolicyEvaluationLog{})
 	policyevaluationlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1680,6 +1732,36 @@ func init() {
 	stockquantDescID := stockquantMixinFields0[0].Descriptor()
 	// stockquant.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	stockquant.IDValidator = stockquantDescID.Validators[0].(func(uint32) error)
+	subscriptionMixin := schema.Subscription{}.Mixin()
+	subscription.Policy = privacy.NewPolicies(subscriptionMixin[5], schema.Subscription{})
+	subscription.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := subscription.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	subscriptionMixinInters2 := subscriptionMixin[2].Interceptors()
+	subscription.Interceptors[0] = subscriptionMixinInters2[0]
+	subscriptionMixinFields0 := subscriptionMixin[0].Fields()
+	_ = subscriptionMixinFields0
+	subscriptionMixinFields5 := subscriptionMixin[5].Fields()
+	_ = subscriptionMixinFields5
+	subscriptionFields := schema.Subscription{}.Fields()
+	_ = subscriptionFields
+	// subscriptionDescTenantID is the schema descriptor for tenant_id field.
+	subscriptionDescTenantID := subscriptionMixinFields5[0].Descriptor()
+	// subscription.DefaultTenantID holds the default value on creation for the tenant_id field.
+	subscription.DefaultTenantID = subscriptionDescTenantID.Default.(uint32)
+	// subscriptionDescPlanCode is the schema descriptor for plan_code field.
+	subscriptionDescPlanCode := subscriptionFields[0].Descriptor()
+	// subscription.PlanCodeValidator is a validator for the "plan_code" field. It is called by the builders before save.
+	subscription.PlanCodeValidator = subscriptionDescPlanCode.Validators[0].(func(string) error)
+	// subscriptionDescID is the schema descriptor for id field.
+	subscriptionDescID := subscriptionMixinFields0[0].Descriptor()
+	// subscription.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	subscription.IDValidator = subscriptionDescID.Validators[0].(func(uint32) error)
 	supplierMixin := schema.Supplier{}.Mixin()
 	supplier.Policy = privacy.NewPolicies(supplierMixin[5], schema.Supplier{})
 	supplier.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -105,4 +105,6 @@ var ProviderSet = wire.NewSet(
 	data.NewInternalMessageRepo,
 	data.NewInternalMessageCategoryRepo,
 	data.NewInternalMessageRecipientRepo,
+	data.NewPlanRepo,
+	data.NewSubscriptionRepo,
 )

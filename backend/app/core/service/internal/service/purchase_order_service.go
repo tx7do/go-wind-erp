@@ -34,6 +34,7 @@ type PurchaseOrderService struct {
 	purchaseOrderRepo   *data.PurchaseOrderRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
 	payableRepo         *data.PayableRepo
+	billingGuard        *BillingGuard
 	stockQuantRepo      *data.StockQuantRepo
 	locationRepo        *data.LocationRepo
 	stockPickingRepo    *data.StockPickingRepo
@@ -44,6 +45,7 @@ func NewPurchaseOrderService(
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	payableRepo *data.PayableRepo,
+	billingGuard *BillingGuard,
 	stockQuantRepo *data.StockQuantRepo,
 	locationRepo *data.LocationRepo,
 	stockPickingRepo *data.StockPickingRepo,
@@ -53,6 +55,7 @@ func NewPurchaseOrderService(
 		purchaseOrderRepo:   purchaseOrderRepo,
 		approvalRequestRepo: approvalRequestRepo,
 		payableRepo:         payableRepo,
+		billingGuard:      billingGuard,
 		stockQuantRepo:      stockQuantRepo,
 		locationRepo:        locationRepo,
 		stockPickingRepo:    stockPickingRepo,
@@ -84,6 +87,12 @@ func (s *PurchaseOrderService) Create(ctx context.Context, req *procurementV1.Cr
 
 	// 校验明细并预计算金额（乘法溢出守卫 + 累加守卫）。
 	if err := computeOrderAmounts(req.Data); err != nil {
+		return nil, err
+	}
+
+	// 透明定价配额守卫：订阅到期/月单量超限 → 409（数据保留只读）。
+	// SAGA 自动补货草稿（CreateReplenishmentDraft）不走守卫——系统自动行为。
+	if err := s.billingGuard.EnsureCanCreateOrder(ctx); err != nil {
 		return nil, err
 	}
 

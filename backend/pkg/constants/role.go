@@ -46,3 +46,10 @@ func ExtractRoleCodeFromTemplate(roleCode string) string {
 	}
 	return roleCode
 }
+
+// 套餐编码（透明定价，sub_plans.code 的合法取值）
+const (
+	FreePlanCode     = "FREE"
+	StandardPlanCode = "STANDARD"
+	ProPlanCode      = "PRO"
+)

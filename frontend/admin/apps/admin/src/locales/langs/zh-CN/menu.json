@@ -84,5 +84,10 @@
     "moduleName": "销售管理",
     "salesOrder": "销售单",
     "customer": "客户管理"
+  },
+  "billing": {
+    "moduleName": "订阅与定价",
+    "subscription": "我的订阅",
+    "plan": "套餐管理"
   }
 }

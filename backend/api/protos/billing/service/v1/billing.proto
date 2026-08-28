@@ -1,0 +1,363 @@
+syntax = "proto3";
+
+package billing.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 套餐（透明定价的全局目录，平台级）
+message Plan {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "套餐ID"
+    }
+  ]; // 套餐ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "套餐编码：FREE/STANDARD/PRO"
+    }
+  ]; // 套餐编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "套餐名称"
+    }
+  ]; // 套餐名称
+
+  optional string description = 4 [
+    json_name = "description",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "套餐说明（定价页展示）"
+    }
+  ]; // 套餐说明
+
+  optional int64 price_cents = 5 [
+    json_name = "priceCents",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "月价（分/月，FREE=0）"
+    }
+  ]; // 月价
+
+  optional int64 max_users = 6 [
+    json_name = "maxUsers",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "用户数上限（0=无限）"
+    }
+  ]; // 用户数上限
+
+  optional int64 max_orders_monthly = 7 [
+    json_name = "maxOrdersMonthly",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "月单量上限（PO+SO 合计，0=无限）"
+    }
+  ]; // 月单量上限
+
+  // 套餐状态
+  enum Status {
+    OFF = 0;
+    ON = 1;
+  }
+
+  optional Status status = 8 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "套餐状态"
+    }
+  ]; // 套餐状态
+
+  optional uint32 sort_order = 9 [
+    json_name = "sortOrder",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "排序（定价页展示顺序）"
+    }
+  ]; // 排序
+
+  optional string remark = 100 [
+    json_name = "remark",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "备注"
+    }
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "租户ID（平台级目录=0）"
+    }
+  ]; // 租户ID
+
+  optional uint32 created_by = 101 [
+    json_name = "createdBy",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "创建人ID"
+    },
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建人ID
+
+  optional uint32 updated_by = 102 [
+    json_name = "updatedBy",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "更新人ID"
+    },
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新人ID
+
+  optional google.protobuf.Timestamp created_at = 200 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "创建时间"
+    }
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 201 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "更新时间"
+    }
+  ]; // 更新时间
+
+  optional google.protobuf.Timestamp deleted_at = 202 [
+    json_name = "deletedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "删除时间"
+    }
+  ]; // 删除时间
+}
+
+// 租户订阅（每租户一条当前订阅）
+message Subscription {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "订阅ID"
+    }
+  ]; // 订阅ID
+
+  optional uint32 tenant_id = 2 [
+    json_name = "tenantId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "租户ID（唯一）"
+    }
+  ]; // 租户ID
+
+  optional string plan_code = 3 [
+    json_name = "planCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "当前套餐编码"
+    }
+  ]; // 当前套餐编码
+
+  optional google.protobuf.Timestamp period_start = 4 [
+    json_name = "periodStart",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "周期起点"
+    }
+  ]; // 周期起点
+
+  optional google.protobuf.Timestamp period_end = 5 [
+    json_name = "periodEnd",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "周期终点（nil=永久，FREE 无到期）"
+    }
+  ]; // 周期终点
+
+  // 订阅状态（过期由守卫按 period_end 动态判断，status 仅记录）
+  enum Status {
+    ACTIVE = 0;
+    EXPIRED = 1;
+    CANCELLED = 2;
+  }
+
+  optional Status status = 6 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "订阅状态"
+    }
+  ]; // 订阅状态
+
+  optional string remark = 100 [
+    json_name = "remark",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "备注"
+    }
+  ]; // 备注
+
+  optional uint32 created_by = 101 [
+    json_name = "createdBy",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "创建人ID"
+    },
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 创建人ID
+
+  optional uint32 updated_by = 102 [
+    json_name = "updatedBy",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "更新人ID"
+    },
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ]; // 更新人ID
+
+  optional google.protobuf.Timestamp created_at = 200 [
+    json_name = "createdAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "创建时间"
+    }
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 201 [
+    json_name = "updatedAt",
+    (google.api.field_behavior) = OUTPUT_ONLY,
+    (gnostic.openapi.v3.property) = {
+      description: "更新时间"
+    }
+  ]; // 更新时间
+}
+
+// 订阅用量视图（当前套餐 + 实时计量 + 限额，前端进度条数据源）
+message SubscriptionUsage {
+  optional Subscription subscription = 1 [
+    json_name = "subscription",
+    (gnostic.openapi.v3.property) = {
+      description: "当前订阅（无记录时为 nil，等效 FREE 默认）"
+    }
+  ]; // 当前订阅
+
+  optional Plan plan = 2 [
+    json_name = "plan",
+    (gnostic.openapi.v3.property) = {
+      description: "当前套餐详情"
+    }
+  ]; // 当前套餐详情
+
+  optional int64 user_count = 3 [
+    json_name = "userCount",
+    (gnostic.openapi.v3.property) = {
+      description: "当前用户数"
+    }
+  ]; // 当前用户数
+
+  optional int64 order_count_month = 4 [
+    json_name = "orderCountMonth",
+    (gnostic.openapi.v3.property) = {
+      description: "本月单量（PO+SO 合计）"
+    }
+  ]; // 本月单量
+
+  optional bool expired = 5 [
+    json_name = "expired",
+    (gnostic.openapi.v3.property) = {
+      description: "订阅是否已到期（守卫动态判断）"
+    }
+  ]; // 是否已到期
+}
+
+// 计费服务（租户自助：查订阅/看定价/切套餐/续费）
+service BillingService {
+  // 查询当前租户订阅 + 用量 + 限额
+  rpc GetMySubscription (google.protobuf.Empty) returns (SubscriptionUsage) {}
+
+  // 公开套餐列表（定价页数据，含未启用的由前端过滤）
+  rpc ListPlans (pagination.PagingRequest) returns (ListPlanResponse) {}
+
+  // 切换套餐（免费→付费=开通30天；付费→免费=降级；付费→付费=变更）
+  rpc ChangePlan (ChangePlanRequest) returns (google.protobuf.Empty) {}
+
+  // 续费（当前付费套餐延长30天）
+  rpc Renew (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+// 套餐管理服务（平台管理员 CRUD）
+service PlanAdminService {
+  rpc List (pagination.PagingRequest) returns (ListPlanResponse) {}
+
+  rpc Count (pagination.PagingRequest) returns (CountPlanResponse) {}
+
+  rpc Get (GetPlanRequest) returns (Plan) {}
+
+  rpc Create (CreatePlanRequest) returns (google.protobuf.Empty) {}
+
+  rpc Update (UpdatePlanRequest) returns (google.protobuf.Empty) {}
+
+  rpc Delete (DeletePlanRequest) returns (google.protobuf.Empty) {}
+}
+
+message ListPlanResponse {
+  repeated Plan items = 1;
+  uint64 total = 2;
+}
+
+message CountPlanResponse {
+  int64 count = 1;
+}
+
+message GetPlanRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CreatePlanRequest {
+  Plan data = 1;
+}
+
+message UpdatePlanRequest {
+  Plan data = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeletePlanRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message ChangePlanRequest {
+  string plan_code = 1 [
+    json_name = "planCode",
+    (gnostic.openapi.v3.property) = {description: "目标套餐编码（FREE/STANDARD/PRO）"}
+  ]; // 目标套餐编码
+}

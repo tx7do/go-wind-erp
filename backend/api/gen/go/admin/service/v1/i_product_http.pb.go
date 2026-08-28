@@ -38,14 +38,14 @@ type ProductServiceHTTPServer interface {
 
 func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/products", _ProductService_List29_HTTP_Handler(srv))
-	r.GET("/admin/v1/products/{id}", _ProductService_Get29_HTTP_Handler(srv))
-	r.POST("/admin/v1/products", _ProductService_Create22_HTTP_Handler(srv))
-	r.PUT("/admin/v1/products/{id}", _ProductService_Update16_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/products/{id}", _ProductService_Delete20_HTTP_Handler(srv))
+	r.GET("/admin/v1/products", _ProductService_List30_HTTP_Handler(srv))
+	r.GET("/admin/v1/products/{id}", _ProductService_Get30_HTTP_Handler(srv))
+	r.POST("/admin/v1/products", _ProductService_Create23_HTTP_Handler(srv))
+	r.PUT("/admin/v1/products/{id}", _ProductService_Update17_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/products/{id}", _ProductService_Delete21_HTTP_Handler(srv))
 }
 
-func _ProductService_List29_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_List30_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -64,7 +64,7 @@ func _ProductService_List29_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ProductService_Get29_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Get30_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _ProductService_Get29_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ProductService_Create22_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Create23_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateProductRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -108,7 +108,7 @@ func _ProductService_Create22_HTTP_Handler(srv ProductServiceHTTPServer) func(ct
 	}
 }
 
-func _ProductService_Update16_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Update17_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateProductRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -133,7 +133,7 @@ func _ProductService_Update16_HTTP_Handler(srv ProductServiceHTTPServer) func(ct
 	}
 }
 
-func _ProductService_Delete20_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Delete21_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteProductRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -76,3 +76,4 @@ export * from './stock-picking';
 export * from './stock-quant';
 
 export * from './user-profile';
+export * from './billing';

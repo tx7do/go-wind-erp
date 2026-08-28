@@ -70,6 +70,9 @@ var ProviderSet = wire.NewSet(
 	service.NewDataAccessAuditLogService,
 	service.NewOperationAuditLogService,
 	service.NewFileTransferService,
+	service.NewBillingService,
+	service.NewPlanAdminService,
+	service.NewBillingGuard,
 
 	service.NewLoggingContactSender,
 	wire.Bind(new(service.ContactCodeSender), new(*service.LoggingContactSender)),

@@ -23,6 +23,7 @@ import (
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	billingV1 "go-wind-erp/api/gen/go/billing/service/v1"
 	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 	productV1 "go-wind-erp/api/gen/go/product/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
@@ -445,6 +446,24 @@ func NewCustomerServiceClient(ctx *bootstrap.Context, r registry.Discovery) sale
 	}
 
 	return salesV1.NewCustomerServiceClient(cli)
+}
+
+func NewBillingServiceClient(ctx *bootstrap.Context, r registry.Discovery) billingV1.BillingServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return billingV1.NewBillingServiceClient(cli)
+}
+
+func NewPlanAdminServiceClient(ctx *bootstrap.Context, r registry.Discovery) billingV1.PlanAdminServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return billingV1.NewPlanAdminServiceClient(cli)
 }
 
 func NewSalesOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) salesV1.SalesOrderServiceClient {

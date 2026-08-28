@@ -68,6 +68,9 @@ managed:
       path: sales/service/v1
       value: go-wind-erp/api/gen/go/sales/service/v1;salespb
     - file_option: go_package
+      path: billing/service/v1
+      value: go-wind-erp/api/gen/go/billing/service/v1;billingpb
+    - file_option: go_package
       path: product/service/v1
       value: go-wind-erp/api/gen/go/product/service/v1;productpb
     - file_option: go_package

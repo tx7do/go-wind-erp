@@ -36,6 +36,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/permissiongroup"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionmenu"
 	"go-wind-erp/app/core/service/internal/data/ent/permissionpolicy"
+	"go-wind-erp/app/core/service/internal/data/ent/plan"
 	"go-wind-erp/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-erp/app/core/service/internal/data/ent/position"
 	"go-wind-erp/app/core/service/internal/data/ent/product"
@@ -53,6 +54,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
 	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
 	"go-wind-erp/app/core/service/internal/data/ent/stockquant"
+	"go-wind-erp/app/core/service/internal/data/ent/subscription"
 	"go-wind-erp/app/core/service/internal/data/ent/supplier"
 	"go-wind-erp/app/core/service/internal/data/ent/task"
 	"go-wind-erp/app/core/service/internal/data/ent/tenant"
@@ -158,6 +160,7 @@ func checkColumn(t, c string) error {
 			permissiongroup.Table:          permissiongroup.ValidColumn,
 			permissionmenu.Table:           permissionmenu.ValidColumn,
 			permissionpolicy.Table:         permissionpolicy.ValidColumn,
+			plan.Table:                     plan.ValidColumn,
 			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
 			position.Table:                 position.ValidColumn,
 			product.Table:                  product.ValidColumn,
@@ -175,6 +178,7 @@ func checkColumn(t, c string) error {
 			stockmoveline.Table:            stockmoveline.ValidColumn,
 			stockpicking.Table:             stockpicking.ValidColumn,
 			stockquant.Table:               stockquant.ValidColumn,
+			subscription.Table:             subscription.ValidColumn,
 			supplier.Table:                 supplier.ValidColumn,
 			task.Table:                     task.ValidColumn,
 			tenant.Table:                   tenant.ValidColumn,

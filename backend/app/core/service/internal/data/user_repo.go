@@ -48,6 +48,9 @@ type UserRepo interface {
 
 	Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error)
 
+	// CountByTenant 计租户用户数（计费守卫的用户配额计量）。
+	CountByTenant(ctx context.Context, tenantID uint32) (int, error)
+
 	UserExists(ctx context.Context, req *identityV1.UserExistsRequest) (*identityV1.UserExistsResponse, error)
 
 	AssignUserRole(ctx context.Context, data *permissionV1.UserRole) error
@@ -498,6 +501,15 @@ func (r *userRepo) Create(ctx context.Context, req *identityV1.CreateUserRequest
 }
 
 // CreateWithTx 在事务中创建用户
+func (r *userRepo) CountByTenant(ctx context.Context, tenantID uint32) (int, error) {
+	if tenantID == 0 {
+		return 0, nil
+	}
+	return r.entClient.Client().User.Query().
+		Where(user.TenantIDEQ(tenantID)).
+		Count(ctx)
+}
+
 func (r *userRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *identityV1.User) (dto *identityV1.User, err error) {
 	if data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")

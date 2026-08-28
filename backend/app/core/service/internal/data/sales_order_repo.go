@@ -617,6 +617,14 @@ func (r *SalesOrderRepo) RevenueByMonth(ctx context.Context) ([]RevenueRow, erro
 	return out, nil
 }
 
+// CountTenantSince 计租户自某时刻起创建的单据数（计费守卫的月配额计量）。
+func (r *SalesOrderRepo) CountTenantSince(ctx context.Context, tenantID uint32, since time.Time) (int, error) {
+	return r.entClient.Client().SalesOrder.Query().
+		Where(salesorder.TenantIDEQ(tenantID)).
+		Where(salesorder.CreatedAtGTE(since)).
+		Count(ctx)
+}
+
 func (r *SalesOrderRepo) Delete(ctx context.Context, req *salesV1.DeleteSalesOrderRequest) error {
 	if req == nil {
 		return salesV1.ErrorBadRequest("invalid parameter")

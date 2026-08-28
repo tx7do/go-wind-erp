@@ -34,6 +34,7 @@ type SalesOrderService struct {
 	salesOrderRepo      *data.SalesOrderRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
 	receivableRepo      *data.ReceivableRepo
+	billingGuard        *BillingGuard
 	locationRepo        *data.LocationRepo
 	stockPickingRepo    *data.StockPickingRepo
 }
@@ -43,6 +44,7 @@ func NewSalesOrderService(
 	salesOrderRepo *data.SalesOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	receivableRepo *data.ReceivableRepo,
+	billingGuard *BillingGuard,
 	locationRepo *data.LocationRepo,
 	stockPickingRepo *data.StockPickingRepo,
 ) *SalesOrderService {
@@ -51,6 +53,7 @@ func NewSalesOrderService(
 		salesOrderRepo:      salesOrderRepo,
 		approvalRequestRepo: approvalRequestRepo,
 		receivableRepo:      receivableRepo,
+		billingGuard:        billingGuard,
 		locationRepo:        locationRepo,
 		stockPickingRepo:    stockPickingRepo,
 	}
@@ -81,6 +84,11 @@ func (s *SalesOrderService) Create(ctx context.Context, req *salesV1.CreateSales
 
 	// 校验明细并预计算金额（乘法溢出守卫 + 累加守卫）。
 	if err := computeSalesOrderAmounts(req.Data); err != nil {
+		return nil, err
+	}
+
+	// 透明定价配额守卫：订阅到期/月单量超限 → 409（数据保留只读）。
+	if err := s.billingGuard.EnsureCanCreateOrder(ctx); err != nil {
 		return nil, err
 	}
 

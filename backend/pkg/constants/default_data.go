@@ -7,6 +7,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
+	billingV1 "go-wind-erp/api/gen/go/billing/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
@@ -824,5 +825,40 @@ var DefaultMenus = []*permissionV1.Menu{
 			Order:     trans.Ptr(int32(7)),
 			Authority: []string{"sys:platform_admin"},
 		},
+	},
+}
+
+// DefaultPlans 系统初始化默认套餐（透明定价目录，平台级 tenant_id=0）。
+// 限额语义：0 = 无限。免费版限制用户数与月单量；付费档按月订阅。
+var DefaultPlans = []*billingV1.Plan{
+	{
+		Code:            trans.Ptr(FreePlanCode),
+		Name:            trans.Ptr("免费版"),
+		Description:     trans.Ptr("适合刚起步的小团队：3 个用户、每月 100 张单据，永久免费"),
+		PriceCents:      trans.Ptr(int64(0)),
+		MaxUsers:        trans.Ptr(int64(3)),
+		MaxOrdersMonthly: trans.Ptr(int64(100)),
+		Status:          billingV1.Plan_ON.Enum(),
+		SortOrder:       trans.Ptr(uint32(1)),
+	},
+	{
+		Code:            trans.Ptr(StandardPlanCode),
+		Name:            trans.Ptr("标准版"),
+		Description:     trans.Ptr("成长型团队：10 个用户、每月 5000 张单据，¥99/月"),
+		PriceCents:      trans.Ptr(int64(9900)),
+		MaxUsers:        trans.Ptr(int64(10)),
+		MaxOrdersMonthly: trans.Ptr(int64(5000)),
+		Status:          billingV1.Plan_ON.Enum(),
+		SortOrder:       trans.Ptr(uint32(2)),
+	},
+	{
+		Code:            trans.Ptr(ProPlanCode),
+		Name:            trans.Ptr("专业版"),
+		Description:     trans.Ptr("不限用户、不限单量，¥299/月"),
+		PriceCents:      trans.Ptr(int64(29900)),
+		MaxUsers:        trans.Ptr(int64(0)),
+		MaxOrdersMonthly: trans.Ptr(int64(0)),
+		Status:          billingV1.Plan_ON.Enum(),
+		SortOrder:       trans.Ptr(uint32(3)),
 	},
 }

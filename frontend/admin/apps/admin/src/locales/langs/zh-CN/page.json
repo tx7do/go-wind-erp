@@ -744,5 +744,29 @@
     "stepPoDesc": "采购入库自动增加库存并按单价记录加权成本",
     "stepSo": "创建首张销售单",
     "stepSoDesc": "销售出库自动扣减库存、冻结成本，利润报表实时可见"
+  },
+  "billing": {
+    "moduleName": "订阅与定价",
+    "currentPlan": "当前套餐",
+    "userUsage": "用户数",
+    "orderUsage": "本月单量",
+    "expiry": "到期时间",
+    "permanent": "永久",
+    "renew": "续费30天",
+    "renewed": "续费成功",
+    "renewFailed": "续费失败",
+    "choosePlan": "选择套餐",
+    "current": "当前",
+    "upgrade": "升级",
+    "downgrade": "降级",
+    "planChanged": "套餐已切换",
+    "planChangeFailed": "套餐切换失败",
+    "expiredBanner": "订阅已到期：数据保留（只读），续费后恢复",
+    "code": "编码",
+    "name": "名称",
+    "price": "月价",
+    "maxUsers": "用户上限",
+    "maxOrders": "月单量上限",
+    "planManagement": "套餐管理"
   }
 }

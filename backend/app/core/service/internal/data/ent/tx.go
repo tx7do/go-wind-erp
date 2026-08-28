@@ -72,6 +72,8 @@ type Tx struct {
 	PermissionMenu *PermissionMenuClient
 	// PermissionPolicy is the client for interacting with the PermissionPolicy builders.
 	PermissionPolicy *PermissionPolicyClient
+	// Plan is the client for interacting with the Plan builders.
+	Plan *PlanClient
 	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
@@ -106,6 +108,8 @@ type Tx struct {
 	StockPicking *StockPickingClient
 	// StockQuant is the client for interacting with the StockQuant builders.
 	StockQuant *StockQuantClient
+	// Subscription is the client for interacting with the Subscription builders.
+	Subscription *SubscriptionClient
 	// Supplier is the client for interacting with the Supplier builders.
 	Supplier *SupplierClient
 	// Task is the client for interacting with the Task builders.
@@ -285,6 +289,7 @@ func (tx *Tx) init() {
 	tx.PermissionGroup = NewPermissionGroupClient(tx.config)
 	tx.PermissionMenu = NewPermissionMenuClient(tx.config)
 	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
+	tx.Plan = NewPlanClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
 	tx.Product = NewProductClient(tx.config)
@@ -302,6 +307,7 @@ func (tx *Tx) init() {
 	tx.StockMoveLine = NewStockMoveLineClient(tx.config)
 	tx.StockPicking = NewStockPickingClient(tx.config)
 	tx.StockQuant = NewStockQuantClient(tx.config)
+	tx.Subscription = NewSubscriptionClient(tx.config)
 	tx.Supplier = NewSupplierClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)

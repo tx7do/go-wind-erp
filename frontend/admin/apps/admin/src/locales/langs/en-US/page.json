@@ -715,5 +715,29 @@
     "stepPoDesc": "Receiving increases stock and tracks weighted-average cost",
     "stepSo": "Create First Sales Order",
     "stepSoDesc": "Shipping decreases stock, freezes COGS; profit report updates live"
+  },
+  "billing": {
+    "moduleName": "Subscription & Pricing",
+    "currentPlan": "Current Plan",
+    "userUsage": "Users",
+    "orderUsage": "Orders This Month",
+    "expiry": "Expiry",
+    "permanent": "Permanent",
+    "renew": "Renew 30 Days",
+    "renewed": "Renewed",
+    "renewFailed": "Renew failed",
+    "choosePlan": "Choose a Plan",
+    "current": "Current",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "planChanged": "Plan changed",
+    "planChangeFailed": "Plan change failed",
+    "expiredBanner": "Subscription expired: data kept (read-only), renew to restore",
+    "code": "Code",
+    "name": "Name",
+    "price": "Price",
+    "maxUsers": "Max Users",
+    "maxOrders": "Max Orders/Month",
+    "planManagement": "Plan Management"
   }
 }

@@ -1981,6 +1981,40 @@ var (
 			},
 		},
 	}
+	// SubPlansColumns holds the columns for the "sub_plans" table.
+	SubPlansColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "套餐编码：FREE/STANDARD/PRO"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "套餐名称"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "套餐说明（定价页展示）"},
+		{Name: "price_cents", Type: field.TypeInt64, Nullable: true, Comment: "月价（分/月，FREE=0）", Default: 0},
+		{Name: "max_users", Type: field.TypeInt64, Nullable: true, Comment: "用户数上限（0=无限）", Default: 0},
+		{Name: "max_orders_monthly", Type: field.TypeInt64, Nullable: true, Comment: "月单量上限（PO+SO 合计，0=无限）", Default: 0},
+	}
+	// SubPlansTable holds the schema information for the "sub_plans" table.
+	SubPlansTable = &schema.Table{
+		Name:       "sub_plans",
+		Comment:    "套餐表（透明定价目录）",
+		Columns:    SubPlansColumns,
+		PrimaryKey: []*schema.Column{SubPlansColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sub_plan_code",
+				Unique:  true,
+				Columns: []*schema.Column{SubPlansColumns[11]},
+			},
+		},
+	}
 	// SysPolicyEvaluationLogsColumns holds the columns for the "sys_policy_evaluation_logs" table.
 	SysPolicyEvaluationLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2832,6 +2866,41 @@ var (
 			},
 		},
 	}
+	// SubSubscriptionsColumns holds the columns for the "sub_subscriptions" table.
+	SubSubscriptionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "plan_code", Type: field.TypeString, Nullable: true, Comment: "当前套餐编码（FREE/STANDARD/PRO）"},
+		{Name: "period_start", Type: field.TypeTime, Nullable: true, Comment: "订阅周期起点"},
+		{Name: "period_end", Type: field.TypeTime, Nullable: true, Comment: "订阅周期终点（nil=永久，FREE 无到期）"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "订阅状态（过期由守卫按 period_end 动态判断，status 仅记录最近一次操作）", Enums: []string{"ACTIVE", "EXPIRED", "CANCELLED"}, Default: "ACTIVE"},
+	}
+	// SubSubscriptionsTable holds the schema information for the "sub_subscriptions" table.
+	SubSubscriptionsTable = &schema.Table{
+		Name:       "sub_subscriptions",
+		Comment:    "租户订阅表（透明定价）",
+		Columns:    SubSubscriptionsColumns,
+		PrimaryKey: []*schema.Column{SubSubscriptionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_sub_subscription_tenant",
+				Unique:  true,
+				Columns: []*schema.Column{SubSubscriptionsColumns[8]},
+			},
+			{
+				Name:    "idx_sub_subscription_tenant_plan",
+				Unique:  false,
+				Columns: []*schema.Column{SubSubscriptionsColumns[8], SubSubscriptionsColumns[9]},
+			},
+		},
+	}
 	// PurSuppliersColumns holds the columns for the "pur_suppliers" table.
 	PurSuppliersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3482,6 +3551,7 @@ var (
 		SysPermissionGroupsTable,
 		SysPermissionMenusTable,
 		SysPermissionPoliciesTable,
+		SubPlansTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
 		PrdProductsTable,
@@ -3499,6 +3569,7 @@ var (
 		InvStockMoveLinesTable,
 		InvStockPickingsTable,
 		InvStockQuantsTable,
+		SubSubscriptionsTable,
 		PurSuppliersTable,
 		SysTasksTable,
 		SysTenantsTable,
@@ -3667,6 +3738,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	SubPlansTable.Annotation = &entsql.Annotation{
+		Table:     "sub_plans",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysPolicyEvaluationLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_policy_evaluation_logs",
 		Charset:   "utf8mb4",
@@ -3749,6 +3825,11 @@ func init() {
 	}
 	InvStockQuantsTable.Annotation = &entsql.Annotation{
 		Table:     "inv_stock_quants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SubSubscriptionsTable.Annotation = &entsql.Annotation{
+		Table:     "sub_subscriptions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
