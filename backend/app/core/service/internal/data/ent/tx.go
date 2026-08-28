@@ -18,6 +18,8 @@ type Tx struct {
 	ApiAuditLog *ApiAuditLogClient
 	// ApprovalRequest is the client for interacting with the ApprovalRequest builders.
 	ApprovalRequest *ApprovalRequestClient
+	// Customer is the client for interacting with the Customer builders.
+	Customer *CustomerClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -80,12 +82,20 @@ type Tx struct {
 	PurchaseOrder *PurchaseOrderClient
 	// PurchaseOrderItem is the client for interacting with the PurchaseOrderItem builders.
 	PurchaseOrderItem *PurchaseOrderItemClient
+	// Receipt is the client for interacting with the Receipt builders.
+	Receipt *ReceiptClient
+	// Receivable is the client for interacting with the Receivable builders.
+	Receivable *ReceivableClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// SalesOrder is the client for interacting with the SalesOrder builders.
+	SalesOrder *SalesOrderClient
+	// SalesOrderItem is the client for interacting with the SalesOrderItem builders.
+	SalesOrderItem *SalesOrderItemClient
 	// StockLocation is the client for interacting with the StockLocation builders.
 	StockLocation *StockLocationClient
 	// StockMove is the client for interacting with the StockMove builders.
@@ -248,6 +258,7 @@ func (tx *Tx) init() {
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.ApprovalRequest = NewApprovalRequestClient(tx.config)
+	tx.Customer = NewCustomerClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
@@ -279,9 +290,13 @@ func (tx *Tx) init() {
 	tx.Product = NewProductClient(tx.config)
 	tx.PurchaseOrder = NewPurchaseOrderClient(tx.config)
 	tx.PurchaseOrderItem = NewPurchaseOrderItemClient(tx.config)
+	tx.Receipt = NewReceiptClient(tx.config)
+	tx.Receivable = NewReceivableClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.SalesOrder = NewSalesOrderClient(tx.config)
+	tx.SalesOrderItem = NewSalesOrderItemClient(tx.config)
 	tx.StockLocation = NewStockLocationClient(tx.config)
 	tx.StockMove = NewStockMoveClient(tx.config)
 	tx.StockMoveLine = NewStockMoveLineClient(tx.config)

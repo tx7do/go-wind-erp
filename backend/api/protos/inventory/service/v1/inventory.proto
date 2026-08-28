@@ -174,6 +174,7 @@ message StockLocation {
   enum Usage {
     INTERNAL = 0; // 内部仓库位置（dest for incoming, src/dst for internal）
     SUPPLIER = 1; // 供应商位置（src for incoming）
+    CUSTOMER = 2; // 客户位置（dest for outgoing）
   }
 
   optional uint32 id = 1 [
@@ -261,6 +262,14 @@ message StockQuant {
         }
   ]; // 在手数量
 
+  optional int64 cost_price = 5 [
+    json_name = "costPrice",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "加权平均成本（分）"
+        }
+  ]; // 加权平均成本
+
   optional string remark = 11 [
     json_name = "remark",
     (gnostic.openapi.v3.property) = {description: "备注"}
@@ -286,6 +295,7 @@ message StockPicking {
   enum PickingType {
     INCOMING = 0; // 入库（SUPPLIER→INTERNAL）
     INTERNAL = 1; // 调拨（INTERNAL→INTERNAL）
+    OUTGOING = 2; // 出库（INTERNAL→CUSTOMER）
   }
 
   // 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
@@ -469,6 +479,14 @@ message StockMove {
           description: "关联采购明细ID（仅入库）"
         }
   ]; // 关联采购明细ID
+
+  optional uint32 sales_order_item_id = 9 [
+    json_name = "salesOrderItemId",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "关联销售明细ID（仅出库）"
+        }
+  ]; // 关联销售明细ID
 
   optional string remark = 11 [
     json_name = "remark",

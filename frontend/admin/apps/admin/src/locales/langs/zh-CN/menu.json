@@ -74,6 +74,15 @@
     "moduleName": "财务管理",
     "payable": "应付管理",
     "payment": "付款流水",
-    "aging": "账龄报表"
+    "aging": "账龄报表",
+    "receivable": "应收管理",
+    "receipt": "收款流水",
+    "agingAr": "应收账龄",
+    "profit": "利润报表"
+  },
+  "sales": {
+    "moduleName": "销售管理",
+    "salesOrder": "销售单",
+    "customer": "客户管理"
   }
 }

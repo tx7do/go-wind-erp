@@ -34,6 +34,8 @@ const (
 	FieldProductCode = "product_code"
 	// FieldQuantity holds the string denoting the quantity field in the database.
 	FieldQuantity = "quantity"
+	// FieldCostPrice holds the string denoting the cost_price field in the database.
+	FieldCostPrice = "cost_price"
 	// Table holds the table name of the stockquant in the database.
 	Table = "inv_stock_quants"
 )
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldLocationID,
 	FieldProductCode,
 	FieldQuantity,
+	FieldCostPrice,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -78,6 +81,8 @@ var (
 	DefaultLocationID uint32
 	// DefaultQuantity holds the default value on creation for the "quantity" field.
 	DefaultQuantity int64
+	// DefaultCostPrice holds the default value on creation for the "cost_price" field.
+	DefaultCostPrice int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -143,4 +148,9 @@ func ByProductCode(opts ...sql.OrderTermOption) OrderOption {
 // ByQuantity orders the results by the quantity field.
 func ByQuantity(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldQuantity, opts...).ToFunc()
+}
+
+// ByCostPrice orders the results by the cost_price field.
+func ByCostPrice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCostPrice, opts...).ToFunc()
 }

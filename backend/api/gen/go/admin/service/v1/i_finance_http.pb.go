@@ -428,3 +428,438 @@ func (c *PaymentServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 	}
 	return &out, nil
 }
+
+const OperationReceivableServiceAgingReport = "/admin.service.v1.ReceivableService/AgingReport"
+const OperationReceivableServiceCancel = "/admin.service.v1.ReceivableService/Cancel"
+const OperationReceivableServiceCreate = "/admin.service.v1.ReceivableService/Create"
+const OperationReceivableServiceDelete = "/admin.service.v1.ReceivableService/Delete"
+const OperationReceivableServiceGet = "/admin.service.v1.ReceivableService/Get"
+const OperationReceivableServiceList = "/admin.service.v1.ReceivableService/List"
+
+type ReceivableServiceHTTPServer interface {
+	AgingReport(context.Context, *emptypb.Empty) (*v11.AgingReportResponse, error)
+	Cancel(context.Context, *v11.CancelReceivableRequest) (*emptypb.Empty, error)
+	Create(context.Context, *v11.CreateReceivableRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *v11.DeleteReceivableRequest) (*emptypb.Empty, error)
+	Get(context.Context, *v11.GetReceivableRequest) (*v11.Receivable, error)
+	List(context.Context, *v1.PagingRequest) (*v11.ListReceivableResponse, error)
+}
+
+func RegisterReceivableServiceHTTPServer(s *http.Server, srv ReceivableServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/receivables", _ReceivableService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/receivables/{id}", _ReceivableService_Get9_HTTP_Handler(srv))
+	r.POST("/admin/v1/receivables", _ReceivableService_Create7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/receivables/{id}", _ReceivableService_Delete6_HTTP_Handler(srv))
+	r.POST("/admin/v1/receivables:cancel", _ReceivableService_Cancel2_HTTP_Handler(srv))
+	r.GET("/admin/v1/receivables:aging-report", _ReceivableService_AgingReport1_HTTP_Handler(srv))
+}
+
+func _ReceivableService_List9_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListReceivableResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceivableService_Get9_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetReceivableRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetReceivableRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Receivable)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceivableService_Create7_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CreateReceivableRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceCreate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Create(ctx, req.(*v11.CreateReceivableRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceivableService_Delete6_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.DeleteReceivableRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceDelete)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Delete(ctx, req.(*v11.DeleteReceivableRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceivableService_Cancel2_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CancelReceivableRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceCancel)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Cancel(ctx, req.(*v11.CancelReceivableRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceivableService_AgingReport1_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceivableServiceAgingReport)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AgingReport(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.AgingReportResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type ReceivableServiceHTTPClient interface {
+	AgingReport(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.AgingReportResponse, err error)
+	Cancel(ctx context.Context, req *v11.CancelReceivableRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Create(ctx context.Context, req *v11.CreateReceivableRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Delete(ctx context.Context, req *v11.DeleteReceivableRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Get(ctx context.Context, req *v11.GetReceivableRequest, opts ...http.CallOption) (rsp *v11.Receivable, err error)
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListReceivableResponse, err error)
+}
+
+type ReceivableServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewReceivableServiceHTTPClient(client *http.Client) ReceivableServiceHTTPClient {
+	return &ReceivableServiceHTTPClientImpl{client}
+}
+
+func (c *ReceivableServiceHTTPClientImpl) AgingReport(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.AgingReportResponse, error) {
+	var out v11.AgingReportResponse
+	pattern := "/admin/v1/receivables:aging-report"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceivableServiceAgingReport))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceivableServiceHTTPClientImpl) Cancel(ctx context.Context, in *v11.CancelReceivableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/receivables:cancel"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationReceivableServiceCancel))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceivableServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateReceivableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/receivables"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationReceivableServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceivableServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteReceivableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/receivables/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceivableServiceDelete))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceivableServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetReceivableRequest, opts ...http.CallOption) (*v11.Receivable, error) {
+	var out v11.Receivable
+	pattern := "/admin/v1/receivables/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceivableServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceivableServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListReceivableResponse, error) {
+	var out v11.ListReceivableResponse
+	pattern := "/admin/v1/receivables"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceivableServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+const OperationReceiptServiceCreate = "/admin.service.v1.ReceiptService/Create"
+const OperationReceiptServiceGet = "/admin.service.v1.ReceiptService/Get"
+const OperationReceiptServiceList = "/admin.service.v1.ReceiptService/List"
+
+type ReceiptServiceHTTPServer interface {
+	Create(context.Context, *v11.CreateReceiptRequest) (*emptypb.Empty, error)
+	Get(context.Context, *v11.GetReceiptRequest) (*v11.Receipt, error)
+	List(context.Context, *v1.PagingRequest) (*v11.ListReceiptResponse, error)
+}
+
+func RegisterReceiptServiceHTTPServer(s *http.Server, srv ReceiptServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/receipts", _ReceiptService_List10_HTTP_Handler(srv))
+	r.GET("/admin/v1/receipts/{id}", _ReceiptService_Get10_HTTP_Handler(srv))
+	r.POST("/admin/v1/receipts", _ReceiptService_Create8_HTTP_Handler(srv))
+}
+
+func _ReceiptService_List10_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceiptServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListReceiptResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceiptService_Get10_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetReceiptRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceiptServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetReceiptRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Receipt)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ReceiptService_Create8_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CreateReceiptRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReceiptServiceCreate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Create(ctx, req.(*v11.CreateReceiptRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+type ReceiptServiceHTTPClient interface {
+	Create(ctx context.Context, req *v11.CreateReceiptRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Get(ctx context.Context, req *v11.GetReceiptRequest, opts ...http.CallOption) (rsp *v11.Receipt, err error)
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListReceiptResponse, err error)
+}
+
+type ReceiptServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewReceiptServiceHTTPClient(client *http.Client) ReceiptServiceHTTPClient {
+	return &ReceiptServiceHTTPClientImpl{client}
+}
+
+func (c *ReceiptServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateReceiptRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/receipts"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationReceiptServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceiptServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetReceiptRequest, opts ...http.CallOption) (*v11.Receipt, error) {
+	var out v11.Receipt
+	pattern := "/admin/v1/receipts/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceiptServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *ReceiptServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListReceiptResponse, error) {
+	var out v11.ListReceiptResponse
+	pattern := "/admin/v1/receipts"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReceiptServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+const OperationFinanceReportServiceProfitReport = "/admin.service.v1.FinanceReportService/ProfitReport"
+
+type FinanceReportServiceHTTPServer interface {
+	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
+}
+
+func RegisterFinanceReportServiceHTTPServer(s *http.Server, srv FinanceReportServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/finance/profit-report", _FinanceReportService_ProfitReport0_HTTP_Handler(srv))
+}
+
+func _FinanceReportService_ProfitReport0_HTTP_Handler(srv FinanceReportServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFinanceReportServiceProfitReport)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ProfitReport(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ProfitReportResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type FinanceReportServiceHTTPClient interface {
+	ProfitReport(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.ProfitReportResponse, err error)
+}
+
+type FinanceReportServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewFinanceReportServiceHTTPClient(client *http.Client) FinanceReportServiceHTTPClient {
+	return &FinanceReportServiceHTTPClientImpl{client}
+}
+
+func (c *FinanceReportServiceHTTPClientImpl) ProfitReport(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.ProfitReportResponse, error) {
+	var out v11.ProfitReportResponse
+	pattern := "/admin/v1/finance/profit-report"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationFinanceReportServiceProfitReport))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}

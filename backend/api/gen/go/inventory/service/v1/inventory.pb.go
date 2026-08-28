@@ -33,6 +33,7 @@ type StockLocation_Usage int32
 const (
 	StockLocation_INTERNAL StockLocation_Usage = 0 // 内部仓库位置（dest for incoming, src/dst for internal）
 	StockLocation_SUPPLIER StockLocation_Usage = 1 // 供应商位置（src for incoming）
+	StockLocation_CUSTOMER StockLocation_Usage = 2 // 客户位置（dest for outgoing）
 )
 
 // Enum value maps for StockLocation_Usage.
@@ -40,10 +41,12 @@ var (
 	StockLocation_Usage_name = map[int32]string{
 		0: "INTERNAL",
 		1: "SUPPLIER",
+		2: "CUSTOMER",
 	}
 	StockLocation_Usage_value = map[string]int32{
 		"INTERNAL": 0,
 		"SUPPLIER": 1,
+		"CUSTOMER": 2,
 	}
 )
 
@@ -80,6 +83,7 @@ type StockPicking_PickingType int32
 const (
 	StockPicking_INCOMING StockPicking_PickingType = 0 // 入库（SUPPLIER→INTERNAL）
 	StockPicking_INTERNAL StockPicking_PickingType = 1 // 调拨（INTERNAL→INTERNAL）
+	StockPicking_OUTGOING StockPicking_PickingType = 2 // 出库（INTERNAL→CUSTOMER）
 )
 
 // Enum value maps for StockPicking_PickingType.
@@ -87,10 +91,12 @@ var (
 	StockPicking_PickingType_name = map[int32]string{
 		0: "INCOMING",
 		1: "INTERNAL",
+		2: "OUTGOING",
 	}
 	StockPicking_PickingType_value = map[string]int32{
 		"INCOMING": 0,
 		"INTERNAL": 1,
+		"OUTGOING": 2,
 	}
 )
 
@@ -518,6 +524,7 @@ type StockQuant struct {
 	LocationId    *uint32                `protobuf:"varint,2,opt,name=location_id,json=locationId,proto3,oneof" json:"location_id,omitempty"`   // 所在位置ID
 	ProductCode   *string                `protobuf:"bytes,3,opt,name=product_code,json=productCode,proto3,oneof" json:"product_code,omitempty"` // 产品编码
 	Quantity      *int64                 `protobuf:"varint,4,opt,name=quantity,proto3,oneof" json:"quantity,omitempty"`                         // 在手数量
+	CostPrice     *int64                 `protobuf:"varint,5,opt,name=cost_price,json=costPrice,proto3,oneof" json:"cost_price,omitempty"`      // 加权平均成本
 	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                             // 备注
 	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`        // 租户ID，0代表系统全局
 	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`    // 创建者用户ID
@@ -584,6 +591,13 @@ func (x *StockQuant) GetProductCode() string {
 func (x *StockQuant) GetQuantity() int64 {
 	if x != nil && x.Quantity != nil {
 		return *x.Quantity
+	}
+	return 0
+}
+
+func (x *StockQuant) GetCostPrice() int64 {
+	if x != nil && x.CostPrice != nil {
+		return *x.CostPrice
 	}
 	return 0
 }
@@ -849,6 +863,7 @@ type StockMove struct {
 	PlannedQuantity       *int64                 `protobuf:"varint,6,opt,name=planned_quantity,json=plannedQuantity,proto3,oneof" json:"planned_quantity,omitempty"`                     // 计划数量
 	State                 *StockMove_State       `protobuf:"varint,7,opt,name=state,proto3,enum=inventory.service.v1.StockMove_State,oneof" json:"state,omitempty"`                      // 移动状态
 	PurchaseOrderItemId   *uint32                `protobuf:"varint,8,opt,name=purchase_order_item_id,json=purchaseOrderItemId,proto3,oneof" json:"purchase_order_item_id,omitempty"`     // 关联采购明细ID
+	SalesOrderItemId      *uint32                `protobuf:"varint,9,opt,name=sales_order_item_id,json=salesOrderItemId,proto3,oneof" json:"sales_order_item_id,omitempty"`              // 关联销售明细ID
 	Remark                *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                                              // 备注
 	TenantId              *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                                         // 租户ID，0代表系统全局
 	CreatedBy             *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                     // 创建者用户ID
@@ -943,6 +958,13 @@ func (x *StockMove) GetState() StockMove_State {
 func (x *StockMove) GetPurchaseOrderItemId() uint32 {
 	if x != nil && x.PurchaseOrderItemId != nil {
 		return *x.PurchaseOrderItemId
+	}
+	return 0
+}
+
+func (x *StockMove) GetSalesOrderItemId() uint32 {
+	if x != nil && x.SalesOrderItemId != nil {
+		return *x.SalesOrderItemId
 	}
 	return 0
 }
@@ -2593,7 +2615,7 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\x94\b\n" +
+	"\v_deleted_at\"\xa2\b\n" +
 	"\rStockLocation\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b位置IDH\x00R\x02id\x88\x01\x01\x12.\n" +
 	"\x04name\x18\x02 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f位置名称H\x01R\x04name\x88\x01\x01\x12[\n" +
@@ -2613,10 +2635,11 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\n" +
 	"R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\vR\tdeletedAt\x88\x01\x01\"#\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\vR\tdeletedAt\x88\x01\x01\"1\n" +
 	"\x05Usage\x12\f\n" +
 	"\bINTERNAL\x10\x00\x12\f\n" +
-	"\bSUPPLIER\x10\x01B\x05\n" +
+	"\bSUPPLIER\x10\x01\x12\f\n" +
+	"\bCUSTOMER\x10\x02B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\b\n" +
 	"\x06_usageB\x11\n" +
@@ -2629,33 +2652,36 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xbe\a\n" +
+	"\v_deleted_at\"\x97\b\n" +
 	"\n" +
 	"StockQuant\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v库存量IDH\x00R\x02id\x88\x01\x01\x12=\n" +
 	"\vlocation_id\x18\x02 \x01(\rB\x17\xe0A\x01\xbaG\x11\x92\x02\x0e所在位置IDH\x01R\n" +
 	"locationId\x88\x01\x01\x12=\n" +
 	"\fproduct_code\x18\x03 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f产品编码H\x02R\vproductCode\x88\x01\x01\x126\n" +
-	"\bquantity\x18\x04 \x01(\x03B\x15\xe0A\x01\xbaG\x0f\x92\x02\f在手数量H\x03R\bquantity\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x04R\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\x05R\btenantId\x88\x01\x01\x12;\n" +
+	"\bquantity\x18\x04 \x01(\x03B\x15\xe0A\x01\xbaG\x0f\x92\x02\f在手数量H\x03R\bquantity\x88\x01\x01\x12H\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x06R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"cost_price\x18\x05 \x01(\x03B$\xe0A\x01\xbaG\x1e\x92\x02\x1b加权平均成本（分）H\x04R\tcostPrice\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x05R\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\x06R\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\aR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\aR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\bR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\bR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\tR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\tR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\n" +
-	"R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\n" +
+	"R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\vR\tdeletedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\vR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\fR\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\x0e\n" +
 	"\f_location_idB\x0f\n" +
 	"\r_product_codeB\v\n" +
-	"\t_quantityB\t\n" +
+	"\t_quantityB\r\n" +
+	"\v_cost_priceB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
@@ -2664,7 +2690,7 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xbf\x0f\n" +
+	"\v_deleted_at\"\xcd\x0f\n" +
 	"\fStockPicking\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v拣货单IDH\x00R\x02id\x88\x01\x01\x12V\n" +
 	"\x0epicking_number\x18\x02 \x01(\tB*\xe0A\x01\xbaG$\x92\x02!拣货单号（服务端生成）H\x01R\rpickingNumber\x88\x01\x01\x12m\n" +
@@ -2692,10 +2718,11 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\")\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\"7\n" +
 	"\vPickingType\x12\f\n" +
 	"\bINCOMING\x10\x00\x12\f\n" +
-	"\bINTERNAL\x10\x01\"A\n" +
+	"\bINTERNAL\x10\x01\x12\f\n" +
+	"\bOUTGOING\x10\x02\"A\n" +
 	"\fDerivedState\x12\t\n" +
 	"\x05DRAFT\x10\x00\x12\r\n" +
 	"\tCONFIRMED\x10\x01\x12\b\n" +
@@ -2719,7 +2746,7 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xc5\v\n" +
+	"\v_deleted_at\"\xbf\f\n" +
 	"\tStockMove\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b移动IDH\x00R\x02id\x88\x01\x01\x12>\n" +
 	"\n" +
@@ -2729,22 +2756,23 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\x17destination_location_id\x18\x05 \x01(\rB\x17\xe0A\x01\xbaG\x11\x92\x02\x0e目的位置IDH\x04R\x15destinationLocationId\x88\x01\x01\x12E\n" +
 	"\x10planned_quantity\x18\x06 \x01(\x03B\x15\xe0A\x01\xbaG\x0f\x92\x02\f计划数量H\x05R\x0fplannedQuantity\x88\x01\x01\x12W\n" +
 	"\x05state\x18\a \x01(\x0e2%.inventory.service.v1.StockMove.StateB\x15\xe0A\x01\xbaG\x0f\x92\x02\f移动状态H\x06R\x05state\x88\x01\x01\x12f\n" +
-	"\x16purchase_order_item_id\x18\b \x01(\rB,\xe0A\x01\xbaG&\x92\x02#关联采购明细ID（仅入库）H\aR\x13purchaseOrderItemId\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\tR\btenantId\x88\x01\x01\x12;\n" +
+	"\x16purchase_order_item_id\x18\b \x01(\rB,\xe0A\x01\xbaG&\x92\x02#关联采购明细ID（仅入库）H\aR\x13purchaseOrderItemId\x88\x01\x01\x12`\n" +
+	"\x13sales_order_item_id\x18\t \x01(\rB,\xe0A\x01\xbaG&\x92\x02#关联销售明细ID（仅出库）H\bR\x10salesOrderItemId\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\tR\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\n" +
+	"R\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
-	"R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\":\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\":\n" +
 	"\x05State\x12\t\n" +
 	"\x05DRAFT\x10\x00\x12\r\n" +
 	"\tCONFIRMED\x10\x01\x12\b\n" +
@@ -2757,7 +2785,8 @@ const file_inventory_service_v1_inventory_proto_rawDesc = "" +
 	"\x18_destination_location_idB\x13\n" +
 	"\x11_planned_quantityB\b\n" +
 	"\x06_stateB\x19\n" +
-	"\x17_purchase_order_item_idB\t\n" +
+	"\x17_purchase_order_item_idB\x16\n" +
+	"\x14_sales_order_item_idB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +

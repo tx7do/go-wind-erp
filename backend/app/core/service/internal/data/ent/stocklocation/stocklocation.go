@@ -98,6 +98,7 @@ const DefaultUsage = UsageInternal
 const (
 	UsageSupplier Usage = "SUPPLIER"
 	UsageInternal Usage = "INTERNAL"
+	UsageCustomer Usage = "CUSTOMER"
 )
 
 func (u Usage) String() string {
@@ -107,7 +108,7 @@ func (u Usage) String() string {
 // UsageValidator is a validator for the "usage" field enum values. It is called by the builders before save.
 func UsageValidator(u Usage) error {
 	switch u {
-	case UsageSupplier, UsageInternal:
+	case UsageSupplier, UsageInternal, UsageCustomer:
 		return nil
 	default:
 		return fmt.Errorf("stocklocation: invalid enum value for usage field: %q", u)

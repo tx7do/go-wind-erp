@@ -597,3 +597,561 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "finance/service/v1/finance.proto",
 }
+
+const (
+	ReceivableService_List_FullMethodName        = "/finance.service.v1.ReceivableService/List"
+	ReceivableService_Count_FullMethodName       = "/finance.service.v1.ReceivableService/Count"
+	ReceivableService_Get_FullMethodName         = "/finance.service.v1.ReceivableService/Get"
+	ReceivableService_Create_FullMethodName      = "/finance.service.v1.ReceivableService/Create"
+	ReceivableService_Delete_FullMethodName      = "/finance.service.v1.ReceivableService/Delete"
+	ReceivableService_Cancel_FullMethodName      = "/finance.service.v1.ReceivableService/Cancel"
+	ReceivableService_AgingReport_FullMethodName = "/finance.service.v1.ReceivableService/AgingReport"
+)
+
+// ReceivableServiceClient is the client API for ReceivableService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ==============================
+// 应收单管理服务（镜像 PayableService）
+// ==============================
+type ReceivableServiceClient interface {
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListReceivableResponse, error)
+	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*CountReceivableResponse, error)
+	Get(ctx context.Context, in *GetReceivableRequest, opts ...grpc.CallOption) (*Receivable, error)
+	Create(ctx context.Context, in *CreateReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *DeleteReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Cancel(ctx context.Context, in *CancelReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AgingReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AgingReportResponse, error)
+}
+
+type receivableServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewReceivableServiceClient(cc grpc.ClientConnInterface) ReceivableServiceClient {
+	return &receivableServiceClient{cc}
+}
+
+func (c *receivableServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListReceivableResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReceivableResponse)
+	err := c.cc.Invoke(ctx, ReceivableService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*CountReceivableResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CountReceivableResponse)
+	err := c.cc.Invoke(ctx, ReceivableService_Count_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) Get(ctx context.Context, in *GetReceivableRequest, opts ...grpc.CallOption) (*Receivable, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Receivable)
+	err := c.cc.Invoke(ctx, ReceivableService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) Create(ctx context.Context, in *CreateReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ReceivableService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) Delete(ctx context.Context, in *DeleteReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ReceivableService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) Cancel(ctx context.Context, in *CancelReceivableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ReceivableService_Cancel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receivableServiceClient) AgingReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AgingReportResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AgingReportResponse)
+	err := c.cc.Invoke(ctx, ReceivableService_AgingReport_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ReceivableServiceServer is the server API for ReceivableService service.
+// All implementations must embed UnimplementedReceivableServiceServer
+// for forward compatibility.
+//
+// ==============================
+// 应收单管理服务（镜像 PayableService）
+// ==============================
+type ReceivableServiceServer interface {
+	List(context.Context, *v1.PagingRequest) (*ListReceivableResponse, error)
+	Count(context.Context, *v1.PagingRequest) (*CountReceivableResponse, error)
+	Get(context.Context, *GetReceivableRequest) (*Receivable, error)
+	Create(context.Context, *CreateReceivableRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *DeleteReceivableRequest) (*emptypb.Empty, error)
+	Cancel(context.Context, *CancelReceivableRequest) (*emptypb.Empty, error)
+	AgingReport(context.Context, *emptypb.Empty) (*AgingReportResponse, error)
+	mustEmbedUnimplementedReceivableServiceServer()
+}
+
+// UnimplementedReceivableServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedReceivableServiceServer struct{}
+
+func (UnimplementedReceivableServiceServer) List(context.Context, *v1.PagingRequest) (*ListReceivableResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedReceivableServiceServer) Count(context.Context, *v1.PagingRequest) (*CountReceivableResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Count not implemented")
+}
+func (UnimplementedReceivableServiceServer) Get(context.Context, *GetReceivableRequest) (*Receivable, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedReceivableServiceServer) Create(context.Context, *CreateReceivableRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedReceivableServiceServer) Delete(context.Context, *DeleteReceivableRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedReceivableServiceServer) Cancel(context.Context, *CancelReceivableRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Cancel not implemented")
+}
+func (UnimplementedReceivableServiceServer) AgingReport(context.Context, *emptypb.Empty) (*AgingReportResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AgingReport not implemented")
+}
+func (UnimplementedReceivableServiceServer) mustEmbedUnimplementedReceivableServiceServer() {}
+func (UnimplementedReceivableServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeReceivableServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ReceivableServiceServer will
+// result in compilation errors.
+type UnsafeReceivableServiceServer interface {
+	mustEmbedUnimplementedReceivableServiceServer()
+}
+
+func RegisterReceivableServiceServer(s grpc.ServiceRegistrar, srv ReceivableServiceServer) {
+	// If the following call panics, it indicates UnimplementedReceivableServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ReceivableService_ServiceDesc, srv)
+}
+
+func _ReceivableService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).List(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_Count_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).Count(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_Count_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).Count(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReceivableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).Get(ctx, req.(*GetReceivableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateReceivableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).Create(ctx, req.(*CreateReceivableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteReceivableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).Delete(ctx, req.(*DeleteReceivableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_Cancel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelReceivableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).Cancel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_Cancel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).Cancel(ctx, req.(*CancelReceivableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceivableService_AgingReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceivableServiceServer).AgingReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceivableService_AgingReport_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceivableServiceServer).AgingReport(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ReceivableService_ServiceDesc is the grpc.ServiceDesc for ReceivableService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ReceivableService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "finance.service.v1.ReceivableService",
+	HandlerType: (*ReceivableServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "List",
+			Handler:    _ReceivableService_List_Handler,
+		},
+		{
+			MethodName: "Count",
+			Handler:    _ReceivableService_Count_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _ReceivableService_Get_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _ReceivableService_Create_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _ReceivableService_Delete_Handler,
+		},
+		{
+			MethodName: "Cancel",
+			Handler:    _ReceivableService_Cancel_Handler,
+		},
+		{
+			MethodName: "AgingReport",
+			Handler:    _ReceivableService_AgingReport_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "finance/service/v1/finance.proto",
+}
+
+const (
+	ReceiptService_List_FullMethodName   = "/finance.service.v1.ReceiptService/List"
+	ReceiptService_Count_FullMethodName  = "/finance.service.v1.ReceiptService/Count"
+	ReceiptService_Get_FullMethodName    = "/finance.service.v1.ReceiptService/Get"
+	ReceiptService_Create_FullMethodName = "/finance.service.v1.ReceiptService/Create"
+)
+
+// ReceiptServiceClient is the client API for ReceiptService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 收款管理服务（append-only 台账，镜像 PaymentService）
+type ReceiptServiceClient interface {
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListReceiptResponse, error)
+	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*CountReceiptResponse, error)
+	Get(ctx context.Context, in *GetReceiptRequest, opts ...grpc.CallOption) (*Receipt, error)
+	Create(ctx context.Context, in *CreateReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type receiptServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewReceiptServiceClient(cc grpc.ClientConnInterface) ReceiptServiceClient {
+	return &receiptServiceClient{cc}
+}
+
+func (c *receiptServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListReceiptResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReceiptResponse)
+	err := c.cc.Invoke(ctx, ReceiptService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receiptServiceClient) Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*CountReceiptResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CountReceiptResponse)
+	err := c.cc.Invoke(ctx, ReceiptService_Count_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receiptServiceClient) Get(ctx context.Context, in *GetReceiptRequest, opts ...grpc.CallOption) (*Receipt, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Receipt)
+	err := c.cc.Invoke(ctx, ReceiptService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *receiptServiceClient) Create(ctx context.Context, in *CreateReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ReceiptService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ReceiptServiceServer is the server API for ReceiptService service.
+// All implementations must embed UnimplementedReceiptServiceServer
+// for forward compatibility.
+//
+// 收款管理服务（append-only 台账，镜像 PaymentService）
+type ReceiptServiceServer interface {
+	List(context.Context, *v1.PagingRequest) (*ListReceiptResponse, error)
+	Count(context.Context, *v1.PagingRequest) (*CountReceiptResponse, error)
+	Get(context.Context, *GetReceiptRequest) (*Receipt, error)
+	Create(context.Context, *CreateReceiptRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedReceiptServiceServer()
+}
+
+// UnimplementedReceiptServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedReceiptServiceServer struct{}
+
+func (UnimplementedReceiptServiceServer) List(context.Context, *v1.PagingRequest) (*ListReceiptResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedReceiptServiceServer) Count(context.Context, *v1.PagingRequest) (*CountReceiptResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Count not implemented")
+}
+func (UnimplementedReceiptServiceServer) Get(context.Context, *GetReceiptRequest) (*Receipt, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedReceiptServiceServer) Create(context.Context, *CreateReceiptRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedReceiptServiceServer) mustEmbedUnimplementedReceiptServiceServer() {}
+func (UnimplementedReceiptServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeReceiptServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ReceiptServiceServer will
+// result in compilation errors.
+type UnsafeReceiptServiceServer interface {
+	mustEmbedUnimplementedReceiptServiceServer()
+}
+
+func RegisterReceiptServiceServer(s grpc.ServiceRegistrar, srv ReceiptServiceServer) {
+	// If the following call panics, it indicates UnimplementedReceiptServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ReceiptService_ServiceDesc, srv)
+}
+
+func _ReceiptService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceiptServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceiptService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceiptServiceServer).List(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceiptService_Count_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceiptServiceServer).Count(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceiptService_Count_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceiptServiceServer).Count(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceiptService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceiptServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceiptService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceiptServiceServer).Get(ctx, req.(*GetReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReceiptService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReceiptServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReceiptService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReceiptServiceServer).Create(ctx, req.(*CreateReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ReceiptService_ServiceDesc is the grpc.ServiceDesc for ReceiptService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ReceiptService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "finance.service.v1.ReceiptService",
+	HandlerType: (*ReceiptServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "List",
+			Handler:    _ReceiptService_List_Handler,
+		},
+		{
+			MethodName: "Count",
+			Handler:    _ReceiptService_Count_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _ReceiptService_Get_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _ReceiptService_Create_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "finance/service/v1/finance.proto",
+}

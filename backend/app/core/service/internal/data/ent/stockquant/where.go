@@ -109,6 +109,11 @@ func Quantity(v int64) predicate.StockQuant {
 	return predicate.StockQuant(sql.FieldEQ(FieldQuantity, v))
 }
 
+// CostPrice applies equality check predicate on the "cost_price" field. It's identical to CostPriceEQ.
+func CostPrice(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldEQ(FieldCostPrice, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.StockQuant {
 	return predicate.StockQuant(sql.FieldEQ(FieldCreatedAt, v))
@@ -707,6 +712,56 @@ func QuantityIsNil() predicate.StockQuant {
 // QuantityNotNil applies the NotNil predicate on the "quantity" field.
 func QuantityNotNil() predicate.StockQuant {
 	return predicate.StockQuant(sql.FieldNotNull(FieldQuantity))
+}
+
+// CostPriceEQ applies the EQ predicate on the "cost_price" field.
+func CostPriceEQ(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldEQ(FieldCostPrice, v))
+}
+
+// CostPriceNEQ applies the NEQ predicate on the "cost_price" field.
+func CostPriceNEQ(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldNEQ(FieldCostPrice, v))
+}
+
+// CostPriceIn applies the In predicate on the "cost_price" field.
+func CostPriceIn(vs ...int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldIn(FieldCostPrice, vs...))
+}
+
+// CostPriceNotIn applies the NotIn predicate on the "cost_price" field.
+func CostPriceNotIn(vs ...int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldNotIn(FieldCostPrice, vs...))
+}
+
+// CostPriceGT applies the GT predicate on the "cost_price" field.
+func CostPriceGT(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldGT(FieldCostPrice, v))
+}
+
+// CostPriceGTE applies the GTE predicate on the "cost_price" field.
+func CostPriceGTE(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldGTE(FieldCostPrice, v))
+}
+
+// CostPriceLT applies the LT predicate on the "cost_price" field.
+func CostPriceLT(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldLT(FieldCostPrice, v))
+}
+
+// CostPriceLTE applies the LTE predicate on the "cost_price" field.
+func CostPriceLTE(v int64) predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldLTE(FieldCostPrice, v))
+}
+
+// CostPriceIsNil applies the IsNil predicate on the "cost_price" field.
+func CostPriceIsNil() predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldIsNull(FieldCostPrice))
+}
+
+// CostPriceNotNil applies the NotNil predicate on the "cost_price" field.
+func CostPriceNotNil() predicate.StockQuant {
+	return predicate.StockQuant(sql.FieldNotNull(FieldCostPrice))
 }
 
 // And groups predicates with the AND operator between them.

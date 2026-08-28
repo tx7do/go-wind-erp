@@ -232,6 +232,20 @@ func (_c *StockMoveCreate) SetNillablePurchaseOrderItemID(v *uint32) *StockMoveC
 	return _c
 }
 
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (_c *StockMoveCreate) SetSalesOrderItemID(v uint32) *StockMoveCreate {
+	_c.mutation.SetSalesOrderItemID(v)
+	return _c
+}
+
+// SetNillableSalesOrderItemID sets the "sales_order_item_id" field if the given value is not nil.
+func (_c *StockMoveCreate) SetNillableSalesOrderItemID(v *uint32) *StockMoveCreate {
+	if v != nil {
+		_c.SetSalesOrderItemID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *StockMoveCreate) SetID(v uint32) *StockMoveCreate {
 	_c.mutation.SetID(v)
@@ -302,6 +316,10 @@ func (_c *StockMoveCreate) defaults() error {
 	if _, ok := _c.mutation.PurchaseOrderItemID(); !ok {
 		v := stockmove.DefaultPurchaseOrderItemID
 		_c.mutation.SetPurchaseOrderItemID(v)
+	}
+	if _, ok := _c.mutation.SalesOrderItemID(); !ok {
+		v := stockmove.DefaultSalesOrderItemID
+		_c.mutation.SetSalesOrderItemID(v)
 	}
 	return nil
 }
@@ -410,6 +428,10 @@ func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.PurchaseOrderItemID(); ok {
 		_spec.SetField(stockmove.FieldPurchaseOrderItemID, field.TypeUint32, value)
 		_node.PurchaseOrderItemID = &value
+	}
+	if value, ok := _c.mutation.SalesOrderItemID(); ok {
+		_spec.SetField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+		_node.SalesOrderItemID = &value
 	}
 	return _node, _spec
 }
@@ -742,6 +764,30 @@ func (u *StockMoveUpsert) AddPurchaseOrderItemID(v uint32) *StockMoveUpsert {
 // ClearPurchaseOrderItemID clears the value of the "purchase_order_item_id" field.
 func (u *StockMoveUpsert) ClearPurchaseOrderItemID() *StockMoveUpsert {
 	u.SetNull(stockmove.FieldPurchaseOrderItemID)
+	return u
+}
+
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (u *StockMoveUpsert) SetSalesOrderItemID(v uint32) *StockMoveUpsert {
+	u.Set(stockmove.FieldSalesOrderItemID, v)
+	return u
+}
+
+// UpdateSalesOrderItemID sets the "sales_order_item_id" field to the value that was provided on create.
+func (u *StockMoveUpsert) UpdateSalesOrderItemID() *StockMoveUpsert {
+	u.SetExcluded(stockmove.FieldSalesOrderItemID)
+	return u
+}
+
+// AddSalesOrderItemID adds v to the "sales_order_item_id" field.
+func (u *StockMoveUpsert) AddSalesOrderItemID(v uint32) *StockMoveUpsert {
+	u.Add(stockmove.FieldSalesOrderItemID, v)
+	return u
+}
+
+// ClearSalesOrderItemID clears the value of the "sales_order_item_id" field.
+func (u *StockMoveUpsert) ClearSalesOrderItemID() *StockMoveUpsert {
+	u.SetNull(stockmove.FieldSalesOrderItemID)
 	return u
 }
 
@@ -1125,6 +1171,34 @@ func (u *StockMoveUpsertOne) UpdatePurchaseOrderItemID() *StockMoveUpsertOne {
 func (u *StockMoveUpsertOne) ClearPurchaseOrderItemID() *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.ClearPurchaseOrderItemID()
+	})
+}
+
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (u *StockMoveUpsertOne) SetSalesOrderItemID(v uint32) *StockMoveUpsertOne {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.SetSalesOrderItemID(v)
+	})
+}
+
+// AddSalesOrderItemID adds v to the "sales_order_item_id" field.
+func (u *StockMoveUpsertOne) AddSalesOrderItemID(v uint32) *StockMoveUpsertOne {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.AddSalesOrderItemID(v)
+	})
+}
+
+// UpdateSalesOrderItemID sets the "sales_order_item_id" field to the value that was provided on create.
+func (u *StockMoveUpsertOne) UpdateSalesOrderItemID() *StockMoveUpsertOne {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.UpdateSalesOrderItemID()
+	})
+}
+
+// ClearSalesOrderItemID clears the value of the "sales_order_item_id" field.
+func (u *StockMoveUpsertOne) ClearSalesOrderItemID() *StockMoveUpsertOne {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.ClearSalesOrderItemID()
 	})
 }
 
@@ -1674,6 +1748,34 @@ func (u *StockMoveUpsertBulk) UpdatePurchaseOrderItemID() *StockMoveUpsertBulk {
 func (u *StockMoveUpsertBulk) ClearPurchaseOrderItemID() *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.ClearPurchaseOrderItemID()
+	})
+}
+
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (u *StockMoveUpsertBulk) SetSalesOrderItemID(v uint32) *StockMoveUpsertBulk {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.SetSalesOrderItemID(v)
+	})
+}
+
+// AddSalesOrderItemID adds v to the "sales_order_item_id" field.
+func (u *StockMoveUpsertBulk) AddSalesOrderItemID(v uint32) *StockMoveUpsertBulk {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.AddSalesOrderItemID(v)
+	})
+}
+
+// UpdateSalesOrderItemID sets the "sales_order_item_id" field to the value that was provided on create.
+func (u *StockMoveUpsertBulk) UpdateSalesOrderItemID() *StockMoveUpsertBulk {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.UpdateSalesOrderItemID()
+	})
+}
+
+// ClearSalesOrderItemID clears the value of the "sales_order_item_id" field.
+func (u *StockMoveUpsertBulk) ClearSalesOrderItemID() *StockMoveUpsertBulk {
+	return u.Update(func(s *StockMoveUpsert) {
+		s.ClearSalesOrderItemID()
 	})
 }
 

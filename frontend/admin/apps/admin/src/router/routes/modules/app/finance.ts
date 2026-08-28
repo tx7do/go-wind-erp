@@ -18,6 +18,39 @@ const finance: RouteRecordRaw[] = [
     },
     children: [
       {
+        path: 'aging',
+        name: 'PayableAgingReport',
+        meta: {
+          order: 0,
+          icon: 'lucide:alarm-clock',
+          title: $t('menu.finance.aging'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/aging/index.vue'),
+      },
+      {
+        path: 'aging-ar',
+        name: 'ReceivableAgingReport',
+        meta: {
+          order: 0,
+          icon: 'lucide:alarm-clock',
+          title: $t('menu.finance.agingAr'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/aging_ar/index.vue'),
+      },
+      {
+        path: 'profit',
+        name: 'ProfitReport',
+        meta: {
+          order: 0,
+          icon: 'lucide:chart-line',
+          title: $t('menu.finance.profit'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/profit/index.vue'),
+      },
+      {
         path: 'payables',
         name: 'PayableManagement',
         meta: {
@@ -29,17 +62,16 @@ const finance: RouteRecordRaw[] = [
         component: () => import('#/views/app/finance/payable/index.vue'),
       },
       {
-        path: 'aging',
-        name: 'PayableAgingReport',
+        path: 'receivables',
+        name: 'ReceivableManagement',
         meta: {
-          order: 0,
-          icon: 'lucide:alarm-clock',
-          title: $t('menu.finance.aging'),
+          order: 1,
+          icon: 'lucide:notebook-pen',
+          title: $t('menu.finance.receivable'),
           authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
         },
-        component: () => import('#/views/app/finance/aging/index.vue'),
+        component: () => import('#/views/app/finance/receivable/index.vue'),
       },
-
       {
         path: 'payments',
         name: 'PaymentManagement',
@@ -50,6 +82,17 @@ const finance: RouteRecordRaw[] = [
           authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
         },
         component: () => import('#/views/app/finance/payment/index.vue'),
+      },
+      {
+        path: 'receipts',
+        name: 'ReceiptManagement',
+        meta: {
+          order: 2,
+          icon: 'lucide:download',
+          title: $t('menu.finance.receipt'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/receipt/index.vue'),
       },
     ],
   },

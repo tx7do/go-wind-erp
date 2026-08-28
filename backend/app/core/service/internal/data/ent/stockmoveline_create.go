@@ -190,6 +190,20 @@ func (_c *StockMoveLineCreate) SetNillableExecutedQuantity(v *int64) *StockMoveL
 	return _c
 }
 
+// SetUnitCost sets the "unit_cost" field.
+func (_c *StockMoveLineCreate) SetUnitCost(v int64) *StockMoveLineCreate {
+	_c.mutation.SetUnitCost(v)
+	return _c
+}
+
+// SetNillableUnitCost sets the "unit_cost" field if the given value is not nil.
+func (_c *StockMoveLineCreate) SetNillableUnitCost(v *int64) *StockMoveLineCreate {
+	if v != nil {
+		_c.SetUnitCost(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *StockMoveLineCreate) SetID(v uint32) *StockMoveLineCreate {
 	_c.mutation.SetID(v)
@@ -256,6 +270,10 @@ func (_c *StockMoveLineCreate) defaults() error {
 	if _, ok := _c.mutation.ExecutedQuantity(); !ok {
 		v := stockmoveline.DefaultExecutedQuantity
 		_c.mutation.SetExecutedQuantity(v)
+	}
+	if _, ok := _c.mutation.UnitCost(); !ok {
+		v := stockmoveline.DefaultUnitCost
+		_c.mutation.SetUnitCost(v)
 	}
 	return nil
 }
@@ -347,6 +365,10 @@ func (_c *StockMoveLineCreate) createSpec() (*StockMoveLine, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.ExecutedQuantity(); ok {
 		_spec.SetField(stockmoveline.FieldExecutedQuantity, field.TypeInt64, value)
 		_node.ExecutedQuantity = &value
+	}
+	if value, ok := _c.mutation.UnitCost(); ok {
+		_spec.SetField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
+		_node.UnitCost = &value
 	}
 	return _node, _spec
 }
@@ -625,6 +647,30 @@ func (u *StockMoveLineUpsert) AddExecutedQuantity(v int64) *StockMoveLineUpsert 
 // ClearExecutedQuantity clears the value of the "executed_quantity" field.
 func (u *StockMoveLineUpsert) ClearExecutedQuantity() *StockMoveLineUpsert {
 	u.SetNull(stockmoveline.FieldExecutedQuantity)
+	return u
+}
+
+// SetUnitCost sets the "unit_cost" field.
+func (u *StockMoveLineUpsert) SetUnitCost(v int64) *StockMoveLineUpsert {
+	u.Set(stockmoveline.FieldUnitCost, v)
+	return u
+}
+
+// UpdateUnitCost sets the "unit_cost" field to the value that was provided on create.
+func (u *StockMoveLineUpsert) UpdateUnitCost() *StockMoveLineUpsert {
+	u.SetExcluded(stockmoveline.FieldUnitCost)
+	return u
+}
+
+// AddUnitCost adds v to the "unit_cost" field.
+func (u *StockMoveLineUpsert) AddUnitCost(v int64) *StockMoveLineUpsert {
+	u.Add(stockmoveline.FieldUnitCost, v)
+	return u
+}
+
+// ClearUnitCost clears the value of the "unit_cost" field.
+func (u *StockMoveLineUpsert) ClearUnitCost() *StockMoveLineUpsert {
+	u.SetNull(stockmoveline.FieldUnitCost)
 	return u
 }
 
@@ -945,6 +991,34 @@ func (u *StockMoveLineUpsertOne) UpdateExecutedQuantity() *StockMoveLineUpsertOn
 func (u *StockMoveLineUpsertOne) ClearExecutedQuantity() *StockMoveLineUpsertOne {
 	return u.Update(func(s *StockMoveLineUpsert) {
 		s.ClearExecutedQuantity()
+	})
+}
+
+// SetUnitCost sets the "unit_cost" field.
+func (u *StockMoveLineUpsertOne) SetUnitCost(v int64) *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.SetUnitCost(v)
+	})
+}
+
+// AddUnitCost adds v to the "unit_cost" field.
+func (u *StockMoveLineUpsertOne) AddUnitCost(v int64) *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.AddUnitCost(v)
+	})
+}
+
+// UpdateUnitCost sets the "unit_cost" field to the value that was provided on create.
+func (u *StockMoveLineUpsertOne) UpdateUnitCost() *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.UpdateUnitCost()
+	})
+}
+
+// ClearUnitCost clears the value of the "unit_cost" field.
+func (u *StockMoveLineUpsertOne) ClearUnitCost() *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.ClearUnitCost()
 	})
 }
 
@@ -1431,6 +1505,34 @@ func (u *StockMoveLineUpsertBulk) UpdateExecutedQuantity() *StockMoveLineUpsertB
 func (u *StockMoveLineUpsertBulk) ClearExecutedQuantity() *StockMoveLineUpsertBulk {
 	return u.Update(func(s *StockMoveLineUpsert) {
 		s.ClearExecutedQuantity()
+	})
+}
+
+// SetUnitCost sets the "unit_cost" field.
+func (u *StockMoveLineUpsertBulk) SetUnitCost(v int64) *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.SetUnitCost(v)
+	})
+}
+
+// AddUnitCost adds v to the "unit_cost" field.
+func (u *StockMoveLineUpsertBulk) AddUnitCost(v int64) *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.AddUnitCost(v)
+	})
+}
+
+// UpdateUnitCost sets the "unit_cost" field to the value that was provided on create.
+func (u *StockMoveLineUpsertBulk) UpdateUnitCost() *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.UpdateUnitCost()
+	})
+}
+
+// ClearUnitCost clears the value of the "unit_cost" field.
+func (u *StockMoveLineUpsertBulk) ClearUnitCost() *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.ClearUnitCost()
 	})
 }
 

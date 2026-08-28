@@ -105,6 +105,7 @@ const DefaultPickingType = PickingTypeIncoming
 const (
 	PickingTypeIncoming PickingType = "INCOMING"
 	PickingTypeInternal PickingType = "INTERNAL"
+	PickingTypeOutgoing PickingType = "OUTGOING"
 )
 
 func (pt PickingType) String() string {
@@ -114,7 +115,7 @@ func (pt PickingType) String() string {
 // PickingTypeValidator is a validator for the "picking_type" field enum values. It is called by the builders before save.
 func PickingTypeValidator(pt PickingType) error {
 	switch pt {
-	case PickingTypeIncoming, PickingTypeInternal:
+	case PickingTypeIncoming, PickingTypeInternal, PickingTypeOutgoing:
 		return nil
 	default:
 		return fmt.Errorf("stockpicking: invalid enum value for picking_type field: %q", pt)

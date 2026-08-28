@@ -52,10 +52,11 @@ func (StockLocation) Fields() []ent.Field {
 			Nillable(),
 
 		field.Enum("usage").
-			Comment("位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置").
+			Comment("位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的）").
 			NamedValues(
 				"Supplier", "SUPPLIER",
 				"Internal", "INTERNAL",
+				"Customer", "CUSTOMER",
 			).
 			Default("INTERNAL").
 			Optional().

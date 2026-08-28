@@ -50,6 +50,14 @@ func (StockQuant) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		// cost_price：加权平均成本（分）。入库时按采购单价做加权平均更新，
+		// 出库时冻结到 stock_move_line.unit_cost 用于 COGS 核算。
+		field.Int64("cost_price").
+			Comment("加权平均成本（分）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 

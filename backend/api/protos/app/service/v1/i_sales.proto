@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "sales/service/v1/sales.proto";
+
+// 销售单服务（移动端只读：审批人在审批中心看到销售审批后可查单据原文）
+service SalesOrderService {
+  rpc List (pagination.PagingRequest) returns (sales.service.v1.ListSalesOrderResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/sales-orders"
+    };
+  }
+
+  rpc Get (sales.service.v1.GetSalesOrderRequest) returns (sales.service.v1.SalesOrder) {
+    option (google.api.http) = {
+      get: "/app/v1/sales-orders/{id}"
+    };
+  }
+}

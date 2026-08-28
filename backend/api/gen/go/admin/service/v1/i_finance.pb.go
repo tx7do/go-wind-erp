@@ -39,23 +39,47 @@ const file_admin_service_v1_i_finance_proto_rawDesc = "" +
 	"\x0ePaymentService\x12f\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPaymentResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/payments\x12j\n" +
 	"\x03Get\x12%.finance.service.v1.GetPaymentRequest\x1a\x1b.finance.service.v1.Payment\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/payments/{id}\x12i\n" +
-	"\x06Create\x12(.finance.service.v1.CreatePaymentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/paymentsB\xb8\x01\n" +
+	"\x06Create\x12(.finance.service.v1.CreatePaymentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/payments2\xce\x05\n" +
+	"\x11ReceivableService\x12l\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a*.finance.service.v1.ListReceivableResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/receivables\x12s\n" +
+	"\x03Get\x12(.finance.service.v1.GetReceivableRequest\x1a\x1e.finance.service.v1.Receivable\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/admin/v1/receivables/{id}\x12o\n" +
+	"\x06Create\x12+.finance.service.v1.CreateReceivableRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/receivables\x12q\n" +
+	"\x06Delete\x12+.finance.service.v1.DeleteReceivableRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/receivables/{id}\x12v\n" +
+	"\x06Cancel\x12+.finance.service.v1.CancelReceivableRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/admin/v1/receivables:cancel\x12z\n" +
+	"\vAgingReport\x12\x16.google.protobuf.Empty\x1a'.finance.service.v1.AgingReportResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/receivables:aging-report2\xcf\x02\n" +
+	"\x0eReceiptService\x12f\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListReceiptResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/receipts\x12j\n" +
+	"\x03Get\x12%.finance.service.v1.GetReceiptRequest\x1a\x1b.finance.service.v1.Receipt\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/receipts/{id}\x12i\n" +
+	"\x06Create\x12(.finance.service.v1.CreateReceiptRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/receipts2\x91\x01\n" +
+	"\x14FinanceReportService\x12y\n" +
+	"\fProfitReport\x12\x16.google.protobuf.Empty\x1a(.finance.service.v1.ProfitReportResponse\"'\x82\xd3\xe4\x93\x02!\x12\x1f/admin/v1/finance/profit-reportB\xb8\x01\n" +
 	"\x14com.admin.service.v1B\rIFinanceProtoP\x01Z/go-wind-erp/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_finance_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),         // 0: pagination.PagingRequest
-	(*v11.GetPayableRequest)(nil),    // 1: finance.service.v1.GetPayableRequest
-	(*v11.CreatePayableRequest)(nil), // 2: finance.service.v1.CreatePayableRequest
-	(*v11.DeletePayableRequest)(nil), // 3: finance.service.v1.DeletePayableRequest
-	(*v11.CancelPayableRequest)(nil), // 4: finance.service.v1.CancelPayableRequest
-	(*emptypb.Empty)(nil),            // 5: google.protobuf.Empty
-	(*v11.GetPaymentRequest)(nil),    // 6: finance.service.v1.GetPaymentRequest
-	(*v11.CreatePaymentRequest)(nil), // 7: finance.service.v1.CreatePaymentRequest
-	(*v11.ListPayableResponse)(nil),  // 8: finance.service.v1.ListPayableResponse
-	(*v11.Payable)(nil),              // 9: finance.service.v1.Payable
-	(*v11.AgingReportResponse)(nil),  // 10: finance.service.v1.AgingReportResponse
-	(*v11.ListPaymentResponse)(nil),  // 11: finance.service.v1.ListPaymentResponse
-	(*v11.Payment)(nil),              // 12: finance.service.v1.Payment
+	(*v1.PagingRequest)(nil),            // 0: pagination.PagingRequest
+	(*v11.GetPayableRequest)(nil),       // 1: finance.service.v1.GetPayableRequest
+	(*v11.CreatePayableRequest)(nil),    // 2: finance.service.v1.CreatePayableRequest
+	(*v11.DeletePayableRequest)(nil),    // 3: finance.service.v1.DeletePayableRequest
+	(*v11.CancelPayableRequest)(nil),    // 4: finance.service.v1.CancelPayableRequest
+	(*emptypb.Empty)(nil),               // 5: google.protobuf.Empty
+	(*v11.GetPaymentRequest)(nil),       // 6: finance.service.v1.GetPaymentRequest
+	(*v11.CreatePaymentRequest)(nil),    // 7: finance.service.v1.CreatePaymentRequest
+	(*v11.GetReceivableRequest)(nil),    // 8: finance.service.v1.GetReceivableRequest
+	(*v11.CreateReceivableRequest)(nil), // 9: finance.service.v1.CreateReceivableRequest
+	(*v11.DeleteReceivableRequest)(nil), // 10: finance.service.v1.DeleteReceivableRequest
+	(*v11.CancelReceivableRequest)(nil), // 11: finance.service.v1.CancelReceivableRequest
+	(*v11.GetReceiptRequest)(nil),       // 12: finance.service.v1.GetReceiptRequest
+	(*v11.CreateReceiptRequest)(nil),    // 13: finance.service.v1.CreateReceiptRequest
+	(*v11.ListPayableResponse)(nil),     // 14: finance.service.v1.ListPayableResponse
+	(*v11.Payable)(nil),                 // 15: finance.service.v1.Payable
+	(*v11.AgingReportResponse)(nil),     // 16: finance.service.v1.AgingReportResponse
+	(*v11.ListPaymentResponse)(nil),     // 17: finance.service.v1.ListPaymentResponse
+	(*v11.Payment)(nil),                 // 18: finance.service.v1.Payment
+	(*v11.ListReceivableResponse)(nil),  // 19: finance.service.v1.ListReceivableResponse
+	(*v11.Receivable)(nil),              // 20: finance.service.v1.Receivable
+	(*v11.ListReceiptResponse)(nil),     // 21: finance.service.v1.ListReceiptResponse
+	(*v11.Receipt)(nil),                 // 22: finance.service.v1.Receipt
+	(*v11.ProfitReportResponse)(nil),    // 23: finance.service.v1.ProfitReportResponse
 }
 var file_admin_service_v1_i_finance_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.PayableService.List:input_type -> pagination.PagingRequest
@@ -67,17 +91,37 @@ var file_admin_service_v1_i_finance_proto_depIdxs = []int32{
 	0,  // 6: admin.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
 	6,  // 7: admin.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
 	7,  // 8: admin.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	8,  // 9: admin.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	9,  // 10: admin.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	5,  // 11: admin.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	5,  // 12: admin.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	5,  // 13: admin.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	10, // 14: admin.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	11, // 15: admin.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	12, // 16: admin.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	5,  // 17: admin.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	9,  // [9:18] is the sub-list for method output_type
-	0,  // [0:9] is the sub-list for method input_type
+	0,  // 9: admin.service.v1.ReceivableService.List:input_type -> pagination.PagingRequest
+	8,  // 10: admin.service.v1.ReceivableService.Get:input_type -> finance.service.v1.GetReceivableRequest
+	9,  // 11: admin.service.v1.ReceivableService.Create:input_type -> finance.service.v1.CreateReceivableRequest
+	10, // 12: admin.service.v1.ReceivableService.Delete:input_type -> finance.service.v1.DeleteReceivableRequest
+	11, // 13: admin.service.v1.ReceivableService.Cancel:input_type -> finance.service.v1.CancelReceivableRequest
+	5,  // 14: admin.service.v1.ReceivableService.AgingReport:input_type -> google.protobuf.Empty
+	0,  // 15: admin.service.v1.ReceiptService.List:input_type -> pagination.PagingRequest
+	12, // 16: admin.service.v1.ReceiptService.Get:input_type -> finance.service.v1.GetReceiptRequest
+	13, // 17: admin.service.v1.ReceiptService.Create:input_type -> finance.service.v1.CreateReceiptRequest
+	5,  // 18: admin.service.v1.FinanceReportService.ProfitReport:input_type -> google.protobuf.Empty
+	14, // 19: admin.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	15, // 20: admin.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	5,  // 21: admin.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	5,  // 22: admin.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	5,  // 23: admin.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	16, // 24: admin.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	17, // 25: admin.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	18, // 26: admin.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	5,  // 27: admin.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	19, // 28: admin.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
+	20, // 29: admin.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
+	5,  // 30: admin.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
+	5,  // 31: admin.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
+	5,  // 32: admin.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
+	16, // 33: admin.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	21, // 34: admin.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
+	22, // 35: admin.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
+	5,  // 36: admin.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
+	23, // 37: admin.service.v1.FinanceReportService.ProfitReport:output_type -> finance.service.v1.ProfitReportResponse
+	19, // [19:38] is the sub-list for method output_type
+	0,  // [0:19] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -96,7 +140,7 @@ func file_admin_service_v1_i_finance_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   5,
 		},
 		GoTypes:           file_admin_service_v1_i_finance_proto_goTypes,
 		DependencyIndexes: file_admin_service_v1_i_finance_proto_depIdxs,

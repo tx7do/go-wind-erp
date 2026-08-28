@@ -9,6 +9,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
+	"go-wind-erp/app/core/service/internal/data/ent/customer"
 	"go-wind-erp/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/dictentry"
 	"go-wind-erp/app/core/service/internal/data/ent/dictentryi18n"
@@ -40,9 +41,13 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/product"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
+	"go-wind-erp/app/core/service/internal/data/ent/receipt"
+	"go-wind-erp/app/core/service/internal/data/ent/receivable"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-erp/app/core/service/internal/data/ent/salesorder"
+	"go-wind-erp/app/core/service/internal/data/ent/salesorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
@@ -126,6 +131,7 @@ func checkColumn(t, c string) error {
 			api.Table:                      api.ValidColumn,
 			apiauditlog.Table:              apiauditlog.ValidColumn,
 			approvalrequest.Table:          approvalrequest.ValidColumn,
+			customer.Table:                 customer.ValidColumn,
 			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
 			dictentry.Table:                dictentry.ValidColumn,
 			dictentryi18n.Table:            dictentryi18n.ValidColumn,
@@ -157,9 +163,13 @@ func checkColumn(t, c string) error {
 			product.Table:                  product.ValidColumn,
 			purchaseorder.Table:            purchaseorder.ValidColumn,
 			purchaseorderitem.Table:        purchaseorderitem.ValidColumn,
+			receipt.Table:                  receipt.ValidColumn,
+			receivable.Table:               receivable.ValidColumn,
 			role.Table:                     role.ValidColumn,
 			rolemetadata.Table:             rolemetadata.ValidColumn,
 			rolepermission.Table:           rolepermission.ValidColumn,
+			salesorder.Table:               salesorder.ValidColumn,
+			salesorderitem.Table:           salesorderitem.ValidColumn,
 			stocklocation.Table:            stocklocation.ValidColumn,
 			stockmove.Table:                stockmove.ValidColumn,
 			stockmoveline.Table:            stockmoveline.ValidColumn,

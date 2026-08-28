@@ -244,6 +244,33 @@ func (_u *StockQuantUpdate) ClearQuantity() *StockQuantUpdate {
 	return _u
 }
 
+// SetCostPrice sets the "cost_price" field.
+func (_u *StockQuantUpdate) SetCostPrice(v int64) *StockQuantUpdate {
+	_u.mutation.ResetCostPrice()
+	_u.mutation.SetCostPrice(v)
+	return _u
+}
+
+// SetNillableCostPrice sets the "cost_price" field if the given value is not nil.
+func (_u *StockQuantUpdate) SetNillableCostPrice(v *int64) *StockQuantUpdate {
+	if v != nil {
+		_u.SetCostPrice(*v)
+	}
+	return _u
+}
+
+// AddCostPrice adds value to the "cost_price" field.
+func (_u *StockQuantUpdate) AddCostPrice(v int64) *StockQuantUpdate {
+	_u.mutation.AddCostPrice(v)
+	return _u
+}
+
+// ClearCostPrice clears the value of the "cost_price" field.
+func (_u *StockQuantUpdate) ClearCostPrice() *StockQuantUpdate {
+	_u.mutation.ClearCostPrice()
+	return _u
+}
+
 // Mutation returns the StockQuantMutation object of the builder.
 func (_u *StockQuantUpdate) Mutation() *StockQuantMutation {
 	return _u.mutation
@@ -365,6 +392,15 @@ func (_u *StockQuantUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if _u.mutation.QuantityCleared() {
 		_spec.ClearField(stockquant.FieldQuantity, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.CostPrice(); ok {
+		_spec.SetField(stockquant.FieldCostPrice, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCostPrice(); ok {
+		_spec.AddField(stockquant.FieldCostPrice, field.TypeInt64, value)
+	}
+	if _u.mutation.CostPriceCleared() {
+		_spec.ClearField(stockquant.FieldCostPrice, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -603,6 +639,33 @@ func (_u *StockQuantUpdateOne) ClearQuantity() *StockQuantUpdateOne {
 	return _u
 }
 
+// SetCostPrice sets the "cost_price" field.
+func (_u *StockQuantUpdateOne) SetCostPrice(v int64) *StockQuantUpdateOne {
+	_u.mutation.ResetCostPrice()
+	_u.mutation.SetCostPrice(v)
+	return _u
+}
+
+// SetNillableCostPrice sets the "cost_price" field if the given value is not nil.
+func (_u *StockQuantUpdateOne) SetNillableCostPrice(v *int64) *StockQuantUpdateOne {
+	if v != nil {
+		_u.SetCostPrice(*v)
+	}
+	return _u
+}
+
+// AddCostPrice adds value to the "cost_price" field.
+func (_u *StockQuantUpdateOne) AddCostPrice(v int64) *StockQuantUpdateOne {
+	_u.mutation.AddCostPrice(v)
+	return _u
+}
+
+// ClearCostPrice clears the value of the "cost_price" field.
+func (_u *StockQuantUpdateOne) ClearCostPrice() *StockQuantUpdateOne {
+	_u.mutation.ClearCostPrice()
+	return _u
+}
+
 // Mutation returns the StockQuantMutation object of the builder.
 func (_u *StockQuantUpdateOne) Mutation() *StockQuantMutation {
 	return _u.mutation
@@ -754,6 +817,15 @@ func (_u *StockQuantUpdateOne) sqlSave(ctx context.Context) (_node *StockQuant, 
 	}
 	if _u.mutation.QuantityCleared() {
 		_spec.ClearField(stockquant.FieldQuantity, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.CostPrice(); ok {
+		_spec.SetField(stockquant.FieldCostPrice, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCostPrice(); ok {
+		_spec.AddField(stockquant.FieldCostPrice, field.TypeInt64, value)
+	}
+	if _u.mutation.CostPriceCleared() {
+		_spec.ClearField(stockquant.FieldCostPrice, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &StockQuant{config: _u.config}

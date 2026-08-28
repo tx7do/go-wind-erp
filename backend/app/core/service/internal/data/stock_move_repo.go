@@ -70,6 +70,9 @@ func (r *StockMoveRepo) CreateMovesForPicking(
 		if move.PurchaseOrderItemId != nil {
 			builder.SetNillablePurchaseOrderItemID(move.PurchaseOrderItemId)
 		}
+		if move.SalesOrderItemId != nil {
+			builder.SetNillableSalesOrderItemID(move.SalesOrderItemId)
+		}
 		if _, err := builder.Save(ctx); err != nil {
 			r.log.Errorf("insert stock_move failed: %s", err.Error())
 			return inventoryV1.ErrorInternalServerError("insert stock_move failed")
@@ -203,6 +206,7 @@ func (r *StockMoveRepo) mapMoveRows(rows []*ent.StockMove) []*inventoryV1.StockM
 			PlannedQuantity:       row.PlannedQuantity,
 			State:                 r.stateConverter.ToDTO(row.State),
 			PurchaseOrderItemId:   row.PurchaseOrderItemID,
+			SalesOrderItemId:      row.SalesOrderItemID,
 			Remark:                row.Remark,
 		}
 		items = append(items, dto)

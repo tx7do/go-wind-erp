@@ -266,6 +266,25 @@ func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (uint32, error
 	return loc.ID, nil
 }
 
+// GetCustomerLocationID 取租户的客户位置ID（出库 move 的 dest location）。
+// 每租户仅一条 usage=CUSTOMER 的位置。
+func (r *LocationRepo) GetCustomerLocationID(ctx context.Context) (uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockLocation.Query().
+		Where(stocklocation.UsageEQ(stocklocation.UsageCustomer))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, inventoryV1.ErrorNotFound("customer location not found for tenant")
+		}
+		return 0, inventoryV1.ErrorInternalServerError("query customer location failed")
+	}
+	return loc.ID, nil
+}
+
 // GetUsageTx 在事务内查位置的 usage 值。Validate 用此判断 source/dest
 // 是否为虚拟位置（SUPPLIER = 虚拟，无 quant，跳过该腿的 quant 回写）。
 func (r *LocationRepo) GetUsageTx(
@@ -289,14 +308,16 @@ func (r *LocationRepo) GetUsageTx(
 	if loc.Usage == nil {
 		return inventoryV1.StockLocation_INTERNAL, nil
 	}
-	switch *loc.Usage {
-	case stocklocation.UsageSupplier:
-			return inventoryV1.StockLocation_SUPPLIER, nil
-	case stocklocation.UsageInternal:
-			return inventoryV1.StockLocation_INTERNAL, nil
-	default:
-			return inventoryV1.StockLocation_INTERNAL, nil
-	}
+		switch *loc.Usage {
+		case stocklocation.UsageSupplier:
+				return inventoryV1.StockLocation_SUPPLIER, nil
+		case stocklocation.UsageInternal:
+				return inventoryV1.StockLocation_INTERNAL, nil
+		case stocklocation.UsageCustomer:
+				return inventoryV1.StockLocation_CUSTOMER, nil
+		default:
+				return inventoryV1.StockLocation_INTERNAL, nil
+		}
 }
 
 // GetWarehouseCodeTx 在事务内查位置的 warehouse_code（INTERNAL 位置的归属
@@ -365,6 +386,26 @@ func (r *LocationRepo) CreateSupplierLocation(ctx context.Context) error {
 	if err != nil {
 		r.log.Errorf("create supplier location failed: %s", err.Error())
 		return inventoryV1.ErrorInternalServerError("create supplier location failed")
+	}
+	return nil
+}
+
+// CreateCustomerLocation 为租户创建其 CUSTOMER 虚拟位置（租户初始化时调用）。
+// 每租户仅一条。镜像 CreateSupplierLocation。
+func (r *LocationRepo) CreateCustomerLocation(ctx context.Context) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return inventoryV1.ErrorBadRequest("tenant context required for customer location creation")
+	}
+	usage := stocklocation.UsageCustomer
+	builder := r.entClient.Client().StockLocation.Create().
+		SetUsage(usage).
+		SetName("customer location").
+		SetTenantID(tid)
+	_, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create customer location failed: %s", err.Error())
+		return inventoryV1.ErrorInternalServerError("create customer location failed")
 	}
 	return nil
 }

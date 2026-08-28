@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "sales/service/v1/sales.proto";
+
+// 客户管理服务
+service CustomerService {
+  rpc List (pagination.PagingRequest) returns (sales.service.v1.ListCustomerResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/customers"
+    };
+  }
+
+  rpc Get (sales.service.v1.GetCustomerRequest) returns (sales.service.v1.Customer) {
+    option (google.api.http) = {
+      get: "/admin/v1/customers/{id}"
+    };
+  }
+
+  rpc Create (sales.service.v1.CreateCustomerRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/customers"
+      body: "*"
+    };
+  }
+
+  rpc Update (sales.service.v1.UpdateCustomerRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/customers/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (sales.service.v1.DeleteCustomerRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/customers/{id}"
+    };
+  }
+}
+
+// 销售单管理服务
+service SalesOrderService {
+  rpc List (pagination.PagingRequest) returns (sales.service.v1.ListSalesOrderResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/sales-orders"
+    };
+  }
+
+  rpc Get (sales.service.v1.GetSalesOrderRequest) returns (sales.service.v1.SalesOrder) {
+    option (google.api.http) = {
+      get: "/admin/v1/sales-orders/{id}"
+    };
+  }
+
+  rpc Create (sales.service.v1.CreateSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders"
+      body: "*"
+    };
+  }
+
+  rpc Update (sales.service.v1.UpdateSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/sales-orders/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (sales.service.v1.DeleteSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/sales-orders/{id}"
+    };
+  }
+
+  rpc Submit (sales.service.v1.SubmitSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders:submit"
+      body: "*"
+    };
+  }
+
+  rpc Approve (sales.service.v1.ApproveSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders:approve"
+      body: "*"
+    };
+  }
+
+  rpc Reject (sales.service.v1.RejectSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders:reject"
+      body: "*"
+    };
+  }
+
+  rpc Cancel (sales.service.v1.CancelSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders:cancel"
+      body: "*"
+    };
+  }
+
+  rpc Complete (sales.service.v1.CompleteSalesOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/sales-orders:complete"
+      body: "*"
+    };
+  }
+}

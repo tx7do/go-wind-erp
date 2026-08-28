@@ -39,7 +39,9 @@ type StockQuant struct {
 	// 产品编码
 	ProductCode *string `json:"product_code,omitempty"`
 	// 在手数量
-	Quantity     *int64 `json:"quantity,omitempty"`
+	Quantity *int64 `json:"quantity,omitempty"`
+	// 加权平均成本（分）
+	CostPrice    *int64 `json:"cost_price,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -48,7 +50,7 @@ func (*StockQuant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case stockquant.FieldID, stockquant.FieldCreatedBy, stockquant.FieldUpdatedBy, stockquant.FieldDeletedBy, stockquant.FieldTenantID, stockquant.FieldLocationID, stockquant.FieldQuantity:
+		case stockquant.FieldID, stockquant.FieldCreatedBy, stockquant.FieldUpdatedBy, stockquant.FieldDeletedBy, stockquant.FieldTenantID, stockquant.FieldLocationID, stockquant.FieldQuantity, stockquant.FieldCostPrice:
 			values[i] = new(sql.NullInt64)
 		case stockquant.FieldRemark, stockquant.FieldProductCode:
 			values[i] = new(sql.NullString)
@@ -152,6 +154,13 @@ func (_m *StockQuant) assignValues(columns []string, values []any) error {
 				_m.Quantity = new(int64)
 				*_m.Quantity = value.Int64
 			}
+		case stockquant.FieldCostPrice:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cost_price", values[i])
+			} else if value.Valid {
+				_m.CostPrice = new(int64)
+				*_m.CostPrice = value.Int64
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -240,6 +249,11 @@ func (_m *StockQuant) String() string {
 	builder.WriteString(", ")
 	if v := _m.Quantity; v != nil {
 		builder.WriteString("quantity=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.CostPrice; v != nil {
+		builder.WriteString("cost_price=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

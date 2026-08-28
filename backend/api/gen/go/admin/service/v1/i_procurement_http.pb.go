@@ -43,14 +43,14 @@ type SupplierServiceHTTPServer interface {
 
 func RegisterSupplierServiceHTTPServer(s *http.Server, srv SupplierServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/suppliers", _SupplierService_List25_HTTP_Handler(srv))
-	r.GET("/admin/v1/suppliers/{id}", _SupplierService_Get25_HTTP_Handler(srv))
-	r.POST("/admin/v1/suppliers", _SupplierService_Create18_HTTP_Handler(srv))
+	r.GET("/admin/v1/suppliers", _SupplierService_List27_HTTP_Handler(srv))
+	r.GET("/admin/v1/suppliers/{id}", _SupplierService_Get27_HTTP_Handler(srv))
+	r.POST("/admin/v1/suppliers", _SupplierService_Create20_HTTP_Handler(srv))
 	r.PUT("/admin/v1/suppliers/{id}", _SupplierService_Update14_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/suppliers/{id}", _SupplierService_Delete17_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/suppliers/{id}", _SupplierService_Delete18_HTTP_Handler(srv))
 }
 
-func _SupplierService_List25_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
+func _SupplierService_List27_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _SupplierService_List25_HTTP_Handler(srv SupplierServiceHTTPServer) func(ct
 	}
 }
 
-func _SupplierService_Get25_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
+func _SupplierService_Get27_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSupplierRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _SupplierService_Get25_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx
 	}
 }
 
-func _SupplierService_Create18_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
+func _SupplierService_Create20_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateSupplierRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _SupplierService_Update14_HTTP_Handler(srv SupplierServiceHTTPServer) func(
 	}
 }
 
-func _SupplierService_Delete17_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
+func _SupplierService_Delete18_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSupplierRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -287,19 +287,19 @@ type PurchaseOrderServiceHTTPServer interface {
 
 func RegisterPurchaseOrderServiceHTTPServer(s *http.Server, srv PurchaseOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/purchase-orders", _PurchaseOrderService_List26_HTTP_Handler(srv))
-	r.GET("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Get26_HTTP_Handler(srv))
-	r.POST("/admin/v1/purchase-orders", _PurchaseOrderService_Create19_HTTP_Handler(srv))
+	r.GET("/admin/v1/purchase-orders", _PurchaseOrderService_List28_HTTP_Handler(srv))
+	r.GET("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Get28_HTTP_Handler(srv))
+	r.POST("/admin/v1/purchase-orders", _PurchaseOrderService_Create21_HTTP_Handler(srv))
 	r.PUT("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Update15_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Delete18_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Delete19_HTTP_Handler(srv))
 	r.POST("/admin/v1/purchase-orders:submit", _PurchaseOrderService_Submit0_HTTP_Handler(srv))
 	r.POST("/admin/v1/purchase-orders:approve", _PurchaseOrderService_Approve1_HTTP_Handler(srv))
 	r.POST("/admin/v1/purchase-orders:reject", _PurchaseOrderService_Reject1_HTTP_Handler(srv))
-	r.POST("/admin/v1/purchase-orders:cancel", _PurchaseOrderService_Cancel3_HTTP_Handler(srv))
+	r.POST("/admin/v1/purchase-orders:cancel", _PurchaseOrderService_Cancel4_HTTP_Handler(srv))
 	r.POST("/admin/v1/purchase-orders:complete", _PurchaseOrderService_Complete0_HTTP_Handler(srv))
 }
 
-func _PurchaseOrderService_List26_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_List28_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -318,7 +318,7 @@ func _PurchaseOrderService_List26_HTTP_Handler(srv PurchaseOrderServiceHTTPServe
 	}
 }
 
-func _PurchaseOrderService_Get26_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_Get28_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPurchaseOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -340,7 +340,7 @@ func _PurchaseOrderService_Get26_HTTP_Handler(srv PurchaseOrderServiceHTTPServer
 	}
 }
 
-func _PurchaseOrderService_Create19_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_Create21_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePurchaseOrderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -387,7 +387,7 @@ func _PurchaseOrderService_Update15_HTTP_Handler(srv PurchaseOrderServiceHTTPSer
 	}
 }
 
-func _PurchaseOrderService_Delete18_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_Delete19_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePurchaseOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -475,7 +475,7 @@ func _PurchaseOrderService_Reject1_HTTP_Handler(srv PurchaseOrderServiceHTTPServ
 	}
 }
 
-func _PurchaseOrderService_Cancel3_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_Cancel4_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CancelPurchaseOrderRequest
 		if err := ctx.Bind(&in); err != nil {

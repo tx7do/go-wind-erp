@@ -29,6 +29,7 @@ type StockPickingService struct {
 	stockQuantRepo    *data.StockQuantRepo
 	stockMoveLineRepo *data.StockMoveLineRepo
 	purchaseOrderRepo *data.PurchaseOrderRepo
+	salesOrderRepo    *data.SalesOrderRepo
 	locationRepo      *data.LocationRepo
 	saga              *procurementSagaSeam
 }
@@ -39,6 +40,7 @@ func NewStockPickingService(
 	stockQuantRepo *data.StockQuantRepo,
 	stockMoveLineRepo *data.StockMoveLineRepo,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
+	salesOrderRepo *data.SalesOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	locationRepo *data.LocationRepo,
 	messageRepo *data.InternalMessageRepo,
@@ -50,6 +52,7 @@ func NewStockPickingService(
 		stockQuantRepo:    stockQuantRepo,
 		stockMoveLineRepo: stockMoveLineRepo,
 		purchaseOrderRepo: purchaseOrderRepo,
+		salesOrderRepo:    salesOrderRepo,
 		locationRepo:      locationRepo,
 
 		saga: &procurementSagaSeam{
@@ -99,6 +102,11 @@ func (s *StockPickingService) Create(ctx context.Context, req *inventoryV1.Creat
 		// 接收位置。但入库拣货单仅由采购获批自动创建——客户端直接调
 		// 此接口创建入库拣货单不允许（需经采购审批链）。
 		return nil, inventoryV1.ErrorBadRequest("incoming pickings are created automatically on PO approval")
+
+	case inventoryV1.StockPicking_OUTGOING:
+		// 出库：source = 仓库接收位置，dest = 租户客户位置。出库拣货单
+		// 仅由销售单获批自动创建——客户端直接调此接口不允许。
+		return nil, inventoryV1.ErrorBadRequest("outgoing pickings are created automatically on SO approval")
 
 	case inventoryV1.StockPicking_INTERNAL:
 		// 调拨：source = fromWarehouse 的接收位置，dest = toWarehouse 的
@@ -268,6 +276,7 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		productCode := move.GetProductCode()
 		executedQty := move.GetPlannedQuantity()
 		poItemID := move.GetPurchaseOrderItemId()
+		soItemID := move.GetSalesOrderItemId()
 
 		if executedQty <= 0 {
 			err = inventoryV1.ErrorBadRequest("planned quantity must be positive")
@@ -275,7 +284,7 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		}
 
 		// 查 source/dest 的 usage——借鉴 Odoo stock.location.usage：
-		// SUPPLIER = 虚拟位置（无 quant，跳过该腿的 quant 回写），
+		// SUPPLIER/CUSTOMER = 虚拟位置（无 quant，跳过该腿的 quant 回写），
 		// INTERNAL = 真实位置（有 quant，执行回写）。这是双轨制库存的核心：
 		// 只有真实位置之间的移动才同时做 source 减 / dest 加；涉及虚拟
 		// 位置的腿跳过 quant 回写（库存从边界 "出现" 或 "消失"）。
@@ -290,10 +299,28 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 			return nil, err
 		}
 
+		// 确定 unit_cost：入库腿从采购明细单价取值（quant 加权平均用），
+		// 出库/调拨腿从源位置 quant 的 cost_price 冻结（COGS 核算用）。
+		// 虚拟位置无 quant，unit_cost 取 0（仅审计留痕，无财务意义）。
+		var unitCost int64
+		if srcUsage == inventoryV1.StockLocation_INTERNAL {
+			srcQuantForCost, cerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, sourceLocID, productCode)
+			if cerr != nil {
+				err = cerr
+				return nil, err
+			}
+			unitCost, _ = s.stockQuantRepo.GetCostPriceTx(ctx, tx, srcQuantForCost.GetId())
+		} else if poItemID != 0 {
+			// 入库：source 是虚拟 SUPPLIER，unit_cost 取采购明细单价。
+			unitCost = s.purchaseOrderRepo.GetUnitPriceTx(ctx, tx, poItemID)
+		}
+
 		// 创建 move-line（执行记录，借鉴 Odoo stock.move.line._action_done）。
 		// move-line 始终记录完整的 source→dest 轨迹（含虚拟位置），供审计追溯。
+		// unit_cost 冻结执行时的单位成本（入库=采购单价，出库/调拨=源位置 quant
+		// 的加权平均成本），供 COGS 核算。
 		if err = s.stockMoveLineRepo.CreateTx(ctx, tx, move.GetId(), req.GetId(),
-			productCode, sourceLocID, destLocID, executedQty); err != nil {
+			productCode, sourceLocID, destLocID, executedQty, unitCost); err != nil {
 			return nil, err
 		}
 
@@ -328,6 +355,8 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 
 		// 更新 dest quant：quantity += executedQty（EnsureForLocation 先确保行存在）。
 		// 仅对真实位置（INTERNAL）执行——虚拟位置无 quant 行，跳过。
+		// 使用 ApplyInboundWithCostTx 同时更新 quantity 和 cost_price（加权平均），
+		// unitCost 为上面冻结的源位置成本或采购单价。
 		if dstUsage == inventoryV1.StockLocation_INTERNAL {
 			if err = s.stockQuantRepo.EnsureForLocationTx(ctx, tx, destLocID, productCode); err != nil {
 				return nil, err
@@ -337,7 +366,7 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 				err = qerr
 				return nil, err
 			}
-			if _, err = s.stockQuantRepo.ApplyDeltaTx(ctx, tx, dstQuant.GetId(), executedQty); err != nil {
+			if err = s.stockQuantRepo.ApplyInboundWithCostTx(ctx, tx, dstQuant.GetId(), executedQty, unitCost); err != nil {
 				return nil, err
 			}
 		}
@@ -354,6 +383,16 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 			_, arerr := s.purchaseOrderRepo.ApplyReceiptTx(ctx, tx, poItemID, executedQty)
 			if arerr != nil {
 				err = arerr
+				return nil, err
+			}
+		}
+
+		// 出库联动：回写销售明细 fulfilled_quantity（镜像采购收货回写，
+		// 原子条件更新防超履约）。若全部明细履约齐 → SO 自动完结。
+		if soItemID != 0 {
+			_, ferr := s.salesOrderRepo.ApplyFulfillmentTx(ctx, tx, soItemID, executedQty)
+			if ferr != nil {
+				err = ferr
 				return nil, err
 			}
 		}

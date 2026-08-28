@@ -340,6 +340,84 @@ func (r *StockQuantRepo) ApplyDeltaTx(
 	return *after.Quantity, nil
 }
 
+// GetCostPriceTx 在事务内读取某 quant 的当前加权平均成本（出库时冻结
+// 到 stock_move_line.unit_cost 用于 COGS 核算）。
+func (r *StockQuantRepo) GetCostPriceTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	quantID uint32,
+) (int64, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := tx.StockQuant.Query().
+		Where(stockquant.IDEQ(quantID))
+	if hasTenant {
+		q.Where(stockquant.TenantIDEQ(tid))
+	}
+	quant, err := q.Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, inventoryV1.ErrorNotFound("stock_quant not found")
+		}
+		return 0, inventoryV1.ErrorInternalServerError("query stock_quant failed")
+	}
+	if quant.CostPrice == nil {
+		return 0, nil
+	}
+	return *quant.CostPrice, nil
+}
+
+// ApplyInboundWithCostTx 入库腿的原子回写：同时更新 quantity（+=delta）
+// 和 cost_price（加权平均），在单条 UPDATE 内完成。防负守卫与 ApplyDeltaTx
+// 相同（quantity + delta >= 0）。加权平均公式：
+//   new_cost = (old_qty * old_cost + delta_qty * unit_cost) / (old_qty + delta_qty)
+// 当 old_qty + delta_qty = 0（清仓后重新入库）时重置为 unit_cost。
+func (r *StockQuantRepo) ApplyInboundWithCostTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	quantID uint32,
+	qtyDelta int64,
+	unitCost int64,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	builder := tx.StockQuant.Update().
+		Where(stockquant.IDEQ(quantID)).
+		// 防负：quantity + delta >= 0
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s + %d >= 0", s.C(stockquant.FieldQuantity), qtyDelta,
+			)))
+		}).
+		AddQuantity(qtyDelta)
+	if hasTenant {
+		builder.Where(stockquant.TenantIDEQ(tid))
+	}
+
+	// 加权平均成本：在 SQL 层用 CASE 表达式推导。当新总量为 0 时直接取
+	// unit_cost（避免除零），否则取加权平均。
+	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(
+			stockquant.FieldCostPrice,
+			sql.Expr(fmt.Sprintf(
+				"CASE WHEN %s + %d = 0 THEN %d "+
+					"ELSE (%s * %s + %d * %d) / (%s + %d) END",
+				stockquant.FieldQuantity, qtyDelta, unitCost,
+				stockquant.FieldQuantity, stockquant.FieldCostPrice, qtyDelta, unitCost,
+				stockquant.FieldQuantity, qtyDelta,
+			)),
+		)
+	})
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("apply inbound with cost failed: %s", err.Error())
+		return inventoryV1.ErrorInternalServerError("apply inbound with cost failed")
+	}
+	if n == 0 {
+		return inventoryV1.ErrorConflict("insufficient stock or stock_quant changed concurrently")
+	}
+	return nil
+}
+
 // SumQuantity 库存总量（所有记录 quantity 之和）。
 // 无 GROUP BY 的 SUM 在空集（或全 NULL 列）时返回一行 NULL 而非零行，
 // 直接扫 []int64 会被 database/sql 拒绝导致空库看板 500；用 COALESCE

@@ -8,6 +8,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
+	"go-wind-erp/app/core/service/internal/data/ent/customer"
 	"go-wind-erp/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/dictentry"
 	"go-wind-erp/app/core/service/internal/data/ent/dictentryi18n"
@@ -39,9 +40,13 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/product"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorder"
 	"go-wind-erp/app/core/service/internal/data/ent/purchaseorderitem"
+	"go-wind-erp/app/core/service/internal/data/ent/receipt"
+	"go-wind-erp/app/core/service/internal/data/ent/receivable"
 	"go-wind-erp/app/core/service/internal/data/ent/role"
 	"go-wind-erp/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-erp/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-erp/app/core/service/internal/data/ent/salesorder"
+	"go-wind-erp/app/core/service/internal/data/ent/salesorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/schema"
 	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
@@ -144,6 +149,34 @@ func init() {
 	approvalrequestDescID := approvalrequestMixinFields0[0].Descriptor()
 	// approvalrequest.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	approvalrequest.IDValidator = approvalrequestDescID.Validators[0].(func(uint32) error)
+	customerMixin := schema.Customer{}.Mixin()
+	customer.Policy = privacy.NewPolicies(customerMixin[4], schema.Customer{})
+	customer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := customer.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	customerMixinFields0 := customerMixin[0].Fields()
+	_ = customerMixinFields0
+	customerMixinFields4 := customerMixin[4].Fields()
+	_ = customerMixinFields4
+	customerFields := schema.Customer{}.Fields()
+	_ = customerFields
+	// customerDescTenantID is the schema descriptor for tenant_id field.
+	customerDescTenantID := customerMixinFields4[0].Descriptor()
+	// customer.DefaultTenantID holds the default value on creation for the tenant_id field.
+	customer.DefaultTenantID = customerDescTenantID.Default.(uint32)
+	// customerDescEnable is the schema descriptor for enable field.
+	customerDescEnable := customerFields[4].Descriptor()
+	// customer.DefaultEnable holds the default value on creation for the enable field.
+	customer.DefaultEnable = customerDescEnable.Default.(bool)
+	// customerDescID is the schema descriptor for id field.
+	customerDescID := customerMixinFields0[0].Descriptor()
+	// customer.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	customer.IDValidator = customerDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1129,6 +1162,70 @@ func init() {
 	purchaseorderitemDescID := purchaseorderitemMixinFields0[0].Descriptor()
 	// purchaseorderitem.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	purchaseorderitem.IDValidator = purchaseorderitemDescID.Validators[0].(func(uint32) error)
+	receiptMixin := schema.Receipt{}.Mixin()
+	receipt.Policy = privacy.NewPolicies(receiptMixin[4], schema.Receipt{})
+	receipt.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := receipt.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	receiptMixinFields0 := receiptMixin[0].Fields()
+	_ = receiptMixinFields0
+	receiptMixinFields4 := receiptMixin[4].Fields()
+	_ = receiptMixinFields4
+	receiptFields := schema.Receipt{}.Fields()
+	_ = receiptFields
+	// receiptDescTenantID is the schema descriptor for tenant_id field.
+	receiptDescTenantID := receiptMixinFields4[0].Descriptor()
+	// receipt.DefaultTenantID holds the default value on creation for the tenant_id field.
+	receipt.DefaultTenantID = receiptDescTenantID.Default.(uint32)
+	// receiptDescReceivableID is the schema descriptor for receivable_id field.
+	receiptDescReceivableID := receiptFields[1].Descriptor()
+	// receipt.DefaultReceivableID holds the default value on creation for the receivable_id field.
+	receipt.DefaultReceivableID = receiptDescReceivableID.Default.(uint32)
+	// receiptDescAmount is the schema descriptor for amount field.
+	receiptDescAmount := receiptFields[2].Descriptor()
+	// receipt.DefaultAmount holds the default value on creation for the amount field.
+	receipt.DefaultAmount = receiptDescAmount.Default.(int64)
+	// receiptDescID is the schema descriptor for id field.
+	receiptDescID := receiptMixinFields0[0].Descriptor()
+	// receipt.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	receipt.IDValidator = receiptDescID.Validators[0].(func(uint32) error)
+	receivableMixin := schema.Receivable{}.Mixin()
+	receivable.Policy = privacy.NewPolicies(receivableMixin[4], schema.Receivable{})
+	receivable.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := receivable.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	receivableMixinFields0 := receivableMixin[0].Fields()
+	_ = receivableMixinFields0
+	receivableMixinFields4 := receivableMixin[4].Fields()
+	_ = receivableMixinFields4
+	receivableFields := schema.Receivable{}.Fields()
+	_ = receivableFields
+	// receivableDescTenantID is the schema descriptor for tenant_id field.
+	receivableDescTenantID := receivableMixinFields4[0].Descriptor()
+	// receivable.DefaultTenantID holds the default value on creation for the tenant_id field.
+	receivable.DefaultTenantID = receivableDescTenantID.Default.(uint32)
+	// receivableDescAmount is the schema descriptor for amount field.
+	receivableDescAmount := receivableFields[3].Descriptor()
+	// receivable.DefaultAmount holds the default value on creation for the amount field.
+	receivable.DefaultAmount = receivableDescAmount.Default.(int64)
+	// receivableDescPaidAmount is the schema descriptor for paid_amount field.
+	receivableDescPaidAmount := receivableFields[4].Descriptor()
+	// receivable.DefaultPaidAmount holds the default value on creation for the paid_amount field.
+	receivable.DefaultPaidAmount = receivableDescPaidAmount.Default.(int64)
+	// receivableDescID is the schema descriptor for id field.
+	receivableDescID := receivableMixinFields0[0].Descriptor()
+	// receivable.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	receivable.IDValidator = receivableDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1239,6 +1336,78 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	salesorderMixin := schema.SalesOrder{}.Mixin()
+	salesorder.Policy = privacy.NewPolicies(salesorderMixin[4], schema.SalesOrder{})
+	salesorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := salesorder.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	salesorderMixinFields0 := salesorderMixin[0].Fields()
+	_ = salesorderMixinFields0
+	salesorderMixinFields4 := salesorderMixin[4].Fields()
+	_ = salesorderMixinFields4
+	salesorderFields := schema.SalesOrder{}.Fields()
+	_ = salesorderFields
+	// salesorderDescTenantID is the schema descriptor for tenant_id field.
+	salesorderDescTenantID := salesorderMixinFields4[0].Descriptor()
+	// salesorder.DefaultTenantID holds the default value on creation for the tenant_id field.
+	salesorder.DefaultTenantID = salesorderDescTenantID.Default.(uint32)
+	// salesorderDescTotalAmount is the schema descriptor for total_amount field.
+	salesorderDescTotalAmount := salesorderFields[3].Descriptor()
+	// salesorder.DefaultTotalAmount holds the default value on creation for the total_amount field.
+	salesorder.DefaultTotalAmount = salesorderDescTotalAmount.Default.(int64)
+	// salesorderDescID is the schema descriptor for id field.
+	salesorderDescID := salesorderMixinFields0[0].Descriptor()
+	// salesorder.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	salesorder.IDValidator = salesorderDescID.Validators[0].(func(uint32) error)
+	salesorderitemMixin := schema.SalesOrderItem{}.Mixin()
+	salesorderitem.Policy = privacy.NewPolicies(salesorderitemMixin[3], schema.SalesOrderItem{})
+	salesorderitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := salesorderitem.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	salesorderitemMixinFields0 := salesorderitemMixin[0].Fields()
+	_ = salesorderitemMixinFields0
+	salesorderitemMixinFields3 := salesorderitemMixin[3].Fields()
+	_ = salesorderitemMixinFields3
+	salesorderitemFields := schema.SalesOrderItem{}.Fields()
+	_ = salesorderitemFields
+	// salesorderitemDescTenantID is the schema descriptor for tenant_id field.
+	salesorderitemDescTenantID := salesorderitemMixinFields3[0].Descriptor()
+	// salesorderitem.DefaultTenantID holds the default value on creation for the tenant_id field.
+	salesorderitem.DefaultTenantID = salesorderitemDescTenantID.Default.(uint32)
+	// salesorderitemDescSoID is the schema descriptor for so_id field.
+	salesorderitemDescSoID := salesorderitemFields[0].Descriptor()
+	// salesorderitem.DefaultSoID holds the default value on creation for the so_id field.
+	salesorderitem.DefaultSoID = salesorderitemDescSoID.Default.(uint32)
+	// salesorderitemDescQuantity is the schema descriptor for quantity field.
+	salesorderitemDescQuantity := salesorderitemFields[2].Descriptor()
+	// salesorderitem.DefaultQuantity holds the default value on creation for the quantity field.
+	salesorderitem.DefaultQuantity = salesorderitemDescQuantity.Default.(int64)
+	// salesorderitemDescUnitPrice is the schema descriptor for unit_price field.
+	salesorderitemDescUnitPrice := salesorderitemFields[3].Descriptor()
+	// salesorderitem.DefaultUnitPrice holds the default value on creation for the unit_price field.
+	salesorderitem.DefaultUnitPrice = salesorderitemDescUnitPrice.Default.(int64)
+	// salesorderitemDescAmount is the schema descriptor for amount field.
+	salesorderitemDescAmount := salesorderitemFields[4].Descriptor()
+	// salesorderitem.DefaultAmount holds the default value on creation for the amount field.
+	salesorderitem.DefaultAmount = salesorderitemDescAmount.Default.(int64)
+	// salesorderitemDescFulfilledQuantity is the schema descriptor for fulfilled_quantity field.
+	salesorderitemDescFulfilledQuantity := salesorderitemFields[5].Descriptor()
+	// salesorderitem.DefaultFulfilledQuantity holds the default value on creation for the fulfilled_quantity field.
+	salesorderitem.DefaultFulfilledQuantity = salesorderitemDescFulfilledQuantity.Default.(int64)
+	// salesorderitemDescID is the schema descriptor for id field.
+	salesorderitemDescID := salesorderitemMixinFields0[0].Descriptor()
+	// salesorderitem.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	salesorderitem.IDValidator = salesorderitemDescID.Validators[0].(func(uint32) error)
 	stocklocationMixin := schema.StockLocation{}.Mixin()
 	stocklocation.Policy = privacy.NewPolicies(stocklocationMixin[4], schema.StockLocation{})
 	stocklocation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1307,6 +1476,10 @@ func init() {
 	stockmoveDescPurchaseOrderItemID := stockmoveFields[6].Descriptor()
 	// stockmove.DefaultPurchaseOrderItemID holds the default value on creation for the purchase_order_item_id field.
 	stockmove.DefaultPurchaseOrderItemID = stockmoveDescPurchaseOrderItemID.Default.(uint32)
+	// stockmoveDescSalesOrderItemID is the schema descriptor for sales_order_item_id field.
+	stockmoveDescSalesOrderItemID := stockmoveFields[7].Descriptor()
+	// stockmove.DefaultSalesOrderItemID holds the default value on creation for the sales_order_item_id field.
+	stockmove.DefaultSalesOrderItemID = stockmoveDescSalesOrderItemID.Default.(uint32)
 	// stockmoveDescID is the schema descriptor for id field.
 	stockmoveDescID := stockmoveMixinFields0[0].Descriptor()
 	// stockmove.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1351,6 +1524,10 @@ func init() {
 	stockmovelineDescExecutedQuantity := stockmovelineFields[5].Descriptor()
 	// stockmoveline.DefaultExecutedQuantity holds the default value on creation for the executed_quantity field.
 	stockmoveline.DefaultExecutedQuantity = stockmovelineDescExecutedQuantity.Default.(int64)
+	// stockmovelineDescUnitCost is the schema descriptor for unit_cost field.
+	stockmovelineDescUnitCost := stockmovelineFields[6].Descriptor()
+	// stockmoveline.DefaultUnitCost holds the default value on creation for the unit_cost field.
+	stockmoveline.DefaultUnitCost = stockmovelineDescUnitCost.Default.(int64)
 	// stockmovelineDescID is the schema descriptor for id field.
 	stockmovelineDescID := stockmovelineMixinFields0[0].Descriptor()
 	// stockmoveline.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1419,6 +1596,10 @@ func init() {
 	stockquantDescQuantity := stockquantFields[2].Descriptor()
 	// stockquant.DefaultQuantity holds the default value on creation for the quantity field.
 	stockquant.DefaultQuantity = stockquantDescQuantity.Default.(int64)
+	// stockquantDescCostPrice is the schema descriptor for cost_price field.
+	stockquantDescCostPrice := stockquantFields[3].Descriptor()
+	// stockquant.DefaultCostPrice holds the default value on creation for the cost_price field.
+	stockquant.DefaultCostPrice = stockquantDescCostPrice.Default.(int64)
 	// stockquantDescID is the schema descriptor for id field.
 	stockquantDescID := stockquantMixinFields0[0].Descriptor()
 	// stockquant.IDValidator is a validator for the "id" field. It is called by the builders before save.

@@ -48,7 +48,9 @@ type StockMove struct {
 	State *stockmove.State `json:"state,omitempty"`
 	// 关联采购明细ID（仅入库，Odoo purchase_line_id）
 	PurchaseOrderItemID *uint32 `json:"purchase_order_item_id,omitempty"`
-	selectValues        sql.SelectValues
+	// 关联销售明细ID（仅出库）
+	SalesOrderItemID *uint32 `json:"sales_order_item_id,omitempty"`
+	selectValues     sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -56,7 +58,7 @@ func (*StockMove) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case stockmove.FieldID, stockmove.FieldCreatedBy, stockmove.FieldUpdatedBy, stockmove.FieldDeletedBy, stockmove.FieldTenantID, stockmove.FieldPickingID, stockmove.FieldSourceLocationID, stockmove.FieldDestinationLocationID, stockmove.FieldPlannedQuantity, stockmove.FieldPurchaseOrderItemID:
+		case stockmove.FieldID, stockmove.FieldCreatedBy, stockmove.FieldUpdatedBy, stockmove.FieldDeletedBy, stockmove.FieldTenantID, stockmove.FieldPickingID, stockmove.FieldSourceLocationID, stockmove.FieldDestinationLocationID, stockmove.FieldPlannedQuantity, stockmove.FieldPurchaseOrderItemID, stockmove.FieldSalesOrderItemID:
 			values[i] = new(sql.NullInt64)
 		case stockmove.FieldRemark, stockmove.FieldProductCode, stockmove.FieldState:
 			values[i] = new(sql.NullString)
@@ -188,6 +190,13 @@ func (_m *StockMove) assignValues(columns []string, values []any) error {
 				_m.PurchaseOrderItemID = new(uint32)
 				*_m.PurchaseOrderItemID = uint32(value.Int64)
 			}
+		case stockmove.FieldSalesOrderItemID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sales_order_item_id", values[i])
+			} else if value.Valid {
+				_m.SalesOrderItemID = new(uint32)
+				*_m.SalesOrderItemID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -296,6 +305,11 @@ func (_m *StockMove) String() string {
 	builder.WriteString(", ")
 	if v := _m.PurchaseOrderItemID; v != nil {
 		builder.WriteString("purchase_order_item_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.SalesOrderItemID; v != nil {
+		builder.WriteString("sales_order_item_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

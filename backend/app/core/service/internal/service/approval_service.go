@@ -15,6 +15,7 @@ import (
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 )
 
 // approvalViewerUserID 从 viewer context 提取调用者用户 ID（与 data 层
@@ -44,8 +45,16 @@ type ApprovalRequestService struct {
 	// 服务层逻辑全部生效），而非直连 repo 绕过。
 	purchaseOrderService *PurchaseOrderService
 
+	// 销售联动：biz_type=SALES_ORDER 的审批通过/驳回时回写销售单状态。
+	// 经 SalesOrderService 动作走单一通路（自审守卫、应收生成等
+	// 服务层逻辑全部生效），而非直连 repo 绕过。
+	salesOrderService *SalesOrderService
+
 	// 付款联动：biz_type=PAYMENT 的审批通过/拒绝时驱动付款入账。
 	paymentService *PaymentService
+
+	// 收款联动：biz_type=RECEIPT 的审批通过/拒绝时驱动收款入账。
+	receiptService *ReceiptService
 
 	// 审结站内信通知（申请人）。
 	notifier *approvalNotifier
@@ -55,7 +64,9 @@ func NewApprovalRequestService(
 	ctx *bootstrap.Context,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	purchaseOrderService *PurchaseOrderService,
+	salesOrderService *SalesOrderService,
 	paymentService *PaymentService,
+	receiptService *ReceiptService,
 	messageRepo *data.InternalMessageRepo,
 	recipientRepo *data.InternalMessageRecipientRepo,
 ) *ApprovalRequestService {
@@ -64,7 +75,9 @@ func NewApprovalRequestService(
 		log:                  l,
 		approvalRequestRepo:  approvalRequestRepo,
 		purchaseOrderService: purchaseOrderService,
+		salesOrderService:    salesOrderService,
 		paymentService:       paymentService,
+		receiptService:       receiptService,
 		notifier: &approvalNotifier{
 			messageRepo:   messageRepo,
 			recipientRepo: recipientRepo,
@@ -196,8 +209,12 @@ func (s *ApprovalRequestService) syncBusiness(
 	switch old.GetBizType() {
 	case poApprovalBizType:
 		s.syncPurchaseOrder(ctx, old, to)
+	case soApprovalBizType:
+		s.syncSalesOrder(ctx, old, to)
 	case paymentApprovalBizType:
 		s.syncPayment(ctx, old, to)
+	case receiptApprovalBizType:
+		s.syncReceipt(ctx, old, to)
 	case replenishmentBizType:
 		s.syncReplenishment(ctx, old, to)
 	}
@@ -260,6 +277,32 @@ func (s *ApprovalRequestService) syncPayment(
 	}
 }
 
+// syncReceipt 对 biz_type=RECEIPT 的审批，驱动收款入账/拒绝。
+// biz_ref 形如 "RECEIPT:{id}"。镜像 syncPayment。
+func (s *ApprovalRequestService) syncReceipt(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	raw := strings.TrimPrefix(old.GetBizRef(), "RECEIPT:")
+	receiptID, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		s.log.Errorf("parse receipt ref failed: %s", old.GetBizRef())
+		return
+	}
+
+	switch to {
+	case approvalV1.ApprovalRequest_APPROVED:
+		if err := s.receiptService.ApplyApproved(ctx, uint32(receiptID)); err != nil {
+			s.log.Errorf("apply receipt %d failed: %s", receiptID, err.Error())
+		}
+	case approvalV1.ApprovalRequest_REJECTED:
+		if err := s.receiptService.RejectApplied(ctx, uint32(receiptID)); err != nil {
+			s.log.Errorf("reject receipt %d failed: %s", receiptID, err.Error())
+		}
+	}
+}
+
 // syncPurchaseOrder 对 biz_type=PURCHASE_ORDER 的审批，将其结果同步到
 // 采购单（SUBMITTED→APPROVED/REJECTED）。biz_ref 形如 "PURCHASE_ORDER:{id}"。
 func (s *ApprovalRequestService) syncPurchaseOrder(
@@ -292,6 +335,42 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 			Id: uint32(poID),
 		}); err != nil {
 			s.log.Errorf("sync purchase order %d to REJECTED failed: %s", poID, err.Error())
+		}
+	}
+}
+
+// syncSalesOrder 对 biz_type=SALES_ORDER 的审批，将其结果同步到
+// 销售单（SUBMITTED→APPROVED/REJECTED）。biz_ref 形如 "SALES_ORDER:{id}"。
+func (s *ApprovalRequestService) syncSalesOrder(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	to approvalV1.ApprovalRequest_Status,
+) {
+	if old.GetBizType() != soApprovalBizType {
+		return
+	}
+	raw := strings.TrimPrefix(old.GetBizRef(), "SALES_ORDER:")
+	soID, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		s.log.Errorf("parse sales order ref failed: %s", old.GetBizRef())
+		return
+	}
+
+	// 经 SO 服务动作同步：享受与直审完全相同的守卫（自审拦截、
+	// 原子迁移、获批生成应收单）。
+	if to == approvalV1.ApprovalRequest_APPROVED {
+		if _, err := s.salesOrderService.Approve(ctx, &salesV1.ApproveSalesOrderRequest{
+			Id: uint32(soID),
+		}); err != nil {
+			s.log.Errorf("sync sales order %d to APPROVED failed: %s", soID, err.Error())
+		}
+		return
+	}
+	if to == approvalV1.ApprovalRequest_REJECTED {
+		if _, err := s.salesOrderService.Reject(ctx, &salesV1.RejectSalesOrderRequest{
+			Id: uint32(soID),
+		}); err != nil {
+			s.log.Errorf("sync sales order %d to REJECTED failed: %s", soID, err.Error())
 		}
 	}
 }

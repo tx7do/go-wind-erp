@@ -42,10 +42,11 @@ func (StockPicking) Fields() []ent.Field {
 		// picking_type：操作类别（Odoo picking_type.code，简化为枚举）。
 		// INCOMING=入库（SUPPLIER→INTERNAL），INTERNAL=调拨（INTERNAL→INTERNAL）。
 		field.Enum("picking_type").
-			Comment("拣货类型：INCOMING=入库，INTERNAL=调拨").
+			Comment("拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库").
 			NamedValues(
 				"Incoming", "INCOMING",
 				"Internal", "INTERNAL",
+				"Outgoing", "OUTGOING",
 			).
 			Default("INCOMING").
 			Optional().

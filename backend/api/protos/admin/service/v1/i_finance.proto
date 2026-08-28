@@ -79,3 +79,75 @@ service PaymentService {
     };
   }
 }
+
+// 应收单管理服务（镜像 PayableService）
+service ReceivableService {
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListReceivableResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/receivables"
+    };
+  }
+
+  rpc Get (finance.service.v1.GetReceivableRequest) returns (finance.service.v1.Receivable) {
+    option (google.api.http) = {
+      get: "/admin/v1/receivables/{id}"
+    };
+  }
+
+  rpc Create (finance.service.v1.CreateReceivableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/receivables"
+      body: "*"
+    };
+  }
+
+  rpc Delete (finance.service.v1.DeleteReceivableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/receivables/{id}"
+    };
+  }
+
+  rpc Cancel (finance.service.v1.CancelReceivableRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/receivables:cancel"
+      body: "*"
+    };
+  }
+
+  rpc AgingReport (google.protobuf.Empty) returns (finance.service.v1.AgingReportResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/receivables:aging-report"
+    };
+  }
+}
+
+// 收款管理服务（append-only 台账，镜像 PaymentService）
+service ReceiptService {
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListReceiptResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/receipts"
+    };
+  }
+
+  rpc Get (finance.service.v1.GetReceiptRequest) returns (finance.service.v1.Receipt) {
+    option (google.api.http) = {
+      get: "/admin/v1/receipts/{id}"
+    };
+  }
+
+  rpc Create (finance.service.v1.CreateReceiptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/receipts"
+      body: "*"
+    };
+  }
+}
+
+// 财务报表服务
+service FinanceReportService {
+  rpc ProfitReport (google.protobuf.Empty) returns (finance.service.v1.ProfitReportResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/finance/profit-report"
+    };
+  }
+}

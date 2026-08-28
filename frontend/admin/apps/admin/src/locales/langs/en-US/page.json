@@ -581,5 +581,91 @@
       "over_90": "over 90 days",
       "no_due_date": "No due date"
     }
+  },
+  "receivable": {
+    "amount": "Total",
+    "amountCents": "Total (cents)",
+    "button": {
+      "create": "New Receivable",
+      "receipt": "Receipt",
+      "cancel": "Cancel"
+    },
+    "moduleName": "Receivable",
+    "paidAmount": "Received",
+    "receivableNumber": "Receivable No.",
+    "receiptAmountCents": "Amount (cents)",
+    "receiptInvalid": "Enter a positive whole amount in cents",
+    "soRef": "Source SO",
+    "recordReceipt": "Record Receipt",
+    "status": "Status",
+    "customerCode": "Customer"
+  },
+  "receipt": {
+    "amount": "Amount",
+    "method": "Method",
+    "moduleName": "Receipt",
+    "receivableId": "Receivable ID",
+    "receiptNumber": "Receipt No.",
+    "status": "Status"
+  },
+  "agingAr": {
+    "title": "Receivable Aging Report",
+    "disclaimer": "This report buckets unsettled receivables by due date. The overdue bucket (red) requires priority action. Amounts in yuan.",
+    "bucket": "Bucket",
+    "count": "Count",
+    "totalAmount": "Amount",
+    "bucketLabel": {
+      "overdue": "Overdue",
+      "0_7": "0-7 days",
+      "8_30": "8-30 days",
+      "31_90": "31-90 days",
+      "over_90": "over 90 days",
+      "no_due_date": "No due date"
+    }
+  },
+  "profit": {
+    "title": "Profit Report",
+    "month": "Month",
+    "revenue": "Revenue (CNY)",
+    "cogs": "COGS (CNY)",
+    "profit": "Profit (CNY)",
+    "disclaimer": "This report is for operational reference only and does not constitute a financial audit basis."
+  },
+  "salesOrder": {
+    "addItem": "Add Item",
+    "amount": "Amount",
+    "button": {
+      "create": "New Purchase Order",
+      "submit": "Submit",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "complete": "Complete"
+    },
+    "itemInvalid": "Fill SKU and a positive quantity",
+    "items": "Items",
+    "itemsRequired": "At least one item is required",
+    "moduleName": "Sales Order",
+    "soNumber": "PO Number",
+    "quantity": "Quantity",
+    "fulfillQuantity": "Received",
+    "skuCode": "SKU",
+    "status": "Status",
+    "customerCode": "Supplier",
+    "totalAmount": "Total",
+    "unitPrice": "Unit Price",
+    "unitPriceCents": "Unit Price (cents)",
+    "warehouseCode": "Shipping Warehouse"
+  },
+  "customer": {
+    "button": {
+      "create": "Create Supplier"
+    },
+    "code": "Supplier Code",
+    "contact": "Contact",
+    "enable": "Enabled",
+    "moduleName": "Customer",
+    "name": "Supplier Name",
+    "phone": "Phone"
   }
 }

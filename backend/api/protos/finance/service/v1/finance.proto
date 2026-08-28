@@ -295,3 +295,267 @@ message AgingBucket {
 message AgingReportResponse {
   repeated AgingBucket buckets = 1 [json_name = "buckets"];
 }
+
+// ==============================
+// 应收单管理服务（镜像 PayableService）
+// ==============================
+service ReceivableService {
+  rpc List (pagination.PagingRequest) returns (ListReceivableResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountReceivableResponse) {}
+  rpc Get (GetReceivableRequest) returns (Receivable) {}
+  rpc Create (CreateReceivableRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteReceivableRequest) returns (google.protobuf.Empty) {}
+  rpc Cancel (CancelReceivableRequest) returns (google.protobuf.Empty) {}
+  rpc AgingReport (google.protobuf.Empty) returns (AgingReportResponse) {}
+}
+
+// 收款管理服务（append-only 台账，镜像 PaymentService）
+service ReceiptService {
+  rpc List (pagination.PagingRequest) returns (ListReceiptResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountReceiptResponse) {}
+  rpc Get (GetReceiptRequest) returns (Receipt) {}
+  rpc Create (CreateReceiptRequest) returns (google.protobuf.Empty) {}
+}
+
+// 应收单（镜像 Payable）
+message Receivable {
+  enum Status {
+    PENDING = 0;
+    PARTIAL = 1;
+    SETTLED = 2;
+    CANCELLED = 3;
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "应收单ID"
+    }
+  ];
+
+  optional string receivable_number = 2 [
+    json_name = "receivableNumber",
+    (gnostic.openapi.v3.property) = {description: "应收单号（服务端生成）"}
+  ];
+
+  optional string so_ref = 3 [
+    json_name = "soRef",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "来源销售单引用"
+    }
+  ];
+
+  optional string customer_code = 4 [
+    json_name = "customerCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "客户编码"
+    }
+  ];
+
+  optional int64 amount = 5 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "应收总额（分）"}
+  ];
+
+  optional int64 paid_amount = 6 [
+    json_name = "paidAmount",
+    (gnostic.openapi.v3.property) = {description: "已收金额（分，收款驱动）"}
+  ];
+
+  optional Status status = 7 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "应收状态"
+    }
+  ];
+
+  optional google.protobuf.Timestamp due_date = 8 [
+    json_name = "dueDate",
+    (gnostic.openapi.v3.property) = {description: "账期到期日"}
+  ];
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ];
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 收款（镜像 Payment）
+message Receipt {
+  enum Method {
+    BANK_TRANSFER = 0;
+    CASH = 1;
+    CHECK = 2;
+    OTHER = 3;
+  }
+
+  enum Status {
+    PENDING = 0;
+    APPLIED = 1;
+    REJECTED = 2;
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "收款ID"
+    }
+  ];
+
+  optional string receipt_number = 2 [
+    json_name = "receiptNumber",
+    (gnostic.openapi.v3.property) = {description: "收款单号（服务端生成）"}
+  ];
+
+  optional uint32 receivable_id = 3 [
+    json_name = "receivableId",
+    (gnostic.openapi.v3.property) = {description: "所属应收单ID"}
+  ];
+
+  optional int64 amount = 4 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "收款金额（分）"}
+  ];
+
+  optional Method method = 5 [
+    json_name = "method",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "收款方式"
+        }
+  ];
+
+  optional Status status = 9 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "收款状态"
+        }
+  ];
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ];
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "收款操作人用户ID（服务端推导）"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "收款时间"}];
+}
+
+// ==============================
+// 应收单请求/回应
+// ==============================
+
+message ListReceivableResponse {
+  repeated Receivable items = 1;
+  uint64 total = 2;
+}
+
+message GetReceivableRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ];
+}
+
+message CreateReceivableRequest {
+  Receivable data = 1;
+}
+
+message DeleteReceivableRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+}
+
+message CancelReceivableRequest {
+  uint32 id = 1;
+}
+
+message CountReceivableResponse {
+  uint64 count = 1;
+}
+
+// ==============================
+// 收款请求/回应
+// ==============================
+
+message ListReceiptResponse {
+  repeated Receipt items = 1;
+  uint64 total = 2;
+}
+
+message GetReceiptRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ];
+}
+
+message CreateReceiptRequest {
+  Receipt data = 1;
+}
+
+message CountReceiptResponse {
+  uint64 count = 1;
+}
+
+// ==============================
+// 利润报表
+// ==============================
+
+message ProfitReportResponse {
+  repeated MonthlyProfit items = 1 [json_name = "items"];
+}
+
+message MonthlyProfit {
+  optional string month = 1 [json_name = "month", (gnostic.openapi.v3.property) = {description: "月份（YYYY-MM）"}];
+  optional int64 revenue = 2 [json_name = "revenue", (gnostic.openapi.v3.property) = {description: "当月收入（分）"}];
+  optional int64 cogs = 3 [json_name = "cogs", (gnostic.openapi.v3.property) = {description: "当月销售成本（分）"}];
+  optional int64 profit = 4 [json_name = "profit", (gnostic.openapi.v3.property) = {description: "当月利润（分，收入−成本）"}];
+}

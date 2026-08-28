@@ -134,6 +134,23 @@ func (r *StockPickingRepo) IsExist(ctx context.Context, id uint32) (bool, error)
 	return exist, nil
 }
 
+// GetOutgoingPickingIDs 取所有出库（OUTGOING）拣货单的 ID，供 COGS
+// 报表按月聚合 move-line 成本用。
+func (r *StockPickingRepo) GetOutgoingPickingIDs(ctx context.Context) ([]uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockPicking.Query().
+		Where(stockpicking.PickingTypeEQ(stockpicking.PickingTypeOutgoing))
+	if hasTenant {
+		q.Where(stockpicking.TenantIDEQ(tid))
+	}
+	ids, err := q.IDs(ctx)
+	if err != nil {
+		r.log.Errorf("query outgoing picking ids failed: %s", err.Error())
+		return nil, inventoryV1.ErrorInternalServerError("query outgoing picking ids failed")
+	}
+	return ids, nil
+}
+
 func (r *StockPickingRepo) Get(ctx context.Context, req *inventoryV1.GetStockPickingRequest) (*inventoryV1.StockPicking, error) {
 	if req == nil {
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")

@@ -71,6 +71,15 @@ func (StockMoveLine) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		// unit_cost：执行时从源位置 quant 冻结的单位成本（分）。
+		// 出库腿用于 COGS 核算（executed_quantity × unit_cost）；入库腿
+		// 记录采购单价供审计。
+		field.Int64("unit_cost").
+			Comment("执行时冻结的单位成本（分，用于COGS）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 

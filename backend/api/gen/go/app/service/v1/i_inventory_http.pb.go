@@ -34,11 +34,11 @@ type WarehouseServiceHTTPServer interface {
 
 func RegisterWarehouseServiceHTTPServer(s *http.Server, srv WarehouseServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/warehouses", _WarehouseService_List3_HTTP_Handler(srv))
-	r.GET("/app/v1/warehouses/{id}", _WarehouseService_Get3_HTTP_Handler(srv))
+	r.GET("/app/v1/warehouses", _WarehouseService_List5_HTTP_Handler(srv))
+	r.GET("/app/v1/warehouses/{id}", _WarehouseService_Get5_HTTP_Handler(srv))
 }
 
-func _WarehouseService_List3_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_List5_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -57,7 +57,7 @@ func _WarehouseService_List3_HTTP_Handler(srv WarehouseServiceHTTPServer) func(c
 	}
 }
 
-func _WarehouseService_Get3_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_Get5_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetWarehouseRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -137,12 +137,12 @@ type StockQuantServiceHTTPServer interface {
 
 func RegisterStockQuantServiceHTTPServer(s *http.Server, srv StockQuantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/stock-quants", _StockQuantService_List4_HTTP_Handler(srv))
-	r.GET("/app/v1/stock-quants/{id}", _StockQuantService_Get4_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-quants", _StockQuantService_List6_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-quants/{id}", _StockQuantService_Get6_HTTP_Handler(srv))
 	r.GET("/app/v1/stock-quants:overview", _StockQuantService_GetOverview0_HTTP_Handler(srv))
 }
 
-func _StockQuantService_List4_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_List6_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -161,7 +161,7 @@ func _StockQuantService_List4_HTTP_Handler(srv StockQuantServiceHTTPServer) func
 	}
 }
 
-func _StockQuantService_Get4_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_Get6_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockQuantRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -285,15 +285,15 @@ type StockPickingServiceHTTPServer interface {
 
 func RegisterStockPickingServiceHTTPServer(s *http.Server, srv StockPickingServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/stock-pickings", _StockPickingService_List5_HTTP_Handler(srv))
-	r.GET("/app/v1/stock-pickings/{id}", _StockPickingService_Get5_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-pickings", _StockPickingService_List7_HTTP_Handler(srv))
+	r.GET("/app/v1/stock-pickings/{id}", _StockPickingService_Get7_HTTP_Handler(srv))
 	r.POST("/app/v1/stock-pickings", _StockPickingService_Create0_HTTP_Handler(srv))
 	r.POST("/app/v1/stock-pickings/{id}:confirm", _StockPickingService_Confirm0_HTTP_Handler(srv))
 	r.POST("/app/v1/stock-pickings/{id}:validate", _StockPickingService_Validate0_HTTP_Handler(srv))
 	r.POST("/app/v1/stock-pickings/{id}:cancel", _StockPickingService_Cancel1_HTTP_Handler(srv))
 }
 
-func _StockPickingService_List5_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_List7_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -312,7 +312,7 @@ func _StockPickingService_List5_HTTP_Handler(srv StockPickingServiceHTTPServer) 
 	}
 }
 
-func _StockPickingService_Get5_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Get7_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockPickingRequest
 		if err := ctx.BindQuery(&in); err != nil {

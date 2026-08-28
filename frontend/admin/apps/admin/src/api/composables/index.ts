@@ -13,6 +13,8 @@ export * from './api-audit-log';
 
 export * from './auth';
 
+export * from './customer';
+
 export * from './data-access-audit-log';
 
 export * from './dict';
@@ -43,6 +45,10 @@ export * from './procurement';
 
 export * from './product';
 
+export * from './receivable';
+
+export * from './receipt';
+
 export * from './permission-audit-log';
 
 export * from './permission-group';
@@ -52,6 +58,8 @@ export * from './policy-evaluation-log';
 export * from './position';
 
 export * from './role';
+
+export * from './sales';
 
 export * from './shared';
 

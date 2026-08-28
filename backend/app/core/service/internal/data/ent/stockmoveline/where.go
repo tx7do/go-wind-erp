@@ -114,6 +114,11 @@ func ExecutedQuantity(v int64) predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldEQ(FieldExecutedQuantity, v))
 }
 
+// UnitCost applies equality check predicate on the "unit_cost" field. It's identical to UnitCostEQ.
+func UnitCost(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldEQ(FieldUnitCost, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldEQ(FieldCreatedAt, v))
@@ -762,6 +767,56 @@ func ExecutedQuantityIsNil() predicate.StockMoveLine {
 // ExecutedQuantityNotNil applies the NotNil predicate on the "executed_quantity" field.
 func ExecutedQuantityNotNil() predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldNotNull(FieldExecutedQuantity))
+}
+
+// UnitCostEQ applies the EQ predicate on the "unit_cost" field.
+func UnitCostEQ(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldEQ(FieldUnitCost, v))
+}
+
+// UnitCostNEQ applies the NEQ predicate on the "unit_cost" field.
+func UnitCostNEQ(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNEQ(FieldUnitCost, v))
+}
+
+// UnitCostIn applies the In predicate on the "unit_cost" field.
+func UnitCostIn(vs ...int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldIn(FieldUnitCost, vs...))
+}
+
+// UnitCostNotIn applies the NotIn predicate on the "unit_cost" field.
+func UnitCostNotIn(vs ...int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNotIn(FieldUnitCost, vs...))
+}
+
+// UnitCostGT applies the GT predicate on the "unit_cost" field.
+func UnitCostGT(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldGT(FieldUnitCost, v))
+}
+
+// UnitCostGTE applies the GTE predicate on the "unit_cost" field.
+func UnitCostGTE(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldGTE(FieldUnitCost, v))
+}
+
+// UnitCostLT applies the LT predicate on the "unit_cost" field.
+func UnitCostLT(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldLT(FieldUnitCost, v))
+}
+
+// UnitCostLTE applies the LTE predicate on the "unit_cost" field.
+func UnitCostLTE(v int64) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldLTE(FieldUnitCost, v))
+}
+
+// UnitCostIsNil applies the IsNil predicate on the "unit_cost" field.
+func UnitCostIsNil() predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldIsNull(FieldUnitCost))
+}
+
+// UnitCostNotNil applies the NotNil predicate on the "unit_cost" field.
+func UnitCostNotNil() predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNotNull(FieldUnitCost))
 }
 
 // And groups predicates with the AND operator between them.

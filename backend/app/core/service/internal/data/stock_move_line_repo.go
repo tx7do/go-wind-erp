@@ -2,8 +2,10 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -44,6 +46,8 @@ func (r *StockMoveLineRepo) CountAll(ctx context.Context) (int64, error) {
 // CreateTx 在事务内创建一条执行记录（借鉴 Odoo stock.move.line._action_done
 // 的落库动作）。这是唯一能变更 StockQuant.quantity 的路径——调用方
 // （StockPickingService.Validate）在同事务内紧接着调 ApplyDeltaTx 改 quant。
+// unitCost 记录执行时冻结的单位成本（入库=采购单价，出库=源位置 quant 的
+// cost_price），供 COGS 核算使用。
 func (r *StockMoveLineRepo) CreateTx(
 	ctx context.Context,
 	tx *ent.Tx,
@@ -53,6 +57,7 @@ func (r *StockMoveLineRepo) CreateTx(
 	sourceLocationID uint32,
 	destinationLocationID uint32,
 	executedQuantity int64,
+	unitCost int64,
 ) error {
 	builder := tx.StockMoveLine.Create().
 		SetMoveID(moveID).
@@ -61,6 +66,7 @@ func (r *StockMoveLineRepo) CreateTx(
 		SetSourceLocationID(sourceLocationID).
 		SetDestinationLocationID(destinationLocationID).
 		SetExecutedQuantity(executedQuantity).
+		SetUnitCost(unitCost).
 		SetCreatedAt(time.Now())
 
 	if _, err := builder.Save(ctx); err != nil {
@@ -119,3 +125,61 @@ func (r *StockMoveLineRepo) MovementTrend(ctx context.Context) ([]*inventoryV1.M
 	}
 	return points, nil
 }
+
+// CogsByMonth 按月汇总出库 move-line 的 COGS（executed_quantity × unit_cost）。
+// 调用方（FinanceReportService）先取 OUTGOING 拣货单 ID 列表，传入此处。
+// SQL 端按 created_at 分组并 SUM(executed_quantity * unit_cost)，Go 侧将
+// 时间戳格式化为 YYYY-MM 做月度分桶。不使用任何日期函数，保证 PostgreSQL
+// 兼容。
+type CogsRow struct {
+	Month string
+	Total int64
+}
+
+func (r *StockMoveLineRepo) CogsByMonth(ctx context.Context, pickingIDs []uint32) ([]CogsRow, error) {
+	if len(pickingIDs) == 0 {
+		return nil, nil
+	}
+
+	type rawRow struct {
+		CreatedAt *time.Time `sql:"created_at"`
+		Total     int64      `sql:"total"`
+	}
+	var rows []rawRow
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockMoveLine.Query().
+		Where(stockmoveline.PickingIDIn(pickingIDs...))
+	if hasTenant {
+		q.Where(stockmoveline.TenantIDEQ(tid))
+	}
+
+	if err := q.GroupBy(stockmoveline.FieldCreatedAt).
+		Aggregate(
+			ent.As(cogsSumExpr, "total"),
+		).
+		Scan(ctx, &rows); err != nil {
+		r.log.Errorf("cogs by month query failed: %s", err.Error())
+		return nil, inventoryV1.ErrorInternalServerError("cogs query failed")
+	}
+
+	out := make([]CogsRow, 0, len(rows))
+	for _, row := range rows {
+		if row.CreatedAt == nil {
+			continue
+		}
+		out = append(out, CogsRow{
+			Month: row.CreatedAt.Format("2006-01"),
+			Total: row.Total,
+		})
+	}
+	return out, nil
+}
+
+// cogsSumExpr 生成 SUM(executed_quantity * unit_cost) 的原始 SQL 表达式，
+// 用 s.C 拼接带引号列名（借鉴 payable 的 outstandingBalanceSum 模式）。
+func cogsSumExpr(s *sql.Selector) string {
+	return fmt.Sprintf("SUM(COALESCE(%s,0) * COALESCE(%s,0))",
+		s.C(stockmoveline.FieldExecutedQuantity), s.C(stockmoveline.FieldUnitCost))
+}
+

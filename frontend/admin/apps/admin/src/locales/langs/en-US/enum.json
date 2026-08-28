@@ -287,6 +287,33 @@
       "Pending": "Pending",
       "Applied": "Applied",
       "Rejected": "Rejected"
+    },
+    "receivableStatus": {
+      "Pending": "Pending",
+      "Partial": "Partial",
+      "Settled": "Settled",
+      "Cancelled": "Cancelled"
+    },
+    "receiptStatus": {
+      "Pending": "Pending",
+      "Applied": "Applied",
+      "Rejected": "Rejected"
+    },
+    "receiptMethod": {
+      "BankTransfer": "Bank Transfer",
+      "Cash": "Cash",
+      "Check": "Check",
+      "Other": "Other"
+    }
+  },
+  "sales": {
+    "status": {
+      "Draft": "Draft",
+      "Submitted": "Submitted",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
     }
   }
 }

@@ -3065,6 +3065,498 @@ export type financeservicev1_CreatePaymentRequest = {
   data: financeservicev1_Payment | undefined;
 };
 
+// 应收单管理服务（镜像 PayableService）
+export interface ReceivableService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<financeservicev1_ListReceivableResponse>;
+  Get(
+    request: financeservicev1_GetReceivableRequest,
+  ): Promise<financeservicev1_Receivable>;
+  Create(
+    request: financeservicev1_CreateReceivableRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: financeservicev1_DeleteReceivableRequest,
+  ): Promise<wellKnownEmpty>;
+  Cancel(
+    request: financeservicev1_CancelReceivableRequest,
+  ): Promise<wellKnownEmpty>;
+  AgingReport(
+    request: wellKnownEmpty,
+  ): Promise<financeservicev1_AgingReportResponse>;
+}
+
+export function createReceivableServiceClient(
+  transport: ClientTransport,
+): ReceivableService {
+  return {
+    List(request) {
+      const path = `admin/v1/receivables`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ReceivableService',
+        method: 'List',
+      }) as Promise<financeservicev1_ListReceivableResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/receivables/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ReceivableService',
+        method: 'Get',
+      }) as Promise<financeservicev1_Receivable>;
+    },
+    Create(request) {
+      const path = `admin/v1/receivables`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ReceivableService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/receivables/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ReceivableService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Cancel(request) {
+      const path = `admin/v1/receivables:cancel`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ReceivableService',
+        method: 'Cancel',
+      }) as Promise<wellKnownEmpty>;
+    },
+    AgingReport(_request) {
+      const path = `admin/v1/receivables:aging-report`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ReceivableService',
+        method: 'AgingReport',
+      }) as Promise<financeservicev1_AgingReportResponse>;
+    },
+  };
+}
+export type financeservicev1_ListReceivableResponse = {
+  items: financeservicev1_Receivable[] | undefined;
+  total: number | undefined;
+};
+
+// 应收单（镜像 Payable）
+export type financeservicev1_Receivable = {
+  amount?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  customerCode?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  dueDate?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  paidAmount?: number;
+  receivableNumber?: string;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  soRef?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: financeservicev1_Receivable_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+export type financeservicev1_Receivable_Status =
+  | 'CANCELLED'
+  | 'PARTIAL'
+  | 'PENDING'
+  | 'SETTLED';
+export type financeservicev1_GetReceivableRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type financeservicev1_CreateReceivableRequest = {
+  data: financeservicev1_Receivable | undefined;
+};
+
+export type financeservicev1_DeleteReceivableRequest = {
+  id?: number;
+};
+
+export type financeservicev1_CancelReceivableRequest = {
+  id: number | undefined;
+};
+
+// 收款管理服务（append-only 台账，镜像 PaymentService）
+export interface ReceiptService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<financeservicev1_ListReceiptResponse>;
+  Get(
+    request: financeservicev1_GetReceiptRequest,
+  ): Promise<financeservicev1_Receipt>;
+  Create(
+    request: financeservicev1_CreateReceiptRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createReceiptServiceClient(
+  transport: ClientTransport,
+): ReceiptService {
+  return {
+    List(request) {
+      const path = `admin/v1/receipts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ReceiptService',
+        method: 'List',
+      }) as Promise<financeservicev1_ListReceiptResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/receipts/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ReceiptService',
+        method: 'Get',
+      }) as Promise<financeservicev1_Receipt>;
+    },
+    Create(request) {
+      const path = `admin/v1/receipts`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ReceiptService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type financeservicev1_ListReceiptResponse = {
+  items: financeservicev1_Receipt[] | undefined;
+  total: number | undefined;
+};
+
+// 收款（镜像 Payment）
+export type financeservicev1_Receipt = {
+  amount?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  method?: financeservicev1_Receipt_Method;
+  receiptNumber?: string;
+  receivableId?: number;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: financeservicev1_Receipt_Status;
+  tenantId?: number;
+};
+
+export type financeservicev1_Receipt_Method =
+  | 'BANK_TRANSFER'
+  | 'CASH'
+  | 'CHECK'
+  | 'OTHER';
+export type financeservicev1_Receipt_Status =
+  | 'APPLIED'
+  | 'PENDING'
+  | 'REJECTED';
+export type financeservicev1_GetReceiptRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type financeservicev1_CreateReceiptRequest = {
+  data: financeservicev1_Receipt | undefined;
+};
+
+// 财务报表服务
+export interface FinanceReportService {
+  ProfitReport(
+    request: wellKnownEmpty,
+  ): Promise<financeservicev1_ProfitReportResponse>;
+}
+
+export function createFinanceReportServiceClient(
+  transport: ClientTransport,
+): FinanceReportService {
+  return {
+    ProfitReport(_request) {
+      const path = `admin/v1/finance/profit-report`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'FinanceReportService',
+        method: 'ProfitReport',
+      }) as Promise<financeservicev1_ProfitReportResponse>;
+    },
+  };
+}
+export type financeservicev1_ProfitReportResponse = {
+  items: financeservicev1_MonthlyProfit[] | undefined;
+};
+
+export type financeservicev1_MonthlyProfit = {
+  cogs?: number;
+  month?: string;
+  profit?: number;
+  revenue?: number;
+};
+
 // 站内信消息管理服务
 export interface InternalMessageService {
   // 查询站内信消息列表
@@ -4275,6 +4767,7 @@ export type inventoryservicev1_StockLocation = {
 
 // 位置用途（借鉴 Odoo stock.location.usage，驱动移动语义）
 export type inventoryservicev1_StockLocation_Usage =
+  | 'CUSTOMER'
   | 'INTERNAL'
   | 'SUPPLIER';
 export type inventoryservicev1_GetLocationRequest = {
@@ -4497,6 +4990,9 @@ export type inventoryservicev1_ListStockQuantResponse = {
 
 // 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
 export type inventoryservicev1_StockQuant = {
+  //
+  // Behaviors: OPTIONAL
+  costPrice?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   deletedAt?: wellKnownTimestamp;
@@ -4830,7 +5326,8 @@ export type inventoryservicev1_StockPicking = {
 // 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
 export type inventoryservicev1_StockPicking_PickingType =
   | 'INCOMING'
-  | 'INTERNAL';
+  | 'INTERNAL'
+  | 'OUTGOING';
 // 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
 export type inventoryservicev1_StockPicking_DerivedState =
   | 'CANCELLED'
@@ -4862,6 +5359,9 @@ export type inventoryservicev1_StockMove = {
   // Behaviors: OPTIONAL
   purchaseOrderItemId?: number;
   remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  salesOrderItemId?: number;
   //
   // Behaviors: OPTIONAL
   sourceLocationId?: number;
@@ -8764,6 +9264,590 @@ export type permissionservicev1_DeleteRoleRequest = {
   tenantId?: number;
 };
 
+// 客户管理服务
+export interface CustomerService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<salesservicev1_ListCustomerResponse>;
+  Get(
+    request: salesservicev1_GetCustomerRequest,
+  ): Promise<salesservicev1_Customer>;
+  Create(
+    request: salesservicev1_CreateCustomerRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: salesservicev1_UpdateCustomerRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: salesservicev1_DeleteCustomerRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createCustomerServiceClient(
+  transport: ClientTransport,
+): CustomerService {
+  return {
+    List(request) {
+      const path = `admin/v1/customers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CustomerService',
+        method: 'List',
+      }) as Promise<salesservicev1_ListCustomerResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/customers/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CustomerService',
+        method: 'Get',
+      }) as Promise<salesservicev1_Customer>;
+    },
+    Create(request) {
+      const path = `admin/v1/customers`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CustomerService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/customers/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CustomerService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/customers/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'CustomerService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type salesservicev1_ListCustomerResponse = {
+  items: salesservicev1_Customer[] | undefined;
+  total: number | undefined;
+};
+
+// 客户
+export type salesservicev1_Customer = {
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  //
+  // Behaviors: OPTIONAL
+  contact?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  enable?: boolean;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  //
+  // Behaviors: OPTIONAL
+  phone?: string;
+  remark?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+export type salesservicev1_GetCustomerRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type salesservicev1_CreateCustomerRequest = {
+  data: salesservicev1_Customer | undefined;
+};
+
+export type salesservicev1_UpdateCustomerRequest = {
+  allowMissing?: boolean;
+  data: salesservicev1_Customer | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type salesservicev1_DeleteCustomerRequest = {
+  id?: number;
+};
+
+// 销售单管理服务
+export interface SalesOrderService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<salesservicev1_ListSalesOrderResponse>;
+  Get(
+    request: salesservicev1_GetSalesOrderRequest,
+  ): Promise<salesservicev1_SalesOrder>;
+  Create(
+    request: salesservicev1_CreateSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: salesservicev1_UpdateSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: salesservicev1_DeleteSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Submit(
+    request: salesservicev1_SubmitSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Approve(
+    request: salesservicev1_ApproveSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Reject(
+    request: salesservicev1_RejectSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Cancel(
+    request: salesservicev1_CancelSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+  Complete(
+    request: salesservicev1_CompleteSalesOrderRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createSalesOrderServiceClient(
+  transport: ClientTransport,
+): SalesOrderService {
+  return {
+    List(request) {
+      const path = `admin/v1/sales-orders`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SalesOrderService',
+        method: 'List',
+      }) as Promise<salesservicev1_ListSalesOrderResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/sales-orders/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SalesOrderService',
+        method: 'Get',
+      }) as Promise<salesservicev1_SalesOrder>;
+    },
+    Create(request) {
+      const path = `admin/v1/sales-orders`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/sales-orders/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SalesOrderService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/sales-orders/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SalesOrderService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Submit(request) {
+      const path = `admin/v1/sales-orders:submit`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Submit',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Approve(request) {
+      const path = `admin/v1/sales-orders:approve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Approve',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Reject(request) {
+      const path = `admin/v1/sales-orders:reject`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Reject',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Cancel(request) {
+      const path = `admin/v1/sales-orders:cancel`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Cancel',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Complete(request) {
+      const path = `admin/v1/sales-orders:complete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SalesOrderService',
+        method: 'Complete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type salesservicev1_ListSalesOrderResponse = {
+  items: salesservicev1_SalesOrder[] | undefined;
+  total: number | undefined;
+};
+
+// 销售单
+export type salesservicev1_SalesOrder = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  customerCode?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  items: salesservicev1_SalesOrderItem[] | undefined;
+  remark?: string;
+  soNumber?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: salesservicev1_SalesOrder_Status;
+  tenantId?: number;
+  totalAmount?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  warehouseCode?: string;
+};
+
+export type salesservicev1_SalesOrder_Status =
+  | 'APPROVED'
+  | 'CANCELLED'
+  | 'COMPLETED'
+  | 'DRAFT'
+  | 'REJECTED'
+  | 'SUBMITTED';
+// 销售单明细
+export type salesservicev1_SalesOrderItem = {
+  amount?: number;
+  fulfilledQuantity?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  quantity?: number;
+  //
+  // Behaviors: OPTIONAL
+  skuCode?: string;
+  soId?: number;
+  unitPrice?: number;
+};
+
+export type salesservicev1_GetSalesOrderRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type salesservicev1_CreateSalesOrderRequest = {
+  data: salesservicev1_SalesOrder | undefined;
+};
+
+export type salesservicev1_UpdateSalesOrderRequest = {
+  allowMissing?: boolean;
+  data: salesservicev1_SalesOrder | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type salesservicev1_DeleteSalesOrderRequest = {
+  id?: number;
+};
+
+export type salesservicev1_SubmitSalesOrderRequest = {
+  id: number | undefined;
+};
+
+export type salesservicev1_ApproveSalesOrderRequest = {
+  id: number | undefined;
+};
+
+export type salesservicev1_RejectSalesOrderRequest = {
+  id: number | undefined;
+};
+
+export type salesservicev1_CancelSalesOrderRequest = {
+  id: number | undefined;
+};
+
+export type salesservicev1_CompleteSalesOrderRequest = {
+  id: number | undefined;
+};
+
 // 调度任务管理服务
 export interface TaskService {
   // 查询调度任务列表
@@ -10032,11 +11116,13 @@ export class ApiClient {
   private _apiService?: ApiService;
   private _approvalRequestService?: ApprovalRequestService;
   private _authenticationService?: AuthenticationService;
+  private _customerService?: CustomerService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
   private _dictTypeService?: DictTypeService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
+  private _financeReportService?: FinanceReportService;
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _internalMessageService?: InternalMessageService;
@@ -10056,7 +11142,10 @@ export class ApiClient {
   private _positionService?: PositionService;
   private _productService?: ProductService;
   private _purchaseOrderService?: PurchaseOrderService;
+  private _receiptService?: ReceiptService;
+  private _receivableService?: ReceivableService;
   private _roleService?: RoleService;
+  private _salesOrderService?: SalesOrderService;
   private _stockPickingService?: StockPickingService;
   private _stockQuantService?: StockQuantService;
   private _supplierService?: SupplierService;
@@ -10091,6 +11180,10 @@ export class ApiClient {
     return this._authenticationService ??= createAuthenticationServiceClient(this._transport);
   }
 
+  get customerService(): CustomerService {
+    return this._customerService ??= createCustomerServiceClient(this._transport);
+  }
+
   get dataAccessAuditLogService(): DataAccessAuditLogService {
     return this._dataAccessAuditLogService ??= createDataAccessAuditLogServiceClient(this._transport);
   }
@@ -10109,6 +11202,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get financeReportService(): FinanceReportService {
+    return this._financeReportService ??= createFinanceReportServiceClient(this._transport);
   }
 
   get internalMessageCategoryService(): InternalMessageCategoryService {
@@ -10187,8 +11284,20 @@ export class ApiClient {
     return this._purchaseOrderService ??= createPurchaseOrderServiceClient(this._transport);
   }
 
+  get receiptService(): ReceiptService {
+    return this._receiptService ??= createReceiptServiceClient(this._transport);
+  }
+
+  get receivableService(): ReceivableService {
+    return this._receivableService ??= createReceivableServiceClient(this._transport);
+  }
+
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get salesOrderService(): SalesOrderService {
+    return this._salesOrderService ??= createSalesOrderServiceClient(this._transport);
   }
 
   get stockPickingService(): StockPickingService {

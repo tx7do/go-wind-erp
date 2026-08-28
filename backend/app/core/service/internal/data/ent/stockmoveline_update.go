@@ -284,6 +284,33 @@ func (_u *StockMoveLineUpdate) ClearExecutedQuantity() *StockMoveLineUpdate {
 	return _u
 }
 
+// SetUnitCost sets the "unit_cost" field.
+func (_u *StockMoveLineUpdate) SetUnitCost(v int64) *StockMoveLineUpdate {
+	_u.mutation.ResetUnitCost()
+	_u.mutation.SetUnitCost(v)
+	return _u
+}
+
+// SetNillableUnitCost sets the "unit_cost" field if the given value is not nil.
+func (_u *StockMoveLineUpdate) SetNillableUnitCost(v *int64) *StockMoveLineUpdate {
+	if v != nil {
+		_u.SetUnitCost(*v)
+	}
+	return _u
+}
+
+// AddUnitCost adds value to the "unit_cost" field.
+func (_u *StockMoveLineUpdate) AddUnitCost(v int64) *StockMoveLineUpdate {
+	_u.mutation.AddUnitCost(v)
+	return _u
+}
+
+// ClearUnitCost clears the value of the "unit_cost" field.
+func (_u *StockMoveLineUpdate) ClearUnitCost() *StockMoveLineUpdate {
+	_u.mutation.ClearUnitCost()
+	return _u
+}
+
 // Mutation returns the StockMoveLineMutation object of the builder.
 func (_u *StockMoveLineUpdate) Mutation() *StockMoveLineMutation {
 	return _u.mutation
@@ -420,6 +447,15 @@ func (_u *StockMoveLineUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.ExecutedQuantityCleared() {
 		_spec.ClearField(stockmoveline.FieldExecutedQuantity, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.UnitCost(); ok {
+		_spec.SetField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedUnitCost(); ok {
+		_spec.AddField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
+	}
+	if _u.mutation.UnitCostCleared() {
+		_spec.ClearField(stockmoveline.FieldUnitCost, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -699,6 +735,33 @@ func (_u *StockMoveLineUpdateOne) ClearExecutedQuantity() *StockMoveLineUpdateOn
 	return _u
 }
 
+// SetUnitCost sets the "unit_cost" field.
+func (_u *StockMoveLineUpdateOne) SetUnitCost(v int64) *StockMoveLineUpdateOne {
+	_u.mutation.ResetUnitCost()
+	_u.mutation.SetUnitCost(v)
+	return _u
+}
+
+// SetNillableUnitCost sets the "unit_cost" field if the given value is not nil.
+func (_u *StockMoveLineUpdateOne) SetNillableUnitCost(v *int64) *StockMoveLineUpdateOne {
+	if v != nil {
+		_u.SetUnitCost(*v)
+	}
+	return _u
+}
+
+// AddUnitCost adds value to the "unit_cost" field.
+func (_u *StockMoveLineUpdateOne) AddUnitCost(v int64) *StockMoveLineUpdateOne {
+	_u.mutation.AddUnitCost(v)
+	return _u
+}
+
+// ClearUnitCost clears the value of the "unit_cost" field.
+func (_u *StockMoveLineUpdateOne) ClearUnitCost() *StockMoveLineUpdateOne {
+	_u.mutation.ClearUnitCost()
+	return _u
+}
+
 // Mutation returns the StockMoveLineMutation object of the builder.
 func (_u *StockMoveLineUpdateOne) Mutation() *StockMoveLineMutation {
 	return _u.mutation
@@ -865,6 +928,15 @@ func (_u *StockMoveLineUpdateOne) sqlSave(ctx context.Context) (_node *StockMove
 	}
 	if _u.mutation.ExecutedQuantityCleared() {
 		_spec.ClearField(stockmoveline.FieldExecutedQuantity, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.UnitCost(); ok {
+		_spec.SetField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedUnitCost(); ok {
+		_spec.AddField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
+	}
+	if _u.mutation.UnitCostCleared() {
+		_spec.ClearField(stockmoveline.FieldUnitCost, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &StockMoveLine{config: _u.config}

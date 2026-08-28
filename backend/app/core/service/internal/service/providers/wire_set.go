@@ -39,6 +39,14 @@ var ProviderSet = wire.NewSet(
 
 	service.NewPayableService,
 	service.NewPaymentService,
+
+	service.NewCustomerService,
+	service.NewSalesOrderService,
+
+	service.NewReceivableService,
+	service.NewReceiptService,
+	service.NewFinanceReportService,
+
 	service.NewRoleService,
 	service.NewOrgUnitService,
 	service.NewPositionService,

@@ -610,5 +610,91 @@
       "over_90": "90 天以上",
       "no_due_date": "无账期"
     }
+  },
+  "receivable": {
+    "amount": "应收总额（元）",
+    "amountCents": "应收总额（分）",
+    "button": {
+      "create": "手工建账",
+      "receipt": "收款",
+      "cancel": "取消"
+    },
+    "moduleName": "应收单",
+    "paidAmount": "已收（元）",
+    "receivableNumber": "应收单号",
+    "receiptAmountCents": "收款金额（分）",
+    "receiptInvalid": "请输入正整数收款金额（分）",
+    "soRef": "来源销售单",
+    "recordReceipt": "记录收款",
+    "status": "状态",
+    "customerCode": "客户"
+  },
+  "receipt": {
+    "amount": "金额（元）",
+    "method": "收款方式",
+    "moduleName": "收款",
+    "receivableId": "应收单ID",
+    "receiptNumber": "收款单号",
+    "status": "状态"
+  },
+  "agingAr": {
+    "title": "应收账龄报表",
+    "disclaimer": "本报表按账期到期日对未结清应收分桶统计，逾期桶（红色）需优先处置。金额单位元。",
+    "bucket": "分桶",
+    "count": "笔数",
+    "totalAmount": "金额（元）",
+    "bucketLabel": {
+      "overdue": "已逾期",
+      "0_7": "0-7 天",
+      "8_30": "8-30 天",
+      "31_90": "31-90 天",
+      "over_90": "90 天以上",
+      "no_due_date": "无账期"
+    }
+  },
+  "profit": {
+    "title": "利润报表",
+    "month": "月份",
+    "revenue": "收入（元）",
+    "cogs": "销售成本（元）",
+    "profit": "利润（元）",
+    "disclaimer": "本报表仅供经营参考，不构成财务审计依据。"
+  },
+  "salesOrder": {
+    "addItem": "添加明细",
+    "amount": "金额（元）",
+    "button": {
+      "create": "创建采购单",
+      "submit": "提交审批",
+      "approve": "通过",
+      "reject": "驳回",
+      "cancel": "取消",
+      "complete": "完结"
+    },
+    "itemInvalid": "请完整填写 SKU 与正整数数量",
+    "items": "采购明细",
+    "itemsRequired": "至少需要一条明细",
+    "moduleName": "销售单",
+    "soNumber": "采购单号",
+    "quantity": "数量",
+    "fulfillQuantity": "已收数量",
+    "skuCode": "SKU",
+    "status": "状态",
+    "customerCode": "供应商",
+    "totalAmount": "总额（元）",
+    "unitPrice": "单价（元）",
+    "unitPriceCents": "单价（分）",
+    "warehouseCode": "发货仓库"
+  },
+  "customer": {
+    "button": {
+      "create": "创建供应商"
+    },
+    "code": "供应商编码",
+    "contact": "联系人",
+    "enable": "启用状态",
+    "moduleName": "客户",
+    "name": "供应商名称",
+    "phone": "联系电话"
   }
 }

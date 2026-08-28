@@ -85,6 +85,13 @@ func (StockMove) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		// sales_order_item_id：出库 move 关联的销售明细（镜像 purchase_order_item_id）。
+		field.Uint32("sales_order_item_id").
+			Comment("关联销售明细ID（仅出库）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -111,5 +118,9 @@ func (StockMove) Indexes() []ent.Index {
 		// 按采购明细回溯（PO→收货链）
 		index.Fields("tenant_id", "purchase_order_item_id").
 			StorageKey("idx_inv_stock_move_tenant_po_item"),
+
+		// 按销售明细回溯（SO→出库链）
+		index.Fields("tenant_id", "sales_order_item_id").
+			StorageKey("idx_inv_stock_move_tenant_so_item"),
 	}
 }

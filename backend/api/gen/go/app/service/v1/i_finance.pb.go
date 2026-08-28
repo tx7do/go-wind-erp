@@ -33,32 +33,52 @@ const file_app_service_v1_i_finance_proto_rawDesc = "" +
 	"\x03Get\x12%.finance.service.v1.GetPayableRequest\x1a\x1b.finance.service.v1.Payable\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/payables/{id}2\xe0\x01\n" +
 	"\x0ePaymentService\x12d\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPaymentResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/app/v1/payments\x12h\n" +
-	"\x03Get\x12%.finance.service.v1.GetPaymentRequest\x1a\x1b.finance.service.v1.Payment\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/payments/{id}B\xaa\x01\n" +
+	"\x03Get\x12%.finance.service.v1.GetPaymentRequest\x1a\x1b.finance.service.v1.Payment\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/payments/{id}2\xf2\x01\n" +
+	"\x11ReceivableService\x12j\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a*.finance.service.v1.ListReceivableResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/app/v1/receivables\x12q\n" +
+	"\x03Get\x12(.finance.service.v1.GetReceivableRequest\x1a\x1e.finance.service.v1.Receivable\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/app/v1/receivables/{id}2\xe0\x01\n" +
+	"\x0eReceiptService\x12d\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListReceiptResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/app/v1/receipts\x12h\n" +
+	"\x03Get\x12%.finance.service.v1.GetReceiptRequest\x1a\x1b.finance.service.v1.Receipt\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/receipts/{id}B\xaa\x01\n" +
 	"\x12com.app.service.v1B\rIFinanceProtoP\x01Z+go-wind-erp/api/gen/go/app/service/v1;apppb\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_finance_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),        // 0: pagination.PagingRequest
-	(*v11.GetPayableRequest)(nil),   // 1: finance.service.v1.GetPayableRequest
-	(*v11.GetPaymentRequest)(nil),   // 2: finance.service.v1.GetPaymentRequest
-	(*v11.ListPayableResponse)(nil), // 3: finance.service.v1.ListPayableResponse
-	(*v11.Payable)(nil),             // 4: finance.service.v1.Payable
-	(*v11.ListPaymentResponse)(nil), // 5: finance.service.v1.ListPaymentResponse
-	(*v11.Payment)(nil),             // 6: finance.service.v1.Payment
+	(*v1.PagingRequest)(nil),           // 0: pagination.PagingRequest
+	(*v11.GetPayableRequest)(nil),      // 1: finance.service.v1.GetPayableRequest
+	(*v11.GetPaymentRequest)(nil),      // 2: finance.service.v1.GetPaymentRequest
+	(*v11.GetReceivableRequest)(nil),   // 3: finance.service.v1.GetReceivableRequest
+	(*v11.GetReceiptRequest)(nil),      // 4: finance.service.v1.GetReceiptRequest
+	(*v11.ListPayableResponse)(nil),    // 5: finance.service.v1.ListPayableResponse
+	(*v11.Payable)(nil),                // 6: finance.service.v1.Payable
+	(*v11.ListPaymentResponse)(nil),    // 7: finance.service.v1.ListPaymentResponse
+	(*v11.Payment)(nil),                // 8: finance.service.v1.Payment
+	(*v11.ListReceivableResponse)(nil), // 9: finance.service.v1.ListReceivableResponse
+	(*v11.Receivable)(nil),             // 10: finance.service.v1.Receivable
+	(*v11.ListReceiptResponse)(nil),    // 11: finance.service.v1.ListReceiptResponse
+	(*v11.Receipt)(nil),                // 12: finance.service.v1.Receipt
 }
 var file_app_service_v1_i_finance_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	0, // 2: app.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	2, // 3: app.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	3, // 4: app.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	4, // 5: app.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	5, // 6: app.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	6, // 7: app.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: app.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	1,  // 1: app.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	0,  // 2: app.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	2,  // 3: app.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	0,  // 4: app.service.v1.ReceivableService.List:input_type -> pagination.PagingRequest
+	3,  // 5: app.service.v1.ReceivableService.Get:input_type -> finance.service.v1.GetReceivableRequest
+	0,  // 6: app.service.v1.ReceiptService.List:input_type -> pagination.PagingRequest
+	4,  // 7: app.service.v1.ReceiptService.Get:input_type -> finance.service.v1.GetReceiptRequest
+	5,  // 8: app.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	6,  // 9: app.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	7,  // 10: app.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	8,  // 11: app.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	9,  // 12: app.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
+	10, // 13: app.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
+	11, // 14: app.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
+	12, // 15: app.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_app_service_v1_i_finance_proto_init() }
@@ -74,7 +94,7 @@ func file_app_service_v1_i_finance_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   4,
 		},
 		GoTypes:           file_app_service_v1_i_finance_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_finance_proto_depIdxs,

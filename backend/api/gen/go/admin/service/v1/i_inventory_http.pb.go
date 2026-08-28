@@ -43,14 +43,14 @@ type WarehouseServiceHTTPServer interface {
 
 func RegisterWarehouseServiceHTTPServer(s *http.Server, srv WarehouseServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/warehouses", _WarehouseService_List10_HTTP_Handler(srv))
-	r.GET("/admin/v1/warehouses/{id}", _WarehouseService_Get10_HTTP_Handler(srv))
-	r.POST("/admin/v1/warehouses", _WarehouseService_Create8_HTTP_Handler(srv))
+	r.GET("/admin/v1/warehouses", _WarehouseService_List12_HTTP_Handler(srv))
+	r.GET("/admin/v1/warehouses/{id}", _WarehouseService_Get12_HTTP_Handler(srv))
+	r.POST("/admin/v1/warehouses", _WarehouseService_Create10_HTTP_Handler(srv))
 	r.PUT("/admin/v1/warehouses/{id}", _WarehouseService_Update5_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/warehouses/{id}", _WarehouseService_Delete7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/warehouses/{id}", _WarehouseService_Delete8_HTTP_Handler(srv))
 }
 
-func _WarehouseService_List10_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_List12_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _WarehouseService_List10_HTTP_Handler(srv WarehouseServiceHTTPServer) func(
 	}
 }
 
-func _WarehouseService_Get10_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_Get12_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetWarehouseRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _WarehouseService_Get10_HTTP_Handler(srv WarehouseServiceHTTPServer) func(c
 	}
 }
 
-func _WarehouseService_Create8_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_Create10_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateWarehouseRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _WarehouseService_Update5_HTTP_Handler(srv WarehouseServiceHTTPServer) func
 	}
 }
 
-func _WarehouseService_Delete7_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
+func _WarehouseService_Delete8_HTTP_Handler(srv WarehouseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteWarehouseRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -272,14 +272,14 @@ type LocationServiceHTTPServer interface {
 
 func RegisterLocationServiceHTTPServer(s *http.Server, srv LocationServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/stock-locations", _LocationService_List11_HTTP_Handler(srv))
-	r.GET("/admin/v1/stock-locations/{id}", _LocationService_Get11_HTTP_Handler(srv))
-	r.POST("/admin/v1/stock-locations", _LocationService_Create9_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-locations", _LocationService_List13_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-locations/{id}", _LocationService_Get13_HTTP_Handler(srv))
+	r.POST("/admin/v1/stock-locations", _LocationService_Create11_HTTP_Handler(srv))
 	r.PUT("/admin/v1/stock-locations/{id}", _LocationService_Update6_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/stock-locations/{id}", _LocationService_Delete8_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/stock-locations/{id}", _LocationService_Delete9_HTTP_Handler(srv))
 }
 
-func _LocationService_List11_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
+func _LocationService_List13_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -298,7 +298,7 @@ func _LocationService_List11_HTTP_Handler(srv LocationServiceHTTPServer) func(ct
 	}
 }
 
-func _LocationService_Get11_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
+func _LocationService_Get13_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetLocationRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -320,7 +320,7 @@ func _LocationService_Get11_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx
 	}
 }
 
-func _LocationService_Create9_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
+func _LocationService_Create11_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateLocationRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -367,7 +367,7 @@ func _LocationService_Update6_HTTP_Handler(srv LocationServiceHTTPServer) func(c
 	}
 }
 
-func _LocationService_Delete8_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
+func _LocationService_Delete9_HTTP_Handler(srv LocationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteLocationRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -498,13 +498,13 @@ type StockQuantServiceHTTPServer interface {
 
 func RegisterStockQuantServiceHTTPServer(s *http.Server, srv StockQuantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/stock-quants", _StockQuantService_List12_HTTP_Handler(srv))
-	r.GET("/admin/v1/stock-quants/{id}", _StockQuantService_Get12_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-quants", _StockQuantService_List14_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-quants/{id}", _StockQuantService_Get14_HTTP_Handler(srv))
 	r.GET("/admin/v1/stock-quants:overview", _StockQuantService_GetOverview0_HTTP_Handler(srv))
 	r.GET("/admin/v1/stock-quants:movement-trend", _StockQuantService_GetMovementTrend0_HTTP_Handler(srv))
 }
 
-func _StockQuantService_List12_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_List14_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -523,7 +523,7 @@ func _StockQuantService_List12_HTTP_Handler(srv StockQuantServiceHTTPServer) fun
 	}
 }
 
-func _StockQuantService_Get12_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
+func _StockQuantService_Get14_HTTP_Handler(srv StockQuantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockQuantRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -685,16 +685,16 @@ type StockPickingServiceHTTPServer interface {
 
 func RegisterStockPickingServiceHTTPServer(s *http.Server, srv StockPickingServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/stock-pickings", _StockPickingService_List13_HTTP_Handler(srv))
-	r.GET("/admin/v1/stock-pickings/{id}", _StockPickingService_Get13_HTTP_Handler(srv))
-	r.POST("/admin/v1/stock-pickings", _StockPickingService_Create10_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-pickings", _StockPickingService_List15_HTTP_Handler(srv))
+	r.GET("/admin/v1/stock-pickings/{id}", _StockPickingService_Get15_HTTP_Handler(srv))
+	r.POST("/admin/v1/stock-pickings", _StockPickingService_Create12_HTTP_Handler(srv))
 	r.POST("/admin/v1/stock-pickings/{id}:confirm", _StockPickingService_Confirm0_HTTP_Handler(srv))
 	r.POST("/admin/v1/stock-pickings/{id}:validate", _StockPickingService_Validate0_HTTP_Handler(srv))
-	r.POST("/admin/v1/stock-pickings/{id}:cancel", _StockPickingService_Cancel2_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/stock-pickings/{id}", _StockPickingService_Delete9_HTTP_Handler(srv))
+	r.POST("/admin/v1/stock-pickings/{id}:cancel", _StockPickingService_Cancel3_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/stock-pickings/{id}", _StockPickingService_Delete10_HTTP_Handler(srv))
 }
 
-func _StockPickingService_List13_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_List15_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -713,7 +713,7 @@ func _StockPickingService_List13_HTTP_Handler(srv StockPickingServiceHTTPServer)
 	}
 }
 
-func _StockPickingService_Get13_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Get15_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockPickingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -735,7 +735,7 @@ func _StockPickingService_Get13_HTTP_Handler(srv StockPickingServiceHTTPServer) 
 	}
 }
 
-func _StockPickingService_Create10_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Create12_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateStockPickingRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -807,7 +807,7 @@ func _StockPickingService_Validate0_HTTP_Handler(srv StockPickingServiceHTTPServ
 	}
 }
 
-func _StockPickingService_Cancel2_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Cancel3_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CancelStockPickingRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -832,7 +832,7 @@ func _StockPickingService_Cancel2_HTTP_Handler(srv StockPickingServiceHTTPServer
 	}
 }
 
-func _StockPickingService_Delete9_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
+func _StockPickingService_Delete10_HTTP_Handler(srv StockPickingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteStockPickingRequest
 		if err := ctx.BindQuery(&in); err != nil {

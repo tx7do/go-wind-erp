@@ -345,6 +345,33 @@ func (_u *StockMoveUpdate) ClearPurchaseOrderItemID() *StockMoveUpdate {
 	return _u
 }
 
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (_u *StockMoveUpdate) SetSalesOrderItemID(v uint32) *StockMoveUpdate {
+	_u.mutation.ResetSalesOrderItemID()
+	_u.mutation.SetSalesOrderItemID(v)
+	return _u
+}
+
+// SetNillableSalesOrderItemID sets the "sales_order_item_id" field if the given value is not nil.
+func (_u *StockMoveUpdate) SetNillableSalesOrderItemID(v *uint32) *StockMoveUpdate {
+	if v != nil {
+		_u.SetSalesOrderItemID(*v)
+	}
+	return _u
+}
+
+// AddSalesOrderItemID adds value to the "sales_order_item_id" field.
+func (_u *StockMoveUpdate) AddSalesOrderItemID(v int32) *StockMoveUpdate {
+	_u.mutation.AddSalesOrderItemID(v)
+	return _u
+}
+
+// ClearSalesOrderItemID clears the value of the "sales_order_item_id" field.
+func (_u *StockMoveUpdate) ClearSalesOrderItemID() *StockMoveUpdate {
+	_u.mutation.ClearSalesOrderItemID()
+	return _u
+}
+
 // Mutation returns the StockMoveMutation object of the builder.
 func (_u *StockMoveUpdate) Mutation() *StockMoveMutation {
 	return _u.mutation
@@ -512,6 +539,15 @@ func (_u *StockMoveUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.PurchaseOrderItemIDCleared() {
 		_spec.ClearField(stockmove.FieldPurchaseOrderItemID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SalesOrderItemID(); ok {
+		_spec.SetField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSalesOrderItemID(); ok {
+		_spec.AddField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+	}
+	if _u.mutation.SalesOrderItemIDCleared() {
+		_spec.ClearField(stockmove.FieldSalesOrderItemID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -851,6 +887,33 @@ func (_u *StockMoveUpdateOne) ClearPurchaseOrderItemID() *StockMoveUpdateOne {
 	return _u
 }
 
+// SetSalesOrderItemID sets the "sales_order_item_id" field.
+func (_u *StockMoveUpdateOne) SetSalesOrderItemID(v uint32) *StockMoveUpdateOne {
+	_u.mutation.ResetSalesOrderItemID()
+	_u.mutation.SetSalesOrderItemID(v)
+	return _u
+}
+
+// SetNillableSalesOrderItemID sets the "sales_order_item_id" field if the given value is not nil.
+func (_u *StockMoveUpdateOne) SetNillableSalesOrderItemID(v *uint32) *StockMoveUpdateOne {
+	if v != nil {
+		_u.SetSalesOrderItemID(*v)
+	}
+	return _u
+}
+
+// AddSalesOrderItemID adds value to the "sales_order_item_id" field.
+func (_u *StockMoveUpdateOne) AddSalesOrderItemID(v int32) *StockMoveUpdateOne {
+	_u.mutation.AddSalesOrderItemID(v)
+	return _u
+}
+
+// ClearSalesOrderItemID clears the value of the "sales_order_item_id" field.
+func (_u *StockMoveUpdateOne) ClearSalesOrderItemID() *StockMoveUpdateOne {
+	_u.mutation.ClearSalesOrderItemID()
+	return _u
+}
+
 // Mutation returns the StockMoveMutation object of the builder.
 func (_u *StockMoveUpdateOne) Mutation() *StockMoveMutation {
 	return _u.mutation
@@ -1048,6 +1111,15 @@ func (_u *StockMoveUpdateOne) sqlSave(ctx context.Context) (_node *StockMove, er
 	}
 	if _u.mutation.PurchaseOrderItemIDCleared() {
 		_spec.ClearField(stockmove.FieldPurchaseOrderItemID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.SalesOrderItemID(); ok {
+		_spec.SetField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedSalesOrderItemID(); ok {
+		_spec.AddField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+	}
+	if _u.mutation.SalesOrderItemIDCleared() {
+		_spec.ClearField(stockmove.FieldSalesOrderItemID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &StockMove{config: _u.config}

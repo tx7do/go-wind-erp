@@ -550,6 +550,10 @@ func (m *StockQuant) validate(all bool) error {
 		// no validation rules for Quantity
 	}
 
+	if m.CostPrice != nil {
+		// no validation rules for CostPrice
+	}
+
 	if m.Remark != nil {
 		// no validation rules for Remark
 	}
@@ -1090,6 +1094,10 @@ func (m *StockMove) validate(all bool) error {
 
 	if m.PurchaseOrderItemId != nil {
 		// no validation rules for PurchaseOrderItemId
+	}
+
+	if m.SalesOrderItemId != nil {
+		// no validation rules for SalesOrderItemId
 	}
 
 	if m.Remark != nil {

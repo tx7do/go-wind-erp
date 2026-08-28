@@ -124,6 +124,11 @@ func PurchaseOrderItemID(v uint32) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldPurchaseOrderItemID, v))
 }
 
+// SalesOrderItemID applies equality check predicate on the "sales_order_item_id" field. It's identical to SalesOrderItemIDEQ.
+func SalesOrderItemID(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldEQ(FieldSalesOrderItemID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldCreatedAt, v))
@@ -902,6 +907,56 @@ func PurchaseOrderItemIDIsNil() predicate.StockMove {
 // PurchaseOrderItemIDNotNil applies the NotNil predicate on the "purchase_order_item_id" field.
 func PurchaseOrderItemIDNotNil() predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotNull(FieldPurchaseOrderItemID))
+}
+
+// SalesOrderItemIDEQ applies the EQ predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDEQ(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldEQ(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDNEQ applies the NEQ predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDNEQ(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldNEQ(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDIn applies the In predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDIn(vs ...uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldIn(FieldSalesOrderItemID, vs...))
+}
+
+// SalesOrderItemIDNotIn applies the NotIn predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDNotIn(vs ...uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldNotIn(FieldSalesOrderItemID, vs...))
+}
+
+// SalesOrderItemIDGT applies the GT predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDGT(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldGT(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDGTE applies the GTE predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDGTE(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldGTE(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDLT applies the LT predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDLT(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldLT(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDLTE applies the LTE predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDLTE(v uint32) predicate.StockMove {
+	return predicate.StockMove(sql.FieldLTE(FieldSalesOrderItemID, v))
+}
+
+// SalesOrderItemIDIsNil applies the IsNil predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDIsNil() predicate.StockMove {
+	return predicate.StockMove(sql.FieldIsNull(FieldSalesOrderItemID))
+}
+
+// SalesOrderItemIDNotNil applies the NotNil predicate on the "sales_order_item_id" field.
+func SalesOrderItemIDNotNil() predicate.StockMove {
+	return predicate.StockMove(sql.FieldNotNull(FieldSalesOrderItemID))
 }
 
 // And groups predicates with the AND operator between them.

@@ -40,3 +40,33 @@ service PaymentService {
     };
   }
 }
+
+// 应收单服务（移动端只读：财务/管理层查询应收款进度）
+service ReceivableService {
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListReceivableResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/receivables"
+    };
+  }
+
+  rpc Get (finance.service.v1.GetReceivableRequest) returns (finance.service.v1.Receivable) {
+    option (google.api.http) = {
+      get: "/app/v1/receivables/{id}"
+    };
+  }
+}
+
+// 收款服务（移动端只读台账）
+service ReceiptService {
+  rpc List (pagination.PagingRequest) returns (finance.service.v1.ListReceiptResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/receipts"
+    };
+  }
+
+  rpc Get (finance.service.v1.GetReceiptRequest) returns (finance.service.v1.Receipt) {
+    option (google.api.http) = {
+      get: "/app/v1/receipts/{id}"
+    };
+  }
+}

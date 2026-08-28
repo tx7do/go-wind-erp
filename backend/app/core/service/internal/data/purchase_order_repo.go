@@ -476,6 +476,25 @@ func (r *PurchaseOrderRepo) GetItemsTx(
 	return items, nil
 }
 
+// GetUnitPriceTx 取采购明细的单价（事务变体，供 Validate 入库时做加权平均
+// cost_price 更新用）。
+func (r *PurchaseOrderRepo) GetUnitPriceTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	poItemID uint32,
+) int64 {
+	item, err := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.IDEQ(poItemID)).
+		Only(ctx)
+	if err != nil {
+		return 0
+	}
+	if item.UnitPrice == nil {
+		return 0
+	}
+	return *item.UnitPrice
+}
+
 // ApplyReceiptTx 与 ApplyReceipt 同语义的事务变体，接受显式 *ent.Tx，使
 // StockPickingService.Validate 可在单个 DB 事务内运行（消除旧补偿竞态）。
 func (r *PurchaseOrderRepo) ApplyReceiptTx(

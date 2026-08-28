@@ -287,6 +287,33 @@
       "Pending": "待审批",
       "Applied": "已入账",
       "Rejected": "已拒绝"
+    },
+    "receivableStatus": {
+      "Pending": "待收款",
+      "Partial": "部分收款",
+      "Settled": "已结清",
+      "Cancelled": "已取消"
+    },
+    "receiptStatus": {
+      "Pending": "待审批",
+      "Applied": "已入账",
+      "Rejected": "已拒绝"
+    },
+    "receiptMethod": {
+      "BankTransfer": "银行转账",
+      "Cash": "现金",
+      "Check": "支票",
+      "Other": "其他"
+    }
+  },
+  "sales": {
+    "status": {
+      "Draft": "草稿",
+      "Submitted": "待审批",
+      "Approved": "已通过",
+      "Rejected": "已驳回",
+      "Completed": "已完结",
+      "Cancelled": "已取消"
     }
   }
 }

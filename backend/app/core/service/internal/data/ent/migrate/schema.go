@@ -201,6 +201,37 @@ var (
 			},
 		},
 	}
+	// SalCustomersColumns holds the columns for the "sal_customers" table.
+	SalCustomersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "客户名称"},
+		{Name: "contact", Type: field.TypeString, Nullable: true, Comment: "联系人"},
+		{Name: "phone", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
+		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用客户", Default: false},
+	}
+	// SalCustomersTable holds the schema information for the "sal_customers" table.
+	SalCustomersTable = &schema.Table{
+		Name:       "sal_customers",
+		Comment:    "客户表",
+		Columns:    SalCustomersColumns,
+		PrimaryKey: []*schema.Column{SalCustomersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sal_customer_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{SalCustomersColumns[8], SalCustomersColumns[9]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2259,6 +2290,80 @@ var (
 			},
 		},
 	}
+	// FinReceiptsColumns holds the columns for the "fin_receipts" table.
+	FinReceiptsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "receipt_number", Type: field.TypeString, Nullable: true, Comment: "收款单号（服务端生成）"},
+		{Name: "receivable_id", Type: field.TypeUint32, Nullable: true, Comment: "所属应收单ID", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "收款金额（分）", Default: 0},
+		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "收款方式", Enums: []string{"BANK_TRANSFER", "CASH", "CHECK", "OTHER"}, Default: "BANK_TRANSFER"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "收款状态", Enums: []string{"PENDING", "APPLIED", "REJECTED"}, Default: "PENDING"},
+	}
+	// FinReceiptsTable holds the schema information for the "fin_receipts" table.
+	FinReceiptsTable = &schema.Table{
+		Name:       "fin_receipts",
+		Comment:    "收款表（append-only 台账）",
+		Columns:    FinReceiptsColumns,
+		PrimaryKey: []*schema.Column{FinReceiptsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_receipt_tenant_receivable_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FinReceiptsColumns[8], FinReceiptsColumns[10], FinReceiptsColumns[1]},
+			},
+		},
+	}
+	// FinReceivablesColumns holds the columns for the "fin_receivables" table.
+	FinReceivablesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "receivable_number", Type: field.TypeString, Nullable: true, Comment: "应收单号（服务端生成）"},
+		{Name: "so_ref", Type: field.TypeString, Nullable: true, Comment: "来源销售单引用"},
+		{Name: "customer_code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "应收总额（分）", Default: 0},
+		{Name: "paid_amount", Type: field.TypeInt64, Nullable: true, Comment: "已收金额（分，收款驱动）", Default: 0},
+		{Name: "due_date", Type: field.TypeTime, Nullable: true, Comment: "账期到期日"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "应收状态", Enums: []string{"PENDING", "PARTIAL", "SETTLED", "CANCELLED"}, Default: "PENDING"},
+	}
+	// FinReceivablesTable holds the schema information for the "fin_receivables" table.
+	FinReceivablesTable = &schema.Table{
+		Name:       "fin_receivables",
+		Comment:    "应收单表",
+		Columns:    FinReceivablesColumns,
+		PrimaryKey: []*schema.Column{FinReceivablesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_receivable_tenant_number",
+				Unique:  true,
+				Columns: []*schema.Column{FinReceivablesColumns[8], FinReceivablesColumns[9]},
+			},
+			{
+				Name:    "idx_fin_receivable_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FinReceivablesColumns[8], FinReceivablesColumns[15], FinReceivablesColumns[1]},
+			},
+			{
+				Name:    "idx_fin_receivable_tenant_customer",
+				Unique:  false,
+				Columns: []*schema.Column{FinReceivablesColumns[8], FinReceivablesColumns[11]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2461,6 +2566,74 @@ var (
 			},
 		},
 	}
+	// SalSalesOrdersColumns holds the columns for the "sal_sales_orders" table.
+	SalSalesOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "so_number", Type: field.TypeString, Nullable: true, Comment: "销售单号（服务端生成）"},
+		{Name: "customer_code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "销售单状态", Enums: []string{"DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "COMPLETED", "CANCELLED"}, Default: "DRAFT"},
+		{Name: "total_amount", Type: field.TypeInt64, Nullable: true, Comment: "销售总额（分，服务端按明细计算）", Default: 0},
+		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "发货仓库编码"},
+	}
+	// SalSalesOrdersTable holds the schema information for the "sal_sales_orders" table.
+	SalSalesOrdersTable = &schema.Table{
+		Name:       "sal_sales_orders",
+		Comment:    "销售单表",
+		Columns:    SalSalesOrdersColumns,
+		PrimaryKey: []*schema.Column{SalSalesOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sal_so_tenant_so_number",
+				Unique:  true,
+				Columns: []*schema.Column{SalSalesOrdersColumns[8], SalSalesOrdersColumns[9]},
+			},
+			{
+				Name:    "idx_sal_so_tenant_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SalSalesOrdersColumns[8], SalSalesOrdersColumns[11], SalSalesOrdersColumns[1]},
+			},
+			{
+				Name:    "idx_sal_so_tenant_creator_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SalSalesOrdersColumns[8], SalSalesOrdersColumns[4], SalSalesOrdersColumns[1]},
+			},
+		},
+	}
+	// SalSalesOrderItemsColumns holds the columns for the "sal_sales_order_items" table.
+	SalSalesOrderItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "so_id", Type: field.TypeUint32, Nullable: true, Comment: "所属销售单ID", Default: 0},
+		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
+		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "销售数量", Default: 0},
+		{Name: "unit_price", Type: field.TypeInt64, Nullable: true, Comment: "单价（分）", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "明细金额（分，服务端计算）", Default: 0},
+		{Name: "fulfilled_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已履约数量", Default: 0},
+	}
+	// SalSalesOrderItemsTable holds the schema information for the "sal_sales_order_items" table.
+	SalSalesOrderItemsTable = &schema.Table{
+		Name:       "sal_sales_order_items",
+		Comment:    "销售单明细表",
+		Columns:    SalSalesOrderItemsColumns,
+		PrimaryKey: []*schema.Column{SalSalesOrderItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sal_so_item_tenant_so",
+				Unique:  false,
+				Columns: []*schema.Column{SalSalesOrderItemsColumns[3], SalSalesOrderItemsColumns[4]},
+			},
+		},
+	}
 	// InvStockLocationsColumns holds the columns for the "inv_stock_locations" table.
 	InvStockLocationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2475,7 +2648,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "位置名称"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父位置ID（预留层级，初始不用）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "物化路径（预留层级，初始为 /{id}/）"},
-		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置", Enums: []string{"SUPPLIER", "INTERNAL"}, Default: "INTERNAL"},
+		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的）", Enums: []string{"SUPPLIER", "INTERNAL", "CUSTOMER"}, Default: "INTERNAL"},
 		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "归属仓库编码（仅 INTERNAL 位置有值）"},
 	}
 	// InvStockLocationsTable holds the schema information for the "inv_stock_locations" table.
@@ -2515,6 +2688,7 @@ var (
 		{Name: "planned_quantity", Type: field.TypeInt64, Nullable: true, Comment: "计划数量", Default: 0},
 		{Name: "state", Type: field.TypeEnum, Nullable: true, Comment: "移动状态", Enums: []string{"DRAFT", "CONFIRMED", "DONE", "CANCELLED"}, Default: "DRAFT"},
 		{Name: "purchase_order_item_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购明细ID（仅入库，Odoo purchase_line_id）", Default: 0},
+		{Name: "sales_order_item_id", Type: field.TypeUint32, Nullable: true, Comment: "关联销售明细ID（仅出库）", Default: 0},
 	}
 	// InvStockMovesTable holds the schema information for the "inv_stock_moves" table.
 	InvStockMovesTable = &schema.Table{
@@ -2538,6 +2712,11 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{InvStockMovesColumns[8], InvStockMovesColumns[15]},
 			},
+			{
+				Name:    "idx_inv_stock_move_tenant_so_item",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMovesColumns[8], InvStockMovesColumns[16]},
+			},
 		},
 	}
 	// InvStockMoveLinesColumns holds the columns for the "inv_stock_move_lines" table.
@@ -2555,6 +2734,7 @@ var (
 		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
 		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "executed_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已执行数量", Default: 0},
+		{Name: "unit_cost", Type: field.TypeInt64, Nullable: true, Comment: "执行时冻结的单位成本（分，用于COGS）", Default: 0},
 	}
 	// InvStockMoveLinesTable holds the schema information for the "inv_stock_move_lines" table.
 	InvStockMoveLinesTable = &schema.Table{
@@ -2587,7 +2767,7 @@ var (
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "picking_number", Type: field.TypeString, Nullable: true, Comment: "拣货单号（服务端生成）"},
-		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨", Enums: []string{"INCOMING", "INTERNAL"}, Default: "INCOMING"},
+		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库", Enums: []string{"INCOMING", "INTERNAL", "OUTGOING"}, Default: "INCOMING"},
 		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
 		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "purchase_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购单ID（仅入库）", Default: 0},
@@ -2626,6 +2806,7 @@ var (
 		{Name: "location_id", Type: field.TypeUint32, Nullable: true, Comment: "所在位置ID", Default: 0},
 		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
 		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "在手数量", Default: 0},
+		{Name: "cost_price", Type: field.TypeInt64, Nullable: true, Comment: "加权平均成本（分）", Default: 0},
 	}
 	// InvStockQuantsTable holds the schema information for the "inv_stock_quants" table.
 	InvStockQuantsTable = &schema.Table{
@@ -3264,6 +3445,7 @@ var (
 		SysApisTable,
 		SysAPIAuditLogsTable,
 		AprApprovalRequestsTable,
+		SalCustomersTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
@@ -3295,9 +3477,13 @@ var (
 		PrdProductsTable,
 		PurPurchaseOrdersTable,
 		PurPurchaseOrderItemsTable,
+		FinReceiptsTable,
+		FinReceivablesTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		SalSalesOrdersTable,
+		SalSalesOrderItemsTable,
 		InvStockLocationsTable,
 		InvStockMovesTable,
 		InvStockMoveLinesTable,
@@ -3328,6 +3514,11 @@ func init() {
 	}
 	AprApprovalRequestsTable.Annotation = &entsql.Annotation{
 		Table:     "apr_approval_requests",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SalCustomersTable.Annotation = &entsql.Annotation{
+		Table:     "sal_customers",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -3491,6 +3682,16 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	FinReceiptsTable.Annotation = &entsql.Annotation{
+		Table:     "fin_receipts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FinReceivablesTable.Annotation = &entsql.Annotation{
+		Table:     "fin_receivables",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_roles",
 		Charset:   "utf8mb4",
@@ -3503,6 +3704,16 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SalSalesOrdersTable.Annotation = &entsql.Annotation{
+		Table:     "sal_sales_orders",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SalSalesOrderItemsTable.Annotation = &entsql.Annotation{
+		Table:     "sal_sales_order_items",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

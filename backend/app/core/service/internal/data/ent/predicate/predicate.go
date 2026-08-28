@@ -15,6 +15,9 @@ type ApiAuditLog func(*sql.Selector)
 // ApprovalRequest is the predicate function for approvalrequest builders.
 type ApprovalRequest func(*sql.Selector)
 
+// Customer is the predicate function for customer builders.
+type Customer func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -108,6 +111,12 @@ type PurchaseOrder func(*sql.Selector)
 // PurchaseOrderItem is the predicate function for purchaseorderitem builders.
 type PurchaseOrderItem func(*sql.Selector)
 
+// Receipt is the predicate function for receipt builders.
+type Receipt func(*sql.Selector)
+
+// Receivable is the predicate function for receivable builders.
+type Receivable func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
@@ -116,6 +125,12 @@ type RoleMetadata func(*sql.Selector)
 
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
+
+// SalesOrder is the predicate function for salesorder builders.
+type SalesOrder func(*sql.Selector)
+
+// SalesOrderItem is the predicate function for salesorderitem builders.
+type SalesOrderItem func(*sql.Selector)
 
 // StockLocation is the predicate function for stocklocation builders.
 type StockLocation func(*sql.Selector)

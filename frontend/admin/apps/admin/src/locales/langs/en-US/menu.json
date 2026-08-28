@@ -73,6 +73,15 @@
     "moduleName": "Finance",
     "payable": "Payables",
     "payment": "Payments",
-    "aging": "Aging Report"
+    "aging": "Aging Report",
+    "receivable": "Receivable Management",
+    "receipt": "Receipt Ledger",
+    "agingAr": "Receivable Aging",
+    "profit": "Profit Report"
+  },
+  "sales": {
+    "moduleName": "Sales Management",
+    "salesOrder": "Sales Orders",
+    "customer": "Customer Management"
   }
 }

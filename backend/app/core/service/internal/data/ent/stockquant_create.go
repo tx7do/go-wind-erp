@@ -176,6 +176,20 @@ func (_c *StockQuantCreate) SetNillableQuantity(v *int64) *StockQuantCreate {
 	return _c
 }
 
+// SetCostPrice sets the "cost_price" field.
+func (_c *StockQuantCreate) SetCostPrice(v int64) *StockQuantCreate {
+	_c.mutation.SetCostPrice(v)
+	return _c
+}
+
+// SetNillableCostPrice sets the "cost_price" field if the given value is not nil.
+func (_c *StockQuantCreate) SetNillableCostPrice(v *int64) *StockQuantCreate {
+	if v != nil {
+		_c.SetCostPrice(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *StockQuantCreate) SetID(v uint32) *StockQuantCreate {
 	_c.mutation.SetID(v)
@@ -230,6 +244,10 @@ func (_c *StockQuantCreate) defaults() error {
 	if _, ok := _c.mutation.Quantity(); !ok {
 		v := stockquant.DefaultQuantity
 		_c.mutation.SetQuantity(v)
+	}
+	if _, ok := _c.mutation.CostPrice(); !ok {
+		v := stockquant.DefaultCostPrice
+		_c.mutation.SetCostPrice(v)
 	}
 	return nil
 }
@@ -317,6 +335,10 @@ func (_c *StockQuantCreate) createSpec() (*StockQuant, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Quantity(); ok {
 		_spec.SetField(stockquant.FieldQuantity, field.TypeInt64, value)
 		_node.Quantity = &value
+	}
+	if value, ok := _c.mutation.CostPrice(); ok {
+		_spec.SetField(stockquant.FieldCostPrice, field.TypeInt64, value)
+		_node.CostPrice = &value
 	}
 	return _node, _spec
 }
@@ -559,6 +581,30 @@ func (u *StockQuantUpsert) AddQuantity(v int64) *StockQuantUpsert {
 // ClearQuantity clears the value of the "quantity" field.
 func (u *StockQuantUpsert) ClearQuantity() *StockQuantUpsert {
 	u.SetNull(stockquant.FieldQuantity)
+	return u
+}
+
+// SetCostPrice sets the "cost_price" field.
+func (u *StockQuantUpsert) SetCostPrice(v int64) *StockQuantUpsert {
+	u.Set(stockquant.FieldCostPrice, v)
+	return u
+}
+
+// UpdateCostPrice sets the "cost_price" field to the value that was provided on create.
+func (u *StockQuantUpsert) UpdateCostPrice() *StockQuantUpsert {
+	u.SetExcluded(stockquant.FieldCostPrice)
+	return u
+}
+
+// AddCostPrice adds v to the "cost_price" field.
+func (u *StockQuantUpsert) AddCostPrice(v int64) *StockQuantUpsert {
+	u.Add(stockquant.FieldCostPrice, v)
+	return u
+}
+
+// ClearCostPrice clears the value of the "cost_price" field.
+func (u *StockQuantUpsert) ClearCostPrice() *StockQuantUpsert {
+	u.SetNull(stockquant.FieldCostPrice)
 	return u
 }
 
@@ -837,6 +883,34 @@ func (u *StockQuantUpsertOne) UpdateQuantity() *StockQuantUpsertOne {
 func (u *StockQuantUpsertOne) ClearQuantity() *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.ClearQuantity()
+	})
+}
+
+// SetCostPrice sets the "cost_price" field.
+func (u *StockQuantUpsertOne) SetCostPrice(v int64) *StockQuantUpsertOne {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.SetCostPrice(v)
+	})
+}
+
+// AddCostPrice adds v to the "cost_price" field.
+func (u *StockQuantUpsertOne) AddCostPrice(v int64) *StockQuantUpsertOne {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.AddCostPrice(v)
+	})
+}
+
+// UpdateCostPrice sets the "cost_price" field to the value that was provided on create.
+func (u *StockQuantUpsertOne) UpdateCostPrice() *StockQuantUpsertOne {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.UpdateCostPrice()
+	})
+}
+
+// ClearCostPrice clears the value of the "cost_price" field.
+func (u *StockQuantUpsertOne) ClearCostPrice() *StockQuantUpsertOne {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.ClearCostPrice()
 	})
 }
 
@@ -1281,6 +1355,34 @@ func (u *StockQuantUpsertBulk) UpdateQuantity() *StockQuantUpsertBulk {
 func (u *StockQuantUpsertBulk) ClearQuantity() *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.ClearQuantity()
+	})
+}
+
+// SetCostPrice sets the "cost_price" field.
+func (u *StockQuantUpsertBulk) SetCostPrice(v int64) *StockQuantUpsertBulk {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.SetCostPrice(v)
+	})
+}
+
+// AddCostPrice adds v to the "cost_price" field.
+func (u *StockQuantUpsertBulk) AddCostPrice(v int64) *StockQuantUpsertBulk {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.AddCostPrice(v)
+	})
+}
+
+// UpdateCostPrice sets the "cost_price" field to the value that was provided on create.
+func (u *StockQuantUpsertBulk) UpdateCostPrice() *StockQuantUpsertBulk {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.UpdateCostPrice()
+	})
+}
+
+// ClearCostPrice clears the value of the "cost_price" field.
+func (u *StockQuantUpsertBulk) ClearCostPrice() *StockQuantUpsertBulk {
+	return u.Update(func(s *StockQuantUpsert) {
+		s.ClearCostPrice()
 	})
 }
 

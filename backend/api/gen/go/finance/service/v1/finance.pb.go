@@ -183,6 +183,159 @@ func (Payment_Status) EnumDescriptor() ([]byte, []int) {
 	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{1, 1}
 }
 
+type Receivable_Status int32
+
+const (
+	Receivable_PENDING   Receivable_Status = 0
+	Receivable_PARTIAL   Receivable_Status = 1
+	Receivable_SETTLED   Receivable_Status = 2
+	Receivable_CANCELLED Receivable_Status = 3
+)
+
+// Enum value maps for Receivable_Status.
+var (
+	Receivable_Status_name = map[int32]string{
+		0: "PENDING",
+		1: "PARTIAL",
+		2: "SETTLED",
+		3: "CANCELLED",
+	}
+	Receivable_Status_value = map[string]int32{
+		"PENDING":   0,
+		"PARTIAL":   1,
+		"SETTLED":   2,
+		"CANCELLED": 3,
+	}
+)
+
+func (x Receivable_Status) Enum() *Receivable_Status {
+	p := new(Receivable_Status)
+	*p = x
+	return p
+}
+
+func (x Receivable_Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Receivable_Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_finance_service_v1_finance_proto_enumTypes[3].Descriptor()
+}
+
+func (Receivable_Status) Type() protoreflect.EnumType {
+	return &file_finance_service_v1_finance_proto_enumTypes[3]
+}
+
+func (x Receivable_Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Receivable_Status.Descriptor instead.
+func (Receivable_Status) EnumDescriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{14, 0}
+}
+
+type Receipt_Method int32
+
+const (
+	Receipt_BANK_TRANSFER Receipt_Method = 0
+	Receipt_CASH          Receipt_Method = 1
+	Receipt_CHECK         Receipt_Method = 2
+	Receipt_OTHER         Receipt_Method = 3
+)
+
+// Enum value maps for Receipt_Method.
+var (
+	Receipt_Method_name = map[int32]string{
+		0: "BANK_TRANSFER",
+		1: "CASH",
+		2: "CHECK",
+		3: "OTHER",
+	}
+	Receipt_Method_value = map[string]int32{
+		"BANK_TRANSFER": 0,
+		"CASH":          1,
+		"CHECK":         2,
+		"OTHER":         3,
+	}
+)
+
+func (x Receipt_Method) Enum() *Receipt_Method {
+	p := new(Receipt_Method)
+	*p = x
+	return p
+}
+
+func (x Receipt_Method) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Receipt_Method) Descriptor() protoreflect.EnumDescriptor {
+	return file_finance_service_v1_finance_proto_enumTypes[4].Descriptor()
+}
+
+func (Receipt_Method) Type() protoreflect.EnumType {
+	return &file_finance_service_v1_finance_proto_enumTypes[4]
+}
+
+func (x Receipt_Method) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Receipt_Method.Descriptor instead.
+func (Receipt_Method) EnumDescriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{15, 0}
+}
+
+type Receipt_Status int32
+
+const (
+	Receipt_PENDING  Receipt_Status = 0
+	Receipt_APPLIED  Receipt_Status = 1
+	Receipt_REJECTED Receipt_Status = 2
+)
+
+// Enum value maps for Receipt_Status.
+var (
+	Receipt_Status_name = map[int32]string{
+		0: "PENDING",
+		1: "APPLIED",
+		2: "REJECTED",
+	}
+	Receipt_Status_value = map[string]int32{
+		"PENDING":  0,
+		"APPLIED":  1,
+		"REJECTED": 2,
+	}
+)
+
+func (x Receipt_Status) Enum() *Receipt_Status {
+	p := new(Receipt_Status)
+	*p = x
+	return p
+}
+
+func (x Receipt_Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Receipt_Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_finance_service_v1_finance_proto_enumTypes[5].Descriptor()
+}
+
+func (Receipt_Status) Type() protoreflect.EnumType {
+	return &file_finance_service_v1_finance_proto_enumTypes[5]
+}
+
+func (x Receipt_Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Receipt_Status.Descriptor instead.
+func (Receipt_Status) EnumDescriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{15, 1}
+}
+
 // 应付单
 type Payable struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1109,6 +1262,938 @@ func (x *AgingReportResponse) GetBuckets() []*AgingBucket {
 	return nil
 }
 
+// 应收单（镜像 Payable）
+type Receivable struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	ReceivableNumber *string                `protobuf:"bytes,2,opt,name=receivable_number,json=receivableNumber,proto3,oneof" json:"receivable_number,omitempty"`
+	SoRef            *string                `protobuf:"bytes,3,opt,name=so_ref,json=soRef,proto3,oneof" json:"so_ref,omitempty"`
+	CustomerCode     *string                `protobuf:"bytes,4,opt,name=customer_code,json=customerCode,proto3,oneof" json:"customer_code,omitempty"`
+	Amount           *int64                 `protobuf:"varint,5,opt,name=amount,proto3,oneof" json:"amount,omitempty"`
+	PaidAmount       *int64                 `protobuf:"varint,6,opt,name=paid_amount,json=paidAmount,proto3,oneof" json:"paid_amount,omitempty"`
+	Status           *Receivable_Status     `protobuf:"varint,7,opt,name=status,proto3,enum=finance.service.v1.Receivable_Status,oneof" json:"status,omitempty"`
+	DueDate          *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=due_date,json=dueDate,proto3,oneof" json:"due_date,omitempty"`
+	Remark           *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`
+	TenantId         *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	CreatedBy        *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy        *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	DeletedBy        *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt        *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *Receivable) Reset() {
+	*x = Receivable{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Receivable) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Receivable) ProtoMessage() {}
+
+func (x *Receivable) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Receivable.ProtoReflect.Descriptor instead.
+func (*Receivable) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *Receivable) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *Receivable) GetReceivableNumber() string {
+	if x != nil && x.ReceivableNumber != nil {
+		return *x.ReceivableNumber
+	}
+	return ""
+}
+
+func (x *Receivable) GetSoRef() string {
+	if x != nil && x.SoRef != nil {
+		return *x.SoRef
+	}
+	return ""
+}
+
+func (x *Receivable) GetCustomerCode() string {
+	if x != nil && x.CustomerCode != nil {
+		return *x.CustomerCode
+	}
+	return ""
+}
+
+func (x *Receivable) GetAmount() int64 {
+	if x != nil && x.Amount != nil {
+		return *x.Amount
+	}
+	return 0
+}
+
+func (x *Receivable) GetPaidAmount() int64 {
+	if x != nil && x.PaidAmount != nil {
+		return *x.PaidAmount
+	}
+	return 0
+}
+
+func (x *Receivable) GetStatus() Receivable_Status {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return Receivable_PENDING
+}
+
+func (x *Receivable) GetDueDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DueDate
+	}
+	return nil
+}
+
+func (x *Receivable) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
+	}
+	return ""
+}
+
+func (x *Receivable) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *Receivable) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *Receivable) GetUpdatedBy() uint32 {
+	if x != nil && x.UpdatedBy != nil {
+		return *x.UpdatedBy
+	}
+	return 0
+}
+
+func (x *Receivable) GetDeletedBy() uint32 {
+	if x != nil && x.DeletedBy != nil {
+		return *x.DeletedBy
+	}
+	return 0
+}
+
+func (x *Receivable) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Receivable) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Receivable) GetDeletedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
+// 收款（镜像 Payment）
+type Receipt struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	ReceiptNumber *string                `protobuf:"bytes,2,opt,name=receipt_number,json=receiptNumber,proto3,oneof" json:"receipt_number,omitempty"`
+	ReceivableId  *uint32                `protobuf:"varint,3,opt,name=receivable_id,json=receivableId,proto3,oneof" json:"receivable_id,omitempty"`
+	Amount        *int64                 `protobuf:"varint,4,opt,name=amount,proto3,oneof" json:"amount,omitempty"`
+	Method        *Receipt_Method        `protobuf:"varint,5,opt,name=method,proto3,enum=finance.service.v1.Receipt_Method,oneof" json:"method,omitempty"`
+	Status        *Receipt_Status        `protobuf:"varint,9,opt,name=status,proto3,enum=finance.service.v1.Receipt_Status,oneof" json:"status,omitempty"`
+	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`
+	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Receipt) Reset() {
+	*x = Receipt{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Receipt) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Receipt) ProtoMessage() {}
+
+func (x *Receipt) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Receipt.ProtoReflect.Descriptor instead.
+func (*Receipt) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *Receipt) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *Receipt) GetReceiptNumber() string {
+	if x != nil && x.ReceiptNumber != nil {
+		return *x.ReceiptNumber
+	}
+	return ""
+}
+
+func (x *Receipt) GetReceivableId() uint32 {
+	if x != nil && x.ReceivableId != nil {
+		return *x.ReceivableId
+	}
+	return 0
+}
+
+func (x *Receipt) GetAmount() int64 {
+	if x != nil && x.Amount != nil {
+		return *x.Amount
+	}
+	return 0
+}
+
+func (x *Receipt) GetMethod() Receipt_Method {
+	if x != nil && x.Method != nil {
+		return *x.Method
+	}
+	return Receipt_BANK_TRANSFER
+}
+
+func (x *Receipt) GetStatus() Receipt_Status {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return Receipt_PENDING
+}
+
+func (x *Receipt) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
+	}
+	return ""
+}
+
+func (x *Receipt) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *Receipt) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *Receipt) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ListReceivableResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*Receivable          `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReceivableResponse) Reset() {
+	*x = ListReceivableResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReceivableResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReceivableResponse) ProtoMessage() {}
+
+func (x *ListReceivableResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReceivableResponse.ProtoReflect.Descriptor instead.
+func (*ListReceivableResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ListReceivableResponse) GetItems() []*Receivable {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListReceivableResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type GetReceivableRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetReceivableRequest_Id
+	QueryBy       isGetReceivableRequest_QueryBy `protobuf_oneof:"query_by"`
+	ViewMask      *fieldmaskpb.FieldMask         `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReceivableRequest) Reset() {
+	*x = GetReceivableRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReceivableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReceivableRequest) ProtoMessage() {}
+
+func (x *GetReceivableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReceivableRequest.ProtoReflect.Descriptor instead.
+func (*GetReceivableRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetReceivableRequest) GetQueryBy() isGetReceivableRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
+func (x *GetReceivableRequest) GetId() uint32 {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetReceivableRequest_Id); ok {
+			return x.Id
+		}
+	}
+	return 0
+}
+
+func (x *GetReceivableRequest) GetViewMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.ViewMask
+	}
+	return nil
+}
+
+type isGetReceivableRequest_QueryBy interface {
+	isGetReceivableRequest_QueryBy()
+}
+
+type GetReceivableRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
+}
+
+func (*GetReceivableRequest_Id) isGetReceivableRequest_QueryBy() {}
+
+type CreateReceivableRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *Receivable            `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReceivableRequest) Reset() {
+	*x = CreateReceivableRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReceivableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReceivableRequest) ProtoMessage() {}
+
+func (x *CreateReceivableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReceivableRequest.ProtoReflect.Descriptor instead.
+func (*CreateReceivableRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *CreateReceivableRequest) GetData() *Receivable {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type DeleteReceivableRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*DeleteReceivableRequest_Id
+	QueryBy       isDeleteReceivableRequest_QueryBy `protobuf_oneof:"query_by"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteReceivableRequest) Reset() {
+	*x = DeleteReceivableRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteReceivableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteReceivableRequest) ProtoMessage() {}
+
+func (x *DeleteReceivableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteReceivableRequest.ProtoReflect.Descriptor instead.
+func (*DeleteReceivableRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DeleteReceivableRequest) GetQueryBy() isDeleteReceivableRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
+func (x *DeleteReceivableRequest) GetId() uint32 {
+	if x != nil {
+		if x, ok := x.QueryBy.(*DeleteReceivableRequest_Id); ok {
+			return x.Id
+		}
+	}
+	return 0
+}
+
+type isDeleteReceivableRequest_QueryBy interface {
+	isDeleteReceivableRequest_QueryBy()
+}
+
+type DeleteReceivableRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
+}
+
+func (*DeleteReceivableRequest_Id) isDeleteReceivableRequest_QueryBy() {}
+
+type CancelReceivableRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelReceivableRequest) Reset() {
+	*x = CancelReceivableRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelReceivableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelReceivableRequest) ProtoMessage() {}
+
+func (x *CancelReceivableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelReceivableRequest.ProtoReflect.Descriptor instead.
+func (*CancelReceivableRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CancelReceivableRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type CountReceivableResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         uint64                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CountReceivableResponse) Reset() {
+	*x = CountReceivableResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CountReceivableResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CountReceivableResponse) ProtoMessage() {}
+
+func (x *CountReceivableResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CountReceivableResponse.ProtoReflect.Descriptor instead.
+func (*CountReceivableResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *CountReceivableResponse) GetCount() uint64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type ListReceiptResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*Receipt             `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReceiptResponse) Reset() {
+	*x = ListReceiptResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReceiptResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReceiptResponse) ProtoMessage() {}
+
+func (x *ListReceiptResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReceiptResponse.ProtoReflect.Descriptor instead.
+func (*ListReceiptResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ListReceiptResponse) GetItems() []*Receipt {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListReceiptResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type GetReceiptRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetReceiptRequest_Id
+	QueryBy       isGetReceiptRequest_QueryBy `protobuf_oneof:"query_by"`
+	ViewMask      *fieldmaskpb.FieldMask      `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReceiptRequest) Reset() {
+	*x = GetReceiptRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReceiptRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReceiptRequest) ProtoMessage() {}
+
+func (x *GetReceiptRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReceiptRequest.ProtoReflect.Descriptor instead.
+func (*GetReceiptRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetReceiptRequest) GetQueryBy() isGetReceiptRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
+func (x *GetReceiptRequest) GetId() uint32 {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetReceiptRequest_Id); ok {
+			return x.Id
+		}
+	}
+	return 0
+}
+
+func (x *GetReceiptRequest) GetViewMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.ViewMask
+	}
+	return nil
+}
+
+type isGetReceiptRequest_QueryBy interface {
+	isGetReceiptRequest_QueryBy()
+}
+
+type GetReceiptRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
+}
+
+func (*GetReceiptRequest_Id) isGetReceiptRequest_QueryBy() {}
+
+type CreateReceiptRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *Receipt               `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReceiptRequest) Reset() {
+	*x = CreateReceiptRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReceiptRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReceiptRequest) ProtoMessage() {}
+
+func (x *CreateReceiptRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReceiptRequest.ProtoReflect.Descriptor instead.
+func (*CreateReceiptRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CreateReceiptRequest) GetData() *Receipt {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type CountReceiptResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         uint64                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CountReceiptResponse) Reset() {
+	*x = CountReceiptResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CountReceiptResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CountReceiptResponse) ProtoMessage() {}
+
+func (x *CountReceiptResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CountReceiptResponse.ProtoReflect.Descriptor instead.
+func (*CountReceiptResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CountReceiptResponse) GetCount() uint64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type ProfitReportResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*MonthlyProfit       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProfitReportResponse) Reset() {
+	*x = ProfitReportResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProfitReportResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProfitReportResponse) ProtoMessage() {}
+
+func (x *ProfitReportResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProfitReportResponse.ProtoReflect.Descriptor instead.
+func (*ProfitReportResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ProfitReportResponse) GetItems() []*MonthlyProfit {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type MonthlyProfit struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Month         *string                `protobuf:"bytes,1,opt,name=month,proto3,oneof" json:"month,omitempty"`
+	Revenue       *int64                 `protobuf:"varint,2,opt,name=revenue,proto3,oneof" json:"revenue,omitempty"`
+	Cogs          *int64                 `protobuf:"varint,3,opt,name=cogs,proto3,oneof" json:"cogs,omitempty"`
+	Profit        *int64                 `protobuf:"varint,4,opt,name=profit,proto3,oneof" json:"profit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MonthlyProfit) Reset() {
+	*x = MonthlyProfit{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MonthlyProfit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MonthlyProfit) ProtoMessage() {}
+
+func (x *MonthlyProfit) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MonthlyProfit.ProtoReflect.Descriptor instead.
+func (*MonthlyProfit) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *MonthlyProfit) GetMonth() string {
+	if x != nil && x.Month != nil {
+		return *x.Month
+	}
+	return ""
+}
+
+func (x *MonthlyProfit) GetRevenue() int64 {
+	if x != nil && x.Revenue != nil {
+		return *x.Revenue
+	}
+	return 0
+}
+
+func (x *MonthlyProfit) GetCogs() int64 {
+	if x != nil && x.Cogs != nil {
+		return *x.Cogs
+	}
+	return 0
+}
+
+func (x *MonthlyProfit) GetProfit() int64 {
+	if x != nil && x.Profit != nil {
+		return *x.Profit
+	}
+	return 0
+}
+
 var File_finance_service_v1_finance_proto protoreflect.FileDescriptor
 
 const file_finance_service_v1_finance_proto_rawDesc = "" +
@@ -1240,7 +2325,137 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\x06_countB\x0f\n" +
 	"\r_total_amount\"P\n" +
 	"\x13AgingReportResponse\x129\n" +
-	"\abuckets\x18\x01 \x03(\v2\x1f.finance.service.v1.AgingBucketR\abuckets2\xb7\x04\n" +
+	"\abuckets\x18\x01 \x03(\v2\x1f.finance.service.v1.AgingBucketR\abuckets\"\x92\v\n" +
+	"\n" +
+	"Receivable\x12)\n" +
+	"\x02id\x18\x01 \x01(\rB\x14\xe0A\x01\xbaG\x0e\x92\x02\v应收单IDH\x00R\x02id\x88\x01\x01\x12Y\n" +
+	"\x11receivable_number\x18\x02 \x01(\tB'\xbaG$\x92\x02!应收单号（服务端生成）H\x01R\x10receivableNumber\x88\x01\x01\x12:\n" +
+	"\x06so_ref\x18\x03 \x01(\tB\x1e\xe0A\x01\xbaG\x18\x92\x02\x15来源销售单引用H\x02R\x05soRef\x88\x01\x01\x12?\n" +
+	"\rcustomer_code\x18\x04 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f客户编码H\x03R\fcustomerCode\x88\x01\x01\x128\n" +
+	"\x06amount\x18\x05 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15应收总额（分）H\x04R\x06amount\x88\x01\x01\x12P\n" +
+	"\vpaid_amount\x18\x06 \x01(\x03B*\xbaG'\x92\x02$已收金额（分，收款驱动）H\x05R\n" +
+	"paidAmount\x88\x01\x01\x12Y\n" +
+	"\x06status\x18\a \x01(\x0e2%.finance.service.v1.Receivable.StatusB\x15\xe0A\x01\xbaG\x0f\x92\x02\f应收状态H\x06R\x06status\x88\x01\x01\x12Q\n" +
+	"\bdue_date\x18\b \x01(\v2\x1a.google.protobuf.TimestampB\x15\xbaG\x12\x92\x02\x0f账期到期日H\aR\adueDate\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\bR\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\tR\btenantId\x88\x01\x01\x12;\n" +
+	"\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
+	"R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\">\n" +
+	"\x06Status\x12\v\n" +
+	"\aPENDING\x10\x00\x12\v\n" +
+	"\aPARTIAL\x10\x01\x12\v\n" +
+	"\aSETTLED\x10\x02\x12\r\n" +
+	"\tCANCELLED\x10\x03B\x05\n" +
+	"\x03_idB\x14\n" +
+	"\x12_receivable_numberB\t\n" +
+	"\a_so_refB\x10\n" +
+	"\x0e_customer_codeB\t\n" +
+	"\a_amountB\x0e\n" +
+	"\f_paid_amountB\t\n" +
+	"\a_statusB\v\n" +
+	"\t_due_dateB\t\n" +
+	"\a_remarkB\f\n" +
+	"\n" +
+	"_tenant_idB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_updated_byB\r\n" +
+	"\v_deleted_byB\r\n" +
+	"\v_created_atB\r\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_at\"\xc6\a\n" +
+	"\aReceipt\x12&\n" +
+	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b收款IDH\x00R\x02id\x88\x01\x01\x12S\n" +
+	"\x0ereceipt_number\x18\x02 \x01(\tB'\xbaG$\x92\x02!收款单号（服务端生成）H\x01R\rreceiptNumber\x88\x01\x01\x12A\n" +
+	"\rreceivable_id\x18\x03 \x01(\rB\x17\xbaG\x14\x92\x02\x11所属应收单IDH\x02R\freceivableId\x88\x01\x01\x128\n" +
+	"\x06amount\x18\x04 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15收款金额（分）H\x03R\x06amount\x88\x01\x01\x12V\n" +
+	"\x06method\x18\x05 \x01(\x0e2\".finance.service.v1.Receipt.MethodB\x15\xe0A\x01\xbaG\x0f\x92\x02\f收款方式H\x04R\x06method\x88\x01\x01\x12V\n" +
+	"\x06status\x18\t \x01(\x0e2\".finance.service.v1.Receipt.StatusB\x15\xe0A\x01\xbaG\x0f\x92\x02\f收款状态H\x05R\x06status\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x06R\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\aR\btenantId\x88\x01\x01\x12V\n" +
+	"\n" +
+	"created_by\x18d \x01(\rB2\xbaG/\x92\x02,收款操作人用户ID（服务端推导）H\bR\tcreatedBy\x88\x01\x01\x12S\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f收款时间H\tR\tcreatedAt\x88\x01\x01\";\n" +
+	"\x06Method\x12\x11\n" +
+	"\rBANK_TRANSFER\x10\x00\x12\b\n" +
+	"\x04CASH\x10\x01\x12\t\n" +
+	"\x05CHECK\x10\x02\x12\t\n" +
+	"\x05OTHER\x10\x03\"0\n" +
+	"\x06Status\x12\v\n" +
+	"\aPENDING\x10\x00\x12\v\n" +
+	"\aAPPLIED\x10\x01\x12\f\n" +
+	"\bREJECTED\x10\x02B\x05\n" +
+	"\x03_idB\x11\n" +
+	"\x0f_receipt_numberB\x10\n" +
+	"\x0e_receivable_idB\t\n" +
+	"\a_amountB\t\n" +
+	"\a_methodB\t\n" +
+	"\a_statusB\t\n" +
+	"\a_remarkB\f\n" +
+	"\n" +
+	"_tenant_idB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_created_at\"d\n" +
+	"\x16ListReceivableResponse\x124\n" +
+	"\x05items\x18\x01 \x03(\v2\x1e.finance.service.v1.ReceivableR\x05items\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xc7\x01\n" +
+	"\x14GetReceivableRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x01R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\f\n" +
+	"\n" +
+	"_view_mask\"M\n" +
+	"\x17CreateReceivableRequest\x122\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.finance.service.v1.ReceivableR\x04data\"C\n" +
+	"\x17DeleteReceivableRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
+	"\n" +
+	"\bquery_by\")\n" +
+	"\x17CancelReceivableRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"/\n" +
+	"\x17CountReceivableResponse\x12\x14\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"^\n" +
+	"\x13ListReceiptResponse\x121\n" +
+	"\x05items\x18\x01 \x03(\v2\x1b.finance.service.v1.ReceiptR\x05items\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xc4\x01\n" +
+	"\x11GetReceiptRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12w\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x01R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\f\n" +
+	"\n" +
+	"_view_mask\"G\n" +
+	"\x14CreateReceiptRequest\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x1b.finance.service.v1.ReceiptR\x04data\",\n" +
+	"\x14CountReceiptResponse\x12\x14\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"O\n" +
+	"\x14ProfitReportResponse\x127\n" +
+	"\x05items\x18\x01 \x03(\v2!.finance.service.v1.MonthlyProfitR\x05items\"\xb3\x02\n" +
+	"\rMonthlyProfit\x124\n" +
+	"\x05month\x18\x01 \x01(\tB\x19\xbaG\x16\x92\x02\x13月份（YYYY-MM）H\x00R\x05month\x88\x01\x01\x12:\n" +
+	"\arevenue\x18\x02 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15当月收入（分）H\x01R\arevenue\x88\x01\x01\x12:\n" +
+	"\x04cogs\x18\x03 \x01(\x03B!\xbaG\x1e\x92\x02\x1b当月销售成本（分）H\x02R\x04cogs\x88\x01\x01\x12J\n" +
+	"\x06profit\x18\x04 \x01(\x03B-\xbaG*\x92\x02'当月利润（分，收入−成本）H\x03R\x06profit\x88\x01\x01B\b\n" +
+	"\x06_monthB\n" +
+	"\n" +
+	"\b_revenueB\a\n" +
+	"\x05_cogsB\t\n" +
+	"\a_profit2\xb7\x04\n" +
 	"\x0ePayableService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPayableResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountPayableResponse\"\x00\x12K\n" +
@@ -1253,7 +2468,20 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPaymentResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountPaymentResponse\"\x00\x12K\n" +
 	"\x03Get\x12%.finance.service.v1.GetPaymentRequest\x1a\x1b.finance.service.v1.Payment\"\x00\x12L\n" +
-	"\x06Create\x12(.finance.service.v1.CreatePaymentRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc5\x01\n" +
+	"\x06Create\x12(.finance.service.v1.CreatePaymentRequest\x1a\x16.google.protobuf.Empty\"\x002\xcf\x04\n" +
+	"\x11ReceivableService\x12O\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a*.finance.service.v1.ListReceivableResponse\"\x00\x12Q\n" +
+	"\x05Count\x12\x19.pagination.PagingRequest\x1a+.finance.service.v1.CountReceivableResponse\"\x00\x12Q\n" +
+	"\x03Get\x12(.finance.service.v1.GetReceivableRequest\x1a\x1e.finance.service.v1.Receivable\"\x00\x12O\n" +
+	"\x06Create\x12+.finance.service.v1.CreateReceivableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12O\n" +
+	"\x06Delete\x12+.finance.service.v1.DeleteReceivableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12O\n" +
+	"\x06Cancel\x12+.finance.service.v1.CancelReceivableRequest\x1a\x16.google.protobuf.Empty\"\x00\x12P\n" +
+	"\vAgingReport\x12\x16.google.protobuf.Empty\x1a'.finance.service.v1.AgingReportResponse\"\x002\xc9\x02\n" +
+	"\x0eReceiptService\x12L\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListReceiptResponse\"\x00\x12N\n" +
+	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountReceiptResponse\"\x00\x12K\n" +
+	"\x03Get\x12%.finance.service.v1.GetReceiptRequest\x1a\x1b.finance.service.v1.Receipt\"\x00\x12L\n" +
+	"\x06Create\x12(.finance.service.v1.CreateReceiptRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc5\x01\n" +
 	"\x16com.finance.service.v1B\fFinanceProtoP\x01Z3go-wind-erp/api/gen/go/finance/service/v1;financepb\xa2\x02\x03FSX\xaa\x02\x12Finance.Service.V1\xca\x02\x12Finance\\Service\\V1\xe2\x02\x1eFinance\\Service\\V1\\GPBMetadata\xea\x02\x14Finance::Service::V1b\x06proto3"
 
 var (
@@ -1268,74 +2496,128 @@ func file_finance_service_v1_finance_proto_rawDescGZIP() []byte {
 	return file_finance_service_v1_finance_proto_rawDescData
 }
 
-var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_finance_service_v1_finance_proto_goTypes = []any{
-	(Payable_Status)(0),           // 0: finance.service.v1.Payable.Status
-	(Payment_Method)(0),           // 1: finance.service.v1.Payment.Method
-	(Payment_Status)(0),           // 2: finance.service.v1.Payment.Status
-	(*Payable)(nil),               // 3: finance.service.v1.Payable
-	(*Payment)(nil),               // 4: finance.service.v1.Payment
-	(*ListPayableResponse)(nil),   // 5: finance.service.v1.ListPayableResponse
-	(*GetPayableRequest)(nil),     // 6: finance.service.v1.GetPayableRequest
-	(*CreatePayableRequest)(nil),  // 7: finance.service.v1.CreatePayableRequest
-	(*DeletePayableRequest)(nil),  // 8: finance.service.v1.DeletePayableRequest
-	(*CancelPayableRequest)(nil),  // 9: finance.service.v1.CancelPayableRequest
-	(*CountPayableResponse)(nil),  // 10: finance.service.v1.CountPayableResponse
-	(*ListPaymentResponse)(nil),   // 11: finance.service.v1.ListPaymentResponse
-	(*GetPaymentRequest)(nil),     // 12: finance.service.v1.GetPaymentRequest
-	(*CreatePaymentRequest)(nil),  // 13: finance.service.v1.CreatePaymentRequest
-	(*CountPaymentResponse)(nil),  // 14: finance.service.v1.CountPaymentResponse
-	(*AgingBucket)(nil),           // 15: finance.service.v1.AgingBucket
-	(*AgingReportResponse)(nil),   // 16: finance.service.v1.AgingReportResponse
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 18: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 19: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 20: google.protobuf.Empty
+	(Payable_Status)(0),             // 0: finance.service.v1.Payable.Status
+	(Payment_Method)(0),             // 1: finance.service.v1.Payment.Method
+	(Payment_Status)(0),             // 2: finance.service.v1.Payment.Status
+	(Receivable_Status)(0),          // 3: finance.service.v1.Receivable.Status
+	(Receipt_Method)(0),             // 4: finance.service.v1.Receipt.Method
+	(Receipt_Status)(0),             // 5: finance.service.v1.Receipt.Status
+	(*Payable)(nil),                 // 6: finance.service.v1.Payable
+	(*Payment)(nil),                 // 7: finance.service.v1.Payment
+	(*ListPayableResponse)(nil),     // 8: finance.service.v1.ListPayableResponse
+	(*GetPayableRequest)(nil),       // 9: finance.service.v1.GetPayableRequest
+	(*CreatePayableRequest)(nil),    // 10: finance.service.v1.CreatePayableRequest
+	(*DeletePayableRequest)(nil),    // 11: finance.service.v1.DeletePayableRequest
+	(*CancelPayableRequest)(nil),    // 12: finance.service.v1.CancelPayableRequest
+	(*CountPayableResponse)(nil),    // 13: finance.service.v1.CountPayableResponse
+	(*ListPaymentResponse)(nil),     // 14: finance.service.v1.ListPaymentResponse
+	(*GetPaymentRequest)(nil),       // 15: finance.service.v1.GetPaymentRequest
+	(*CreatePaymentRequest)(nil),    // 16: finance.service.v1.CreatePaymentRequest
+	(*CountPaymentResponse)(nil),    // 17: finance.service.v1.CountPaymentResponse
+	(*AgingBucket)(nil),             // 18: finance.service.v1.AgingBucket
+	(*AgingReportResponse)(nil),     // 19: finance.service.v1.AgingReportResponse
+	(*Receivable)(nil),              // 20: finance.service.v1.Receivable
+	(*Receipt)(nil),                 // 21: finance.service.v1.Receipt
+	(*ListReceivableResponse)(nil),  // 22: finance.service.v1.ListReceivableResponse
+	(*GetReceivableRequest)(nil),    // 23: finance.service.v1.GetReceivableRequest
+	(*CreateReceivableRequest)(nil), // 24: finance.service.v1.CreateReceivableRequest
+	(*DeleteReceivableRequest)(nil), // 25: finance.service.v1.DeleteReceivableRequest
+	(*CancelReceivableRequest)(nil), // 26: finance.service.v1.CancelReceivableRequest
+	(*CountReceivableResponse)(nil), // 27: finance.service.v1.CountReceivableResponse
+	(*ListReceiptResponse)(nil),     // 28: finance.service.v1.ListReceiptResponse
+	(*GetReceiptRequest)(nil),       // 29: finance.service.v1.GetReceiptRequest
+	(*CreateReceiptRequest)(nil),    // 30: finance.service.v1.CreateReceiptRequest
+	(*CountReceiptResponse)(nil),    // 31: finance.service.v1.CountReceiptResponse
+	(*ProfitReportResponse)(nil),    // 32: finance.service.v1.ProfitReportResponse
+	(*MonthlyProfit)(nil),           // 33: finance.service.v1.MonthlyProfit
+	(*timestamppb.Timestamp)(nil),   // 34: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),   // 35: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),        // 36: pagination.PagingRequest
+	(*emptypb.Empty)(nil),           // 37: google.protobuf.Empty
 }
 var file_finance_service_v1_finance_proto_depIdxs = []int32{
 	0,  // 0: finance.service.v1.Payable.status:type_name -> finance.service.v1.Payable.Status
-	17, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
-	17, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
-	17, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
-	17, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
+	34, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
+	34, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
+	34, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
+	34, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
 	2,  // 6: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
-	17, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 8: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
-	18, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
-	3,  // 10: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
-	4,  // 11: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
-	18, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
-	4,  // 13: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
-	15, // 14: finance.service.v1.AgingReportResponse.buckets:type_name -> finance.service.v1.AgingBucket
-	19, // 15: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	19, // 16: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
-	6,  // 17: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	7,  // 18: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
-	8,  // 19: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
-	9,  // 20: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
-	20, // 21: finance.service.v1.PayableService.AgingReport:input_type -> google.protobuf.Empty
-	19, // 22: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	19, // 23: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
-	12, // 24: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	13, // 25: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	5,  // 26: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	10, // 27: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
-	3,  // 28: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	20, // 29: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	20, // 30: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	20, // 31: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	16, // 32: finance.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	11, // 33: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	14, // 34: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
-	4,  // 35: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	20, // 36: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	26, // [26:37] is the sub-list for method output_type
-	15, // [15:26] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	34, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
+	6,  // 8: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
+	35, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	6,  // 10: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
+	7,  // 11: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
+	35, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	7,  // 13: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
+	18, // 14: finance.service.v1.AgingReportResponse.buckets:type_name -> finance.service.v1.AgingBucket
+	3,  // 15: finance.service.v1.Receivable.status:type_name -> finance.service.v1.Receivable.Status
+	34, // 16: finance.service.v1.Receivable.due_date:type_name -> google.protobuf.Timestamp
+	34, // 17: finance.service.v1.Receivable.created_at:type_name -> google.protobuf.Timestamp
+	34, // 18: finance.service.v1.Receivable.updated_at:type_name -> google.protobuf.Timestamp
+	34, // 19: finance.service.v1.Receivable.deleted_at:type_name -> google.protobuf.Timestamp
+	4,  // 20: finance.service.v1.Receipt.method:type_name -> finance.service.v1.Receipt.Method
+	5,  // 21: finance.service.v1.Receipt.status:type_name -> finance.service.v1.Receipt.Status
+	34, // 22: finance.service.v1.Receipt.created_at:type_name -> google.protobuf.Timestamp
+	20, // 23: finance.service.v1.ListReceivableResponse.items:type_name -> finance.service.v1.Receivable
+	35, // 24: finance.service.v1.GetReceivableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	20, // 25: finance.service.v1.CreateReceivableRequest.data:type_name -> finance.service.v1.Receivable
+	21, // 26: finance.service.v1.ListReceiptResponse.items:type_name -> finance.service.v1.Receipt
+	35, // 27: finance.service.v1.GetReceiptRequest.view_mask:type_name -> google.protobuf.FieldMask
+	21, // 28: finance.service.v1.CreateReceiptRequest.data:type_name -> finance.service.v1.Receipt
+	33, // 29: finance.service.v1.ProfitReportResponse.items:type_name -> finance.service.v1.MonthlyProfit
+	36, // 30: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	36, // 31: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
+	9,  // 32: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	10, // 33: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
+	11, // 34: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
+	12, // 35: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
+	37, // 36: finance.service.v1.PayableService.AgingReport:input_type -> google.protobuf.Empty
+	36, // 37: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	36, // 38: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
+	15, // 39: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	16, // 40: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
+	36, // 41: finance.service.v1.ReceivableService.List:input_type -> pagination.PagingRequest
+	36, // 42: finance.service.v1.ReceivableService.Count:input_type -> pagination.PagingRequest
+	23, // 43: finance.service.v1.ReceivableService.Get:input_type -> finance.service.v1.GetReceivableRequest
+	24, // 44: finance.service.v1.ReceivableService.Create:input_type -> finance.service.v1.CreateReceivableRequest
+	25, // 45: finance.service.v1.ReceivableService.Delete:input_type -> finance.service.v1.DeleteReceivableRequest
+	26, // 46: finance.service.v1.ReceivableService.Cancel:input_type -> finance.service.v1.CancelReceivableRequest
+	37, // 47: finance.service.v1.ReceivableService.AgingReport:input_type -> google.protobuf.Empty
+	36, // 48: finance.service.v1.ReceiptService.List:input_type -> pagination.PagingRequest
+	36, // 49: finance.service.v1.ReceiptService.Count:input_type -> pagination.PagingRequest
+	29, // 50: finance.service.v1.ReceiptService.Get:input_type -> finance.service.v1.GetReceiptRequest
+	30, // 51: finance.service.v1.ReceiptService.Create:input_type -> finance.service.v1.CreateReceiptRequest
+	8,  // 52: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	13, // 53: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
+	6,  // 54: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	37, // 55: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	37, // 56: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	37, // 57: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 58: finance.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	14, // 59: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	17, // 60: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
+	7,  // 61: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	37, // 62: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	22, // 63: finance.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
+	27, // 64: finance.service.v1.ReceivableService.Count:output_type -> finance.service.v1.CountReceivableResponse
+	20, // 65: finance.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
+	37, // 66: finance.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
+	37, // 67: finance.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
+	37, // 68: finance.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 69: finance.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	28, // 70: finance.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
+	31, // 71: finance.service.v1.ReceiptService.Count:output_type -> finance.service.v1.CountReceiptResponse
+	21, // 72: finance.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
+	37, // 73: finance.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
+	52, // [52:74] is the sub-list for method output_type
+	30, // [30:52] is the sub-list for method input_type
+	30, // [30:30] is the sub-list for extension type_name
+	30, // [30:30] is the sub-list for extension extendee
+	0,  // [0:30] is the sub-list for field type_name
 }
 
 func init() { file_finance_service_v1_finance_proto_init() }
@@ -1355,15 +2637,27 @@ func file_finance_service_v1_finance_proto_init() {
 		(*GetPaymentRequest_Id)(nil),
 	}
 	file_finance_service_v1_finance_proto_msgTypes[12].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[14].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[15].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[17].OneofWrappers = []any{
+		(*GetReceivableRequest_Id)(nil),
+	}
+	file_finance_service_v1_finance_proto_msgTypes[19].OneofWrappers = []any{
+		(*DeleteReceivableRequest_Id)(nil),
+	}
+	file_finance_service_v1_finance_proto_msgTypes[23].OneofWrappers = []any{
+		(*GetReceiptRequest_Id)(nil),
+	}
+	file_finance_service_v1_finance_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_finance_service_v1_finance_proto_rawDesc), len(file_finance_service_v1_finance_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   14,
+			NumEnums:      6,
+			NumMessages:   28,
 			NumExtensions: 0,
-			NumServices:   2,
+			NumServices:   4,
 		},
 		GoTypes:           file_finance_service_v1_finance_proto_goTypes,
 		DependencyIndexes: file_finance_service_v1_finance_proto_depIdxs,

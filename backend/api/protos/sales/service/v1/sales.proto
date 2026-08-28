@@ -1,0 +1,383 @@
+syntax = "proto3";
+
+package sales.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 客户管理服务
+service CustomerService {
+  rpc List (pagination.PagingRequest) returns (ListCustomerResponse) {}
+
+  rpc Count (pagination.PagingRequest) returns (CountCustomerResponse) {}
+
+  rpc Get (GetCustomerRequest) returns (Customer) {}
+
+  rpc Create (CreateCustomerRequest) returns (google.protobuf.Empty) {}
+
+  rpc Update (UpdateCustomerRequest) returns (google.protobuf.Empty) {}
+
+  rpc Delete (DeleteCustomerRequest) returns (google.protobuf.Empty) {}
+}
+
+// 销售单管理服务
+service SalesOrderService {
+  rpc List (pagination.PagingRequest) returns (ListSalesOrderResponse) {}
+
+  rpc Count (pagination.PagingRequest) returns (CountSalesOrderResponse) {}
+
+  rpc Get (GetSalesOrderRequest) returns (SalesOrder) {}
+
+  rpc Create (CreateSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Update (UpdateSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Delete (DeleteSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Submit (SubmitSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Approve (ApproveSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Reject (RejectSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Cancel (CancelSalesOrderRequest) returns (google.protobuf.Empty) {}
+
+  rpc Complete (CompleteSalesOrderRequest) returns (google.protobuf.Empty) {}
+}
+
+// 客户
+message Customer {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "客户ID"
+    }
+  ];
+
+  optional string code = 2 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "客户编码，租户范围内唯一"
+    }
+  ];
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "客户名称"
+    }
+  ];
+
+  optional string contact = 4 [
+    json_name = "contact",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "联系人"
+    }
+  ];
+
+  optional string phone = 5 [
+    json_name = "phone",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "联系电话"
+    }
+  ];
+
+  optional bool enable = 10 [
+    json_name = "enable",
+    (gnostic.openapi.v3.property) = {
+      description: "启用/禁用客户"
+    }
+  ];
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ];
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 销售单
+message SalesOrder {
+  enum Status {
+    DRAFT = 0;
+    SUBMITTED = 1;
+    APPROVED = 2;
+    REJECTED = 3;
+    COMPLETED = 4;
+    CANCELLED = 5;
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "销售单ID"
+    }
+  ];
+
+  optional string so_number = 2 [
+    json_name = "soNumber",
+    (gnostic.openapi.v3.property) = {description: "销售单号（服务端生成）"}
+  ];
+
+  optional string customer_code = 3 [
+    json_name = "customerCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "客户编码"
+        }
+  ];
+
+  optional Status status = 4 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "销售单状态"
+        }
+  ];
+
+  optional int64 total_amount = 5 [
+    json_name = "totalAmount",
+    (gnostic.openapi.v3.property) = {description: "销售总额（分，服务端按明细计算）"}
+  ];
+
+  optional string warehouse_code = 7 [
+    json_name = "warehouseCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "发货仓库编码"
+        }
+  ];
+
+  repeated SalesOrderItem items = 6 [
+    json_name = "items",
+    (gnostic.openapi.v3.property) = {description: "销售明细（Get 返回；List 不含）"}
+  ];
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ];
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 销售单明细
+message SalesOrderItem {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "明细ID"
+    }
+  ];
+
+  optional uint32 so_id = 2 [
+    json_name = "soId",
+    (gnostic.openapi.v3.property) = {description: "所属销售单ID"}
+  ];
+
+  optional string sku_code = 3 [
+    json_name = "skuCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+          description: "SKU编码"
+        }
+  ];
+
+  optional int64 quantity = 4 [
+    json_name = "quantity",
+    (gnostic.openapi.v3.property) = {description: "销售数量"}
+  ];
+
+  optional int64 unit_price = 5 [
+    json_name = "unitPrice",
+    (gnostic.openapi.v3.property) = {description: "单价（分）"}
+  ];
+
+  optional int64 amount = 6 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "明细金额（分，服务端计算）"}
+  ];
+
+  optional int64 fulfilled_quantity = 7 [
+    json_name = "fulfilledQuantity",
+    (gnostic.openapi.v3.property) = {description: "已履约数量"}
+  ];
+}
+
+// ==============================
+// 客户请求/回应
+// ==============================
+
+message ListCustomerResponse {
+  repeated Customer items = 1;
+  uint64 total = 2;
+}
+
+message GetCustomerRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ];
+}
+
+message CreateCustomerRequest {
+  Customer data = 1;
+}
+
+message UpdateCustomerRequest {
+  uint32 id = 1;
+
+  Customer data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表"
+        },
+    json_name = "updateMask"
+  ];
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ];
+}
+
+message DeleteCustomerRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+}
+
+message CountCustomerResponse {
+  uint64 count = 1;
+}
+
+// ==============================
+// 销售单请求/回应
+// ==============================
+
+message ListSalesOrderResponse {
+  repeated SalesOrder items = 1;
+  uint64 total = 2;
+}
+
+message GetSalesOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+          description: "视图字段过滤器，用于控制返回的字段"
+        }
+  ];
+}
+
+message CreateSalesOrderRequest {
+  SalesOrder data = 1;
+}
+
+message UpdateSalesOrderRequest {
+  uint32 id = 1;
+
+  SalesOrder data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+          description: "要更新的字段列表"
+        },
+    json_name = "updateMask"
+  ];
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ];
+}
+
+message DeleteSalesOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ];
+  }
+}
+
+message SubmitSalesOrderRequest {
+  uint32 id = 1;
+}
+
+message ApproveSalesOrderRequest {
+  uint32 id = 1;
+}
+
+message RejectSalesOrderRequest {
+  uint32 id = 1;
+}
+
+message CancelSalesOrderRequest {
+  uint32 id = 1;
+}
+
+message CompleteSalesOrderRequest {
+  uint32 id = 1;
+}
+
+message CountSalesOrderResponse {
+  uint64 count = 1;
+}
