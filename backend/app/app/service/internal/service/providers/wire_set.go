@@ -31,6 +31,7 @@ var ProviderSet = wire.NewSet(
 	service.NewDictEntryLookup,
 
 	service.NewPurchaseOrderService,
+	service.NewSalesOrderService,
 
 	service.NewPayableService,
 	service.NewPaymentService,

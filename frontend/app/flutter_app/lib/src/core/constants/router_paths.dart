@@ -6,4 +6,6 @@ class AppRoutePath {
   static const home = '/';
   static const approval = '/approval';
   static const wms = '/wms';
+  static const sales = '/sales';
+  static const salesDetailPrefix = '/sales/detail/';
 }

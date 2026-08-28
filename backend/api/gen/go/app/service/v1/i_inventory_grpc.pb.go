@@ -358,12 +358,14 @@ var StockQuantService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	StockPickingService_List_FullMethodName     = "/app.service.v1.StockPickingService/List"
-	StockPickingService_Get_FullMethodName      = "/app.service.v1.StockPickingService/Get"
-	StockPickingService_Create_FullMethodName   = "/app.service.v1.StockPickingService/Create"
-	StockPickingService_Confirm_FullMethodName  = "/app.service.v1.StockPickingService/Confirm"
-	StockPickingService_Validate_FullMethodName = "/app.service.v1.StockPickingService/Validate"
-	StockPickingService_Cancel_FullMethodName   = "/app.service.v1.StockPickingService/Cancel"
+	StockPickingService_List_FullMethodName                 = "/app.service.v1.StockPickingService/List"
+	StockPickingService_Get_FullMethodName                  = "/app.service.v1.StockPickingService/Get"
+	StockPickingService_Create_FullMethodName               = "/app.service.v1.StockPickingService/Create"
+	StockPickingService_CreateSalesReturn_FullMethodName    = "/app.service.v1.StockPickingService/CreateSalesReturn"
+	StockPickingService_CreatePurchaseReturn_FullMethodName = "/app.service.v1.StockPickingService/CreatePurchaseReturn"
+	StockPickingService_Confirm_FullMethodName              = "/app.service.v1.StockPickingService/Confirm"
+	StockPickingService_Validate_FullMethodName             = "/app.service.v1.StockPickingService/Validate"
+	StockPickingService_Cancel_FullMethodName               = "/app.service.v1.StockPickingService/Cancel"
 )
 
 // StockPickingServiceClient is the client API for StockPickingService service.
@@ -376,8 +378,12 @@ type StockPickingServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListStockPickingResponse, error)
 	// 查询拣货单详情
 	Get(ctx context.Context, in *v11.GetStockPickingRequest, opts ...grpc.CallOption) (*v11.StockPicking, error)
-	// 创建拣货单（扫码调拨）
+	// 创建拣货单（扫码调拨 / 盘点：type=INVENTORY_ADJUSTMENT + 带符号差异明细）
 	Create(ctx context.Context, in *v11.CreateStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建销售退货拣货单（INCOMING：客户→仓库，负向回写履约数）
+	CreateSalesReturn(ctx context.Context, in *v11.CreateSalesReturnRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建采购退货拣货单（OUTGOING：仓库→供应商，负向回写收货数）
+	CreatePurchaseReturn(ctx context.Context, in *v11.CreatePurchaseReturnRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 确认拣货单
 	Confirm(ctx context.Context, in *v11.ConfirmStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 校验拣货单
@@ -424,6 +430,26 @@ func (c *stockPickingServiceClient) Create(ctx context.Context, in *v11.CreateSt
 	return out, nil
 }
 
+func (c *stockPickingServiceClient) CreateSalesReturn(ctx context.Context, in *v11.CreateSalesReturnRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_CreateSalesReturn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stockPickingServiceClient) CreatePurchaseReturn(ctx context.Context, in *v11.CreatePurchaseReturnRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, StockPickingService_CreatePurchaseReturn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *stockPickingServiceClient) Confirm(ctx context.Context, in *v11.ConfirmStockPickingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -464,8 +490,12 @@ type StockPickingServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListStockPickingResponse, error)
 	// 查询拣货单详情
 	Get(context.Context, *v11.GetStockPickingRequest) (*v11.StockPicking, error)
-	// 创建拣货单（扫码调拨）
+	// 创建拣货单（扫码调拨 / 盘点：type=INVENTORY_ADJUSTMENT + 带符号差异明细）
 	Create(context.Context, *v11.CreateStockPickingRequest) (*emptypb.Empty, error)
+	// 创建销售退货拣货单（INCOMING：客户→仓库，负向回写履约数）
+	CreateSalesReturn(context.Context, *v11.CreateSalesReturnRequest) (*emptypb.Empty, error)
+	// 创建采购退货拣货单（OUTGOING：仓库→供应商，负向回写收货数）
+	CreatePurchaseReturn(context.Context, *v11.CreatePurchaseReturnRequest) (*emptypb.Empty, error)
 	// 确认拣货单
 	Confirm(context.Context, *v11.ConfirmStockPickingRequest) (*emptypb.Empty, error)
 	// 校验拣货单
@@ -490,6 +520,12 @@ func (UnimplementedStockPickingServiceServer) Get(context.Context, *v11.GetStock
 }
 func (UnimplementedStockPickingServiceServer) Create(context.Context, *v11.CreateStockPickingRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedStockPickingServiceServer) CreateSalesReturn(context.Context, *v11.CreateSalesReturnRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSalesReturn not implemented")
+}
+func (UnimplementedStockPickingServiceServer) CreatePurchaseReturn(context.Context, *v11.CreatePurchaseReturnRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePurchaseReturn not implemented")
 }
 func (UnimplementedStockPickingServiceServer) Confirm(context.Context, *v11.ConfirmStockPickingRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Confirm not implemented")
@@ -575,6 +611,42 @@ func _StockPickingService_Create_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StockPickingService_CreateSalesReturn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreateSalesReturnRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).CreateSalesReturn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_CreateSalesReturn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).CreateSalesReturn(ctx, req.(*v11.CreateSalesReturnRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StockPickingService_CreatePurchaseReturn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreatePurchaseReturnRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockPickingServiceServer).CreatePurchaseReturn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockPickingService_CreatePurchaseReturn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockPickingServiceServer).CreatePurchaseReturn(ctx, req.(*v11.CreatePurchaseReturnRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _StockPickingService_Confirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.ConfirmStockPickingRequest)
 	if err := dec(in); err != nil {
@@ -647,6 +719,14 @@ var StockPickingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _StockPickingService_Create_Handler,
+		},
+		{
+			MethodName: "CreateSalesReturn",
+			Handler:    _StockPickingService_CreateSalesReturn_Handler,
+		},
+		{
+			MethodName: "CreatePurchaseReturn",
+			Handler:    _StockPickingService_CreatePurchaseReturn_Handler,
 		},
 		{
 			MethodName: "Confirm",

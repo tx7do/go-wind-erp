@@ -53,3 +53,13 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 func (s *StockPickingService) Cancel(ctx context.Context, req *inventoryV1.CancelStockPickingRequest) (*emptypb.Empty, error) {
 	return s.stockPickingServiceClient.Cancel(ctx, req)
 }
+
+// CreateSalesReturn 创建销售退货拣货单（纯委派，数量守卫在 core）。
+func (s *StockPickingService) CreateSalesReturn(ctx context.Context, req *inventoryV1.CreateSalesReturnRequest) (*emptypb.Empty, error) {
+	return s.stockPickingServiceClient.CreateSalesReturn(ctx, req)
+}
+
+// CreatePurchaseReturn 创建采购退货拣货单（纯委派，数量守卫在 core）。
+func (s *StockPickingService) CreatePurchaseReturn(ctx context.Context, req *inventoryV1.CreatePurchaseReturnRequest) (*emptypb.Empty, error) {
+	return s.stockPickingServiceClient.CreatePurchaseReturn(ctx, req)
+}

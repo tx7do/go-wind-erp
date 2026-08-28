@@ -91,6 +91,7 @@ func NewRestServer(
 	dictEntryLookupService *service.DictEntryLookup,
 
 	purchaseOrderService *service.PurchaseOrderService,
+	salesOrderService *service.SalesOrderService,
 
 	payableService *service.PayableService,
 	paymentService *service.PaymentService,
@@ -119,6 +120,7 @@ func NewRestServer(
 	appV1.RegisterDictEntryLookupHTTPServer(srv, dictEntryLookupService)
 
 	appV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
+	appV1.RegisterSalesOrderServiceHTTPServer(srv, salesOrderService)
 
 	appV1.RegisterPayableServiceHTTPServer(srv, payableService)
 	appV1.RegisterPaymentServiceHTTPServer(srv, paymentService)

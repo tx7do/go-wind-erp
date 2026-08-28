@@ -110,6 +110,39 @@ class WmsRemoteDataSource {
     );
   }
 
+  /// 盘点 → create(INVENTORY_ADJUSTMENT) → confirm → validate 一键链。
+  ///
+  /// 客户端提供仓库编码与单条带符号差异 move；服务层按符号推导方向
+  /// （盘盈 INVENTORY_LOSS→仓库 / 盘亏 仓库→INVENTORY_LOSS，盘亏数量
+  /// 落库为绝对值）。
+  Future<void> submitStocktake(StocktakeDraft draft) async {
+    final picking = InventoryServiceV1StockPicking(
+      pickingType:
+          InventoryServiceV1StockPicking$PickingType.inventoryAdjustment,
+      fromWarehouseCode: draft.warehouseCode,
+      moves: [
+        InventoryServiceV1StockMove(
+          productCode: draft.productCode,
+          plannedQuantity: draft.diff,
+        ),
+      ],
+    );
+    final created = await _stockPickings.create(
+      InventoryServiceV1CreateStockPickingRequest(data: picking),
+    );
+    final rawId = created['id'];
+    final id = rawId is int ? rawId : int.tryParse(rawId?.toString() ?? '');
+    if (id == null) {
+      throw StateError('created picking missing id');
+    }
+    await _stockPickings.confirm(
+      InventoryServiceV1ConfirmStockPickingRequest(id: id),
+    );
+    await _stockPickings.validate(
+      InventoryServiceV1ValidateStockPickingRequest(id: id),
+    );
+  }
+
   /// 仓库编码 → `locationId`（取自仓库记录的 `receivingLocationId`）。
   Future<int?> _resolveLocationId(String warehouseCode) async {
     final resp = await _warehouses.list(

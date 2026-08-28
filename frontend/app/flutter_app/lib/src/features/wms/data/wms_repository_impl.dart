@@ -57,6 +57,15 @@ class WmsRepositoryImpl implements WmsRepository {
   }
 
   @override
+  Future<void> submitStocktake(StocktakeDraft draft) async {
+    try {
+      await _dataSource.submitStocktake(draft);
+    } on DioException catch (e) {
+      throw _toFailure(e);
+    }
+  }
+
+  @override
   Future<List<PickingRecord>> listPickings({int limit = 20}) async {
     try {
       final resp = await _dataSource.listPickings(limit: limit);

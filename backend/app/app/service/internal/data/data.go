@@ -22,6 +22,7 @@ import (
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
@@ -219,6 +220,15 @@ func NewPurchaseOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return procurementV1.NewPurchaseOrderServiceClient(cli)
+}
+
+func NewSalesOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) salesV1.SalesOrderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return salesV1.NewSalesOrderServiceClient(cli)
 }
 
 func NewPayableServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.PayableServiceClient {

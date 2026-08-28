@@ -32,7 +32,7 @@ class _WmsPageState extends State<WmsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(loc.navWms)),
       body: BlocConsumer<WmsCubit, WmsState>(
-        listener: (context, state) {
+          listener: (context, state) {
           if (state is WmsReady && state.message != null) {
             final text = switch (state.message) {
               'transferSuccess' => loc.transferSuccess,
@@ -40,6 +40,9 @@ class _WmsPageState extends State<WmsPage> {
               'negativeStock' => loc.negativeStock,
               'lookupFailed' => loc.lookupFailed,
               'sameWarehouse' => loc.sameWarehouse,
+              'stocktakeSuccess' => loc.stocktakeSuccess,
+              'stocktakeFailed' => loc.stocktakeFailed,
+              'stocktakeZeroDiff' => loc.stocktakeZeroDiff,
               _ => state.message!,
             };
             ScaffoldMessenger.of(context)
@@ -94,6 +97,14 @@ class _WmsPageState extends State<WmsPage> {
                   : () => _showTransferDialog(context, loc, state),
               icon: const Icon(Icons.swap_horiz),
               label: Text(loc.transferAction),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: state.submitting
+                  ? null
+                  : () => _showStocktakeDialog(context, loc, state),
+              icon: const Icon(Icons.balance),
+              label: Text(loc.stocktakeAction),
             ),
           ],
           if (state.pickings.isNotEmpty) ...[
@@ -267,6 +278,66 @@ class _WmsPageState extends State<WmsPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 盘点对话框：仓库=当前选中仓库，SKU=当前查询上下文，差异=带符号数
+  /// （正=盘盈，负=盘亏，0 拒绝）。提交后 create→confirm→validate 一键链。
+  void _showStocktakeDialog(BuildContext context, S loc, WmsReady state) {
+    final inv = state.inventory;
+    if (inv == null) {
+      _showSnackBar(context, loc.scanSkuFirst);
+      return;
+    }
+
+    final diffController = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(loc.stocktakeAction),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('${loc.skuLabel}: ${inv.productCode}'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: diffController,
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: true,
+              ),
+              decoration: InputDecoration(
+                labelText: loc.stocktakeDiffLabel,
+                helperText: loc.stocktakeDiffHint,
+                border: const OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(loc.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              final diff = int.tryParse(diffController.text.trim());
+              if (diff == null || diff == 0) {
+                _showSnackBar(dialogContext, loc.stocktakeZeroDiff);
+                return;
+              }
+              if (diff < 0 && -diff > inv.quantity) {
+                _showSnackBar(dialogContext, loc.negativeStock);
+                return;
+              }
+              Navigator.of(dialogContext).pop();
+              context.read<WmsCubit>().submitStocktake(diff: diff);
+            },
+            child: Text(loc.confirm),
+          ),
+        ],
       ),
     );
   }

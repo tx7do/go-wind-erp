@@ -45,6 +45,23 @@ class InternalTransferDraft {
   });
 }
 
+/// 待提交的盘点草稿（Odoo InventoryLoss 模式）。
+///
+/// `diff` 为带符号差异数：正=盘盈（INVENTORY_LOSS→仓库），负=盘亏
+/// （仓库→INVENTORY_LOSS，服务端转绝对值+方向）。提交流程与调拨一致：
+/// create(INVENTORY_ADJUSTMENT) → confirm → validate 一键链。
+class StocktakeDraft {
+  final String warehouseCode;
+  final String productCode;
+  final int diff;
+
+  const StocktakeDraft({
+    required this.warehouseCode,
+    required this.productCode,
+    required this.diff,
+  });
+}
+
 /// 拣货单记录（历史列表展示项）。
 ///
 /// 对应后端 `stock.picking` 的一等文档视图；`derivedState` 由子 moves 聚合

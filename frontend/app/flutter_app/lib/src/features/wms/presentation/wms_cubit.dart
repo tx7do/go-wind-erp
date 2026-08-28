@@ -144,6 +144,45 @@ class WmsCubit extends Cubit<WmsState> {
     }
   }
 
+  /// 盘点：仓库=当前选中仓库，productCode=当前查询上下文。
+  /// 客户端守卫：差异数非 0（后端按符号推导方向并有守卫；盘亏绝对值
+  /// 不得超当前库存由防负守卫兜底）。
+  Future<void> submitStocktake({required int diff}) async {
+    final s = state;
+    if (s is! WmsReady) return;
+    final warehouse = s.selectedWarehouseCode;
+    final inv = s.inventory;
+    if (warehouse == null || inv == null) return;
+
+    if (diff == 0) {
+      emit(s.copyWith(message: 'stocktakeZeroDiff'));
+      return;
+    }
+    if (diff < 0 && -diff > inv.quantity) {
+      emit(s.copyWith(message: 'negativeStock'));
+      return;
+    }
+
+    final draft = StocktakeDraft(
+      warehouseCode: warehouse,
+      productCode: inv.productCode,
+      diff: diff,
+    );
+
+    emit(s.copyWith(submitting: true, message: null));
+    try {
+      await _repository.submitStocktake(draft);
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'stocktakeSuccess'));
+      await lookupInventory(inv.productCode);
+    } on WmsFailure {
+      if (isClosed) return;
+      final cur = state as WmsReady;
+      emit(cur.copyWith(submitting: false, message: 'stocktakeFailed'));
+    }
+  }
+
   void clearMessage() {
     final s = state;
     if (s is! WmsReady) return;

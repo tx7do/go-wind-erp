@@ -21,6 +21,11 @@ abstract class WmsRepository {
   /// 入库拣货单不再由客户端创建——服务层在采购单审批通过后自动生成。
   Future<void> submitInternalTransfer(InternalTransferDraft draft);
 
+  /// 提交盘点拣货单：create(INVENTORY_ADJUSTMENT) → confirm → validate。
+  ///
+  /// 客户端须校验差异数非 0；后端按符号推导方向并有守卫。
+  Future<void> submitStocktake(StocktakeDraft draft);
+
   /// 拉取近期拣货单（默认 20 条）。
   Future<List<PickingRecord>> listPickings({int limit = 20});
 }
