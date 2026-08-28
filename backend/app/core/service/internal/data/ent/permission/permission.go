@@ -75,8 +75,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
-	Hooks  [1]ent.Hook
-	Policy ent.Policy
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.

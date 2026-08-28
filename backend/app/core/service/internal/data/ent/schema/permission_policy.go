@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // PermissionPolicy 权限点动态策略表（NIST RBAC+ABAC混合标准）
@@ -75,7 +76,7 @@ func (PermissionPolicy) Fields() []ent.Field {
 func (PermissionPolicy) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.SwitchStatus{},
 		mixin.TenantID[uint32]{},

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // Position holds the schema definition for the Position entity.
@@ -107,7 +108,7 @@ func (Position) Fields() []ent.Field {
 func (Position) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.SortOrder{},
 		mixin.Remark{},

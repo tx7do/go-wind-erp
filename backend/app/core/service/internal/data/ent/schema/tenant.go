@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // Tenant holds the schema definition for the Tenant entity.
@@ -125,7 +126,7 @@ func (Tenant) Fields() []ent.Field {
 func (Tenant) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.Remark{},
 	}

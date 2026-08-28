@@ -13,6 +13,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data"
 
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
+	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 )
 
 // StockPickingService 拣货单服务（借鉴 Odoo stock.picking：一等文档，有生命周期）。
@@ -114,9 +116,226 @@ func (s *StockPickingService) Create(ctx context.Context, req *inventoryV1.Creat
 		// 但不提供 per-move location（从 picking 继承）。
 		return s.createInternalPicking(ctx, req)
 
+	case inventoryV1.StockPicking_INVENTORY_ADJUSTMENT:
+		// 盘点：moves 的 planned_quantity = 带符号差异数（正=盘盈，负=盘亏）。
+		// 同一单内必须同号；盘盈 INVENTORY_LOSS→仓库，盘亏 仓库→INVENTORY_LOSS。
+		return s.createAdjustmentPicking(ctx, req)
+
 	default:
 		return nil, inventoryV1.ErrorBadRequest("unsupported picking type")
 	}
+}
+
+// createAdjustmentPicking 创建盘点拣货单（INVENTORY_ADJUSTMENT）。
+// 借鉴 Odoo InventoryLoss 虚拟位置：盘盈 = 虚拟位置→仓库（入库腿），
+// 盘亏 = 仓库→虚拟位置（出库腿，冻结当前均价成本）。同一单必须全正或全负
+// （picking 的 source/dest 是单值，混合符号需拆成两张单）。Validate 的
+// 双轨 quant 逻辑零改动即可执行（虚拟位置腿自动跳过）。
+func (s *StockPickingService) createAdjustmentPicking(ctx context.Context, req *inventoryV1.CreateStockPickingRequest) (*emptypb.Empty, error) {
+	whCode := req.Data.GetFromWarehouseCode()
+	if whCode == "" {
+		return nil, inventoryV1.ErrorBadRequest("from_warehouse_code is required for inventory adjustment")
+	}
+
+	whLocID, err := s.locationRepo.GetLocationID(ctx, whCode)
+	if err != nil {
+		return nil, err
+	}
+	lossLocID, err := s.locationRepo.GetInventoryLossLocationID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	moves := req.Data.GetMoves()
+	if len(moves) == 0 {
+		return nil, inventoryV1.ErrorBadRequest("at least one move is required")
+	}
+
+	hasPositive, hasNegative := false, false
+	for _, m := range moves {
+		if m == nil || m.GetProductCode() == "" || m.GetPlannedQuantity() == 0 {
+			return nil, inventoryV1.ErrorBadRequest("each move must have a valid product_code and non-zero signed planned_quantity")
+		}
+		if m.GetPlannedQuantity() > 0 {
+			hasPositive = true
+		} else {
+			hasNegative = true
+		}
+	}
+	if hasPositive && hasNegative {
+		return nil, inventoryV1.ErrorBadRequest("an adjustment picking must be all-gain or all-loss; split mixed differences into separate pickings")
+	}
+
+	// 盘盈：INVENTORY_LOSS→仓库；盘亏：仓库→INVENTORY_LOSS。
+	// move 的 planned_quantity 一律取绝对值（Validate 拒绝非正数量），
+	// 方向由 source/dest 表达——与 INCOMING/OUTGOING 的语义一致。
+	var srcLocID, dstLocID uint32
+	absMoves := make([]*inventoryV1.StockMove, 0, len(moves))
+	if hasPositive {
+		srcLocID, dstLocID = lossLocID, whLocID
+		absMoves = moves
+	} else {
+		srcLocID, dstLocID = whLocID, lossLocID
+		for _, m := range moves {
+			absMoves = append(absMoves, &inventoryV1.StockMove{
+				ProductCode:         m.ProductCode,
+				PlannedQuantity:     trans.Ptr(-m.GetPlannedQuantity()),
+				PurchaseOrderItemId: m.PurchaseOrderItemId,
+				SalesOrderItemId:    m.SalesOrderItemId,
+			})
+		}
+	}
+
+	_, err = s.stockPickingRepo.Create(ctx, &inventoryV1.CreateStockPickingRequest{
+		Data: &inventoryV1.StockPicking{
+			PickingType:           inventoryV1.StockPicking_INVENTORY_ADJUSTMENT.Enum(),
+			SourceLocationId:      trans.Ptr(srcLocID),
+			DestinationLocationId: trans.Ptr(dstLocID),
+			Moves:                 absMoves,
+			Remark:                req.Data.Remark,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// CreateSalesReturn 创建销售退货拣货单：INCOMING（CUSTOMER→SO 仓库位置），
+// moves 带 sales_order_item_id；Validate 时负向回写 fulfilled_quantity。
+// 仓库/客户编码从 SO 推导，退数 ≤ 已履约数由 repo 原子守卫兜底。
+func (s *StockPickingService) CreateSalesReturn(ctx context.Context, req *inventoryV1.CreateSalesReturnRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetSalesOrderId() == 0 || len(req.GetItems()) == 0 {
+		return nil, inventoryV1.ErrorBadRequest("sales_order_id and at least one item are required")
+	}
+	for _, it := range req.GetItems() {
+		if it.GetSalesOrderItemId() == 0 || it.GetQuantity() <= 0 {
+			return nil, inventoryV1.ErrorBadRequest("each return item must have a valid sales_order_item_id and positive quantity")
+		}
+	}
+
+	soDTO, err := s.salesOrderRepo.Get(ctx, &salesV1.GetSalesOrderRequest{
+		QueryBy: &salesV1.GetSalesOrderRequest_Id{Id: req.GetSalesOrderId()},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	whLocID, err := s.locationRepo.GetLocationID(ctx, soDTO.GetWarehouseCode())
+	if err != nil {
+		return nil, err
+	}
+	custLocID, err := s.locationRepo.GetCustomerLocationID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	moves := make([]*inventoryV1.StockMove, 0, len(req.GetItems()))
+	for _, it := range req.GetItems() {
+		var item *salesV1.SalesOrderItem
+		for _, i := range soDTO.GetItems() {
+			if i.GetId() == it.GetSalesOrderItemId() {
+				item = i
+				break
+			}
+		}
+		if item == nil {
+			return nil, inventoryV1.ErrorBadRequest("sales order item not found on this order")
+		}
+		if item.GetFulfilledQuantity() < it.GetQuantity() {
+			return nil, inventoryV1.ErrorBadRequest("return quantity exceeds fulfilled quantity")
+		}
+		moves = append(moves, &inventoryV1.StockMove{
+			ProductCode:       trans.Ptr(item.GetSkuCode()),
+			PlannedQuantity:   trans.Ptr(it.GetQuantity()),
+			SalesOrderItemId:  trans.Ptr(it.GetSalesOrderItemId()),
+		})
+	}
+
+	_, err = s.stockPickingRepo.Create(ctx, &inventoryV1.CreateStockPickingRequest{
+		Data: &inventoryV1.StockPicking{
+			PickingType:           inventoryV1.StockPicking_INCOMING.Enum(),
+			SourceLocationId:      trans.Ptr(custLocID),
+			DestinationLocationId: trans.Ptr(whLocID),
+			PartnerCode:           soDTO.CustomerCode,
+			Moves:                 moves,
+			Remark:                req.Remark,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// CreatePurchaseReturn 创建采购退货拣货单：OUTGOING（PO 仓库位置→SUPPLIER），
+// moves 带 purchase_order_item_id；Validate 时负向回写 received_quantity。
+func (s *StockPickingService) CreatePurchaseReturn(ctx context.Context, req *inventoryV1.CreatePurchaseReturnRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetPurchaseOrderId() == 0 || len(req.GetItems()) == 0 {
+		return nil, inventoryV1.ErrorBadRequest("purchase_order_id and at least one item are required")
+	}
+	for _, it := range req.GetItems() {
+		if it.GetPurchaseOrderItemId() == 0 || it.GetQuantity() <= 0 {
+			return nil, inventoryV1.ErrorBadRequest("each return item must have a valid purchase_order_item_id and positive quantity")
+		}
+	}
+
+	poDTO, err := s.purchaseOrderRepo.Get(ctx, &procurementV1.GetPurchaseOrderRequest{
+		QueryBy: &procurementV1.GetPurchaseOrderRequest_Id{Id: req.GetPurchaseOrderId()},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	whLocID, err := s.locationRepo.GetLocationID(ctx, poDTO.GetWarehouseCode())
+	if err != nil {
+		return nil, err
+	}
+	supLocID, err := s.locationRepo.GetSupplierLocationID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	moves := make([]*inventoryV1.StockMove, 0, len(req.GetItems()))
+	for _, it := range req.GetItems() {
+		var item *procurementV1.PurchaseOrderItem
+		for _, i := range poDTO.GetItems() {
+			if i.GetId() == it.GetPurchaseOrderItemId() {
+				item = i
+				break
+			}
+		}
+		if item == nil {
+			return nil, inventoryV1.ErrorBadRequest("purchase order item not found on this order")
+		}
+		if item.GetReceivedQuantity() < it.GetQuantity() {
+			return nil, inventoryV1.ErrorBadRequest("return quantity exceeds received quantity")
+		}
+		moves = append(moves, &inventoryV1.StockMove{
+			ProductCode:         trans.Ptr(item.GetSkuCode()),
+			PlannedQuantity:     trans.Ptr(it.GetQuantity()),
+			PurchaseOrderItemId: trans.Ptr(it.GetPurchaseOrderItemId()),
+		})
+	}
+
+	_, err = s.stockPickingRepo.Create(ctx, &inventoryV1.CreateStockPickingRequest{
+		Data: &inventoryV1.StockPicking{
+			PickingType:           inventoryV1.StockPicking_OUTGOING.Enum(),
+			SourceLocationId:      trans.Ptr(whLocID),
+			DestinationLocationId: trans.Ptr(supLocID),
+			PurchaseOrderId:       trans.Ptr(req.GetPurchaseOrderId()),
+			PartnerCode:           poDTO.SupplierCode,
+			Moves:                 moves,
+			Remark:                req.Remark,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 // createInternalPicking 创建调拨拣货单（INTERNAL：仓库间转移）。
@@ -301,7 +520,9 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 
 		// 确定 unit_cost：入库腿从采购明细单价取值（quant 加权平均用），
 		// 出库/调拨腿从源位置 quant 的 cost_price 冻结（COGS 核算用）。
-		// 虚拟位置无 quant，unit_cost 取 0（仅审计留痕，无财务意义）。
+		// 盘盈/销退回货（source 虚拟 → dest INTERNAL）取 dest quant 当前均价
+		// ——按当前均价入库使加权平均保持稳定，避免零成本稀释。
+		// 其余虚拟源（无 PO 关联）unit_cost 取 0（仅审计留痕，无财务意义）。
 		var unitCost int64
 		if srcUsage == inventoryV1.StockLocation_INTERNAL {
 			srcQuantForCost, cerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, sourceLocID, productCode)
@@ -313,6 +534,12 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		} else if poItemID != 0 {
 			// 入库：source 是虚拟 SUPPLIER，unit_cost 取采购明细单价。
 			unitCost = s.purchaseOrderRepo.GetUnitPriceTx(ctx, tx, poItemID)
+		} else if dstUsage == inventoryV1.StockLocation_INTERNAL {
+			// 盘盈 / 销售退货回货：source 是 INVENTORY_LOSS/CUSTOMER 虚拟位置，
+			// 按 dest 当前均价入库（quant 行不存在则 0）。
+			if dstQuantForCost, qerr := s.stockQuantRepo.FindByLocationProductTx(ctx, tx, destLocID, productCode); qerr == nil {
+				unitCost, _ = s.stockQuantRepo.GetCostPriceTx(ctx, tx, dstQuantForCost.GetId())
+			}
 		}
 
 		// 创建 move-line（执行记录，借鉴 Odoo stock.move.line._action_done）。
@@ -379,21 +606,37 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 
 		// 入库联动：回写采购明细 received_quantity（借鉴 Odoo 收货回写，
 		// 原子条件更新防超收）。若全部明细收齐 → PO 自动完结。
+		// 采购退货 = OUTGOING + poItem 关联 → 负向回写（减已收数，减空则 PO 重开）。
 		if poItemID != 0 {
-			_, arerr := s.purchaseOrderRepo.ApplyReceiptTx(ctx, tx, poItemID, executedQty)
-			if arerr != nil {
-				err = arerr
-				return nil, err
+			if picking.GetPickingType() == inventoryV1.StockPicking_OUTGOING {
+				if rerr := s.purchaseOrderRepo.ApplyReceiptReturnTx(ctx, tx, poItemID, executedQty); rerr != nil {
+					err = rerr
+					return nil, err
+				}
+			} else {
+				_, arerr := s.purchaseOrderRepo.ApplyReceiptTx(ctx, tx, poItemID, executedQty)
+				if arerr != nil {
+					err = arerr
+					return nil, err
+				}
 			}
 		}
 
 		// 出库联动：回写销售明细 fulfilled_quantity（镜像采购收货回写，
 		// 原子条件更新防超履约）。若全部明细履约齐 → SO 自动完结。
+		// 销售退货 = INCOMING + soItem 关联 → 负向回写（减已履约数，减空则 SO 重开）。
 		if soItemID != 0 {
-			_, ferr := s.salesOrderRepo.ApplyFulfillmentTx(ctx, tx, soItemID, executedQty)
-			if ferr != nil {
-				err = ferr
-				return nil, err
+			if picking.GetPickingType() == inventoryV1.StockPicking_INCOMING {
+				if rerr := s.salesOrderRepo.ApplyFulfillmentReturnTx(ctx, tx, soItemID, executedQty); rerr != nil {
+					err = rerr
+					return nil, err
+				}
+			} else {
+				_, ferr := s.salesOrderRepo.ApplyFulfillmentTx(ctx, tx, soItemID, executedQty)
+				if ferr != nil {
+					err = ferr
+					return nil, err
+				}
 			}
 		}
 	}

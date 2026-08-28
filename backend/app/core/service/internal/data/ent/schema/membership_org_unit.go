@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // MembershipOrgUnit 成员与组织单元关联表
@@ -93,7 +94,7 @@ func (MembershipOrgUnit) Fields() []ent.Field {
 func (MembershipOrgUnit) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.TenantID[uint32]{},
 		mixin.Remark{},

@@ -36,7 +36,7 @@ type StockPicking struct {
 	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 拣货单号（服务端生成）
 	PickingNumber *string `json:"picking_number,omitempty"`
-	// 拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库
+	// 拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库，INVENTORY_ADJUSTMENT=盘点
 	PickingType *stockpicking.PickingType `json:"picking_type,omitempty"`
 	// 源位置ID
 	SourceLocationID *uint32 `json:"source_location_id,omitempty"`

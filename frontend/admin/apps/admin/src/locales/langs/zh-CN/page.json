@@ -498,7 +498,25 @@
       "create": "创建拣货单",
       "transfer": "调拨",
       "confirm": "确认",
-      "validate": "执行"
+      "validate": "执行",
+      "adjustment": "盘点"
+    },
+    "adjustment": {
+      "title": "库存盘点",
+      "warehouse": "仓库",
+      "diff": "差异数量",
+      "diffTip": "正数=盘盈，负数=盘亏",
+      "diffNonZero": "差异数量不能为 0",
+      "remark": "备注"
+    },
+    "return": {
+      "salesTitle": "销售退货",
+      "purchaseTitle": "采购退货",
+      "quantity": "退货数量",
+      "returnable": "可退",
+      "salesSuccess": "销售退货单已创建，请到拣货单列表确认并执行",
+      "purchaseSuccess": "采购退货单已创建，请到拣货单列表确认并执行",
+      "failed": "退货单创建失败"
     }
   },
   "approval": {

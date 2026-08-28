@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // tenant_id 为 NULL 或者 0 时代表全局或个人系统成员。
@@ -100,7 +101,7 @@ func (Membership) Fields() []ent.Field {
 func (Membership) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.TenantID[uint32]{},
 		mixin.Remark{},

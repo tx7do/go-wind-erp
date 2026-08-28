@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
@@ -16,6 +16,8 @@ import {
   fetchListWarehouses,
   salesOrderStatusToName,
 } from '#/api';
+
+import SalesReturnModalComponent from './sales-return-modal.vue';
 
 const data = ref();
 
@@ -34,6 +36,33 @@ const newItem = reactive<ItemRow>({
 
 const isCreate = computed(() => data.value?.create);
 const isDraft = computed(() => data.value?.row?.status === 'DRAFT');
+// APPROVED/COMPLETED 状态下可按明细退货（服务端 ApplyFulfillmentReturnTx
+// 有状态门与防超退守卫，前端按钮按已履约数量显隐）。
+const isReturnable = computed(
+  () =>
+    data.value?.row?.status === 'APPROVED' ||
+    data.value?.row?.status === 'COMPLETED',
+);
+
+// 退货弹窗：收集退货数量，成功后关闭抽屉让列表刷新。
+const [SalesReturnModal, salesReturnModalApi] = useVbenModal({
+  connectedComponent: SalesReturnModalComponent,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      drawerApi.close();
+    }
+  },
+});
+
+function handleReturn(record: any) {
+  salesReturnModalApi.setData({
+    soId: data.value.row.id,
+    soItemId: record.id,
+    returnable: record.fulfilledQuantity ?? 0,
+  });
+  salesReturnModalApi.open();
+}
 
 const getTitle = computed(() =>
   isCreate.value
@@ -188,9 +217,24 @@ const [Drawer, drawerApi] = useVbenDrawer({
     }
   },
 
-  onOpenChange(isOpen: boolean) {
+  async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       data.value = drawerApi.getData<Record<string, any>>();
+
+      // 列表行不含明细（明细仅在 Get 组装），打开时拉取完整单据
+      // 供只读明细表/退货按钮使用。
+      if (!data.value?.create && data.value?.row?.id) {
+        try {
+          const full = await apiClient.salesOrderService.Get({
+            id: data.value.row.id,
+          });
+          if (full?.id) {
+            data.value = { ...data.value, row: full };
+          }
+        } catch {
+          // 拉取失败退回列表行数据
+        }
+      }
 
       items.splice(0, items.length);
       newItem.skuCode = '';
@@ -286,6 +330,7 @@ const readonlyItemColumns = [
     title: $t('page.salesOrder.amount'),
     dataIndex: 'amount',
   },
+  { title: $t('ui.table.action'), key: 'op', width: 90 },
 ];
 
 function setLoading(loading: boolean) {
@@ -365,6 +410,15 @@ function setLoading(loading: boolean) {
               <template v-else-if="column.dataIndex === 'amount'">
                 {{ centsToYuan(record.amount) }}
               </template>
+              <template v-else-if="column.key === 'op'">
+                <a-button
+                  v-if="isReturnable && (record.fulfilledQuantity ?? 0) > 0"
+                  size="small"
+                  @click="handleReturn(record)"
+                >
+                  {{ $t('page.stockPicking.return.salesTitle') }}
+                </a-button>
+              </template>
             </template>
           </a-table>
         </template>
@@ -400,5 +454,6 @@ function setLoading(loading: boolean) {
         </template>
       </div>
     </div>
+    <SalesReturnModal />
   </Drawer>
 </template>

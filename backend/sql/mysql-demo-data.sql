@@ -249,7 +249,8 @@ INSERT INTO inv_stock_locations (id, created_at, updated_at, deleted_at, created
     (1, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-收货暂存区', NULL, '/1/', 'INTERNAL', 'WH-BJ'),
     (2, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-收货暂存区', NULL, '/2/', 'INTERNAL', 'WH-SH'),
     (3, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'supplier location', NULL, '/3/', 'SUPPLIER', NULL),
-    (4, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'customer location', NULL, '/4/', 'CUSTOMER', NULL)
+    (4, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'customer location', NULL, '/4/', 'CUSTOMER', NULL),
+    (5, NOW(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'inventory loss location', NULL, '/5/', 'INVENTORY_LOSS', NULL)
 ;
 ALTER TABLE inv_stock_locations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM inv_stock_locations);
 -- ----------------------------

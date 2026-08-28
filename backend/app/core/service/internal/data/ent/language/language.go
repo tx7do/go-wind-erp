@@ -3,6 +3,7 @@
 package language
 
 import (
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -66,7 +67,13 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
+	Interceptors [1]ent.Interceptor
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
 	// DefaultIsEnabled holds the default value on creation for the "is_enabled" field.

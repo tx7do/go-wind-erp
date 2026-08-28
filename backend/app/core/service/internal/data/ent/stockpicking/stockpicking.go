@@ -81,8 +81,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
-	Hooks  [1]ent.Hook
-	Policy ent.Policy
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
 	// DefaultSourceLocationID holds the default value on creation for the "source_location_id" field.
@@ -103,9 +104,10 @@ const DefaultPickingType = PickingTypeIncoming
 
 // PickingType values.
 const (
-	PickingTypeIncoming PickingType = "INCOMING"
-	PickingTypeInternal PickingType = "INTERNAL"
-	PickingTypeOutgoing PickingType = "OUTGOING"
+	PickingTypeIncoming            PickingType = "INCOMING"
+	PickingTypeInternal            PickingType = "INTERNAL"
+	PickingTypeOutgoing            PickingType = "OUTGOING"
+	PickingTypeInventoryAdjustment PickingType = "INVENTORY_ADJUSTMENT"
 )
 
 func (pt PickingType) String() string {
@@ -115,7 +117,7 @@ func (pt PickingType) String() string {
 // PickingTypeValidator is a validator for the "picking_type" field enum values. It is called by the builders before save.
 func PickingTypeValidator(pt PickingType) error {
 	switch pt {
-	case PickingTypeIncoming, PickingTypeInternal, PickingTypeOutgoing:
+	case PickingTypeIncoming, PickingTypeInternal, PickingTypeOutgoing, PickingTypeInventoryAdjustment:
 		return nil
 	default:
 		return fmt.Errorf("stockpicking: invalid enum value for picking_type field: %q", pt)

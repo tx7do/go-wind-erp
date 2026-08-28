@@ -4769,6 +4769,7 @@ export type inventoryservicev1_StockLocation = {
 export type inventoryservicev1_StockLocation_Usage =
   | 'CUSTOMER'
   | 'INTERNAL'
+  | 'INVENTORY_LOSS'
   | 'SUPPLIER';
 export type inventoryservicev1_GetLocationRequest = {
   id?: number;
@@ -5064,6 +5065,14 @@ export interface StockPickingService {
   Create(
     request: inventoryservicev1_CreateStockPickingRequest,
   ): Promise<wellKnownEmpty>;
+  // 创建销售退货拣货单
+  CreateSalesReturn(
+    request: inventoryservicev1_CreateSalesReturnRequest,
+  ): Promise<wellKnownEmpty>;
+  // 创建采购退货拣货单
+  CreatePurchaseReturn(
+    request: inventoryservicev1_CreatePurchaseReturnRequest,
+  ): Promise<wellKnownEmpty>;
   // 确认拣货单
   Confirm(
     request: inventoryservicev1_ConfirmStockPickingRequest,
@@ -5230,6 +5239,22 @@ export function createStockPickingServiceClient(
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
+    CreateSalesReturn(request) {
+      const path = `admin/v1/stock-pickings:sales-return`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'StockPickingService',
+        method: 'CreateSalesReturn',
+      }) as Promise<wellKnownEmpty>;
+    },
+    CreatePurchaseReturn(request) {
+      const path = `admin/v1/stock-pickings:purchase-return`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'StockPickingService',
+        method: 'CreatePurchaseReturn',
+      }) as Promise<wellKnownEmpty>;
+    },
     Confirm(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -5327,6 +5352,7 @@ export type inventoryservicev1_StockPicking = {
 export type inventoryservicev1_StockPicking_PickingType =
   | 'INCOMING'
   | 'INTERNAL'
+  | 'INVENTORY_ADJUSTMENT'
   | 'OUTGOING';
 // 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
 export type inventoryservicev1_StockPicking_DerivedState =
@@ -5386,6 +5412,32 @@ export type inventoryservicev1_GetStockPickingRequest = {
 
 export type inventoryservicev1_CreateStockPickingRequest = {
   data: inventoryservicev1_StockPicking | undefined;
+};
+
+// 创建销售退货 - 请求
+export type inventoryservicev1_CreateSalesReturnRequest = {
+  items: inventoryservicev1_SalesReturnItem[] | undefined;
+  remark?: string;
+  salesOrderId: number | undefined;
+};
+
+// 销售退货明细项
+export type inventoryservicev1_SalesReturnItem = {
+  quantity: number | undefined;
+  salesOrderItemId: number | undefined;
+};
+
+// 创建采购退货 - 请求
+export type inventoryservicev1_CreatePurchaseReturnRequest = {
+  items: inventoryservicev1_PurchaseReturnItem[] | undefined;
+  purchaseOrderId: number | undefined;
+  remark?: string;
+};
+
+// 采购退货明细项
+export type inventoryservicev1_PurchaseReturnItem = {
+  purchaseOrderItemId: number | undefined;
+  quantity: number | undefined;
 };
 
 export type inventoryservicev1_ConfirmStockPickingRequest = {

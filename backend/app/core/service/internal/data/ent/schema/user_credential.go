@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // UserCredential holds the schema definition for the UserCredential entity.
@@ -185,7 +186,7 @@ func (UserCredential) Fields() []ent.Field {
 // Mixin of the UserCredential.
 func (UserCredential) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.AutoIncrementId{},
 		mixin.TenantID[uint32]{},
 	}

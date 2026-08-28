@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
 )
@@ -83,7 +84,7 @@ func (Menu) Fields() []ent.Field {
 func (Menu) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.Tree[Menu]{},
 		//mixin.TreePath{},

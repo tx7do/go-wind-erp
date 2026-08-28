@@ -784,7 +784,8 @@ func (c *APIClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *APIClient) Interceptors() []Interceptor {
-	return c.inters.Api
+	inters := c.inters.Api
+	return append(inters[:len(inters):len(inters)], api.Interceptors[:]...)
 }
 
 func (c *APIClient) mutate(ctx context.Context, m *APIMutation) (Value, error) {
@@ -1052,7 +1053,8 @@ func (c *ApprovalRequestClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *ApprovalRequestClient) Interceptors() []Interceptor {
-	return c.inters.ApprovalRequest
+	inters := c.inters.ApprovalRequest
+	return append(inters[:len(inters):len(inters)], approvalrequest.Interceptors[:]...)
 }
 
 func (c *ApprovalRequestClient) mutate(ctx context.Context, m *ApprovalRequestMutation) (Value, error) {
@@ -1186,7 +1188,8 @@ func (c *CustomerClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *CustomerClient) Interceptors() []Interceptor {
-	return c.inters.Customer
+	inters := c.inters.Customer
+	return append(inters[:len(inters):len(inters)], customer.Interceptors[:]...)
 }
 
 func (c *CustomerClient) mutate(ctx context.Context, m *CustomerMutation) (Value, error) {
@@ -1486,7 +1489,8 @@ func (c *DictEntryClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *DictEntryClient) Interceptors() []Interceptor {
-	return c.inters.DictEntry
+	inters := c.inters.DictEntry
+	return append(inters[:len(inters):len(inters)], dictentry.Interceptors[:]...)
 }
 
 func (c *DictEntryClient) mutate(ctx context.Context, m *DictEntryMutation) (Value, error) {
@@ -1636,7 +1640,8 @@ func (c *DictEntryI18nClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *DictEntryI18nClient) Interceptors() []Interceptor {
-	return c.inters.DictEntryI18n
+	inters := c.inters.DictEntryI18n
+	return append(inters[:len(inters):len(inters)], dictentryi18n.Interceptors[:]...)
 }
 
 func (c *DictEntryI18nClient) mutate(ctx context.Context, m *DictEntryI18nMutation) (Value, error) {
@@ -1786,7 +1791,8 @@ func (c *DictTypeClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *DictTypeClient) Interceptors() []Interceptor {
-	return c.inters.DictType
+	inters := c.inters.DictType
+	return append(inters[:len(inters):len(inters)], dicttype.Interceptors[:]...)
 }
 
 func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value, error) {
@@ -1920,7 +1926,8 @@ func (c *FileClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *FileClient) Interceptors() []Interceptor {
-	return c.inters.File
+	inters := c.inters.File
+	return append(inters[:len(inters):len(inters)], file.Interceptors[:]...)
 }
 
 func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error) {
@@ -2054,7 +2061,8 @@ func (c *InternalMessageClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *InternalMessageClient) Interceptors() []Interceptor {
-	return c.inters.InternalMessage
+	inters := c.inters.InternalMessage
+	return append(inters[:len(inters):len(inters)], internalmessage.Interceptors[:]...)
 }
 
 func (c *InternalMessageClient) mutate(ctx context.Context, m *InternalMessageMutation) (Value, error) {
@@ -2188,7 +2196,8 @@ func (c *InternalMessageCategoryClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *InternalMessageCategoryClient) Interceptors() []Interceptor {
-	return c.inters.InternalMessageCategory
+	inters := c.inters.InternalMessageCategory
+	return append(inters[:len(inters):len(inters)], internalmessagecategory.Interceptors[:]...)
 }
 
 func (c *InternalMessageCategoryClient) mutate(ctx context.Context, m *InternalMessageCategoryMutation) (Value, error) {
@@ -2322,7 +2331,8 @@ func (c *InternalMessageRecipientClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *InternalMessageRecipientClient) Interceptors() []Interceptor {
-	return c.inters.InternalMessageRecipient
+	inters := c.inters.InternalMessageRecipient
+	return append(inters[:len(inters):len(inters)], internalmessagerecipient.Interceptors[:]...)
 }
 
 func (c *InternalMessageRecipientClient) mutate(ctx context.Context, m *InternalMessageRecipientMutation) (Value, error) {
@@ -2455,7 +2465,8 @@ func (c *LanguageClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *LanguageClient) Interceptors() []Interceptor {
-	return c.inters.Language
+	inters := c.inters.Language
+	return append(inters[:len(inters):len(inters)], language.Interceptors[:]...)
 }
 
 func (c *LanguageClient) mutate(ctx context.Context, m *LanguageMutation) (Value, error) {
@@ -2723,7 +2734,8 @@ func (c *LoginPolicyClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *LoginPolicyClient) Interceptors() []Interceptor {
-	return c.inters.LoginPolicy
+	inters := c.inters.LoginPolicy
+	return append(inters[:len(inters):len(inters)], loginpolicy.Interceptors[:]...)
 }
 
 func (c *LoginPolicyClient) mutate(ctx context.Context, m *LoginPolicyMutation) (Value, error) {
@@ -2857,7 +2869,8 @@ func (c *MembershipClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *MembershipClient) Interceptors() []Interceptor {
-	return c.inters.Membership
+	inters := c.inters.Membership
+	return append(inters[:len(inters):len(inters)], membership.Interceptors[:]...)
 }
 
 func (c *MembershipClient) mutate(ctx context.Context, m *MembershipMutation) (Value, error) {
@@ -2991,7 +3004,8 @@ func (c *MembershipOrgUnitClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *MembershipOrgUnitClient) Interceptors() []Interceptor {
-	return c.inters.MembershipOrgUnit
+	inters := c.inters.MembershipOrgUnit
+	return append(inters[:len(inters):len(inters)], membershiporgunit.Interceptors[:]...)
 }
 
 func (c *MembershipOrgUnitClient) mutate(ctx context.Context, m *MembershipOrgUnitMutation) (Value, error) {
@@ -3125,7 +3139,8 @@ func (c *MembershipPositionClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *MembershipPositionClient) Interceptors() []Interceptor {
-	return c.inters.MembershipPosition
+	inters := c.inters.MembershipPosition
+	return append(inters[:len(inters):len(inters)], membershipposition.Interceptors[:]...)
 }
 
 func (c *MembershipPositionClient) mutate(ctx context.Context, m *MembershipPositionMutation) (Value, error) {
@@ -3259,7 +3274,8 @@ func (c *MembershipRoleClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *MembershipRoleClient) Interceptors() []Interceptor {
-	return c.inters.MembershipRole
+	inters := c.inters.MembershipRole
+	return append(inters[:len(inters):len(inters)], membershiprole.Interceptors[:]...)
 }
 
 func (c *MembershipRoleClient) mutate(ctx context.Context, m *MembershipRoleMutation) (Value, error) {
@@ -3425,7 +3441,8 @@ func (c *MenuClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *MenuClient) Interceptors() []Interceptor {
-	return c.inters.Menu
+	inters := c.inters.Menu
+	return append(inters[:len(inters):len(inters)], menu.Interceptors[:]...)
 }
 
 func (c *MenuClient) mutate(ctx context.Context, m *MenuMutation) (Value, error) {
@@ -3725,7 +3742,8 @@ func (c *OrgUnitClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *OrgUnitClient) Interceptors() []Interceptor {
-	return c.inters.OrgUnit
+	inters := c.inters.OrgUnit
+	return append(inters[:len(inters):len(inters)], orgunit.Interceptors[:]...)
 }
 
 func (c *OrgUnitClient) mutate(ctx context.Context, m *OrgUnitMutation) (Value, error) {
@@ -3859,7 +3877,8 @@ func (c *PayableClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PayableClient) Interceptors() []Interceptor {
-	return c.inters.Payable
+	inters := c.inters.Payable
+	return append(inters[:len(inters):len(inters)], payable.Interceptors[:]...)
 }
 
 func (c *PayableClient) mutate(ctx context.Context, m *PayableMutation) (Value, error) {
@@ -3993,7 +4012,8 @@ func (c *PaymentClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PaymentClient) Interceptors() []Interceptor {
-	return c.inters.Payment
+	inters := c.inters.Payment
+	return append(inters[:len(inters):len(inters)], payment.Interceptors[:]...)
 }
 
 func (c *PaymentClient) mutate(ctx context.Context, m *PaymentMutation) (Value, error) {
@@ -4127,7 +4147,8 @@ func (c *PermissionClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PermissionClient) Interceptors() []Interceptor {
-	return c.inters.Permission
+	inters := c.inters.Permission
+	return append(inters[:len(inters):len(inters)], permission.Interceptors[:]...)
 }
 
 func (c *PermissionClient) mutate(ctx context.Context, m *PermissionMutation) (Value, error) {
@@ -4261,7 +4282,8 @@ func (c *PermissionApiClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PermissionApiClient) Interceptors() []Interceptor {
-	return c.inters.PermissionApi
+	inters := c.inters.PermissionApi
+	return append(inters[:len(inters):len(inters)], permissionapi.Interceptors[:]...)
 }
 
 func (c *PermissionApiClient) mutate(ctx context.Context, m *PermissionApiMutation) (Value, error) {
@@ -4561,7 +4583,8 @@ func (c *PermissionGroupClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PermissionGroupClient) Interceptors() []Interceptor {
-	return c.inters.PermissionGroup
+	inters := c.inters.PermissionGroup
+	return append(inters[:len(inters):len(inters)], permissiongroup.Interceptors[:]...)
 }
 
 func (c *PermissionGroupClient) mutate(ctx context.Context, m *PermissionGroupMutation) (Value, error) {
@@ -4695,7 +4718,8 @@ func (c *PermissionMenuClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PermissionMenuClient) Interceptors() []Interceptor {
-	return c.inters.PermissionMenu
+	inters := c.inters.PermissionMenu
+	return append(inters[:len(inters):len(inters)], permissionmenu.Interceptors[:]...)
 }
 
 func (c *PermissionMenuClient) mutate(ctx context.Context, m *PermissionMenuMutation) (Value, error) {
@@ -4829,7 +4853,8 @@ func (c *PermissionPolicyClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PermissionPolicyClient) Interceptors() []Interceptor {
-	return c.inters.PermissionPolicy
+	inters := c.inters.PermissionPolicy
+	return append(inters[:len(inters):len(inters)], permissionpolicy.Interceptors[:]...)
 }
 
 func (c *PermissionPolicyClient) mutate(ctx context.Context, m *PermissionPolicyMutation) (Value, error) {
@@ -5097,7 +5122,8 @@ func (c *PositionClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PositionClient) Interceptors() []Interceptor {
-	return c.inters.Position
+	inters := c.inters.Position
+	return append(inters[:len(inters):len(inters)], position.Interceptors[:]...)
 }
 
 func (c *PositionClient) mutate(ctx context.Context, m *PositionMutation) (Value, error) {
@@ -5231,7 +5257,8 @@ func (c *ProductClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *ProductClient) Interceptors() []Interceptor {
-	return c.inters.Product
+	inters := c.inters.Product
+	return append(inters[:len(inters):len(inters)], product.Interceptors[:]...)
 }
 
 func (c *ProductClient) mutate(ctx context.Context, m *ProductMutation) (Value, error) {
@@ -5365,7 +5392,8 @@ func (c *PurchaseOrderClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PurchaseOrderClient) Interceptors() []Interceptor {
-	return c.inters.PurchaseOrder
+	inters := c.inters.PurchaseOrder
+	return append(inters[:len(inters):len(inters)], purchaseorder.Interceptors[:]...)
 }
 
 func (c *PurchaseOrderClient) mutate(ctx context.Context, m *PurchaseOrderMutation) (Value, error) {
@@ -5633,7 +5661,8 @@ func (c *ReceiptClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *ReceiptClient) Interceptors() []Interceptor {
-	return c.inters.Receipt
+	inters := c.inters.Receipt
+	return append(inters[:len(inters):len(inters)], receipt.Interceptors[:]...)
 }
 
 func (c *ReceiptClient) mutate(ctx context.Context, m *ReceiptMutation) (Value, error) {
@@ -5767,7 +5796,8 @@ func (c *ReceivableClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *ReceivableClient) Interceptors() []Interceptor {
-	return c.inters.Receivable
+	inters := c.inters.Receivable
+	return append(inters[:len(inters):len(inters)], receivable.Interceptors[:]...)
 }
 
 func (c *ReceivableClient) mutate(ctx context.Context, m *ReceivableMutation) (Value, error) {
@@ -5901,7 +5931,8 @@ func (c *RoleClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *RoleClient) Interceptors() []Interceptor {
-	return c.inters.Role
+	inters := c.inters.Role
+	return append(inters[:len(inters):len(inters)], role.Interceptors[:]...)
 }
 
 func (c *RoleClient) mutate(ctx context.Context, m *RoleMutation) (Value, error) {
@@ -6035,7 +6066,8 @@ func (c *RoleMetadataClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *RoleMetadataClient) Interceptors() []Interceptor {
-	return c.inters.RoleMetadata
+	inters := c.inters.RoleMetadata
+	return append(inters[:len(inters):len(inters)], rolemetadata.Interceptors[:]...)
 }
 
 func (c *RoleMetadataClient) mutate(ctx context.Context, m *RoleMetadataMutation) (Value, error) {
@@ -6169,7 +6201,8 @@ func (c *RolePermissionClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *RolePermissionClient) Interceptors() []Interceptor {
-	return c.inters.RolePermission
+	inters := c.inters.RolePermission
+	return append(inters[:len(inters):len(inters)], rolepermission.Interceptors[:]...)
 }
 
 func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMutation) (Value, error) {
@@ -6303,7 +6336,8 @@ func (c *SalesOrderClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *SalesOrderClient) Interceptors() []Interceptor {
-	return c.inters.SalesOrder
+	inters := c.inters.SalesOrder
+	return append(inters[:len(inters):len(inters)], salesorder.Interceptors[:]...)
 }
 
 func (c *SalesOrderClient) mutate(ctx context.Context, m *SalesOrderMutation) (Value, error) {
@@ -6571,7 +6605,8 @@ func (c *StockLocationClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *StockLocationClient) Interceptors() []Interceptor {
-	return c.inters.StockLocation
+	inters := c.inters.StockLocation
+	return append(inters[:len(inters):len(inters)], stocklocation.Interceptors[:]...)
 }
 
 func (c *StockLocationClient) mutate(ctx context.Context, m *StockLocationMutation) (Value, error) {
@@ -6705,7 +6740,8 @@ func (c *StockMoveClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *StockMoveClient) Interceptors() []Interceptor {
-	return c.inters.StockMove
+	inters := c.inters.StockMove
+	return append(inters[:len(inters):len(inters)], stockmove.Interceptors[:]...)
 }
 
 func (c *StockMoveClient) mutate(ctx context.Context, m *StockMoveMutation) (Value, error) {
@@ -6973,7 +7009,8 @@ func (c *StockPickingClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *StockPickingClient) Interceptors() []Interceptor {
-	return c.inters.StockPicking
+	inters := c.inters.StockPicking
+	return append(inters[:len(inters):len(inters)], stockpicking.Interceptors[:]...)
 }
 
 func (c *StockPickingClient) mutate(ctx context.Context, m *StockPickingMutation) (Value, error) {
@@ -7107,7 +7144,8 @@ func (c *StockQuantClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *StockQuantClient) Interceptors() []Interceptor {
-	return c.inters.StockQuant
+	inters := c.inters.StockQuant
+	return append(inters[:len(inters):len(inters)], stockquant.Interceptors[:]...)
 }
 
 func (c *StockQuantClient) mutate(ctx context.Context, m *StockQuantMutation) (Value, error) {
@@ -7241,7 +7279,8 @@ func (c *SupplierClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *SupplierClient) Interceptors() []Interceptor {
-	return c.inters.Supplier
+	inters := c.inters.Supplier
+	return append(inters[:len(inters):len(inters)], supplier.Interceptors[:]...)
 }
 
 func (c *SupplierClient) mutate(ctx context.Context, m *SupplierMutation) (Value, error) {
@@ -7375,7 +7414,8 @@ func (c *TaskClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *TaskClient) Interceptors() []Interceptor {
-	return c.inters.Task
+	inters := c.inters.Task
+	return append(inters[:len(inters):len(inters)], task.Interceptors[:]...)
 }
 
 func (c *TaskClient) mutate(ctx context.Context, m *TaskMutation) (Value, error) {
@@ -7508,7 +7548,8 @@ func (c *TenantClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *TenantClient) Interceptors() []Interceptor {
-	return c.inters.Tenant
+	inters := c.inters.Tenant
+	return append(inters[:len(inters):len(inters)], tenant.Interceptors[:]...)
 }
 
 func (c *TenantClient) mutate(ctx context.Context, m *TenantMutation) (Value, error) {
@@ -7642,7 +7683,8 @@ func (c *UserClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserClient) Interceptors() []Interceptor {
-	return c.inters.User
+	inters := c.inters.User
+	return append(inters[:len(inters):len(inters)], user.Interceptors[:]...)
 }
 
 func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error) {
@@ -7776,7 +7818,8 @@ func (c *UserCredentialClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserCredentialClient) Interceptors() []Interceptor {
-	return c.inters.UserCredential
+	inters := c.inters.UserCredential
+	return append(inters[:len(inters):len(inters)], usercredential.Interceptors[:]...)
 }
 
 func (c *UserCredentialClient) mutate(ctx context.Context, m *UserCredentialMutation) (Value, error) {
@@ -7910,7 +7953,8 @@ func (c *UserOrgUnitClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserOrgUnitClient) Interceptors() []Interceptor {
-	return c.inters.UserOrgUnit
+	inters := c.inters.UserOrgUnit
+	return append(inters[:len(inters):len(inters)], userorgunit.Interceptors[:]...)
 }
 
 func (c *UserOrgUnitClient) mutate(ctx context.Context, m *UserOrgUnitMutation) (Value, error) {
@@ -8044,7 +8088,8 @@ func (c *UserPositionClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserPositionClient) Interceptors() []Interceptor {
-	return c.inters.UserPosition
+	inters := c.inters.UserPosition
+	return append(inters[:len(inters):len(inters)], userposition.Interceptors[:]...)
 }
 
 func (c *UserPositionClient) mutate(ctx context.Context, m *UserPositionMutation) (Value, error) {
@@ -8178,7 +8223,8 @@ func (c *UserRoleClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserRoleClient) Interceptors() []Interceptor {
-	return c.inters.UserRole
+	inters := c.inters.UserRole
+	return append(inters[:len(inters):len(inters)], userrole.Interceptors[:]...)
 }
 
 func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value, error) {
@@ -8312,7 +8358,8 @@ func (c *WarehouseClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *WarehouseClient) Interceptors() []Interceptor {
-	return c.inters.Warehouse
+	inters := c.inters.Warehouse
+	return append(inters[:len(inters):len(inters)], warehouse.Interceptors[:]...)
 }
 
 func (c *WarehouseClient) mutate(ctx context.Context, m *WarehouseMutation) (Value, error) {

@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from 'vue';
 
 import { useVbenDrawer, useVbenModal } from '@vben/common-ui';
+
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
@@ -17,6 +18,7 @@ import {
   purchaseOrderStatusToName,
 } from '#/api';
 
+import PurchaseReturnModalComponent from './purchase-return-modal.vue';
 import ReceiveModalComponent from './receive-modal.vue';
 
 const data = ref();
@@ -38,6 +40,13 @@ const isCreate = computed(() => data.value?.create);
 const isDraft = computed(() => data.value?.row?.status === 'DRAFT');
 // APPROVED 状态下可按明细收货（服务端 ApplyReceipt 有审批闸门与防超收守卫）。
 const isApproved = computed(() => data.value?.row?.status === 'APPROVED');
+// APPROVED/COMPLETED 状态下可按明细退货（服务端 ApplyReceiptReturnTx 有
+// 状态门与防超退守卫，前端按钮按已收数量显隐）。
+const isReturnable = computed(
+  () =>
+    data.value?.row?.status === 'APPROVED' ||
+    data.value?.row?.status === 'COMPLETED',
+);
 
 // 收货弹窗：收集仓库+数量，成功后关闭抽屉让列表刷新（与工作流动作同模式）。
 const [ReceiveModal, receiveModalApi] = useVbenModal({
@@ -57,6 +66,26 @@ function handleReceive(record: any) {
     remaining: (record.quantity ?? 0) - (record.receivedQuantity ?? 0),
   });
   receiveModalApi.open();
+}
+
+// 退货弹窗：收集退货数量，成功后关闭抽屉让列表刷新。
+const [PurchaseReturnModal, purchaseReturnModalApi] = useVbenModal({
+  connectedComponent: PurchaseReturnModalComponent,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      drawerApi.close();
+    }
+  },
+});
+
+function handleReturn(record: any) {
+  purchaseReturnModalApi.setData({
+    poId: data.value.row.id,
+    poItemId: record.id,
+    returnable: record.receivedQuantity ?? 0,
+  });
+  purchaseReturnModalApi.open();
 }
 
 const getTitle = computed(() =>
@@ -224,9 +253,24 @@ const [Drawer, drawerApi] = useVbenDrawer({
     }
   },
 
-  onOpenChange(isOpen: boolean) {
+  async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       data.value = drawerApi.getData<Record<string, any>>();
+
+      // 列表行不含明细（明细仅在 Get 组装），打开时拉取完整单据
+      // 供只读明细表/收货/退货按钮使用。
+      if (!data.value?.create && data.value?.row?.id) {
+        try {
+          const full = await apiClient.purchaseOrderService.Get({
+            id: data.value.row.id,
+          });
+          if (full?.id) {
+            data.value = { ...data.value, row: full };
+          }
+        } catch {
+          // 拉取失败退回列表行数据
+        }
+      }
 
       items.splice(0, items.length);
       newItem.skuCode = '';
@@ -309,6 +353,7 @@ const itemColumns = [
 ];
 
 // 只读明细列：额外展示已收数量与收货操作（收货仅 APPROVED 且未收满时可用）。
+// 退货（APPROVED/COMPLETED 且已收>0）走 purchase-return-modal。
 const readonlyItemColumns = [
   { title: $t('page.purchaseOrder.skuCode'), dataIndex: 'skuCode' },
   { title: $t('page.purchaseOrder.quantity'), dataIndex: 'quantity' },
@@ -324,7 +369,7 @@ const readonlyItemColumns = [
     title: $t('page.purchaseOrder.amount'),
     dataIndex: 'amount',
   },
-  { title: $t('ui.table.action'), key: 'op', width: 90 },
+  { title: $t('ui.table.action'), key: 'op', width: 140 },
 ];
 
 function setLoading(loading: boolean) {
@@ -407,21 +452,33 @@ function setLoading(loading: boolean) {
                 {{ centsToYuan(record.amount) }}
               </template>
               <template v-else-if="column.key === 'op'">
-                <a-button
-                  v-if="
-                    isApproved &&
-                    (record.quantity ?? 0) - (record.receivedQuantity ?? 0) > 0
-                  "
-                  size="small"
-                  type="primary"
-                  @click="handleReceive(record)"
-                >
-                  {{ $t('page.purchaseOrder.button.receive') }}
-                </a-button>
-                <a-tag v-else-if="isApproved" color="green">
-                  {{ $t('page.purchaseOrder.receivedQuantity') }}:
-                  {{ record.receivedQuantity ?? 0 }}/{{ record.quantity ?? 0 }}
-                </a-tag>
+                <div class="flex gap-1">
+                  <a-button
+                    v-if="
+                      isApproved &&
+                      (record.quantity ?? 0) - (record.receivedQuantity ?? 0) > 0
+                    "
+                    size="small"
+                    type="primary"
+                    @click="handleReceive(record)"
+                  >
+                    {{ $t('page.purchaseOrder.button.receive') }}
+                  </a-button>
+                  <a-button
+                    v-if="isReturnable && (record.receivedQuantity ?? 0) > 0"
+                    size="small"
+                    @click="handleReturn(record)"
+                  >
+                    {{ $t('page.stockPicking.return.purchaseTitle') }}
+                  </a-button>
+                  <a-tag
+                    v-else-if="isApproved"
+                    color="green"
+                    class="ml-1 self-center"
+                  >
+                    {{ record.receivedQuantity ?? 0 }}/{{ record.quantity ?? 0 }}
+                  </a-tag>
+                </div>
               </template>
             </template>
           </a-table>
@@ -460,5 +517,6 @@ function setLoading(loading: boolean) {
       </div>
     </div>
     <ReceiveModal />
+    <PurchaseReturnModal />
   </Drawer>
 </template>

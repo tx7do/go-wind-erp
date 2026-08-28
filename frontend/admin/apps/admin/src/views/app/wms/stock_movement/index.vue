@@ -31,6 +31,7 @@ import {
 import { $t } from '#/locales';
 
 import StockPickingDrawer from './stock_movement-drawer.vue';
+import AdjustmentDrawerComponent from './adjustment-drawer.vue';
 import TransferDrawerComponent from './transfer-drawer.vue';
 
 const formOptions: VbenFormProps = {
@@ -154,6 +155,16 @@ const [TransferDrawer, transferDrawerApi] = useVbenDrawer({
   },
 });
 
+const [AdjustmentDrawer, adjustmentDrawerApi] = useVbenDrawer({
+  connectedComponent: AdjustmentDrawerComponent,
+
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      gridApi.reload();
+    }
+  },
+});
+
 function openModal(create: boolean, row?: any) {
   drawerApi.setData({
     create,
@@ -169,6 +180,10 @@ function handleCreate() {
 
 function handleTransfer() {
   transferDrawerApi.open();
+}
+
+function handleAdjustment() {
+  adjustmentDrawerApi.open();
 }
 
 async function handleDelete(row: any) {
@@ -239,6 +254,9 @@ async function handleValidatePicking(row: any) {
         <a-button class="mr-2" :icon="h(LucideArrowLeftRight)" @click="handleTransfer">
           {{ $t('page.stockPicking.button.transfer') }}
         </a-button>
+        <a-button class="mr-2" @click="handleAdjustment">
+          {{ $t('page.stockPicking.button.adjustment') }}
+        </a-button>
       </template>
 
       <template #pickingType="{ row }">
@@ -286,5 +304,6 @@ async function handleValidatePicking(row: any) {
     </Grid>
     <Drawer />
     <TransferDrawer />
+    <AdjustmentDrawer />
   </Page>
 </template>

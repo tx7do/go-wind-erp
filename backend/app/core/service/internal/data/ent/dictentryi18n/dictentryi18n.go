@@ -91,8 +91,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
-	Hooks  [1]ent.Hook
-	Policy ent.Policy
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.

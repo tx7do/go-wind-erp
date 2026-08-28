@@ -40,7 +40,7 @@ type StockLocation struct {
 	ParentID *uint32 `json:"parent_id,omitempty"`
 	// 物化路径（预留层级，初始为 /{id}/）
 	Path *string `json:"path,omitempty"`
-	// 位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的）
+	// 位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的），INVENTORY_LOSS=盘点虚拟位置（盘盈源/盘亏目的）
 	Usage *stocklocation.Usage `json:"usage,omitempty"`
 	// 归属仓库编码（仅 INTERNAL 位置有值）
 	WarehouseCode *string `json:"warehouse_code,omitempty"`

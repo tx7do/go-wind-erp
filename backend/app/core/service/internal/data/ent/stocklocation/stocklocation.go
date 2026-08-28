@@ -78,8 +78,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
-	Hooks  [1]ent.Hook
-	Policy ent.Policy
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
 	// DefaultParentID holds the default value on creation for the "parent_id" field.
@@ -96,9 +97,10 @@ const DefaultUsage = UsageInternal
 
 // Usage values.
 const (
-	UsageSupplier Usage = "SUPPLIER"
-	UsageInternal Usage = "INTERNAL"
-	UsageCustomer Usage = "CUSTOMER"
+	UsageSupplier      Usage = "SUPPLIER"
+	UsageInternal      Usage = "INTERNAL"
+	UsageCustomer      Usage = "CUSTOMER"
+	UsageInventoryLoss Usage = "INVENTORY_LOSS"
 )
 
 func (u Usage) String() string {
@@ -108,7 +110,7 @@ func (u Usage) String() string {
 // UsageValidator is a validator for the "usage" field enum values. It is called by the builders before save.
 func UsageValidator(u Usage) error {
 	switch u {
-	case UsageSupplier, UsageInternal, UsageCustomer:
+	case UsageSupplier, UsageInternal, UsageCustomer, UsageInventoryLoss:
 		return nil
 	default:
 		return fmt.Errorf("stocklocation: invalid enum value for usage field: %q", u)

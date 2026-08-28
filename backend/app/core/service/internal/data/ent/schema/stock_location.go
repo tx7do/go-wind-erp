@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // StockLocation holds the schema definition for the StockLocation entity.
@@ -52,11 +53,12 @@ func (StockLocation) Fields() []ent.Field {
 			Nillable(),
 
 		field.Enum("usage").
-			Comment("位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的）").
+			Comment("位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的），INVENTORY_LOSS=盘点虚拟位置（盘盈源/盘亏目的）").
 			NamedValues(
 				"Supplier", "SUPPLIER",
 				"Internal", "INTERNAL",
 				"Customer", "CUSTOMER",
+				"InventoryLoss", "INVENTORY_LOSS",
 			).
 			Default("INTERNAL").
 			Optional().
@@ -72,7 +74,7 @@ func (StockLocation) Fields() []ent.Field {
 func (StockLocation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.Remark{},
 		mixin.TenantID[uint32]{},

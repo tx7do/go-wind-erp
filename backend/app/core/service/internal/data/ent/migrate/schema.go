@@ -2648,7 +2648,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "位置名称"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父位置ID（预留层级，初始不用）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "物化路径（预留层级，初始为 /{id}/）"},
-		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的）", Enums: []string{"SUPPLIER", "INTERNAL", "CUSTOMER"}, Default: "INTERNAL"},
+		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的），INVENTORY_LOSS=盘点虚拟位置（盘盈源/盘亏目的）", Enums: []string{"SUPPLIER", "INTERNAL", "CUSTOMER", "INVENTORY_LOSS"}, Default: "INTERNAL"},
 		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "归属仓库编码（仅 INTERNAL 位置有值）"},
 	}
 	// InvStockLocationsTable holds the schema information for the "inv_stock_locations" table.
@@ -2767,7 +2767,7 @@ var (
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "picking_number", Type: field.TypeString, Nullable: true, Comment: "拣货单号（服务端生成）"},
-		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库", Enums: []string{"INCOMING", "INTERNAL", "OUTGOING"}, Default: "INCOMING"},
+		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库，INVENTORY_ADJUSTMENT=盘点", Enums: []string{"INCOMING", "INTERNAL", "OUTGOING", "INVENTORY_ADJUSTMENT"}, Default: "INCOMING"},
 		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
 		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "purchase_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购单ID（仅入库）", Default: 0},

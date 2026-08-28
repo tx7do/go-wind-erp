@@ -243,7 +243,8 @@
   "stockPicking": {
     "pickingType": {
       "Incoming": "Incoming",
-      "Internal": "Internal"
+      "Internal": "Internal",
+      "InventoryAdjustment": "Adjustment"
     },
     "derivedState": {
       "Draft": "Draft",

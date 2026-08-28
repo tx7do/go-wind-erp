@@ -469,7 +469,25 @@
       "create": "Create Picking",
       "transfer": "Transfer",
       "confirm": "Confirm",
-      "validate": "Validate"
+      "validate": "Validate",
+      "adjustment": "Adjustment"
+    },
+    "adjustment": {
+      "title": "Inventory Adjustment",
+      "warehouse": "Warehouse",
+      "diff": "Difference",
+      "diffTip": "Positive = gain, negative = loss",
+      "diffNonZero": "Difference must not be 0",
+      "remark": "Remark"
+    },
+    "return": {
+      "salesTitle": "Sales Return",
+      "purchaseTitle": "Purchase Return",
+      "quantity": "Return Quantity",
+      "returnable": "Returnable",
+      "salesSuccess": "Sales return picking created; confirm and validate it in the picking list",
+      "purchaseSuccess": "Purchase return picking created; confirm and validate it in the picking list",
+      "failed": "Failed to create return picking"
     }
   },
   "approval": {

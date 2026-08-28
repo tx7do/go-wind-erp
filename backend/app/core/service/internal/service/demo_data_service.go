@@ -138,6 +138,11 @@ func (s *DemoDataService) seedDomain(ctx context.Context) error {
 		return fmt.Errorf("seed customer location: %w", err)
 	}
 
+	// 每租户一条 INVENTORY_LOSS 虚拟位置，盘点拣货单的盘盈源/盘亏目的。
+	if err := s.locationRepo.CreateInventoryLossLocation(tenantCtx); err != nil {
+		return fmt.Errorf("seed inventory loss location: %w", err)
+	}
+
 	for i := 0; i < demoWarehouseCount; i++ {
 		code := fmt.Sprintf("WH-%02d", i+1)
 		name := fmt.Sprintf("Demo Warehouse %d", i+1)

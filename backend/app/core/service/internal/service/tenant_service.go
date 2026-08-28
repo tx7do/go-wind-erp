@@ -349,6 +349,9 @@ func (s *TenantService) SelfRegisterTenant(ctx context.Context, req *identityV1.
 		if berr := s.locationRepo.CreateCustomerLocation(tenantCtx); berr != nil {
 			s.log.Errorf("self register: create customer location failed: %v", berr)
 		}
+		if berr := s.locationRepo.CreateInventoryLossLocation(tenantCtx); berr != nil {
+			s.log.Errorf("self register: create inventory loss location failed: %v", berr)
+		}
 		if _, berr := s.warehouseService.Create(tenantCtx, &inventoryV1.CreateWarehouseRequest{
 			Data: &inventoryV1.Warehouse{
 				Code:   trans.Ptr("MAIN"),

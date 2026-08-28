@@ -315,9 +315,30 @@ func (r *LocationRepo) GetUsageTx(
 				return inventoryV1.StockLocation_INTERNAL, nil
 		case stocklocation.UsageCustomer:
 				return inventoryV1.StockLocation_CUSTOMER, nil
+		case stocklocation.UsageInventoryLoss:
+				return inventoryV1.StockLocation_INVENTORY_LOSS, nil
 		default:
 				return inventoryV1.StockLocation_INTERNAL, nil
 		}
+}
+
+// GetInventoryLossLocationID 取租户的盘点虚拟位置ID。
+// 每租户仅一条 usage=INVENTORY_LOSS 的位置（盘盈的 source / 盘亏的 dest）。
+func (r *LocationRepo) GetInventoryLossLocationID(ctx context.Context) (uint32, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().StockLocation.Query().
+		Where(stocklocation.UsageEQ(stocklocation.UsageInventoryLoss))
+	if hasTenant {
+		q.Where(stocklocation.TenantIDEQ(tid))
+	}
+	loc, err := q.Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, inventoryV1.ErrorNotFound("inventory loss location not found for tenant")
+		}
+		return 0, inventoryV1.ErrorInternalServerError("query inventory loss location failed")
+	}
+	return loc.ID, nil
 }
 
 // GetWarehouseCodeTx 在事务内查位置的 warehouse_code（INTERNAL 位置的归属
@@ -406,6 +427,26 @@ func (r *LocationRepo) CreateCustomerLocation(ctx context.Context) error {
 	if err != nil {
 		r.log.Errorf("create customer location failed: %s", err.Error())
 		return inventoryV1.ErrorInternalServerError("create customer location failed")
+	}
+	return nil
+}
+
+// CreateInventoryLossLocation 为租户创建其 INVENTORY_LOSS 盘点虚拟位置
+// （租户初始化时调用）。每租户仅一条。镜像 CreateSupplierLocation。
+func (r *LocationRepo) CreateInventoryLossLocation(ctx context.Context) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	if !hasTenant {
+		return inventoryV1.ErrorBadRequest("tenant context required for inventory loss location creation")
+	}
+	usage := stocklocation.UsageInventoryLoss
+	builder := r.entClient.Client().StockLocation.Create().
+		SetUsage(usage).
+		SetName("inventory loss location").
+		SetTenantID(tid)
+	_, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("create inventory loss location failed: %s", err.Error())
+		return inventoryV1.ErrorInternalServerError("create inventory loss location failed")
 	}
 	return nil
 }

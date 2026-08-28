@@ -4330,6 +4330,501 @@ var _ interface {
 	ErrorName() string
 } = CreateStockPickingRequestValidationError{}
 
+// Validate checks the field values on SalesReturnItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SalesReturnItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SalesReturnItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SalesReturnItemMultiError, or nil if none found.
+func (m *SalesReturnItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SalesReturnItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SalesOrderItemId
+
+	// no validation rules for Quantity
+
+	if len(errors) > 0 {
+		return SalesReturnItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// SalesReturnItemMultiError is an error wrapping multiple validation errors
+// returned by SalesReturnItem.ValidateAll() if the designated constraints
+// aren't met.
+type SalesReturnItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SalesReturnItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SalesReturnItemMultiError) AllErrors() []error { return m }
+
+// SalesReturnItemValidationError is the validation error returned by
+// SalesReturnItem.Validate if the designated constraints aren't met.
+type SalesReturnItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SalesReturnItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SalesReturnItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SalesReturnItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SalesReturnItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SalesReturnItemValidationError) ErrorName() string { return "SalesReturnItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SalesReturnItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSalesReturnItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SalesReturnItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SalesReturnItemValidationError{}
+
+// Validate checks the field values on CreateSalesReturnRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateSalesReturnRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateSalesReturnRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateSalesReturnRequestMultiError, or nil if none found.
+func (m *CreateSalesReturnRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateSalesReturnRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SalesOrderId
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateSalesReturnRequestValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateSalesReturnRequestValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateSalesReturnRequestValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if len(errors) > 0 {
+		return CreateSalesReturnRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateSalesReturnRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateSalesReturnRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateSalesReturnRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateSalesReturnRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateSalesReturnRequestMultiError) AllErrors() []error { return m }
+
+// CreateSalesReturnRequestValidationError is the validation error returned by
+// CreateSalesReturnRequest.Validate if the designated constraints aren't met.
+type CreateSalesReturnRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateSalesReturnRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateSalesReturnRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateSalesReturnRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateSalesReturnRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateSalesReturnRequestValidationError) ErrorName() string {
+	return "CreateSalesReturnRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateSalesReturnRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateSalesReturnRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateSalesReturnRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateSalesReturnRequestValidationError{}
+
+// Validate checks the field values on PurchaseReturnItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PurchaseReturnItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PurchaseReturnItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PurchaseReturnItemMultiError, or nil if none found.
+func (m *PurchaseReturnItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PurchaseReturnItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PurchaseOrderItemId
+
+	// no validation rules for Quantity
+
+	if len(errors) > 0 {
+		return PurchaseReturnItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// PurchaseReturnItemMultiError is an error wrapping multiple validation errors
+// returned by PurchaseReturnItem.ValidateAll() if the designated constraints
+// aren't met.
+type PurchaseReturnItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PurchaseReturnItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PurchaseReturnItemMultiError) AllErrors() []error { return m }
+
+// PurchaseReturnItemValidationError is the validation error returned by
+// PurchaseReturnItem.Validate if the designated constraints aren't met.
+type PurchaseReturnItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PurchaseReturnItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PurchaseReturnItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PurchaseReturnItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PurchaseReturnItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PurchaseReturnItemValidationError) ErrorName() string {
+	return "PurchaseReturnItemValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PurchaseReturnItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPurchaseReturnItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PurchaseReturnItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PurchaseReturnItemValidationError{}
+
+// Validate checks the field values on CreatePurchaseReturnRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreatePurchaseReturnRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreatePurchaseReturnRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreatePurchaseReturnRequestMultiError, or nil if none found.
+func (m *CreatePurchaseReturnRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreatePurchaseReturnRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PurchaseOrderId
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreatePurchaseReturnRequestValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreatePurchaseReturnRequestValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreatePurchaseReturnRequestValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if len(errors) > 0 {
+		return CreatePurchaseReturnRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreatePurchaseReturnRequestMultiError is an error wrapping multiple
+// validation errors returned by CreatePurchaseReturnRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreatePurchaseReturnRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreatePurchaseReturnRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreatePurchaseReturnRequestMultiError) AllErrors() []error { return m }
+
+// CreatePurchaseReturnRequestValidationError is the validation error returned
+// by CreatePurchaseReturnRequest.Validate if the designated constraints
+// aren't met.
+type CreatePurchaseReturnRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreatePurchaseReturnRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreatePurchaseReturnRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreatePurchaseReturnRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreatePurchaseReturnRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreatePurchaseReturnRequestValidationError) ErrorName() string {
+	return "CreatePurchaseReturnRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreatePurchaseReturnRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreatePurchaseReturnRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreatePurchaseReturnRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreatePurchaseReturnRequestValidationError{}
+
 // Validate checks the field values on DeleteStockPickingRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

@@ -243,7 +243,8 @@
   "stockPicking": {
     "pickingType": {
       "Incoming": "入库",
-      "Internal": "内部"
+      "Internal": "内部",
+      "InventoryAdjustment": "盘点"
     },
     "derivedState": {
       "Draft": "草稿",

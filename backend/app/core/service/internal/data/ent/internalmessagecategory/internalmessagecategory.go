@@ -76,8 +76,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "go-wind-erp/app/core/service/internal/data/ent/runtime"
 var (
-	Hooks  [1]ent.Hook
-	Policy ent.Policy
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultIsEnabled holds the default value on creation for the "is_enabled" field.
 	DefaultIsEnabled bool
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // StockPicking holds the schema definition for the StockPicking entity.
@@ -40,13 +41,15 @@ func (StockPicking) Fields() []ent.Field {
 			Nillable(),
 
 		// picking_type：操作类别（Odoo picking_type.code，简化为枚举）。
-		// INCOMING=入库（SUPPLIER→INTERNAL），INTERNAL=调拨（INTERNAL→INTERNAL）。
+		// INCOMING=入库（SUPPLIER→INTERNAL），INTERNAL=调拨（INTERNAL→INTERNAL），
+		// INVENTORY_ADJUSTMENT=盘点（INVENTORY_LOSS↔INTERNAL，盘亏出/盘盈入）。
 		field.Enum("picking_type").
-			Comment("拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库").
+			Comment("拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库，INVENTORY_ADJUSTMENT=盘点").
 			NamedValues(
 				"Incoming", "INCOMING",
 				"Internal", "INTERNAL",
 				"Outgoing", "OUTGOING",
+				"InventoryAdjustment", "INVENTORY_ADJUSTMENT",
 			).
 			Default("INCOMING").
 			Optional().
@@ -82,7 +85,7 @@ func (StockPicking) Fields() []ent.Field {
 func (StockPicking) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.Remark{},
 		mixin.TenantID[uint32]{},

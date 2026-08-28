@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+	appmixin "go-wind-erp/pkg/entgo/mixin"
 )
 
 // InternalMessageCategory holds the schema definition for the InternalMessageCategory entity.
@@ -53,7 +54,7 @@ func (InternalMessageCategory) Fields() []ent.Field {
 func (InternalMessageCategory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId{},
-		mixin.TimeAt{},
+		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.OperatorID{},
 		mixin.IsEnabled{},
 		mixin.SortOrder{},

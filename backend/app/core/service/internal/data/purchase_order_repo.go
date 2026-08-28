@@ -586,6 +586,94 @@ func (r *PurchaseOrderRepo) ApplyReceiptTx(
 	return autoCompleted, nil
 }
 
+// ApplyReceiptReturnTx 采购退货负向回写：received_quantity -= qty。
+// 状态门放宽为 APPROVED|COMPLETED（已完结单允许退货）；原子守卫
+// received − qty ≥ 0 防超退；减后未收齐且单据 COMPLETED → 重开为 APPROVED。
+func (r *PurchaseOrderRepo) ApplyReceiptReturnTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	poItemID uint32,
+	qty int64,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	item, err := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.IDEQ(poItemID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return procurementV1.ErrorNotFound("purchase order item not found")
+		}
+		return procurementV1.ErrorInternalServerError("query purchase order item failed")
+	}
+
+	poID := *item.PoID
+
+	// 退货闸门：APPROVED（在途）或 COMPLETED（已完结可退）。
+	gateQuery := tx.PurchaseOrder.Query().
+		Where(purchaseorder.IDEQ(poID)).
+		Where(purchaseorder.StatusIn(purchaseorder.StatusApproved, purchaseorder.StatusCompleted))
+	if hasTenant {
+		gateQuery.Where(purchaseorder.TenantIDEQ(tid))
+	}
+	gateN, gerr := gateQuery.Count(ctx)
+	if gerr != nil {
+		r.log.Errorf("return status gate query failed: %s", gerr.Error())
+		return procurementV1.ErrorInternalServerError("return status gate query failed")
+	}
+	if gateN != 1 {
+		return procurementV1.ErrorConflict("purchase order is not returnable (must be approved or completed)")
+	}
+
+	builder := tx.PurchaseOrderItem.Update().
+		Where(purchaseorderitem.IDEQ(item.ID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s - %d >= 0",
+				s.C(purchaseorderitem.FieldReceivedQuantity), qty,
+			)))
+		}).
+		AddReceivedQuantity(-qty)
+	if hasTenant {
+		builder.Where(purchaseorderitem.TenantIDEQ(tid))
+	}
+
+	n, serr := builder.Save(ctx)
+	if serr != nil {
+		r.log.Errorf("apply receipt return tx failed: %s", serr.Error())
+		return procurementV1.ErrorInternalServerError("apply receipt return failed")
+	}
+	if n == 0 {
+		return procurementV1.ErrorConflict("return exceeds received quantity")
+	}
+
+	// 减后未收齐且单据已完结 → 重开为 APPROVED（允许继续收货）。
+	remaining, cerr := tx.PurchaseOrderItem.Query().
+		Where(purchaseorderitem.PoIDEQ(poID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s < %s",
+				s.C(purchaseorderitem.FieldReceivedQuantity), s.C(purchaseorderitem.FieldQuantity),
+			)))
+		}).
+		Count(ctx)
+	if cerr == nil && remaining > 0 {
+		reopenBuilder := tx.PurchaseOrder.Update().
+			Where(purchaseorder.IDEQ(poID)).
+			Where(purchaseorder.StatusEQ(purchaseorder.StatusCompleted)).
+			SetStatus(purchaseorder.StatusApproved).
+			SetUpdatedAt(time.Now())
+		if hasTenant {
+			reopenBuilder.Where(purchaseorder.TenantIDEQ(tid))
+		}
+		if _, terr := reopenBuilder.Save(ctx); terr != nil {
+			r.log.Warnf("reopen purchase order %d after return failed: %s", poID, terr.Error())
+		}
+	}
+
+	return nil
+}
+
 // Delete 删除采购单及其明细。
 func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.DeletePurchaseOrderRequest) error {
 	if req == nil {

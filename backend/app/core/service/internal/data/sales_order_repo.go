@@ -480,6 +480,94 @@ func (r *SalesOrderRepo) ApplyFulfillmentTx(
 	return autoCompleted, nil
 }
 
+// ApplyFulfillmentReturnTx 销售退货负向回写：fulfilled_quantity -= qty。
+// 状态门放宽为 APPROVED|COMPLETED（已完结单允许退货）；原子守卫
+// fulfilled − qty ≥ 0 防超退；减后未履约齐且单据 COMPLETED → 重开为 APPROVED。
+func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	soItemID uint32,
+	qty int64,
+) error {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	item, err := tx.SalesOrderItem.Query().
+		Where(salesorderitem.IDEQ(soItemID)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return salesV1.ErrorNotFound("sales order item not found")
+		}
+		return salesV1.ErrorInternalServerError("query sales order item failed")
+	}
+
+	soID := *item.SoID
+
+	// 退货闸门：APPROVED（在途）或 COMPLETED（已完结可退）。
+	gateQuery := tx.SalesOrder.Query().
+		Where(salesorder.IDEQ(soID)).
+		Where(salesorder.StatusIn(salesorder.StatusApproved, salesorder.StatusCompleted))
+	if hasTenant {
+		gateQuery.Where(salesorder.TenantIDEQ(tid))
+	}
+	gateN, gerr := gateQuery.Count(ctx)
+	if gerr != nil {
+		r.log.Errorf("return status gate query failed: %s", gerr.Error())
+		return salesV1.ErrorInternalServerError("return status gate query failed")
+	}
+	if gateN != 1 {
+		return salesV1.ErrorConflict("sales order is not returnable (must be approved or completed)")
+	}
+
+	builder := tx.SalesOrderItem.Update().
+		Where(salesorderitem.IDEQ(item.ID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s - %d >= 0",
+				s.C(salesorderitem.FieldFulfilledQuantity), qty,
+			)))
+		}).
+		AddFulfilledQuantity(-qty)
+	if hasTenant {
+		builder.Where(salesorderitem.TenantIDEQ(tid))
+	}
+
+	n, serr := builder.Save(ctx)
+	if serr != nil {
+		r.log.Errorf("apply fulfillment return tx failed: %s", serr.Error())
+		return salesV1.ErrorInternalServerError("apply fulfillment return failed")
+	}
+	if n == 0 {
+		return salesV1.ErrorConflict("return exceeds fulfilled quantity")
+	}
+
+	// 减后未履约齐且单据已完结 → 重开为 APPROVED（允许继续发货）。
+	remaining, cerr := tx.SalesOrderItem.Query().
+		Where(salesorderitem.SoIDEQ(soID)).
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s < %s",
+				s.C(salesorderitem.FieldFulfilledQuantity), s.C(salesorderitem.FieldQuantity),
+			)))
+		}).
+		Count(ctx)
+	if cerr == nil && remaining > 0 {
+		reopenBuilder := tx.SalesOrder.Update().
+			Where(salesorder.IDEQ(soID)).
+			Where(salesorder.StatusEQ(salesorder.StatusCompleted)).
+			SetStatus(salesorder.StatusApproved).
+			SetUpdatedAt(time.Now())
+		if hasTenant {
+			reopenBuilder.Where(salesorder.TenantIDEQ(tid))
+		}
+		if _, terr := reopenBuilder.Save(ctx); terr != nil {
+			r.log.Warnf("reopen sales order %d after return failed: %s", soID, terr.Error())
+		}
+	}
+
+	return nil
+}
+
 // RevenueByMonth 按月汇总 COMPLETED 销售单的 total_amount。SQL 端按
 // created_at（精确时间戳）分组并 SUM(total_amount)，Go 侧将时间戳格式化
 // 为 YYYY-MM 做月度分桶。GROUP BY created_at 不使用任何日期函数，

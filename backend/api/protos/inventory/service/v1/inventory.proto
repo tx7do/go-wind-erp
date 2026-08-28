@@ -84,8 +84,16 @@ service StockPickingService {
   // 查询拣货单详情（含 moves）
   rpc Get (GetStockPickingRequest) returns (StockPicking) {}
 
-  // 创建拣货单（含嵌套 moves；type=INTERNAL 调拨，客户端提供明细）
+  // 创建拣货单（含嵌套 moves；type=INTERNAL 调拨 / INVENTORY_ADJUSTMENT 盘点，客户端提供明细）
   rpc Create (CreateStockPickingRequest) returns (google.protobuf.Empty) {}
+
+  // 创建销售退货拣货单（INCOMING：CUSTOMER→仓库，moves 带 sales_order_item_id，
+  // Validate 时负向回写 fulfilled_quantity；退数≤已履约数由服务端校验）
+  rpc CreateSalesReturn (CreateSalesReturnRequest) returns (google.protobuf.Empty) {}
+
+  // 创建采购退货拣货单（OUTGOING：仓库→SUPPLIER，moves 带 purchase_order_item_id，
+  // Validate 时负向回写 received_quantity；退数≤已收数由服务端校验）
+  rpc CreatePurchaseReturn (CreatePurchaseReturnRequest) returns (google.protobuf.Empty) {}
 
   // 确认拣货单（DRAFT moves → CONFIRMED，借鉴 Odoo action_confirm）
   rpc Confirm (ConfirmStockPickingRequest) returns (google.protobuf.Empty) {}
@@ -175,6 +183,7 @@ message StockLocation {
     INTERNAL = 0; // 内部仓库位置（dest for incoming, src/dst for internal）
     SUPPLIER = 1; // 供应商位置（src for incoming）
     CUSTOMER = 2; // 客户位置（dest for outgoing）
+    INVENTORY_LOSS = 3; // 盘点虚拟位置（src for盘盈, dst for盘亏）
   }
 
   optional uint32 id = 1 [
@@ -293,9 +302,10 @@ message StockQuant {
 message StockPicking {
   // 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
   enum PickingType {
-    INCOMING = 0; // 入库（SUPPLIER→INTERNAL）
+    INCOMING = 0; // 入库（SUPPLIER→INTERNAL；销售退货亦为 INCOMING：CUSTOMER→INTERNAL）
     INTERNAL = 1; // 调拨（INTERNAL→INTERNAL）
-    OUTGOING = 2; // 出库（INTERNAL→CUSTOMER）
+    OUTGOING = 2; // 出库（INTERNAL→CUSTOMER；采购退货亦为 OUTGOING：INTERNAL→SUPPLIER）
+    INVENTORY_ADJUSTMENT = 3; // 盘点（INVENTORY_LOSS↔INTERNAL：盘盈入/盘亏出）
   }
 
   // 派生态（从子 moves 聚合，不存储——借鉴 Odoo _compute_state）
@@ -739,6 +749,62 @@ message GetStockPickingRequest {
 
 message CreateStockPickingRequest {
   StockPicking data = 1;
+}
+
+// 销售退货明细项
+message SalesReturnItem {
+  uint32 sales_order_item_id = 1 [
+    json_name = "salesOrderItemId",
+    (gnostic.openapi.v3.property) = {description: "销售单明细ID"}
+  ]; // 销售单明细ID
+
+  int64 quantity = 2 [
+    (gnostic.openapi.v3.property) = {description: "退货数量（正数，≤已履约数）"}
+  ]; // 退货数量（正数，≤已履约数）
+}
+
+// 创建销售退货 - 请求
+message CreateSalesReturnRequest {
+  uint32 sales_order_id = 1 [
+    json_name = "salesOrderId",
+    (gnostic.openapi.v3.property) = {description: "销售单ID（仓库与客户从中推导）"}
+  ]; // 销售单ID（仓库与客户从中推导）
+
+  repeated SalesReturnItem items = 2 [
+    (gnostic.openapi.v3.property) = {description: "退货明细"}
+  ]; // 退货明细
+
+  optional string remark = 3 [
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+}
+
+// 采购退货明细项
+message PurchaseReturnItem {
+  uint32 purchase_order_item_id = 1 [
+    json_name = "purchaseOrderItemId",
+    (gnostic.openapi.v3.property) = {description: "采购单明细ID"}
+  ]; // 采购单明细ID
+
+  int64 quantity = 2 [
+    (gnostic.openapi.v3.property) = {description: "退货数量（正数，≤已收数）"}
+  ]; // 退货数量（正数，≤已收数）
+}
+
+// 创建采购退货 - 请求
+message CreatePurchaseReturnRequest {
+  uint32 purchase_order_id = 1 [
+    json_name = "purchaseOrderId",
+    (gnostic.openapi.v3.property) = {description: "采购单ID（仓库与供应商从中推导）"}
+  ]; // 采购单ID（仓库与供应商从中推导）
+
+  repeated PurchaseReturnItem items = 2 [
+    (gnostic.openapi.v3.property) = {description: "退货明细"}
+  ]; // 退货明细
+
+  optional string remark = 3 [
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
 }
 
 message DeleteStockPickingRequest {
