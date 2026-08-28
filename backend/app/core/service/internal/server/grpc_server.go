@@ -11,9 +11,11 @@ import (
 	"go-wind-erp/app/core/service/internal/service"
 
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
+	adminV1 "go-wind-erp/api/gen/go/admin/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 	productV1 "go-wind-erp/api/gen/go/product/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 	auditV1 "go-wind-erp/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
@@ -56,8 +58,14 @@ func NewGrpcServer(
 	productService *service.ProductService,
 	purchaseOrderService *service.PurchaseOrderService,
 
+	customerService *service.CustomerService,
+	salesOrderService *service.SalesOrderService,
+
 	payableService *service.PayableService,
 	paymentService *service.PaymentService,
+	receivableService *service.ReceivableService,
+	receiptService *service.ReceiptService,
+	financeReportService *service.FinanceReportService,
 
 	fileService *service.FileService,
 
@@ -113,8 +121,14 @@ func NewGrpcServer(
 	productV1.RegisterProductServiceServer(srv, productService)
 	procurementV1.RegisterPurchaseOrderServiceServer(srv, purchaseOrderService)
 
+	salesV1.RegisterCustomerServiceServer(srv, customerService)
+	salesV1.RegisterSalesOrderServiceServer(srv, salesOrderService)
+
 	financeV1.RegisterPayableServiceServer(srv, payableService)
 	financeV1.RegisterPaymentServiceServer(srv, paymentService)
+	financeV1.RegisterReceivableServiceServer(srv, receivableService)
+	financeV1.RegisterReceiptServiceServer(srv, receiptService)
+	adminV1.RegisterFinanceReportServiceServer(srv, financeReportService)
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)

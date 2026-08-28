@@ -467,7 +467,9 @@
     },
     "button": {
       "create": "Create Picking",
-      "transfer": "Transfer"
+      "transfer": "Transfer",
+      "confirm": "Confirm",
+      "validate": "Validate"
     }
   },
   "approval": {
@@ -501,6 +503,7 @@
     "moduleName": "Purchase Order",
     "poNumber": "PO Number",
     "supplierCode": "Supplier",
+    "warehouseCode": "Receiving Warehouse",
     "status": "Status",
     "totalAmount": "Total",
     "items": "Items",
@@ -659,13 +662,13 @@
   },
   "customer": {
     "button": {
-      "create": "Create Supplier"
+      "create": "Create Customer"
     },
-    "code": "Supplier Code",
+    "code": "Customer Code",
     "contact": "Contact",
     "enable": "Enabled",
     "moduleName": "Customer",
-    "name": "Supplier Name",
+    "name": "Customer Name",
     "phone": "Phone"
   }
 }

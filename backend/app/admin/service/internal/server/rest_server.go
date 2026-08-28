@@ -115,8 +115,14 @@ func NewRestServer(
 	productService *service.ProductService,
 	purchaseOrderService *service.PurchaseOrderService,
 
+	customerService *service.CustomerService,
+	salesOrderService *service.SalesOrderService,
+
 	payableService *service.PayableService,
 	paymentService *service.PaymentService,
+	receivableService *service.ReceivableService,
+	receiptService *service.ReceiptService,
+	financeReportService *service.FinanceReportService,
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
@@ -174,8 +180,14 @@ func NewRestServer(
 	adminV1.RegisterProductServiceHTTPServer(srv, productService)
 	adminV1.RegisterPurchaseOrderServiceHTTPServer(srv, purchaseOrderService)
 
+	adminV1.RegisterCustomerServiceHTTPServer(srv, customerService)
+	adminV1.RegisterSalesOrderServiceHTTPServer(srv, salesOrderService)
+
 	adminV1.RegisterPayableServiceHTTPServer(srv, payableService)
 	adminV1.RegisterPaymentServiceHTTPServer(srv, paymentService)
+	adminV1.RegisterReceivableServiceHTTPServer(srv, receivableService)
+	adminV1.RegisterReceiptServiceHTTPServer(srv, receiptService)
+	adminV1.RegisterFinanceReportServiceHTTPServer(srv, financeReportService)
 
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)

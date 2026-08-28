@@ -496,7 +496,9 @@
     },
     "button": {
       "create": "创建拣货单",
-      "transfer": "调拨"
+      "transfer": "调拨",
+      "confirm": "确认",
+      "validate": "执行"
     }
   },
   "approval": {
@@ -530,6 +532,7 @@
     "moduleName": "采购单",
     "poNumber": "采购单号",
     "supplierCode": "供应商",
+    "warehouseCode": "收货仓库",
     "status": "状态",
     "totalAmount": "总额（元）",
     "items": "采购明细",
@@ -688,13 +691,13 @@
   },
   "customer": {
     "button": {
-      "create": "创建供应商"
+      "create": "创建客户"
     },
-    "code": "供应商编码",
+    "code": "客户编码",
     "contact": "联系人",
     "enable": "启用状态",
     "moduleName": "客户",
-    "name": "供应商名称",
+    "name": "客户名称",
     "phone": "联系电话"
   }
 }

@@ -18,10 +18,12 @@ import (
 	"github.com/tx7do/go-utils/captcha"
 
 	auditV1 "go-wind-erp/api/gen/go/audit/service/v1"
+	adminV1 "go-wind-erp/api/gen/go/admin/service/v1"
 	approvalV1 "go-wind-erp/api/gen/go/approval/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 	productV1 "go-wind-erp/api/gen/go/product/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
@@ -407,6 +409,51 @@ func NewPaymentServiceClient(ctx *bootstrap.Context, r registry.Discovery) finan
 	}
 
 	return financeV1.NewPaymentServiceClient(cli)
+}
+
+func NewReceivableServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.ReceivableServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return financeV1.NewReceivableServiceClient(cli)
+}
+
+func NewReceiptServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.ReceiptServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return financeV1.NewReceiptServiceClient(cli)
+}
+
+func NewFinanceReportServiceClient(ctx *bootstrap.Context, r registry.Discovery) adminV1.FinanceReportServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return adminV1.NewFinanceReportServiceClient(cli)
+}
+
+func NewCustomerServiceClient(ctx *bootstrap.Context, r registry.Discovery) salesV1.CustomerServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return salesV1.NewCustomerServiceClient(cli)
+}
+
+func NewSalesOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) salesV1.SalesOrderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return salesV1.NewSalesOrderServiceClient(cli)
 }
 
 

@@ -25,6 +25,7 @@ import (
 
 	"go-wind-erp/pkg/constants"
 	"go-wind-erp/pkg/utils"
+	appViewer "go-wind-erp/pkg/entgo/viewer"
 )
 
 type PermissionRepo struct {
@@ -201,7 +202,10 @@ func (r *PermissionRepo) List(ctx context.Context, req *paginationV1.PagingReque
 }
 
 // GetPermissionCodesByIDs 通过权限ID列表获取权限代码列表
+// 权限定义是平台级全局目录（tenant_id=0），租户上下文查询必须切换到系统视图，
+// 否则 TenantPrivacy 会注入 tenant_id 过滤导致查不到任何权限码。
 func (r *PermissionRepo) GetPermissionCodesByIDs(ctx context.Context, ids []uint32) ([]string, error) {
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	q := r.entClient.Client().Permission.Query().
 		Where(
 			permission.IDIn(ids...),
@@ -218,7 +222,9 @@ func (r *PermissionRepo) GetPermissionCodesByIDs(ctx context.Context, ids []uint
 }
 
 // GetPermissionIDsByCodes 通过权限代码列表获取权限ID列表
+// 权限定义是平台级全局目录，需以系统视图查询（见 GetPermissionCodesByIDs 注释）。
 func (r *PermissionRepo) GetPermissionIDsByCodes(ctx context.Context, codes []string) ([]uint32, error) {
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	q := r.entClient.Client().Permission.Query().
 		Where(
 			permission.CodeIn(codes...),
@@ -641,7 +647,9 @@ func (r *PermissionRepo) TruncateBizPermissions(ctx context.Context) error {
 }
 
 // ListPermissionIdsByCodes 通过权限代码列表获取权限ID列表
+// 权限定义是平台级全局目录，需以系统视图查询（见 GetPermissionCodesByIDs 注释）。
 func (r *PermissionRepo) ListPermissionIdsByCodes(ctx context.Context, codes []string) ([]uint32, error) {
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	q := r.entClient.Client().Permission.Query().
 		Where(
 			permission.CodeIn(codes...),
@@ -662,7 +670,9 @@ func (r *PermissionRepo) ListPermissionIdsByCodes(ctx context.Context, codes []s
 }
 
 // ListPermissionCodesByIds 通过权限ID列表获取权限代码列表
+// 权限定义是平台级全局目录，需以系统视图查询（见 GetPermissionCodesByIDs 注释）。
 func (r *PermissionRepo) ListPermissionCodesByIds(ctx context.Context, ids []uint32) ([]string, error) {
+	ctx = appViewer.NewSystemViewerContext(ctx)
 	q := r.entClient.Client().Permission.Query().
 		Where(
 			permission.IDIn(ids...),

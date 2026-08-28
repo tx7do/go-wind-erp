@@ -13,6 +13,7 @@ import {
   apiClient,
   centsToYuan,
   fetchListSuppliers,
+  fetchListWarehouses,
   purchaseOrderStatusToName,
 } from '#/api';
 
@@ -108,6 +109,37 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
 
     {
+      component: 'ApiSelect',
+      fieldName: 'warehouseCode',
+      label: $t('page.purchaseOrder.warehouseCode'),
+      rules: 'required',
+      componentProps: {
+        allowClear: true,
+        showSearch: true,
+        placeholder: $t('ui.placeholder.select'),
+        api: async () => {
+          const result = await fetchListWarehouses(
+            // biome-ignore lint/style/noNonNullAssertion: 仓库下拉不分页
+            new (await import('#/transport/rest')).PaginationQuery({
+              paging: { page: 1, pageSize: 500 },
+            }),
+          );
+          return result?.items ?? [];
+        },
+        afterFetch: (
+          warehouses: {
+            code?: string;
+            enable?: boolean;
+            name?: string;
+          }[],
+        ) =>
+          warehouses
+            .filter((w) => w.enable)
+            .map((w) => ({ label: `${w.code} — ${w.name}`, value: w.code })),
+      },
+    },
+
+    {
       component: 'Textarea',
       fieldName: 'remark',
       label: $t('ui.table.remark'),
@@ -159,6 +191,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
         ? apiClient.purchaseOrderService.Create({
             data: {
               supplierCode: values.supplierCode,
+              warehouseCode: values.warehouseCode,
               remark: values.remark,
               items: payloadItems,
             },
@@ -167,10 +200,11 @@ const [Drawer, drawerApi] = useVbenDrawer({
             id: data.value.row.id,
             data: {
               supplierCode: values.supplierCode,
+              warehouseCode: values.warehouseCode,
               remark: values.remark,
               items: payloadItems,
             },
-            updateMask: 'supplierCode,remark,items',
+            updateMask: 'supplierCode,warehouseCode,remark,items',
           }));
 
       notification.success({
@@ -201,6 +235,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
       baseFormApi.setValues({
         supplierCode: data.value?.row?.supplierCode,
+        warehouseCode: data.value?.row?.warehouseCode,
         remark: data.value?.row?.remark,
       });
 

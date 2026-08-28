@@ -193,6 +193,40 @@ async function handleDelete(row: any) {
     });
   }
 }
+
+// 拣货执行动作：DRAFT→Confirm（锁定计划），CONFIRMED→Validate（执行回写库存）。
+// 服务端是权威守卫，前端按钮按当前派生态显隐。
+async function handleConfirmPicking(row: any) {
+  try {
+    await apiClient.stockPickingService.Confirm({ id: row.id });
+
+    notification.success({
+      message: $t('ui.notification.operation_success'),
+    });
+
+    await gridApi.reload();
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  }
+}
+
+async function handleValidatePicking(row: any) {
+  try {
+    await apiClient.stockPickingService.Validate({ id: row.id });
+
+    notification.success({
+      message: $t('ui.notification.operation_success'),
+    });
+
+    await gridApi.reload();
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  }
+}
 </script>
 
 <template>
@@ -218,6 +252,24 @@ async function handleDelete(row: any) {
         </a-tag>
       </template>
       <template #action="{ row }">
+        <a-button
+          v-if="row.derivedState === 'DRAFT'"
+          class="mr-1"
+          size="small"
+          type="link"
+          @click="handleConfirmPicking(row)"
+        >
+          {{ $t('page.stockPicking.button.confirm') }}
+        </a-button>
+        <a-button
+          v-else-if="row.derivedState === 'CONFIRMED'"
+          class="mr-1"
+          size="small"
+          type="link"
+          @click="handleValidatePicking(row)"
+        >
+          {{ $t('page.stockPicking.button.validate') }}
+        </a-button>
         <a-popconfirm
           :cancel-text="$t('ui.button.cancel')"
           :ok-text="$t('ui.button.ok')"

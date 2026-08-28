@@ -56,6 +56,49 @@ VALUES
 SELECT setval('sys_user_credentials_id_seq', (SELECT MAX(id) FROM sys_user_credentials));
 
 -- ----------------------------
+-- 插入租户管理员角色（从模板克隆到租户，对齐 CreateTenantWithAdminUser 流程）
+--
+-- 模板角色（code='template:tenant:manager'，tenant_id=0）由服务启动时的系统初始化创建。
+-- ent privacy 租户过滤要求权限记录必须带租户维度：租户管理员必须持有克隆出的
+-- 租户角色（tenant_id=1）及其权限记录，直接绑定模板角色会因 tenant_id 不匹配
+-- 查不到任何权限码（accessCodes 为空 → 前端路由全部被过滤 → 无菜单）。
+-- 角色按 code 查找引用，权限按 code 关联，不依赖系统初始化的自增 ID。
+-- ----------------------------
+INSERT INTO public.sys_roles (tenant_id, name, code, type, is_protected, sort_order, status, description, created_at)
+SELECT 1, '租户管理员', 'tenant:manager', 'TENANT', true, 2, 'ON',
+       '租户管理员角色，拥有租户内所有功能的操作权限', now()
+WHERE NOT EXISTS (SELECT 1 FROM public.sys_roles WHERE tenant_id = 1 AND code = 'tenant:manager');
+SELECT setval('sys_roles_id_seq', (SELECT MAX(id) FROM sys_roles));
+
+INSERT INTO public.sys_role_metadata (tenant_id, role_id, is_template, template_version, sync_policy, scope, custom_overrides, created_at)
+SELECT 1, r.id, false, 1, 'AUTO', 'TENANT', '{}'::jsonb, now()
+FROM public.sys_roles r
+WHERE r.tenant_id = 1 AND r.code = 'tenant:manager'
+  AND NOT EXISTS (SELECT 1 FROM public.sys_role_metadata m WHERE m.role_id = r.id);
+SELECT setval('sys_role_metadata_id_seq', (SELECT MAX(id) FROM sys_role_metadata));
+
+INSERT INTO public.sys_role_permissions (tenant_id, role_id, permission_id, effect, priority, status, created_at)
+SELECT 1, r.id, p.id, 'ALLOW', 0, 'ON', now()
+FROM public.sys_roles r
+JOIN public.sys_permissions p ON p.code IN ('sys:access_backend', 'sys:tenant_manager')
+WHERE r.tenant_id = 1 AND r.code = 'tenant:manager'
+  AND NOT EXISTS (
+      SELECT 1 FROM public.sys_role_permissions rp
+      WHERE rp.role_id = r.id AND rp.permission_id = p.id
+  );
+SELECT setval('sys_role_permissions_id_seq', (SELECT MAX(id) FROM sys_role_permissions));
+
+INSERT INTO public.sys_user_roles (tenant_id, user_id, role_id, is_primary, status, assigned_at, created_at)
+SELECT 1, 2, r.id, true, 'ACTIVE', now(), now()
+FROM public.sys_roles r
+WHERE r.tenant_id = 1 AND r.code = 'tenant:manager'
+  AND NOT EXISTS (
+      SELECT 1 FROM public.sys_user_roles ur
+      WHERE ur.user_id = 2 AND ur.role_id = r.id
+  );
+SELECT setval('sys_user_roles_id_seq', (SELECT MAX(id) FROM sys_user_roles));
+
+-- ----------------------------
 -- 插入 sys_org_units 组织架构单元
 -- ----------------------------
 INSERT INTO public.sys_org_units (id, tenant_id, parent_id, type, name, code, description, path, sort_order, leader_id, status, created_at)
@@ -290,15 +333,16 @@ INSERT INTO inv_warehouses (id, created_at, updated_at, deleted_at, created_by, 
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_warehouses','id'), COALESCE((SELECT MAX(id) FROM inv_warehouses),1), true);
 -- ----------------------------
--- inv_stock_locations — 库位（INTERNAL 仓库内 / SUPPLIER 入库源）
+-- inv_stock_locations — 库位（INTERNAL 仓库内 / SUPPLIER|CUSTOMER 租户级虚拟位置）
+-- 注意：服务层 GetLocationID/GetSupplierLocationID/GetCustomerLocationID 均以
+-- Only() 取唯一行（Odoo 式双轨库存边界）：每仓库仅一条 INTERNAL 接收位置
+-- （仓库创建时自动生成），SUPPLIER/CUSTOMER 每租户各仅一条，不能多建。
 -- ----------------------------
 INSERT INTO inv_stock_locations (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, name, parent_id, path, usage, warehouse_code) VALUES
     (1, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-收货暂存区', NULL, '/1/', 'INTERNAL', 'WH-BJ'),
     (2, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-收货暂存区', NULL, '/2/', 'INTERNAL', 'WH-SH'),
-    (3, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '北京中心仓-存储区A', NULL, '/3/', 'INTERNAL', 'WH-BJ'),
-    (4, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '上海区域仓-存储区A', NULL, '/4/', 'INTERNAL', 'WH-SH'),
-    (5, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-001', NULL, '/5/', 'SUPPLIER', NULL),
-    (6, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, '供应商发货点-SUP-002', NULL, '/6/', 'SUPPLIER', NULL)
+    (3, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'supplier location', NULL, '/3/', 'SUPPLIER', NULL),
+    (4, now(), NULL, NULL, NULL, NULL, NULL, NULL, 1, 'customer location', NULL, '/4/', 'CUSTOMER', NULL)
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_stock_locations','id'), COALESCE((SELECT MAX(id) FROM inv_stock_locations),1), true);
 -- ----------------------------
@@ -306,31 +350,31 @@ SELECT setval(pg_get_serial_sequence('public.inv_stock_locations','id'), COALESC
 -- ----------------------------
 INSERT INTO inv_stock_quants (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, location_id, product_code, quantity) VALUES
     (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 1000),
-    (2, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 4, 'SKU-A003', 50),
-    (3, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 3, 'SKU-A002', 200)
+    (2, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 2, 'SKU-A003', 50),
+    (3, now() - interval '30 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A002', 200)
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_stock_quants','id'), COALESCE((SELECT MAX(id) FROM inv_stock_quants),1), true);
 -- ----------------------------
 -- inv_stock_pickings — 拣货单（INCOMING 入库 / INTERNAL 调拨）
 -- ----------------------------
 INSERT INTO inv_stock_pickings (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_number, picking_type, source_location_id, destination_location_id, purchase_order_id, partner_code) VALUES
-    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-IN-2026-0001', 'INCOMING', 5, 1, 1, 'SUP-001'),
-    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-TR-2026-0002', 'INTERNAL', 1, 3, 0, NULL)
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-IN-2026-0001', 'INCOMING', 3, 1, 1, 'SUP-001'),
+    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 'PK-TR-2026-0002', 'INTERNAL', 1, 2, 0, NULL)
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_stock_pickings','id'), COALESCE((SELECT MAX(id) FROM inv_stock_pickings),1), true);
 -- ----------------------------
 -- inv_stock_moves — 库存移动计划（DONE/DRAFT 等多状态）
 -- ----------------------------
 INSERT INTO inv_stock_moves (id, created_at, updated_at, deleted_at, created_by, updated_by, deleted_by, remark, tenant_id, picking_id, product_code, source_location_id, destination_location_id, planned_quantity, state, purchase_order_item_id) VALUES
-    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 5, 1, 1000, 'DONE', 1),
-    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 2, 'SKU-A001', 1, 3, 1000, 'DRAFT', 0)
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 'SKU-A001', 3, 1, 1000, 'DONE', 1),
+    (2, now() - interval '6 days', NULL, NULL, NULL, NULL, NULL, NULL, 1, 2, 'SKU-A001', 1, 2, 1000, 'DRAFT', 0)
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_stock_moves','id'), COALESCE((SELECT MAX(id) FROM inv_stock_moves),1), true);
 -- ----------------------------
 -- inv_stock_move_lines — 库存移动执行记录（仅 DONE 移动有）
 -- ----------------------------
 INSERT INTO inv_stock_move_lines (id, created_at, created_by, updated_by, deleted_by, remark, tenant_id, move_id, picking_id, product_code, source_location_id, destination_location_id, executed_quantity) VALUES
-    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, 1, 1, 1, 'SKU-A001', 5, 1, 1000)
+    (1, now() - interval '9 days', NULL, NULL, NULL, NULL, 1, 1, 1, 'SKU-A001', 3, 1, 1000)
 ;
 SELECT setval(pg_get_serial_sequence('public.inv_stock_move_lines','id'), COALESCE((SELECT MAX(id) FROM inv_stock_move_lines),1), true);
 -- ----------------------------

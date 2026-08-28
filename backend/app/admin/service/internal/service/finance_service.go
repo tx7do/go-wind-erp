@@ -118,3 +118,131 @@ func (s *PaymentService) Create(ctx context.Context, req *financeV1.CreatePaymen
 	_, err = s.paymentServiceClient.Create(ctx, req)
 	return &emptypb.Empty{}, err
 }
+
+// ReceivableService 应收单管理（admin BFF facade）
+type ReceivableService struct {
+	adminV1.ReceivableServiceHTTPServer
+
+	log *log.Helper
+
+	receivableServiceClient financeV1.ReceivableServiceClient
+}
+
+func NewReceivableService(
+	ctx *bootstrap.Context,
+	receivableServiceClient financeV1.ReceivableServiceClient,
+) *ReceivableService {
+	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "receivable/service/admin-service"))
+	return &ReceivableService{
+		log:                     l,
+		receivableServiceClient: receivableServiceClient,
+	}
+}
+
+func (s *ReceivableService) List(ctx context.Context, req *paginationV1.PagingRequest) (*financeV1.ListReceivableResponse, error) {
+	return s.receivableServiceClient.List(ctx, req)
+}
+
+func (s *ReceivableService) Get(ctx context.Context, req *financeV1.GetReceivableRequest) (*financeV1.Receivable, error) {
+	return s.receivableServiceClient.Get(ctx, req)
+}
+
+// AgingReport 应收账龄报表（委派 core）。
+func (s *ReceivableService) AgingReport(ctx context.Context, req *emptypb.Empty) (*financeV1.AgingReportResponse, error) {
+	return s.receivableServiceClient.AgingReport(ctx, req)
+}
+
+func (s *ReceivableService) Create(ctx context.Context, req *financeV1.CreateReceivableRequest) (*emptypb.Empty, error) {
+	if req == nil || req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.CreatedBy = trans.Ptr(operator.UserId)
+	req.Data.Id = nil
+
+	_, err = s.receivableServiceClient.Create(ctx, req)
+	return &emptypb.Empty{}, err
+}
+
+func (s *ReceivableService) Delete(ctx context.Context, req *financeV1.DeleteReceivableRequest) (*emptypb.Empty, error) {
+	return s.receivableServiceClient.Delete(ctx, req)
+}
+
+func (s *ReceivableService) Cancel(ctx context.Context, req *financeV1.CancelReceivableRequest) (*emptypb.Empty, error) {
+	return s.receivableServiceClient.Cancel(ctx, req)
+}
+
+// ReceiptService 收款管理（admin BFF facade，append-only）
+type ReceiptService struct {
+	adminV1.ReceiptServiceHTTPServer
+
+	log *log.Helper
+
+	receiptServiceClient financeV1.ReceiptServiceClient
+}
+
+func NewReceiptService(
+	ctx *bootstrap.Context,
+	receiptServiceClient financeV1.ReceiptServiceClient,
+) *ReceiptService {
+	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "receipt/service/admin-service"))
+	return &ReceiptService{
+		log:                  l,
+		receiptServiceClient: receiptServiceClient,
+	}
+}
+
+func (s *ReceiptService) List(ctx context.Context, req *paginationV1.PagingRequest) (*financeV1.ListReceiptResponse, error) {
+	return s.receiptServiceClient.List(ctx, req)
+}
+
+func (s *ReceiptService) Get(ctx context.Context, req *financeV1.GetReceiptRequest) (*financeV1.Receipt, error) {
+	return s.receiptServiceClient.Get(ctx, req)
+}
+
+func (s *ReceiptService) Create(ctx context.Context, req *financeV1.CreateReceiptRequest) (*emptypb.Empty, error) {
+	if req == nil || req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.CreatedBy = trans.Ptr(operator.UserId)
+	req.Data.Id = nil
+
+	_, err = s.receiptServiceClient.Create(ctx, req)
+	return &emptypb.Empty{}, err
+}
+
+// FinanceReportService 财务报表（admin BFF facade）
+type FinanceReportService struct {
+	adminV1.FinanceReportServiceHTTPServer
+
+	log *log.Helper
+
+	financeReportServiceClient adminV1.FinanceReportServiceClient
+}
+
+func NewFinanceReportService(
+	ctx *bootstrap.Context,
+	financeReportServiceClient adminV1.FinanceReportServiceClient,
+) *FinanceReportService {
+	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "finance_report/service/admin-service"))
+	return &FinanceReportService{
+		log:                       l,
+		financeReportServiceClient: financeReportServiceClient,
+	}
+}
+
+// ProfitReport 利润月度报表：收入（已完成销售单）− COGS（出库冻结成本）。
+func (s *FinanceReportService) ProfitReport(ctx context.Context, req *emptypb.Empty) (*financeV1.ProfitReportResponse, error) {
+	return s.financeReportServiceClient.ProfitReport(ctx, req)
+}
