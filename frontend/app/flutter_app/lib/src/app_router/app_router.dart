@@ -31,6 +31,7 @@ import 'package:go_wind_erp/src/features/sales/domain/sales_repository.dart'
 import 'package:go_wind_erp/src/features/sales/presentation/sales_cubit.dart';
 import 'package:go_wind_erp/src/features/sales/presentation/sales_page.dart';
 import 'package:go_wind_erp/src/features/sales/presentation/sales_order_detail_page.dart';
+import 'package:go_wind_erp/src/features/procurement/presentation/purchase_order_detail_page.dart';
 
 /// 路由构造。
 ///
@@ -125,6 +126,21 @@ GoRouter createAppRouter() {
                     },
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                name: RouteNames.poDetail,
+                path: '${AppRoutePath.poDetailPrefix}:id',
+                builder: (context, state) {
+                  final id = int.tryParse(
+                        state.pathParameters['id'] ?? '',
+                      ) ??
+                      0;
+                  return PurchaseOrderDetailPage(orderId: id);
+                },
               ),
             ],
           ),

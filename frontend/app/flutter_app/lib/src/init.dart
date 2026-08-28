@@ -38,6 +38,10 @@ import 'package:go_wind_erp/src/features/sales/data/sales_repository_impl.dart'
     show createSalesRepositoryImpl;
 import 'package:go_wind_erp/src/features/sales/domain/sales_repository.dart'
     show SalesRepository;
+import 'package:go_wind_erp/src/features/procurement/data/procurement_repository_impl.dart'
+    show createProcurementRepositoryImpl;
+import 'package:go_wind_erp/src/features/procurement/domain/procurement_repository.dart'
+    show ProcurementRepository;
 import 'package:get_it/get_it.dart' show GetIt;
 
 import 'init_thirdparty_plugins.dart';
@@ -82,6 +86,9 @@ void _initTransport() {
   );
   getIt.registerLazySingleton<SalesRepository>(
     () => createSalesRepositoryImpl(),
+  );
+  getIt.registerLazySingleton<ProcurementRepository>(
+    () => createProcurementRepositoryImpl(),
   );
   getIt.registerLazySingleton<ApprovalRepository>(
     () => createApprovalRepositoryImpl(),

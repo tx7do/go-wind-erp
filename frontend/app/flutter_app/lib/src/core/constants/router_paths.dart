@@ -8,4 +8,5 @@ class AppRoutePath {
   static const wms = '/wms';
   static const sales = '/sales';
   static const salesDetailPrefix = '/sales/detail/';
+  static const poDetailPrefix = '/procurement/detail/';
 }

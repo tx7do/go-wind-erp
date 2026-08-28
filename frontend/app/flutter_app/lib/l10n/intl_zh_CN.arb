@@ -117,5 +117,8 @@
   "stocktakeZeroDiff": "差异数量不能为 0",
   "stocktakeSuccess": "盘点已生效",
   "stocktakeFailed": "盘点失败",
-  "skuLabel": "SKU"
+  "skuLabel": "SKU",
+  "poDetailTitle": "采购单",
+  "poSupplier": "供应商",
+  "poReceived": "已收"
 }

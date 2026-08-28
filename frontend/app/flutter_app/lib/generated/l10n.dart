@@ -788,6 +788,21 @@ class S {
   String get skuLabel {
     return Intl.message('SKU', name: 'skuLabel', desc: '', args: []);
   }
+
+  /// `采购单`
+  String get poDetailTitle {
+    return Intl.message('采购单', name: 'poDetailTitle', desc: '', args: []);
+  }
+
+  /// `供应商`
+  String get poSupplier {
+    return Intl.message('供应商', name: 'poSupplier', desc: '', args: []);
+  }
+
+  /// `已收`
+  String get poReceived {
+    return Intl.message('已收', name: 'poReceived', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

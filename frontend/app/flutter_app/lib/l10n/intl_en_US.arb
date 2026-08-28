@@ -117,5 +117,8 @@
   "stocktakeZeroDiff": "Difference must not be 0",
   "stocktakeSuccess": "Stocktake applied",
   "stocktakeFailed": "Stocktake failed",
-  "skuLabel": "SKU"
+  "skuLabel": "SKU",
+  "poDetailTitle": "Purchase Order",
+  "poSupplier": "Supplier",
+  "poReceived": "Received"
 }

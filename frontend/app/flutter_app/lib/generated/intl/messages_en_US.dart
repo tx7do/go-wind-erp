@@ -110,6 +110,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "pickingTypeInternal": MessageLookupByLibrary.simpleMessage(
       "Internal Transfer",
     ),
+    "poDetailTitle": MessageLookupByLibrary.simpleMessage("Purchase Order"),
+    "poReceived": MessageLookupByLibrary.simpleMessage("Received"),
+    "poSupplier": MessageLookupByLibrary.simpleMessage("Supplier"),
     "quantityInvalid": MessageLookupByLibrary.simpleMessage(
       "Enter a positive whole number",
     ),

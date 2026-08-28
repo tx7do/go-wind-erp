@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:go_wind_erp/generated/l10n.dart';
+import 'package:go_wind_erp/src/core/constants/router_paths.dart';
 import 'package:go_wind_erp/src/features/approval/domain/approval_models.dart';
 import 'package:go_wind_erp/src/features/approval/presentation/approval_cubit.dart';
 import 'package:go_wind_erp/src/features/dict/domain/dict_failure.dart';
@@ -198,6 +200,7 @@ class _ApprovalBodyState extends State<_ApprovalBody> {
           ),
         ),
         isThreeLine: true,
+        onTap: _detailRoute(item),
         trailing: isPending
             ? Row(
                 mainAxisSize: MainAxisSize.min,
@@ -271,6 +274,29 @@ class _ApprovalBodyState extends State<_ApprovalBody> {
       ),
       child: Text(label, style: TextStyle(color: color, fontSize: 12)),
     );
+  }
+
+  /// 按业务类型深链到单据详情：SALES_ORDER/PURCHASE_ORDER 的 bizRef
+  /// 形如 "XXX_ORDER:{id}"，解析后跳转对应详情页；其他类型不可点。
+  VoidCallback? _detailRoute(ApprovalInfo item) {
+    final id = switch (item.bizType) {
+      'SALES_ORDER' => _orderIdFromRef(item.bizRef, 'SALES_ORDER'),
+      'PURCHASE_ORDER' => _orderIdFromRef(item.bizRef, 'PURCHASE_ORDER'),
+      _ => null,
+    };
+    if (id == null) return null;
+    return () => context.push(
+          item.bizType == 'SALES_ORDER'
+              ? '${AppRoutePath.salesDetailPrefix}$id'
+              : '${AppRoutePath.poDetailPrefix}$id',
+        );
+  }
+
+  int? _orderIdFromRef(String bizRef, String prefix) {
+    final value = bizRef.startsWith('$prefix:')
+        ? bizRef.substring(prefix.length + 1)
+        : '';
+    return int.tryParse(value);
   }
 
   String _filterLabel(S loc, ApprovalFilter filter) => switch (filter) {
