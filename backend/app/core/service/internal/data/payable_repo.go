@@ -367,6 +367,69 @@ func (r *PayableRepo) ApplyPayment(ctx context.Context, payableID uint32, amount
 	})
 }
 
+// ApplyReturnOffsetTx 采购退货的财务冲抵（事务内，尽力而为）：
+// 按来源单据引用（"PURCHASE_ORDER:{id}"）查找应付单，原子 amount -= offset。
+//
+// 守卫 amount − offset ≥ paid_amount：不得把应付冲到已付额之下——已全额
+// 付款的退货冲抵属退款流程（线下处理）。守卫拦截或找不到匹配时记日志
+// 跳过并返回 nil，不阻断退货。镜像 ReceivableRepo.ApplyReturnOffsetTx。
+func (r *PayableRepo) ApplyReturnOffsetTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	poRef string,
+	offset int64,
+) error {
+	if poRef == "" || offset <= 0 {
+		return nil
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := tx.Payable.Update().
+		Where(payable.PoRefEQ(poRef)).
+		Where(payable.StatusNEQ(payable.StatusCancelled)).
+		// 防过度冲抵：冲抵后总额不得低于已付额（对当前值求值）
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s - %d >= %s",
+				s.C(payable.FieldAmount), offset, s.C(payable.FieldPaidAmount),
+			)))
+		}).
+		AddAmount(-offset).
+		SetUpdatedAt(time.Now())
+	if hasTenant {
+		builder.Where(payable.TenantIDEQ(tid))
+	}
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
+	// 状态按冲抵后的终值逆向推导。
+	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(
+			payable.FieldStatus,
+			sql.Expr(fmt.Sprintf(
+				"CASE WHEN %s >= %s - %d THEN '%s' WHEN %s > 0 THEN '%s' ELSE '%s' END",
+				payable.FieldPaidAmount, payable.FieldAmount, offset,
+				payable.StatusSettled,
+				payable.FieldPaidAmount,
+				payable.StatusPartial,
+				payable.StatusPending,
+			)),
+		)
+	})
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("apply return offset failed: %s", err.Error())
+		return financeV1.ErrorInternalServerError("apply return offset failed")
+	}
+	if n == 0 {
+		r.log.Warnf("return offset skipped for po_ref=%s offset=%d (no match or fully paid)", poRef, offset)
+	}
+	return nil
+}
+
 
 // protoTime *timestamppb.Timestamp → *time.Time（nil 安全）。
 func protoTime(t *timestamppb.Timestamp) *time.Time {

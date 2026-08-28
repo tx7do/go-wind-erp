@@ -483,12 +483,13 @@ func (r *SalesOrderRepo) ApplyFulfillmentTx(
 // ApplyFulfillmentReturnTx 销售退货负向回写：fulfilled_quantity -= qty。
 // 状态门放宽为 APPROVED|COMPLETED（已完结单允许退货）；原子守卫
 // fulfilled − qty ≥ 0 防超退；减后未履约齐且单据 COMPLETED → 重开为 APPROVED。
+// 返回 (soID, unitPrice) 供调用方计算应收冲抵额（qty × unitPrice）。
 func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 	ctx context.Context,
 	tx *ent.Tx,
 	soItemID uint32,
 	qty int64,
-) error {
+) (uint32, int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	item, err := tx.SalesOrderItem.Query().
@@ -496,12 +497,16 @@ func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return salesV1.ErrorNotFound("sales order item not found")
+			return 0, 0, salesV1.ErrorNotFound("sales order item not found")
 		}
-		return salesV1.ErrorInternalServerError("query sales order item failed")
+		return 0, 0, salesV1.ErrorInternalServerError("query sales order item failed")
 	}
 
 	soID := *item.SoID
+	var unitPrice int64
+	if item.UnitPrice != nil {
+		unitPrice = *item.UnitPrice
+	}
 
 	// 退货闸门：APPROVED（在途）或 COMPLETED（已完结可退）。
 	gateQuery := tx.SalesOrder.Query().
@@ -513,10 +518,10 @@ func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 	gateN, gerr := gateQuery.Count(ctx)
 	if gerr != nil {
 		r.log.Errorf("return status gate query failed: %s", gerr.Error())
-		return salesV1.ErrorInternalServerError("return status gate query failed")
+		return 0, 0, salesV1.ErrorInternalServerError("return status gate query failed")
 	}
 	if gateN != 1 {
-		return salesV1.ErrorConflict("sales order is not returnable (must be approved or completed)")
+		return 0, 0, salesV1.ErrorConflict("sales order is not returnable (must be approved or completed)")
 	}
 
 	builder := tx.SalesOrderItem.Update().
@@ -535,10 +540,10 @@ func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 	n, serr := builder.Save(ctx)
 	if serr != nil {
 		r.log.Errorf("apply fulfillment return tx failed: %s", serr.Error())
-		return salesV1.ErrorInternalServerError("apply fulfillment return failed")
+		return 0, 0, salesV1.ErrorInternalServerError("apply fulfillment return failed")
 	}
 	if n == 0 {
-		return salesV1.ErrorConflict("return exceeds fulfilled quantity")
+		return 0, 0, salesV1.ErrorConflict("return exceeds fulfilled quantity")
 	}
 
 	// 减后未履约齐且单据已完结 → 重开为 APPROVED（允许继续发货）。
@@ -565,7 +570,7 @@ func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 		}
 	}
 
-	return nil
+	return soID, unitPrice, nil
 }
 
 // RevenueByMonth 按月汇总 COMPLETED 销售单的 total_amount。SQL 端按

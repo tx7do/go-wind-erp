@@ -1676,6 +1676,11 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[11]},
 			},
+			{
+				Name:    "idx_fin_payable_tenant_po_ref",
+				Unique:  false,
+				Columns: []*schema.Column{FinPayablesColumns[8], FinPayablesColumns[10]},
+			},
 		},
 	}
 	// FinPaymentsColumns holds the columns for the "fin_payments" table.
@@ -2361,6 +2366,11 @@ var (
 				Name:    "idx_fin_receivable_tenant_customer",
 				Unique:  false,
 				Columns: []*schema.Column{FinReceivablesColumns[8], FinReceivablesColumns[11]},
+			},
+			{
+				Name:    "idx_fin_receivable_tenant_so_ref",
+				Unique:  false,
+				Columns: []*schema.Column{FinReceivablesColumns[8], FinReceivablesColumns[10]},
 			},
 		},
 	}

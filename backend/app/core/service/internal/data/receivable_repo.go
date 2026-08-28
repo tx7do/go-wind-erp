@@ -365,3 +365,70 @@ func (r *ReceivableRepo) ApplyReceipt(ctx context.Context, receivableID uint32, 
 		QueryBy: &financeV1.GetReceivableRequest_Id{Id: receivableID},
 	})
 }
+
+// ApplyReturnOffsetTx 销售退货的财务冲抵（事务内，尽力而为）：
+// 按来源单据引用（"SALES_ORDER:{id}"）查找应收单，原子 amount -= offset。
+//
+// 守卫 amount − offset ≥ paid_amount：不得把应收冲到已收额之下——已全额
+// 收款的退货冲抵属退款/信用票据流程（线下处理）。守卫拦截或找不到匹配
+// （手工应收/已取消/重复冲抵到零）时记日志跳过并返回 nil，不阻断退货——
+// 实物已退回，财务调整是二级动作（与 PO 审批生成 payable 失败仅记录的
+// 软失败模式一致）。
+func (r *ReceivableRepo) ApplyReturnOffsetTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	soRef string,
+	offset int64,
+) error {
+	if soRef == "" || offset <= 0 {
+		return nil
+	}
+
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := tx.Receivable.Update().
+		Where(receivable.SoRefEQ(soRef)).
+		Where(receivable.StatusNEQ(receivable.StatusCancelled)).
+		// 防过度冲抵：冲抵后总额不得低于已收额（对当前值求值）
+		Where(func(s *sql.Selector) {
+			s.Where(sql.ExprP(fmt.Sprintf(
+				"%s - %d >= %s",
+				s.C(receivable.FieldAmount), offset, s.C(receivable.FieldPaidAmount),
+			)))
+		}).
+		AddAmount(-offset).
+		SetUpdatedAt(time.Now())
+	if hasTenant {
+		builder.Where(receivable.TenantIDEQ(tid))
+	}
+	if hasUser {
+		builder.SetUpdatedBy(callerUserID)
+	}
+	// 状态按冲抵后的终值逆向推导：已收 ≥ 新总额 → SETTLED（等额冲抵）；
+	// 已收 > 0 → PARTIAL；否则 PENDING。
+	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(
+			receivable.FieldStatus,
+			sql.Expr(fmt.Sprintf(
+				"CASE WHEN %s >= %s - %d THEN '%s' WHEN %s > 0 THEN '%s' ELSE '%s' END",
+				receivable.FieldPaidAmount, receivable.FieldAmount, offset,
+				receivable.StatusSettled,
+				receivable.FieldPaidAmount,
+				receivable.StatusPartial,
+				receivable.StatusPending,
+			)),
+		)
+	})
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("apply return offset failed: %s", err.Error())
+		return financeV1.ErrorInternalServerError("apply return offset failed")
+	}
+	if n == 0 {
+		// 找不到匹配或守卫拦截——记录后跳过，不阻断退货。
+		r.log.Warnf("return offset skipped for so_ref=%s offset=%d (no match or fully paid)", soRef, offset)
+	}
+	return nil
+}

@@ -8,7 +8,8 @@ import (
 
 // TestPurchaseOrderTransition_Authorized verifies documented edges:
 // DRAFT→{SUBMITTED,CANCELLED}, SUBMITTED→{APPROVED,REJECTED,CANCELLED},
-// APPROVED→{COMPLETED,CANCELLED}, REJECTED→CANCELLED.
+// APPROVED→{COMPLETED,CANCELLED}, REJECTED→CANCELLED,
+// COMPLETED→APPROVED（采购退货重开，ApplyReceiptReturnTx 事务内迁移）。
 func TestPurchaseOrderTransition_Authorized(t *testing.T) {
 	authorized := []struct {
 		from, to procurementV1.PurchaseOrder_Status
@@ -22,6 +23,7 @@ func TestPurchaseOrderTransition_Authorized(t *testing.T) {
 		{procurementV1.PurchaseOrder_APPROVED, procurementV1.PurchaseOrder_CANCELLED},
 		{procurementV1.PurchaseOrder_REJECTED, procurementV1.PurchaseOrder_CANCELLED},
 		{procurementV1.PurchaseOrder_REJECTED, procurementV1.PurchaseOrder_SUBMITTED},
+		{procurementV1.PurchaseOrder_COMPLETED, procurementV1.PurchaseOrder_APPROVED},
 	}
 	for _, c := range authorized {
 		if !validatePurchaseOrderTransition(c.from, c.to) {
@@ -30,9 +32,9 @@ func TestPurchaseOrderTransition_Authorized(t *testing.T) {
 	}
 }
 
-// TestPurchaseOrderTransition_Unauthorized full-matrix: only the 9 legal
-// edges pass; everything else (incl. terminal exits and cross-jumps like
-// DRAFT→APPROVED bypassing submission) is rejected.
+// TestPurchaseOrderTransition_Unauthorized full-matrix: only the 10 legal
+// edges pass; everything else (incl. CANCELLED terminal exits and cross-jumps
+// like DRAFT→APPROVED bypassing submission) is rejected.
 func TestPurchaseOrderTransition_Unauthorized(t *testing.T) {
 	statuses := []procurementV1.PurchaseOrder_Status{
 		procurementV1.PurchaseOrder_DRAFT,
@@ -56,6 +58,9 @@ func TestPurchaseOrderTransition_Unauthorized(t *testing.T) {
 		procurementV1.PurchaseOrder_REJECTED: {
 			procurementV1.PurchaseOrder_CANCELLED: true,
 			procurementV1.PurchaseOrder_SUBMITTED: true,
+		},
+		procurementV1.PurchaseOrder_COMPLETED: {
+			procurementV1.PurchaseOrder_APPROVED: true,
 		},
 	}
 	for _, from := range statuses {

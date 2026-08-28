@@ -103,5 +103,9 @@ func (Payable) Indexes() []ent.Index {
 		// 按租户 + 供应商，用于供应商维度对账
 		index.Fields("tenant_id", "supplier_code").
 			StorageKey("idx_fin_payable_tenant_supplier"),
+
+		// 按租户 + 来源单据引用，用于采购退货的财务冲抵查找
+		index.Fields("tenant_id", "po_ref").
+			StorageKey("idx_fin_payable_tenant_po_ref"),
 	}
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -32,6 +33,8 @@ type StockPickingService struct {
 	stockMoveLineRepo *data.StockMoveLineRepo
 	purchaseOrderRepo *data.PurchaseOrderRepo
 	salesOrderRepo    *data.SalesOrderRepo
+	receivableRepo    *data.ReceivableRepo
+	payableRepo       *data.PayableRepo
 	locationRepo      *data.LocationRepo
 	saga              *procurementSagaSeam
 }
@@ -43,6 +46,8 @@ func NewStockPickingService(
 	stockMoveLineRepo *data.StockMoveLineRepo,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	salesOrderRepo *data.SalesOrderRepo,
+	receivableRepo *data.ReceivableRepo,
+	payableRepo *data.PayableRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	locationRepo *data.LocationRepo,
 	messageRepo *data.InternalMessageRepo,
@@ -55,6 +60,8 @@ func NewStockPickingService(
 		stockMoveLineRepo: stockMoveLineRepo,
 		purchaseOrderRepo: purchaseOrderRepo,
 		salesOrderRepo:    salesOrderRepo,
+		receivableRepo:    receivableRepo,
+		payableRepo:       payableRepo,
 		locationRepo:      locationRepo,
 
 		saga: &procurementSagaSeam{
@@ -606,12 +613,21 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 
 		// 入库联动：回写采购明细 received_quantity（借鉴 Odoo 收货回写，
 		// 原子条件更新防超收）。若全部明细收齐 → PO 自动完结。
-		// 采购退货 = OUTGOING + poItem 关联 → 负向回写（减已收数，减空则 PO 重开）。
+		// 采购退货 = OUTGOING + poItem 关联 → 负向回写（减已收数，减空则 PO 重开）
+		// + 应付冲抵（amount -= qty×单价，守卫不冲到已付额之下，尽力而为）。
 		if poItemID != 0 {
 			if picking.GetPickingType() == inventoryV1.StockPicking_OUTGOING {
-				if rerr := s.purchaseOrderRepo.ApplyReceiptReturnTx(ctx, tx, poItemID, executedQty); rerr != nil {
+				poID, unitPrice, rerr := s.purchaseOrderRepo.ApplyReceiptReturnTx(ctx, tx, poItemID, executedQty)
+				if rerr != nil {
 					err = rerr
 					return nil, err
+				}
+				if offset, overflow := mulChecked(executedQty, unitPrice); !overflow && offset > 0 {
+					if oerr := s.payableRepo.ApplyReturnOffsetTx(ctx, tx,
+						fmt.Sprintf("PURCHASE_ORDER:%d", poID), offset); oerr != nil {
+						err = oerr
+						return nil, err
+					}
 				}
 			} else {
 				_, arerr := s.purchaseOrderRepo.ApplyReceiptTx(ctx, tx, poItemID, executedQty)
@@ -624,12 +640,21 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 
 		// 出库联动：回写销售明细 fulfilled_quantity（镜像采购收货回写，
 		// 原子条件更新防超履约）。若全部明细履约齐 → SO 自动完结。
-		// 销售退货 = INCOMING + soItem 关联 → 负向回写（减已履约数，减空则 SO 重开）。
+		// 销售退货 = INCOMING + soItem 关联 → 负向回写（减已履约数，减空则 SO 重开）
+		// + 应收冲抵（amount -= qty×单价，守卫不冲到已收额之下，尽力而为）。
 		if soItemID != 0 {
 			if picking.GetPickingType() == inventoryV1.StockPicking_INCOMING {
-				if rerr := s.salesOrderRepo.ApplyFulfillmentReturnTx(ctx, tx, soItemID, executedQty); rerr != nil {
+				soID, unitPrice, rerr := s.salesOrderRepo.ApplyFulfillmentReturnTx(ctx, tx, soItemID, executedQty)
+				if rerr != nil {
 					err = rerr
 					return nil, err
+				}
+				if offset, overflow := mulChecked(executedQty, unitPrice); !overflow && offset > 0 {
+					if oerr := s.receivableRepo.ApplyReturnOffsetTx(ctx, tx,
+						fmt.Sprintf("SALES_ORDER:%d", soID), offset); oerr != nil {
+						err = oerr
+						return nil, err
+					}
 				}
 			} else {
 				_, ferr := s.salesOrderRepo.ApplyFulfillmentTx(ctx, tx, soItemID, executedQty)

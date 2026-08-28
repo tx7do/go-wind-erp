@@ -100,5 +100,9 @@ func (Receivable) Indexes() []ent.Index {
 		// 按租户 + 客户，用于客户维度对账
 		index.Fields("tenant_id", "customer_code").
 			StorageKey("idx_fin_receivable_tenant_customer"),
+
+		// 按租户 + 来源单据引用，用于销售退货的财务冲抵查找
+		index.Fields("tenant_id", "so_ref").
+			StorageKey("idx_fin_receivable_tenant_so_ref"),
 	}
 }
