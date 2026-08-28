@@ -27,6 +27,7 @@ const OperationTenantServiceCreateTenantWithAdminUser = "/admin.service.v1.Tenan
 const OperationTenantServiceDelete = "/admin.service.v1.TenantService/Delete"
 const OperationTenantServiceGet = "/admin.service.v1.TenantService/Get"
 const OperationTenantServiceList = "/admin.service.v1.TenantService/List"
+const OperationTenantServiceSelfRegisterTenant = "/admin.service.v1.TenantService/SelfRegisterTenant"
 const OperationTenantServiceTenantExists = "/admin.service.v1.TenantService/TenantExists"
 const OperationTenantServiceUpdate = "/admin.service.v1.TenantService/Update"
 
@@ -41,6 +42,8 @@ type TenantServiceHTTPServer interface {
 	Get(context.Context, *v11.GetTenantRequest) (*v11.Tenant, error)
 	// List 获取租户列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListTenantResponse, error)
+	// SelfRegisterTenant 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+	SelfRegisterTenant(context.Context, *v11.SelfRegisterTenantRequest) (*emptypb.Empty, error)
 	// TenantExists 租户是否存在
 	TenantExists(context.Context, *v11.TenantExistsRequest) (*v11.TenantExistsResponse, error)
 	// Update 更新租户
@@ -55,6 +58,7 @@ func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer
 	r.PUT("/admin/v1/tenants/{id}", _TenantService_Update21_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/tenants/{id}", _TenantService_Delete25_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenants:with-admin", _TenantService_CreateTenantWithAdminUser0_HTTP_Handler(srv))
+	r.POST("/admin/v1/tenant-registration", _TenantService_SelfRegisterTenant0_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants:exists", _TenantService_TenantExists0_HTTP_Handler(srv))
 }
 
@@ -190,6 +194,28 @@ func _TenantService_CreateTenantWithAdminUser0_HTTP_Handler(srv TenantServiceHTT
 	}
 }
 
+func _TenantService_SelfRegisterTenant0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SelfRegisterTenantRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantServiceSelfRegisterTenant)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SelfRegisterTenant(ctx, req.(*v11.SelfRegisterTenantRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _TenantService_TenantExists0_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.TenantExistsRequest
@@ -220,6 +246,8 @@ type TenantServiceHTTPClient interface {
 	Get(ctx context.Context, req *v11.GetTenantRequest, opts ...http.CallOption) (rsp *v11.Tenant, err error)
 	// List 获取租户列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListTenantResponse, err error)
+	// SelfRegisterTenant 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+	SelfRegisterTenant(ctx context.Context, req *v11.SelfRegisterTenantRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// TenantExists 租户是否存在
 	TenantExists(ctx context.Context, req *v11.TenantExistsRequest, opts ...http.CallOption) (rsp *v11.TenantExistsResponse, err error)
 	// Update 更新租户
@@ -298,6 +326,20 @@ func (c *TenantServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReq
 	opts = append(opts, http.Operation(OperationTenantServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SelfRegisterTenant 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+func (c *TenantServiceHTTPClientImpl) SelfRegisterTenant(ctx context.Context, in *v11.SelfRegisterTenantRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/tenant-registration"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTenantServiceSelfRegisterTenant))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

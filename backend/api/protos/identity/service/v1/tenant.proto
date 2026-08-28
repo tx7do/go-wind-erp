@@ -47,6 +47,10 @@ service TenantService {
 
   // 创建租户及管理员用户
   rpc CreateTenantWithAdminUser (CreateTenantWithAdminUserRequest) returns (google.protobuf.Empty) {}
+
+  // 租户自助注册（公开端点）：创建租户+管理员+角色绑定+业务引导数据
+  // （SUPPLIER/CUSTOMER 虚拟位置、默认仓库），注册即可用。
+  rpc SelfRegisterTenant (SelfRegisterTenantRequest) returns (google.protobuf.Empty) {}
 }
 
 // 租户
@@ -292,6 +296,28 @@ message CreateTenantWithAdminUserRequest {
     json_name = "operatorUserId",
     (gnostic.openapi.v3.property) = {description: "操作人用户ID"}
   ]; // 操作人用户ID
+}
+
+// 租户自助注册 - 请求
+message SelfRegisterTenantRequest {
+  string tenant_name = 1 [
+    json_name = "tenantName",
+    (gnostic.openapi.v3.property) = {description: "租户名称"}
+  ]; // 租户名称
+
+  string tenant_code = 2 [
+    json_name = "tenantCode",
+    (gnostic.openapi.v3.property) = {description: "租户编码（登录用）"}
+  ]; // 租户编码（登录用）
+
+  string admin_username = 3 [
+    json_name = "adminUsername",
+    (gnostic.openapi.v3.property) = {description: "管理员用户名"}
+  ]; // 管理员用户名
+
+  string password = 4 [
+    (gnostic.openapi.v3.property) = {description: "管理员密码（明文传输，入库前bcrypt）"}
+  ]; // 管理员密码
 }
 
 message CountTenantResponse {

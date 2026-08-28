@@ -56,6 +56,14 @@ service TenantService {
     };
   }
 
+  // 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+  rpc SelfRegisterTenant (identity.service.v1.SelfRegisterTenantRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/tenant-registration"
+      body: "*"
+    };
+  }
+
   // 租户是否存在
   rpc TenantExists (identity.service.v1.TenantExistsRequest) returns (identity.service.v1.TenantExistsResponse) {
     option (google.api.http) = {

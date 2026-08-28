@@ -10264,6 +10264,10 @@ export interface TenantService {
   CreateTenantWithAdminUser(
     request: identityservicev1_CreateTenantWithAdminUserRequest,
   ): Promise<wellKnownEmpty>;
+  // 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+  SelfRegisterTenant(
+    request: identityservicev1_SelfRegisterTenantRequest,
+  ): Promise<wellKnownEmpty>;
   // 租户是否存在
   TenantExists(
     request: identityservicev1_TenantExistsRequest,
@@ -10468,6 +10472,14 @@ export function createTenantServiceClient(
         method: 'CreateTenantWithAdminUser',
       }) as Promise<wellKnownEmpty>;
     },
+    SelfRegisterTenant(request) {
+      const path = `admin/v1/tenant-registration`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'TenantService',
+        method: 'SelfRegisterTenant',
+      }) as Promise<wellKnownEmpty>;
+    },
     TenantExists(request) {
       const path = `admin/v1/tenants:exists`;
       const body = null;
@@ -10640,6 +10652,14 @@ export type identityservicev1_User_Status =
   | 'LOCKED'
   | 'NORMAL'
   | 'PENDING';
+// 租户自助注册 - 请求
+export type identityservicev1_SelfRegisterTenantRequest = {
+  adminUsername: string | undefined;
+  password: string | undefined;
+  tenantCode: string | undefined;
+  tenantName: string | undefined;
+};
+
 // 租户是否存在 - 请求
 export type identityservicev1_TenantExistsRequest = {
   code: string | undefined;

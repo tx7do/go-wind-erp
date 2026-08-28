@@ -670,5 +670,32 @@
     "moduleName": "Customer",
     "name": "Customer Name",
     "phone": "Phone"
+  },
+  "register": {
+    "tenantName": "Company Name",
+    "tenantNameTip": "Enter your company name",
+    "tenantCode": "Tenant Code",
+    "tenantCodeTip": "Code for login (letters/digits/dash, 2+ chars)",
+    "tenantCodeInvalid": "Only letters, digits, underscore and dash are allowed",
+    "adminUsername": "Admin Username",
+    "passwordMin": "Password must be at least 6 characters",
+    "successTitle": "Registered",
+    "successDesc": "Tenant {tenantCode} is ready. Log in with admin {username}"
+  },
+  "onboarding": {
+    "title": "Getting Started",
+    "desc": "Follow the guide to set up master data and start your first order",
+    "autoTitle": "Done automatically",
+    "autoDesc": "Created at registration: admin account with permissions, default warehouse MAIN, supplier/customer virtual locations — ready to trade.",
+    "stepProduct": "Add Products",
+    "stepProductDesc": "Enter product SKUs, specs and units; purchase and sales flow by SKU",
+    "stepSupplier": "Add Suppliers",
+    "stepSupplierDesc": "Suppliers are partners of purchase orders; payables are created on approval",
+    "stepCustomer": "Add Customers",
+    "stepCustomerDesc": "Customers are partners of sales orders; receivables are created on approval",
+    "stepPo": "Create First Purchase Order",
+    "stepPoDesc": "Receiving increases stock and tracks weighted-average cost",
+    "stepSo": "Create First Sales Order",
+    "stepSoDesc": "Shipping decreases stock, freezes COGS; profit report updates live"
   }
 }

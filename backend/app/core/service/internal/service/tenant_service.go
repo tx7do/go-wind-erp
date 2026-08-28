@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -11,9 +13,11 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-erp/app/core/service/internal/data"
+	appViewer "go-wind-erp/pkg/entgo/viewer"
 
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
+	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
 )
 
@@ -26,6 +30,8 @@ type TenantService struct {
 	userRepo            data.UserRepo
 	userCredentialsRepo *data.UserCredentialRepo
 	roleRepo            *data.RoleRepo
+	locationRepo        *data.LocationRepo
+	warehouseService    *WarehouseService
 }
 
 func NewTenantService(
@@ -34,6 +40,8 @@ func NewTenantService(
 	userRepo data.UserRepo,
 	userCredentialsRepo *data.UserCredentialRepo,
 	roleRepo *data.RoleRepo,
+	locationRepo *data.LocationRepo,
+	warehouseService *WarehouseService,
 ) *TenantService {
 	return &TenantService{
 		log:                 ctx.NewLoggerHelper("tenant/service/core-service"),
@@ -41,6 +49,8 @@ func NewTenantService(
 		userRepo:            userRepo,
 		userCredentialsRepo: userCredentialsRepo,
 		roleRepo:            roleRepo,
+		locationRepo:        locationRepo,
+		warehouseService:    warehouseService,
 	}
 }
 
@@ -272,4 +282,103 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// SelfRegisterTenant 租户自助注册（公开端点）：
+// 复用 CreateTenantWithAdminUser 的完整事务（租户+角色克隆+管理员+凭证+绑定），
+// 注册成功后追加业务引导：SUPPLIER/CUSTOMER 虚拟位置 + 默认仓库（自动带 INTERNAL
+// 接收位置），使新租户注册即可创建采购单/销售单（半天自助上线的后端保障）。
+// 引导失败不回滚注册（租户与管理员已是事实），仅记录日志可重试。
+func (s *TenantService) SelfRegisterTenant(ctx context.Context, req *identityV1.SelfRegisterTenantRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, identityV1.ErrorBadRequest("invalid parameter")
+	}
+
+	tenantName := strings.TrimSpace(req.GetTenantName())
+	tenantCode := strings.TrimSpace(req.GetTenantCode())
+	adminUsername := strings.TrimSpace(req.GetAdminUsername())
+	password := req.GetPassword()
+
+	if tenantName == "" || tenantCode == "" {
+		return nil, identityV1.ErrorBadRequest("tenant_name and tenant_code are required")
+	}
+	if adminUsername == "" {
+		return nil, identityV1.ErrorBadRequest("admin_username is required")
+	}
+	if len(password) < 6 {
+		return nil, identityV1.ErrorBadRequest("password must be at least 6 characters")
+	}
+
+	// 自助注册即时可用：ON + APPROVED + PAID（对齐演示租户的形态）。
+	onStatus := identityV1.Tenant_ON
+	paidType := identityV1.Tenant_PAID
+	approved := identityV1.Tenant_APPROVED
+
+	userStatus := identityV1.User_NORMAL
+
+	if _, err := s.CreateTenantWithAdminUser(ctx, &identityV1.CreateTenantWithAdminUserRequest{
+		Tenant: &identityV1.Tenant{
+			Name:        trans.Ptr(tenantName),
+			Code:        trans.Ptr(tenantCode),
+			Type:        &paidType,
+			Status:      &onStatus,
+			AuditStatus: &approved,
+			Remark:      trans.Ptr("self-registered tenant"),
+		},
+		User: &identityV1.User{
+			Username: trans.Ptr(adminUsername),
+			Nickname: trans.Ptr(adminUsername),
+			Status:   &userStatus,
+		},
+		Password: password,
+	}); err != nil {
+		return nil, err
+	}
+
+	// 业务引导：以新租户的匿名 viewer 上下文创建虚拟位置与默认仓库。
+	tid, err := s.resolveTenantIDByCode(ctx, tenantCode)
+	if err != nil {
+		// 注册已成功，引导数据缺失仅记录（管理端可补救），不阻断返回。
+		s.log.Errorf("self register: resolve tenant id by code failed: %v", err)
+	} else {
+		tenantCtx := appViewer.NewAnonymousTenantViewerContext(ctx, tid, "self-register")
+
+		if berr := s.locationRepo.CreateSupplierLocation(tenantCtx); berr != nil {
+			s.log.Errorf("self register: create supplier location failed: %v", berr)
+		}
+		if berr := s.locationRepo.CreateCustomerLocation(tenantCtx); berr != nil {
+			s.log.Errorf("self register: create customer location failed: %v", berr)
+		}
+		if _, berr := s.warehouseService.Create(tenantCtx, &inventoryV1.CreateWarehouseRequest{
+			Data: &inventoryV1.Warehouse{
+				Code:   trans.Ptr("MAIN"),
+				Name:   trans.Ptr("默认仓库"),
+				Enable: trans.Ptr(true),
+				Remark: trans.Ptr("self-registered default warehouse"),
+			},
+		}); berr != nil {
+			s.log.Errorf("self register: create default warehouse failed: %v", berr)
+		}
+	}
+
+	s.log.Infof("self register: tenant %q registered with admin %q", tenantCode, adminUsername)
+
+	return &emptypb.Empty{}, nil
+}
+
+// resolveTenantIDByCode 按编码查租户 ID（注册后引导数据需要租户上下文）。
+func (s *TenantService) resolveTenantIDByCode(ctx context.Context, code string) (uint32, error) {
+	resp, err := s.tenantRepo.List(ctx, &paginationV1.PagingRequest{
+		NoPaging: trans.Ptr(true),
+		FilteringType: &paginationV1.PagingRequest_Query{
+			Query: fmt.Sprintf(`{"code": "%s"}`, code),
+		},
+	})
+	if err != nil {
+		return 0, err
+	}
+	if len(resp.GetItems()) == 0 {
+		return 0, fmt.Errorf("tenant %q not found after registration", code)
+	}
+	return resp.GetItems()[0].GetId(), nil
 }

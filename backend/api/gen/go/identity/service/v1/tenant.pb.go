@@ -1114,6 +1114,75 @@ func (x *CreateTenantWithAdminUserRequest) GetOperatorUserId() uint32 {
 	return 0
 }
 
+// 租户自助注册 - 请求
+type SelfRegisterTenantRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantName    string                 `protobuf:"bytes,1,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`          // 租户名称
+	TenantCode    string                 `protobuf:"bytes,2,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`          // 租户编码（登录用）
+	AdminUsername string                 `protobuf:"bytes,3,opt,name=admin_username,json=adminUsername,proto3" json:"admin_username,omitempty"` // 管理员用户名
+	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`                                // 管理员密码
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SelfRegisterTenantRequest) Reset() {
+	*x = SelfRegisterTenantRequest{}
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SelfRegisterTenantRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SelfRegisterTenantRequest) ProtoMessage() {}
+
+func (x *SelfRegisterTenantRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SelfRegisterTenantRequest.ProtoReflect.Descriptor instead.
+func (*SelfRegisterTenantRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *SelfRegisterTenantRequest) GetTenantName() string {
+	if x != nil {
+		return x.TenantName
+	}
+	return ""
+}
+
+func (x *SelfRegisterTenantRequest) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
+}
+
+func (x *SelfRegisterTenantRequest) GetAdminUsername() string {
+	if x != nil {
+		return x.AdminUsername
+	}
+	return ""
+}
+
+func (x *SelfRegisterTenantRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 type CountTenantResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Count         uint64                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
@@ -1123,7 +1192,7 @@ type CountTenantResponse struct {
 
 func (x *CountTenantResponse) Reset() {
 	*x = CountTenantResponse{}
-	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1135,7 +1204,7 @@ func (x *CountTenantResponse) String() string {
 func (*CountTenantResponse) ProtoMessage() {}
 
 func (x *CountTenantResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1148,7 +1217,7 @@ func (x *CountTenantResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountTenantResponse.ProtoReflect.Descriptor instead.
 func (*CountTenantResponse) Descriptor() ([]byte, []int) {
-	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{13}
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CountTenantResponse) GetCount() uint64 {
@@ -1168,7 +1237,7 @@ type AssignTenantAdminRequest struct {
 
 func (x *AssignTenantAdminRequest) Reset() {
 	*x = AssignTenantAdminRequest{}
-	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1180,7 +1249,7 @@ func (x *AssignTenantAdminRequest) String() string {
 func (*AssignTenantAdminRequest) ProtoMessage() {}
 
 func (x *AssignTenantAdminRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1193,7 +1262,7 @@ func (x *AssignTenantAdminRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignTenantAdminRequest.ProtoReflect.Descriptor instead.
 func (*AssignTenantAdminRequest) Descriptor() ([]byte, []int) {
-	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{14}
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AssignTenantAdminRequest) GetTenantId() uint32 {
@@ -1337,12 +1406,19 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x04user\x18\x02 \x01(\v2\x19.identity.service.v1.UserR\x04user\x12\x1a\n" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\x12F\n" +
 	"\x10operator_user_id\x18\x04 \x01(\rB\x17\xbaG\x14\x92\x02\x11操作人用户IDH\x00R\x0eoperatorUserId\x88\x01\x01B\x13\n" +
-	"\x11_operator_user_id\"+\n" +
+	"\x11_operator_user_id\"\xac\x02\n" +
+	"\x19SelfRegisterTenantRequest\x123\n" +
+	"\vtenant_name\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称R\n" +
+	"tenantName\x12B\n" +
+	"\vtenant_code\x18\x02 \x01(\tB!\xbaG\x1e\x92\x02\x1b租户编码（登录用）R\n" +
+	"tenantCode\x12?\n" +
+	"\x0eadmin_username\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12管理员用户名R\radminUsername\x12U\n" +
+	"\bpassword\x18\x04 \x01(\tB9\xbaG6\x92\x023管理员密码（明文传输，入库前bcrypt）R\bpassword\"+\n" +
 	"\x13CountTenantResponse\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x04R\x05count\"p\n" +
 	"\x18AssignTenantAdminRequest\x12+\n" +
 	"\ttenant_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12'\n" +
-	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId2\x91\b\n" +
+	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId2\xf1\b\n" +
 	"\rTenantService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.identity.service.v1.ListTenantResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.identity.service.v1.CountTenantResponse\"\x00\x12K\n" +
@@ -1354,7 +1430,8 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\fTenantExists\x12(.identity.service.v1.TenantExistsRequest\x1a).identity.service.v1.TenantExistsResponse\"\x00\x12\x80\x01\n" +
 	"\x15ResolveTenantByDomain\x121.identity.service.v1.ResolveTenantByDomainRequest\x1a2.identity.service.v1.ResolveTenantByDomainResponse\"\x00\x12\\\n" +
 	"\x11AssignTenantAdmin\x12-.identity.service.v1.AssignTenantAdminRequest\x1a\x16.google.protobuf.Empty\"\x00\x12l\n" +
-	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcb\x01\n" +
+	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12^\n" +
+	"\x12SelfRegisterTenant\x12..identity.service.v1.SelfRegisterTenantRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcb\x01\n" +
 	"\x17com.identity.service.v1B\vTenantProtoP\x01Z5go-wind-erp/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
 
 var (
@@ -1370,7 +1447,7 @@ func file_identity_service_v1_tenant_proto_rawDescGZIP() []byte {
 }
 
 var file_identity_service_v1_tenant_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_identity_service_v1_tenant_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_identity_service_v1_tenant_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_identity_service_v1_tenant_proto_goTypes = []any{
 	(Tenant_Status)(0),                       // 0: identity.service.v1.Tenant.Status
 	(Tenant_Type)(0),                         // 1: identity.service.v1.Tenant.Type
@@ -1388,34 +1465,35 @@ var file_identity_service_v1_tenant_proto_goTypes = []any{
 	(*ResolveTenantByDomainRequest)(nil),     // 13: identity.service.v1.ResolveTenantByDomainRequest
 	(*ResolveTenantByDomainResponse)(nil),    // 14: identity.service.v1.ResolveTenantByDomainResponse
 	(*CreateTenantWithAdminUserRequest)(nil), // 15: identity.service.v1.CreateTenantWithAdminUserRequest
-	(*CountTenantResponse)(nil),              // 16: identity.service.v1.CountTenantResponse
-	(*AssignTenantAdminRequest)(nil),         // 17: identity.service.v1.AssignTenantAdminRequest
-	(*timestamppb.Timestamp)(nil),            // 18: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),            // 19: google.protobuf.FieldMask
-	(*User)(nil),                             // 20: identity.service.v1.User
-	(*v1.PagingRequest)(nil),                 // 21: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                    // 22: google.protobuf.Empty
+	(*SelfRegisterTenantRequest)(nil),        // 16: identity.service.v1.SelfRegisterTenantRequest
+	(*CountTenantResponse)(nil),              // 17: identity.service.v1.CountTenantResponse
+	(*AssignTenantAdminRequest)(nil),         // 18: identity.service.v1.AssignTenantAdminRequest
+	(*timestamppb.Timestamp)(nil),            // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),            // 20: google.protobuf.FieldMask
+	(*User)(nil),                             // 21: identity.service.v1.User
+	(*v1.PagingRequest)(nil),                 // 22: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                    // 23: google.protobuf.Empty
 }
 var file_identity_service_v1_tenant_proto_depIdxs = []int32{
 	1,  // 0: identity.service.v1.Tenant.type:type_name -> identity.service.v1.Tenant.Type
-	18, // 1: identity.service.v1.Tenant.subscription_at:type_name -> google.protobuf.Timestamp
-	18, // 2: identity.service.v1.Tenant.unsubscribe_at:type_name -> google.protobuf.Timestamp
-	18, // 3: identity.service.v1.Tenant.expired_at:type_name -> google.protobuf.Timestamp
+	19, // 1: identity.service.v1.Tenant.subscription_at:type_name -> google.protobuf.Timestamp
+	19, // 2: identity.service.v1.Tenant.unsubscribe_at:type_name -> google.protobuf.Timestamp
+	19, // 3: identity.service.v1.Tenant.expired_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: identity.service.v1.Tenant.status:type_name -> identity.service.v1.Tenant.Status
 	2,  // 5: identity.service.v1.Tenant.audit_status:type_name -> identity.service.v1.Tenant.AuditStatus
-	18, // 6: identity.service.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
-	18, // 7: identity.service.v1.Tenant.updated_at:type_name -> google.protobuf.Timestamp
-	18, // 8: identity.service.v1.Tenant.deleted_at:type_name -> google.protobuf.Timestamp
+	19, // 6: identity.service.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
+	19, // 7: identity.service.v1.Tenant.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 8: identity.service.v1.Tenant.deleted_at:type_name -> google.protobuf.Timestamp
 	3,  // 9: identity.service.v1.ListTenantResponse.items:type_name -> identity.service.v1.Tenant
-	19, // 10: identity.service.v1.GetTenantRequest.view_mask:type_name -> google.protobuf.FieldMask
+	20, // 10: identity.service.v1.GetTenantRequest.view_mask:type_name -> google.protobuf.FieldMask
 	3,  // 11: identity.service.v1.CreateTenantRequest.data:type_name -> identity.service.v1.Tenant
 	3,  // 12: identity.service.v1.UpdateTenantRequest.data:type_name -> identity.service.v1.Tenant
-	19, // 13: identity.service.v1.UpdateTenantRequest.update_mask:type_name -> google.protobuf.FieldMask
+	20, // 13: identity.service.v1.UpdateTenantRequest.update_mask:type_name -> google.protobuf.FieldMask
 	3,  // 14: identity.service.v1.BatchCreateTenantsRequest.items:type_name -> identity.service.v1.Tenant
 	3,  // 15: identity.service.v1.CreateTenantWithAdminUserRequest.tenant:type_name -> identity.service.v1.Tenant
-	20, // 16: identity.service.v1.CreateTenantWithAdminUserRequest.user:type_name -> identity.service.v1.User
-	21, // 17: identity.service.v1.TenantService.List:input_type -> pagination.PagingRequest
-	21, // 18: identity.service.v1.TenantService.Count:input_type -> pagination.PagingRequest
+	21, // 16: identity.service.v1.CreateTenantWithAdminUserRequest.user:type_name -> identity.service.v1.User
+	22, // 17: identity.service.v1.TenantService.List:input_type -> pagination.PagingRequest
+	22, // 18: identity.service.v1.TenantService.Count:input_type -> pagination.PagingRequest
 	5,  // 19: identity.service.v1.TenantService.Get:input_type -> identity.service.v1.GetTenantRequest
 	9,  // 20: identity.service.v1.TenantService.BatchCreate:input_type -> identity.service.v1.BatchCreateTenantsRequest
 	6,  // 21: identity.service.v1.TenantService.Create:input_type -> identity.service.v1.CreateTenantRequest
@@ -1423,21 +1501,23 @@ var file_identity_service_v1_tenant_proto_depIdxs = []int32{
 	8,  // 23: identity.service.v1.TenantService.Delete:input_type -> identity.service.v1.DeleteTenantRequest
 	11, // 24: identity.service.v1.TenantService.TenantExists:input_type -> identity.service.v1.TenantExistsRequest
 	13, // 25: identity.service.v1.TenantService.ResolveTenantByDomain:input_type -> identity.service.v1.ResolveTenantByDomainRequest
-	17, // 26: identity.service.v1.TenantService.AssignTenantAdmin:input_type -> identity.service.v1.AssignTenantAdminRequest
+	18, // 26: identity.service.v1.TenantService.AssignTenantAdmin:input_type -> identity.service.v1.AssignTenantAdminRequest
 	15, // 27: identity.service.v1.TenantService.CreateTenantWithAdminUser:input_type -> identity.service.v1.CreateTenantWithAdminUserRequest
-	4,  // 28: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
-	16, // 29: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
-	3,  // 30: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
-	10, // 31: identity.service.v1.TenantService.BatchCreate:output_type -> identity.service.v1.BatchCreateTenantsResponse
-	3,  // 32: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
-	22, // 33: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
-	22, // 34: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
-	12, // 35: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
-	14, // 36: identity.service.v1.TenantService.ResolveTenantByDomain:output_type -> identity.service.v1.ResolveTenantByDomainResponse
-	22, // 37: identity.service.v1.TenantService.AssignTenantAdmin:output_type -> google.protobuf.Empty
-	22, // 38: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
-	28, // [28:39] is the sub-list for method output_type
-	17, // [17:28] is the sub-list for method input_type
+	16, // 28: identity.service.v1.TenantService.SelfRegisterTenant:input_type -> identity.service.v1.SelfRegisterTenantRequest
+	4,  // 29: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
+	17, // 30: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
+	3,  // 31: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
+	10, // 32: identity.service.v1.TenantService.BatchCreate:output_type -> identity.service.v1.BatchCreateTenantsResponse
+	3,  // 33: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
+	23, // 34: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
+	23, // 35: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
+	12, // 36: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
+	14, // 37: identity.service.v1.TenantService.ResolveTenantByDomain:output_type -> identity.service.v1.ResolveTenantByDomainResponse
+	23, // 38: identity.service.v1.TenantService.AssignTenantAdmin:output_type -> google.protobuf.Empty
+	23, // 39: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
+	23, // 40: identity.service.v1.TenantService.SelfRegisterTenant:output_type -> google.protobuf.Empty
+	29, // [29:41] is the sub-list for method output_type
+	17, // [17:29] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name
 	17, // [17:17] is the sub-list for extension extendee
 	0,  // [0:17] is the sub-list for field type_name
@@ -1467,7 +1547,7 @@ func file_identity_service_v1_tenant_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_identity_service_v1_tenant_proto_rawDesc), len(file_identity_service_v1_tenant_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   15,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

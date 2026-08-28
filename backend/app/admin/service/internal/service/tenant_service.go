@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -10,6 +11,7 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"github.com/tx7do/go-utils/captcha"
 
 	adminV1 "go-wind-erp/api/gen/go/admin/service/v1"
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
@@ -17,6 +19,7 @@ import (
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
 
 	"go-wind-erp/pkg/middleware/auth"
+	"go-wind-erp/pkg/netutil"
 )
 
 type TenantService struct {
@@ -28,6 +31,7 @@ type TenantService struct {
 	userCredentialServiceClient authenticationV1.UserCredentialServiceClient
 	tenantServiceClient         identityV1.TenantServiceClient
 	roleServiceClient           permissionV1.RoleServiceClient
+	captchaClient               *captcha.Captcha
 }
 
 func NewTenantService(
@@ -36,6 +40,7 @@ func NewTenantService(
 	userCredentialServiceClient authenticationV1.UserCredentialServiceClient,
 	tenantServiceClient identityV1.TenantServiceClient,
 	roleServiceClient permissionV1.RoleServiceClient,
+	captchaClient *captcha.Captcha,
 ) *TenantService {
 	svc := &TenantService{
 		log:                         ctx.NewLoggerHelper("tenant/service/admin-service"),
@@ -43,6 +48,7 @@ func NewTenantService(
 		userCredentialServiceClient: userCredentialServiceClient,
 		tenantServiceClient:         tenantServiceClient,
 		roleServiceClient:           roleServiceClient,
+		captchaClient:               captchaClient,
 	}
 
 	svc.init()
@@ -142,4 +148,32 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 	req.OperatorUserId = trans.Ptr(operator.GetUserId())
 
 	return s.tenantServiceClient.CreateTenantWithAdminUser(ctx, req)
+}
+
+// SelfRegisterTenant 租户自助注册（公开端点）。
+// 公开接口必须带验证码（请求头 X-Captcha-Id/Value，与登录同机制）防滥用；
+// 校验通过后委派 core 完成租户+管理员+角色+业务引导数据的创建。
+// 验证码开关与登录共用 CaptchaEnabled（开发环境可关闭）。
+func (s *TenantService) SelfRegisterTenant(ctx context.Context, req *identityV1.SelfRegisterTenantRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	if CaptchaEnabled && s.captchaClient != nil {
+		header := netutil.HeaderFromContext(ctx)
+		if header == nil {
+			return nil, authenticationV1.ErrorBadRequest("invalid or missing captcha")
+		}
+		captchaID := strings.TrimSpace(header.Get(headerCaptchaID))
+		captchaValue := strings.TrimSpace(header.Get(headerCaptchaValue))
+		if captchaID == "" || captchaValue == "" {
+			return nil, authenticationV1.ErrorBadRequest("invalid or missing captcha")
+		}
+		ok, err := s.captchaClient.Verify(ctx, captchaID, captchaValue)
+		if err != nil || !ok {
+			return nil, authenticationV1.ErrorBadRequest("invalid or missing captcha")
+		}
+	}
+
+	return s.tenantServiceClient.SelfRegisterTenant(ctx, req)
 }

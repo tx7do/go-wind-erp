@@ -41,7 +41,12 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	userService := service.NewUserService(context, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 	userProfileService := service.NewUserProfileService(context, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 	roleService := service.NewRoleService(context, roleServiceClient, tenantServiceClient)
-	tenantService := service.NewTenantService(context, userServiceClient, userCredentialServiceClient, tenantServiceClient, roleServiceClient)
+	client, cleanup, err := data.NewRedisClient(context)
+	if err != nil {
+		return nil, nil, err
+	}
+	captcha := data.NewCaptcha(client)
+	tenantService := service.NewTenantService(context, userServiceClient, userCredentialServiceClient, tenantServiceClient, roleServiceClient, captcha)
 	orgUnitService := service.NewOrgUnitService(context, orgUnitServiceClient, userServiceClient)
 	positionService := service.NewPositionService(context, positionServiceClient, orgUnitServiceClient)
 	menuServiceClient := data.NewMenuServiceClient(context, discovery)
@@ -85,11 +90,6 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	receiptService := service.NewReceiptService(context, receiptServiceClient)
 	financeReportServiceClient := data.NewFinanceReportServiceClient(context, discovery)
 	financeReportService := service.NewFinanceReportService(context, financeReportServiceClient)
-	client, cleanup, err := data.NewRedisClient(context)
-	if err != nil {
-		return nil, nil, err
-	}
-	captcha := data.NewCaptcha(client)
 	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, captcha)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(context, discovery)
 	loginPolicyService := service.NewLoginPolicyService(context, loginPolicyServiceClient)

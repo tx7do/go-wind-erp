@@ -699,5 +699,32 @@
     "moduleName": "客户",
     "name": "客户名称",
     "phone": "联系电话"
+  },
+  "register": {
+    "tenantName": "企业名称",
+    "tenantNameTip": "请输入企业名称",
+    "tenantCode": "租户编码",
+    "tenantCodeTip": "登录用编码（字母/数字/横线，2位以上）",
+    "tenantCodeInvalid": "租户编码仅限字母、数字、下划线和横线",
+    "adminUsername": "管理员账号",
+    "passwordMin": "密码至少 6 位",
+    "successTitle": "注册成功",
+    "successDesc": "租户 {tenantCode} 已开通，请使用管理员账号 {username} 登录"
+  },
+  "onboarding": {
+    "title": "初始化向导",
+    "desc": "按引导完成基础数据，即可开始第一笔业务",
+    "autoTitle": "已自动完成",
+    "autoDesc": "注册时已自动创建：管理员账号与权限、默认仓库 MAIN、供应商/客户虚拟库存位置——无需手动配置即可开单。",
+    "stepProduct": "添加商品",
+    "stepProductDesc": "录入商品 SKU、规格与单位，采购销售均按 SKU 流转",
+    "stepSupplier": "添加供应商",
+    "stepSupplierDesc": "供应商是采购单的往来单位，审批通过后自动生成应付",
+    "stepCustomer": "添加客户",
+    "stepCustomerDesc": "客户是销售单的往来单位，审批通过后自动生成应收",
+    "stepPo": "创建首张采购单",
+    "stepPoDesc": "采购入库自动增加库存并按单价记录加权成本",
+    "stepSo": "创建首张销售单",
+    "stepSoDesc": "销售出库自动扣减库存、冻结成本，利润报表实时可见"
   }
 }

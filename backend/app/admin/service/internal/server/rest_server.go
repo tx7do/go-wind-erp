@@ -43,10 +43,12 @@ func NewRestMiddleware(
 	// add white list for authentication.
 	// GenerateCaptcha 和 VerifyCaptcha 必须在白名单中，因为登录需要验证码，
 	// 而获取验证码时用户尚无 token（鸡生蛋问题）。
+	// SelfRegisterTenant 是租户自助注册（公开端点，自带验证码校验防滥用）。
 	rpc.AddWhiteList(
 		adminV1.OperationAuthenticationServiceLogin,
 		adminV1.OperationAuthenticationServiceGenerateCaptcha,
 		adminV1.OperationAuthenticationServiceVerifyCaptcha,
+		adminV1.OperationTenantServiceSelfRegisterTenant,
 	)
 
 	ms = append(ms, applogging.Server(

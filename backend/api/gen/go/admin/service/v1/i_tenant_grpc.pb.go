@@ -28,6 +28,7 @@ const (
 	TenantService_Update_FullMethodName                    = "/admin.service.v1.TenantService/Update"
 	TenantService_Delete_FullMethodName                    = "/admin.service.v1.TenantService/Delete"
 	TenantService_CreateTenantWithAdminUser_FullMethodName = "/admin.service.v1.TenantService/CreateTenantWithAdminUser"
+	TenantService_SelfRegisterTenant_FullMethodName        = "/admin.service.v1.TenantService/SelfRegisterTenant"
 	TenantService_TenantExists_FullMethodName              = "/admin.service.v1.TenantService/TenantExists"
 )
 
@@ -49,6 +50,8 @@ type TenantServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeleteTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
 	CreateTenantWithAdminUser(ctx context.Context, in *v11.CreateTenantWithAdminUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+	SelfRegisterTenant(ctx context.Context, in *v11.SelfRegisterTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(ctx context.Context, in *v11.TenantExistsRequest, opts ...grpc.CallOption) (*v11.TenantExistsResponse, error)
 }
@@ -121,6 +124,16 @@ func (c *tenantServiceClient) CreateTenantWithAdminUser(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *tenantServiceClient) SelfRegisterTenant(ctx context.Context, in *v11.SelfRegisterTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TenantService_SelfRegisterTenant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tenantServiceClient) TenantExists(ctx context.Context, in *v11.TenantExistsRequest, opts ...grpc.CallOption) (*v11.TenantExistsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.TenantExistsResponse)
@@ -149,6 +162,8 @@ type TenantServiceServer interface {
 	Delete(context.Context, *v11.DeleteTenantRequest) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
 	CreateTenantWithAdminUser(context.Context, *v11.CreateTenantWithAdminUserRequest) (*emptypb.Empty, error)
+	// 租户自助注册（公开端点，服务端白名单放行；含验证码头校验）
+	SelfRegisterTenant(context.Context, *v11.SelfRegisterTenantRequest) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(context.Context, *v11.TenantExistsRequest) (*v11.TenantExistsResponse, error)
 	mustEmbedUnimplementedTenantServiceServer()
@@ -178,6 +193,9 @@ func (UnimplementedTenantServiceServer) Delete(context.Context, *v11.DeleteTenan
 }
 func (UnimplementedTenantServiceServer) CreateTenantWithAdminUser(context.Context, *v11.CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantWithAdminUser not implemented")
+}
+func (UnimplementedTenantServiceServer) SelfRegisterTenant(context.Context, *v11.SelfRegisterTenantRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method SelfRegisterTenant not implemented")
 }
 func (UnimplementedTenantServiceServer) TenantExists(context.Context, *v11.TenantExistsRequest) (*v11.TenantExistsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TenantExists not implemented")
@@ -311,6 +329,24 @@ func _TenantService_CreateTenantWithAdminUser_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantService_SelfRegisterTenant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SelfRegisterTenantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantServiceServer).SelfRegisterTenant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantService_SelfRegisterTenant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantServiceServer).SelfRegisterTenant(ctx, req.(*v11.SelfRegisterTenantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TenantService_TenantExists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.TenantExistsRequest)
 	if err := dec(in); err != nil {
@@ -359,6 +395,10 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTenantWithAdminUser",
 			Handler:    _TenantService_CreateTenantWithAdminUser_Handler,
+		},
+		{
+			MethodName: "SelfRegisterTenant",
+			Handler:    _TenantService_SelfRegisterTenant_Handler,
 		},
 		{
 			MethodName: "TenantExists",
