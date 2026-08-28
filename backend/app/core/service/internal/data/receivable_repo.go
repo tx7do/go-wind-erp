@@ -366,14 +366,15 @@ func (r *ReceivableRepo) ApplyReceipt(ctx context.Context, receivableID uint32, 
 	})
 }
 
-// ApplyReturnOffsetTx 销售退货的财务冲抵（事务内，尽力而为）：
-// 按来源单据引用（"SALES_ORDER:{id}"）查找应收单，原子 amount -= offset。
+// ApplyReturnOffsetTx 销售退货的财务冲抵（事务内，尽力而为，信用票据式双降）：
+// 按来源单据引用（"SALES_ORDER:{id}"）查找应收单，原子 amount -= offset；
+// 已收额超出新总额的部分同步下调 paid_amount（LEAST(paid, amount−offset)，
+// SQL SET 子句引用旧值）——视为已向客户退款/信用净额，客户净头寸不变、
+// 已结清单保持已结清，AR 账龄不再虚挂。
 //
-// 守卫 amount − offset ≥ paid_amount：不得把应收冲到已收额之下——已全额
-// 收款的退货冲抵属退款/信用票据流程（线下处理）。守卫拦截或找不到匹配
-// （手工应收/已取消/重复冲抵到零）时记日志跳过并返回 nil，不阻断退货——
-// 实物已退回，财务调整是二级动作（与 PO 审批生成 payable 失败仅记录的
-// 软失败模式一致）。
+// 守卫 amount − offset ≥ 0（总额不得冲负）。找不到匹配（手工应收/已取消）
+// 时记日志跳过并返回 nil，不阻断退货——实物已退回，财务调整是二级动作
+// （与 PO 审批生成 payable 失败仅记录的软失败模式一致）。
 func (r *ReceivableRepo) ApplyReturnOffsetTx(
 	ctx context.Context,
 	tx *ent.Tx,
@@ -390,14 +391,13 @@ func (r *ReceivableRepo) ApplyReturnOffsetTx(
 	builder := tx.Receivable.Update().
 		Where(receivable.SoRefEQ(soRef)).
 		Where(receivable.StatusNEQ(receivable.StatusCancelled)).
-		// 防过度冲抵：冲抵后总额不得低于已收额（对当前值求值）
+		// 防冲负：冲抵后总额不得为负（对当前值求值）
 		Where(func(s *sql.Selector) {
 			s.Where(sql.ExprP(fmt.Sprintf(
-				"%s - %d >= %s",
-				s.C(receivable.FieldAmount), offset, s.C(receivable.FieldPaidAmount),
+				"%s - %d >= 0",
+				s.C(receivable.FieldAmount), offset,
 			)))
 		}).
-		AddAmount(-offset).
 		SetUpdatedAt(time.Now())
 	if hasTenant {
 		builder.Where(receivable.TenantIDEQ(tid))
@@ -405,16 +405,28 @@ func (r *ReceivableRepo) ApplyReturnOffsetTx(
 	if hasUser {
 		builder.SetUpdatedBy(callerUserID)
 	}
-	// 状态按冲抵后的终值逆向推导：已收 ≥ 新总额 → SETTLED（等额冲抵）；
-	// 已收 > 0 → PARTIAL；否则 PENDING。
+	// 双降：amount -= offset；paid 收敛到新总额（已收超出部分 = 自动退款）。
+	// 状态按冲抵后的终值逆向推导（引用旧值求值，与双降结果一致）。
 	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(
+			receivable.FieldAmount,
+			sql.Expr(fmt.Sprintf("%s - %d", receivable.FieldAmount, offset)),
+		)
+		u.Set(
+			receivable.FieldPaidAmount,
+			sql.Expr(fmt.Sprintf(
+				"LEAST(%s, %s - %d)",
+				receivable.FieldPaidAmount, receivable.FieldAmount, offset,
+			)),
+		)
 		u.Set(
 			receivable.FieldStatus,
 			sql.Expr(fmt.Sprintf(
-				"CASE WHEN %s >= %s - %d THEN '%s' WHEN %s > 0 THEN '%s' ELSE '%s' END",
+				"CASE WHEN LEAST(%s, %s - %d) >= %s - %d THEN '%s' WHEN LEAST(%s, %s - %d) > 0 THEN '%s' ELSE '%s' END",
 				receivable.FieldPaidAmount, receivable.FieldAmount, offset,
+				receivable.FieldAmount, offset,
 				receivable.StatusSettled,
-				receivable.FieldPaidAmount,
+				receivable.FieldPaidAmount, receivable.FieldAmount, offset,
 				receivable.StatusPartial,
 				receivable.StatusPending,
 			)),
@@ -428,7 +440,7 @@ func (r *ReceivableRepo) ApplyReturnOffsetTx(
 	}
 	if n == 0 {
 		// 找不到匹配或守卫拦截——记录后跳过，不阻断退货。
-		r.log.Warnf("return offset skipped for so_ref=%s offset=%d (no match or fully paid)", soRef, offset)
+		r.log.Warnf("return offset skipped for so_ref=%s offset=%d (no match or amount would go negative)", soRef, offset)
 	}
 	return nil
 }

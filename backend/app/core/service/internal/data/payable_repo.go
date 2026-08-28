@@ -367,12 +367,11 @@ func (r *PayableRepo) ApplyPayment(ctx context.Context, payableID uint32, amount
 	})
 }
 
-// ApplyReturnOffsetTx 采购退货的财务冲抵（事务内，尽力而为）：
-// 按来源单据引用（"PURCHASE_ORDER:{id}"）查找应付单，原子 amount -= offset。
-//
-// 守卫 amount − offset ≥ paid_amount：不得把应付冲到已付额之下——已全额
-// 付款的退货冲抵属退款流程（线下处理）。守卫拦截或找不到匹配时记日志
-// 跳过并返回 nil，不阻断退货。镜像 ReceivableRepo.ApplyReturnOffsetTx。
+// ApplyReturnOffsetTx 采购退货的财务冲抵（事务内，尽力而为，信用票据式双降）：
+// 按来源单据引用（"PURCHASE_ORDER:{id}"）查找应付单，原子 amount -= offset；
+// 已付额超出新总额的部分同步下调 paid_amount（LEAST(paid, amount−offset)）
+// ——视为供应商已退款/信用净额。守卫 amount − offset ≥ 0。找不到匹配时
+// 记日志跳过并返回 nil，不阻断退货。镜像 ReceivableRepo.ApplyReturnOffsetTx。
 func (r *PayableRepo) ApplyReturnOffsetTx(
 	ctx context.Context,
 	tx *ent.Tx,
@@ -389,14 +388,13 @@ func (r *PayableRepo) ApplyReturnOffsetTx(
 	builder := tx.Payable.Update().
 		Where(payable.PoRefEQ(poRef)).
 		Where(payable.StatusNEQ(payable.StatusCancelled)).
-		// 防过度冲抵：冲抵后总额不得低于已付额（对当前值求值）
+		// 防冲负：冲抵后总额不得为负（对当前值求值）
 		Where(func(s *sql.Selector) {
 			s.Where(sql.ExprP(fmt.Sprintf(
-				"%s - %d >= %s",
-				s.C(payable.FieldAmount), offset, s.C(payable.FieldPaidAmount),
+				"%s - %d >= 0",
+				s.C(payable.FieldAmount), offset,
 			)))
 		}).
-		AddAmount(-offset).
 		SetUpdatedAt(time.Now())
 	if hasTenant {
 		builder.Where(payable.TenantIDEQ(tid))
@@ -404,15 +402,28 @@ func (r *PayableRepo) ApplyReturnOffsetTx(
 	if hasUser {
 		builder.SetUpdatedBy(callerUserID)
 	}
-	// 状态按冲抵后的终值逆向推导。
+	// 双降：amount -= offset；paid 收敛到新总额（已付超出部分 = 自动退款）。
+	// 状态按冲抵后的终值逆向推导（引用旧值求值，与双降结果一致）。
 	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(
+			payable.FieldAmount,
+			sql.Expr(fmt.Sprintf("%s - %d", payable.FieldAmount, offset)),
+		)
+		u.Set(
+			payable.FieldPaidAmount,
+			sql.Expr(fmt.Sprintf(
+				"LEAST(%s, %s - %d)",
+				payable.FieldPaidAmount, payable.FieldAmount, offset,
+			)),
+		)
 		u.Set(
 			payable.FieldStatus,
 			sql.Expr(fmt.Sprintf(
-				"CASE WHEN %s >= %s - %d THEN '%s' WHEN %s > 0 THEN '%s' ELSE '%s' END",
+				"CASE WHEN LEAST(%s, %s - %d) >= %s - %d THEN '%s' WHEN LEAST(%s, %s - %d) > 0 THEN '%s' ELSE '%s' END",
 				payable.FieldPaidAmount, payable.FieldAmount, offset,
+				payable.FieldAmount, offset,
 				payable.StatusSettled,
-				payable.FieldPaidAmount,
+				payable.FieldPaidAmount, payable.FieldAmount, offset,
 				payable.StatusPartial,
 				payable.StatusPending,
 			)),
@@ -425,7 +436,7 @@ func (r *PayableRepo) ApplyReturnOffsetTx(
 		return financeV1.ErrorInternalServerError("apply return offset failed")
 	}
 	if n == 0 {
-		r.log.Warnf("return offset skipped for po_ref=%s offset=%d (no match or fully paid)", poRef, offset)
+		r.log.Warnf("return offset skipped for po_ref=%s offset=%d (no match or amount would go negative)", poRef, offset)
 	}
 	return nil
 }
