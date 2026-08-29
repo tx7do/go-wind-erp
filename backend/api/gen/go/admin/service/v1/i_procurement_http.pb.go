@@ -43,14 +43,14 @@ type SupplierServiceHTTPServer interface {
 
 func RegisterSupplierServiceHTTPServer(s *http.Server, srv SupplierServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/suppliers", _SupplierService_List28_HTTP_Handler(srv))
+	r.GET("/admin/v1/suppliers", _SupplierService_List29_HTTP_Handler(srv))
 	r.GET("/admin/v1/suppliers/{id}", _SupplierService_Get28_HTTP_Handler(srv))
 	r.POST("/admin/v1/suppliers", _SupplierService_Create21_HTTP_Handler(srv))
 	r.PUT("/admin/v1/suppliers/{id}", _SupplierService_Update15_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/suppliers/{id}", _SupplierService_Delete19_HTTP_Handler(srv))
 }
 
-func _SupplierService_List28_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
+func _SupplierService_List29_HTTP_Handler(srv SupplierServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -287,7 +287,7 @@ type PurchaseOrderServiceHTTPServer interface {
 
 func RegisterPurchaseOrderServiceHTTPServer(s *http.Server, srv PurchaseOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/purchase-orders", _PurchaseOrderService_List29_HTTP_Handler(srv))
+	r.GET("/admin/v1/purchase-orders", _PurchaseOrderService_List30_HTTP_Handler(srv))
 	r.GET("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Get29_HTTP_Handler(srv))
 	r.POST("/admin/v1/purchase-orders", _PurchaseOrderService_Create22_HTTP_Handler(srv))
 	r.PUT("/admin/v1/purchase-orders/{id}", _PurchaseOrderService_Update16_HTTP_Handler(srv))
@@ -299,7 +299,7 @@ func RegisterPurchaseOrderServiceHTTPServer(s *http.Server, srv PurchaseOrderSer
 	r.POST("/admin/v1/purchase-orders:complete", _PurchaseOrderService_Complete0_HTTP_Handler(srv))
 }
 
-func _PurchaseOrderService_List29_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
+func _PurchaseOrderService_List30_HTTP_Handler(srv PurchaseOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

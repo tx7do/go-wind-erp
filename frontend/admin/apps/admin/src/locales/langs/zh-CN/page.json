@@ -597,7 +597,11 @@
       "warehouse": "收货仓库",
       "quantity": "收货数量",
       "quantityHint": "默认为未收完的剩余数量",
-      "exceedsRemaining": "收货数量超过剩余未收数量"
+      "exceedsRemaining": "收货数量超过剩余未收数量",
+      "lotSection": "批次登记（可选）",
+      "lotHint": "填写批次号后按批次收货并在批次库存页跟踪余量与效期；留空则不跟踪",
+      "lotName": "批次号",
+      "expiryDate": "效期（可选）"
     },
     "button": {
       "create": "创建采购单",
@@ -799,5 +803,13 @@
     "maxUsers": "用户上限",
     "maxOrders": "月单量上限",
     "planManagement": "套餐管理"
+  },
+  "stockLot": {
+    "moduleName": "批次库存",
+    "name": "批次号",
+    "skuCode": "产品编码",
+    "expiryDate": "效期",
+    "remainingQuantity": "批次余量",
+    "lotStatus": "效期状态"
   }
 }

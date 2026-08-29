@@ -80,6 +80,14 @@ func (StockMoveLine) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		// lot_id：批次（记录式批次/效期）。入库腿登记批次、出库腿按
+		// FEFO 或指派扣减批次；批次余量 = move lines 按 usage 聚合。
+		field.Uint32("lot_id").
+			Comment("批次ID（可空=未跟踪）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -102,5 +110,9 @@ func (StockMoveLine) Indexes() []ent.Index {
 		// 按拣货单取其执行记录（反范式查询）
 		index.Fields("tenant_id", "picking_id").
 			StorageKey("idx_inv_stock_move_line_tenant_picking"),
+
+		// 批次余量聚合：按批次取其全部出入执行记录
+		index.Fields("tenant_id", "lot_id").
+			StorageKey("idx_inv_stock_move_line_tenant_lot"),
 	}
 }

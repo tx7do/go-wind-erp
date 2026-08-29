@@ -5176,6 +5176,40 @@ func (m *ValidateStockPickingRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
+	for idx, item := range m.GetLotAssignments() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ValidateStockPickingRequestValidationError{
+						field:  fmt.Sprintf("LotAssignments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ValidateStockPickingRequestValidationError{
+						field:  fmt.Sprintf("LotAssignments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ValidateStockPickingRequestValidationError{
+					field:  fmt.Sprintf("LotAssignments[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ValidateStockPickingRequestMultiError(errors)
 	}
@@ -5360,3 +5394,475 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CancelStockPickingRequestValidationError{}
+
+// Validate checks the field values on StockLot with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StockLot) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StockLot with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StockLotMultiError, or nil
+// if none found.
+func (m *StockLot) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StockLot) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.SkuCode != nil {
+		// no validation rules for SkuCode
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.ExpiryDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetExpiryDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StockLotValidationError{
+						field:  "ExpiryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StockLotValidationError{
+						field:  "ExpiryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetExpiryDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StockLotValidationError{
+					field:  "ExpiryDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.RemainingQuantity != nil {
+		// no validation rules for RemainingQuantity
+	}
+
+	if m.LotStatus != nil {
+		// no validation rules for LotStatus
+	}
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StockLotValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StockLotValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StockLotValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return StockLotMultiError(errors)
+	}
+
+	return nil
+}
+
+// StockLotMultiError is an error wrapping multiple validation errors returned
+// by StockLot.ValidateAll() if the designated constraints aren't met.
+type StockLotMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StockLotMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StockLotMultiError) AllErrors() []error { return m }
+
+// StockLotValidationError is the validation error returned by
+// StockLot.Validate if the designated constraints aren't met.
+type StockLotValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StockLotValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StockLotValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StockLotValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StockLotValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StockLotValidationError) ErrorName() string { return "StockLotValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StockLotValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStockLot.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StockLotValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StockLotValidationError{}
+
+// Validate checks the field values on ListStockLotResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListStockLotResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListStockLotResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListStockLotResponseMultiError, or nil if none found.
+func (m *ListStockLotResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListStockLotResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListStockLotResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListStockLotResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListStockLotResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListStockLotResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListStockLotResponseMultiError is an error wrapping multiple validation
+// errors returned by ListStockLotResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListStockLotResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListStockLotResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListStockLotResponseMultiError) AllErrors() []error { return m }
+
+// ListStockLotResponseValidationError is the validation error returned by
+// ListStockLotResponse.Validate if the designated constraints aren't met.
+type ListStockLotResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListStockLotResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListStockLotResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListStockLotResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListStockLotResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListStockLotResponseValidationError) ErrorName() string {
+	return "ListStockLotResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListStockLotResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListStockLotResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListStockLotResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListStockLotResponseValidationError{}
+
+// Validate checks the field values on LotAssignment with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *LotAssignment) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LotAssignment with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LotAssignmentMultiError, or
+// nil if none found.
+func (m *LotAssignment) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LotAssignment) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProductCode
+
+	// no validation rules for LotName
+
+	if m.ExpiryDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetExpiryDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LotAssignmentValidationError{
+						field:  "ExpiryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LotAssignmentValidationError{
+						field:  "ExpiryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetExpiryDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LotAssignmentValidationError{
+					field:  "ExpiryDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return LotAssignmentMultiError(errors)
+	}
+
+	return nil
+}
+
+// LotAssignmentMultiError is an error wrapping multiple validation errors
+// returned by LotAssignment.ValidateAll() if the designated constraints
+// aren't met.
+type LotAssignmentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LotAssignmentMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LotAssignmentMultiError) AllErrors() []error { return m }
+
+// LotAssignmentValidationError is the validation error returned by
+// LotAssignment.Validate if the designated constraints aren't met.
+type LotAssignmentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LotAssignmentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LotAssignmentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LotAssignmentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LotAssignmentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LotAssignmentValidationError) ErrorName() string { return "LotAssignmentValidationError" }
+
+// Error satisfies the builtin error interface
+func (e LotAssignmentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLotAssignment.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LotAssignmentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LotAssignmentValidationError{}

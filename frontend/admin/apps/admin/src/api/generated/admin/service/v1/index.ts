@@ -6047,6 +6047,16 @@ export type inventoryservicev1_ConfirmStockPickingRequest = {
 
 export type inventoryservicev1_ValidateStockPickingRequest = {
   id: number | undefined;
+  // 批次指派：入库腿登记/复用批次（expiry_date 供新建批次）；出库腿指定
+  // 批次（余量校验）。出库未指派时自动按 FEFO（效期升序）拆分扣减。
+  lotAssignments: inventoryservicev1_LotAssignment[] | undefined;
+};
+
+// 批次指派（Validate 入参）：product_code 匹配 picking 中的 move
+export type inventoryservicev1_LotAssignment = {
+  expiryDate?: wellKnownTimestamp;
+  lotName: string | undefined;
+  productCode: string | undefined;
 };
 
 export type inventoryservicev1_CancelStockPickingRequest = {
@@ -6057,6 +6067,172 @@ export type inventoryservicev1_DeleteStockPickingRequest = {
   id?: number;
 };
 
+// 批次服务（只读；批次在收货 Validate 时登记）
+export interface StockLotService {
+  // 批次库存列表（含剩余数量与效期状态）
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<inventoryservicev1_ListStockLotResponse>;
+}
+
+export function createStockLotServiceClient(
+  transport: ClientTransport,
+): StockLotService {
+  return {
+    List(request) {
+      const path = `admin/v1/stock-lots`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockLotService',
+        method: 'List',
+      }) as Promise<inventoryservicev1_ListStockLotResponse>;
+    },
+  };
+}
+export type inventoryservicev1_ListStockLotResponse = {
+  items: inventoryservicev1_StockLot[] | undefined;
+  total: number | undefined;
+};
+
+// 批次（借鉴 Odoo stock.production.lot 的登记角色。记录式方案：批次表只
+// 登记批号与效期，剩余数量由 move lines 聚合推导，不动 quant 引擎）
+export type inventoryservicev1_StockLot = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  expiryDate?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  lotStatus?: inventoryservicev1_LotStatus;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  //
+  // Behaviors: OPTIONAL
+  remainingQuantity?: number;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  skuCode?: string;
+  tenantId?: number;
+};
+
+// 批次效期状态（按 expiry_date 与当前时间推导；无效期为 NORMAL）
+export type inventoryservicev1_LotStatus =
+  | 'LOT_EXPIRED'
+  | 'LOT_EXPIRING'
+  | 'LOT_NORMAL';
 // 语言管理服务
 export interface LanguageService {
   // 分页查询语言列表
@@ -11821,6 +11997,7 @@ export class ApiClient {
   private _receivableService?: ReceivableService;
   private _roleService?: RoleService;
   private _salesOrderService?: SalesOrderService;
+  private _stockLotService?: StockLotService;
   private _stockPickingService?: StockPickingService;
   private _stockQuantService?: StockQuantService;
   private _supplierService?: SupplierService;
@@ -11981,6 +12158,10 @@ export class ApiClient {
 
   get salesOrderService(): SalesOrderService {
     return this._salesOrderService ??= createSalesOrderServiceClient(this._transport);
+  }
+
+  get stockLotService(): StockLotService {
+    return this._stockLotService ??= createStockLotServiceClient(this._transport);
   }
 
   get stockPickingService(): StockPickingService {

@@ -100,6 +100,8 @@ type Tx struct {
 	SalesOrderItem *SalesOrderItemClient
 	// StockLocation is the client for interacting with the StockLocation builders.
 	StockLocation *StockLocationClient
+	// StockLot is the client for interacting with the StockLot builders.
+	StockLot *StockLotClient
 	// StockMove is the client for interacting with the StockMove builders.
 	StockMove *StockMoveClient
 	// StockMoveLine is the client for interacting with the StockMoveLine builders.
@@ -303,6 +305,7 @@ func (tx *Tx) init() {
 	tx.SalesOrder = NewSalesOrderClient(tx.config)
 	tx.SalesOrderItem = NewSalesOrderItemClient(tx.config)
 	tx.StockLocation = NewStockLocationClient(tx.config)
+	tx.StockLot = NewStockLotClient(tx.config)
 	tx.StockMove = NewStockMoveClient(tx.config)
 	tx.StockMoveLine = NewStockMoveLineClient(tx.config)
 	tx.StockPicking = NewStockPickingClient(tx.config)

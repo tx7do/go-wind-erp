@@ -55,6 +55,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/salesorder"
 	"go-wind-erp/app/core/service/internal/data/ent/salesorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
+	"go-wind-erp/app/core/service/internal/data/ent/stocklot"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
 	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
@@ -169,6 +170,8 @@ type Client struct {
 	SalesOrderItem *SalesOrderItemClient
 	// StockLocation is the client for interacting with the StockLocation builders.
 	StockLocation *StockLocationClient
+	// StockLot is the client for interacting with the StockLot builders.
+	StockLot *StockLotClient
 	// StockMove is the client for interacting with the StockMove builders.
 	StockMove *StockMoveClient
 	// StockMoveLine is the client for interacting with the StockMoveLine builders.
@@ -252,6 +255,7 @@ func (c *Client) init() {
 	c.SalesOrder = NewSalesOrderClient(c.config)
 	c.SalesOrderItem = NewSalesOrderItemClient(c.config)
 	c.StockLocation = NewStockLocationClient(c.config)
+	c.StockLot = NewStockLotClient(c.config)
 	c.StockMove = NewStockMoveClient(c.config)
 	c.StockMoveLine = NewStockMoveLineClient(c.config)
 	c.StockPicking = NewStockPickingClient(c.config)
@@ -402,6 +406,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SalesOrder:               NewSalesOrderClient(cfg),
 		SalesOrderItem:           NewSalesOrderItemClient(cfg),
 		StockLocation:            NewStockLocationClient(cfg),
+		StockLot:                 NewStockLotClient(cfg),
 		StockMove:                NewStockMoveClient(cfg),
 		StockMoveLine:            NewStockMoveLineClient(cfg),
 		StockPicking:             NewStockPickingClient(cfg),
@@ -479,6 +484,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SalesOrder:               NewSalesOrderClient(cfg),
 		SalesOrderItem:           NewSalesOrderItemClient(cfg),
 		StockLocation:            NewStockLocationClient(cfg),
+		StockLot:                 NewStockLotClient(cfg),
 		StockMove:                NewStockMoveClient(cfg),
 		StockMoveLine:            NewStockMoveLineClient(cfg),
 		StockPicking:             NewStockPickingClient(cfg),
@@ -531,10 +537,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan,
 		c.PolicyEvaluationLog, c.Position, c.Product, c.PurchaseOrder,
 		c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role, c.RoleMetadata,
-		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockMove,
-		c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription, c.Supplier,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole, c.Warehouse,
+		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockLot,
+		c.StockMove, c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription,
+		c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Use(hooks...)
 	}
@@ -553,10 +559,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan,
 		c.PolicyEvaluationLog, c.Position, c.Product, c.PurchaseOrder,
 		c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role, c.RoleMetadata,
-		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockMove,
-		c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription, c.Supplier,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole, c.Warehouse,
+		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockLot,
+		c.StockMove, c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription,
+		c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -653,6 +659,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SalesOrderItem.mutate(ctx, m)
 	case *StockLocationMutation:
 		return c.StockLocation.mutate(ctx, m)
+	case *StockLotMutation:
+		return c.StockLot.mutate(ctx, m)
 	case *StockMoveMutation:
 		return c.StockMove.mutate(ctx, m)
 	case *StockMoveLineMutation:
@@ -6777,6 +6785,141 @@ func (c *StockLocationClient) mutate(ctx context.Context, m *StockLocationMutati
 	}
 }
 
+// StockLotClient is a client for the StockLot schema.
+type StockLotClient struct {
+	config
+}
+
+// NewStockLotClient returns a client for the StockLot from the given config.
+func NewStockLotClient(c config) *StockLotClient {
+	return &StockLotClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `stocklot.Hooks(f(g(h())))`.
+func (c *StockLotClient) Use(hooks ...Hook) {
+	c.hooks.StockLot = append(c.hooks.StockLot, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `stocklot.Intercept(f(g(h())))`.
+func (c *StockLotClient) Intercept(interceptors ...Interceptor) {
+	c.inters.StockLot = append(c.inters.StockLot, interceptors...)
+}
+
+// Create returns a builder for creating a StockLot entity.
+func (c *StockLotClient) Create() *StockLotCreate {
+	mutation := newStockLotMutation(c.config, OpCreate)
+	return &StockLotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of StockLot entities.
+func (c *StockLotClient) CreateBulk(builders ...*StockLotCreate) *StockLotCreateBulk {
+	return &StockLotCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *StockLotClient) MapCreateBulk(slice any, setFunc func(*StockLotCreate, int)) *StockLotCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &StockLotCreateBulk{err: fmt.Errorf("calling to StockLotClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*StockLotCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &StockLotCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for StockLot.
+func (c *StockLotClient) Update() *StockLotUpdate {
+	mutation := newStockLotMutation(c.config, OpUpdate)
+	return &StockLotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StockLotClient) UpdateOne(_m *StockLot) *StockLotUpdateOne {
+	mutation := newStockLotMutation(c.config, OpUpdateOne, withStockLot(_m))
+	return &StockLotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StockLotClient) UpdateOneID(id uint32) *StockLotUpdateOne {
+	mutation := newStockLotMutation(c.config, OpUpdateOne, withStockLotID(id))
+	return &StockLotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StockLot.
+func (c *StockLotClient) Delete() *StockLotDelete {
+	mutation := newStockLotMutation(c.config, OpDelete)
+	return &StockLotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StockLotClient) DeleteOne(_m *StockLot) *StockLotDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StockLotClient) DeleteOneID(id uint32) *StockLotDeleteOne {
+	builder := c.Delete().Where(stocklot.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StockLotDeleteOne{builder}
+}
+
+// Query returns a query builder for StockLot.
+func (c *StockLotClient) Query() *StockLotQuery {
+	return &StockLotQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStockLot},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a StockLot entity by its id.
+func (c *StockLotClient) Get(ctx context.Context, id uint32) (*StockLot, error) {
+	return c.Query().Where(stocklot.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StockLotClient) GetX(ctx context.Context, id uint32) *StockLot {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StockLotClient) Hooks() []Hook {
+	hooks := c.hooks.StockLot
+	return append(hooks[:len(hooks):len(hooks)], stocklot.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *StockLotClient) Interceptors() []Interceptor {
+	inters := c.inters.StockLot
+	return append(inters[:len(inters):len(inters)], stocklot.Interceptors[:]...)
+}
+
+func (c *StockLotClient) mutate(ctx context.Context, m *StockLotMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StockLotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StockLotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StockLotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StockLotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown StockLot mutation op: %q", m.Op())
+	}
+}
+
 // StockMoveClient is a client for the StockMove schema.
 type StockMoveClient struct {
 	config
@@ -8676,9 +8819,9 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
 		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
 		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
-		StockMove, StockMoveLine, StockPicking, StockQuant, Subscription, Supplier,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Warehouse []ent.Hook
+		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
+		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Warehouse []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, ApprovalRequest, Customer, DataAccessAuditLog, DictEntry,
@@ -8689,8 +8832,8 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
 		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
 		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
-		StockMove, StockMoveLine, StockPicking, StockQuant, Subscription, Supplier,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Warehouse []ent.Interceptor
+		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
+		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Warehouse []ent.Interceptor
 	}
 )

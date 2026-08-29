@@ -119,6 +119,11 @@ func UnitCost(v int64) predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldEQ(FieldUnitCost, v))
 }
 
+// LotID applies equality check predicate on the "lot_id" field. It's identical to LotIDEQ.
+func LotID(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldEQ(FieldLotID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldEQ(FieldCreatedAt, v))
@@ -817,6 +822,56 @@ func UnitCostIsNil() predicate.StockMoveLine {
 // UnitCostNotNil applies the NotNil predicate on the "unit_cost" field.
 func UnitCostNotNil() predicate.StockMoveLine {
 	return predicate.StockMoveLine(sql.FieldNotNull(FieldUnitCost))
+}
+
+// LotIDEQ applies the EQ predicate on the "lot_id" field.
+func LotIDEQ(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldEQ(FieldLotID, v))
+}
+
+// LotIDNEQ applies the NEQ predicate on the "lot_id" field.
+func LotIDNEQ(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNEQ(FieldLotID, v))
+}
+
+// LotIDIn applies the In predicate on the "lot_id" field.
+func LotIDIn(vs ...uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldIn(FieldLotID, vs...))
+}
+
+// LotIDNotIn applies the NotIn predicate on the "lot_id" field.
+func LotIDNotIn(vs ...uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNotIn(FieldLotID, vs...))
+}
+
+// LotIDGT applies the GT predicate on the "lot_id" field.
+func LotIDGT(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldGT(FieldLotID, v))
+}
+
+// LotIDGTE applies the GTE predicate on the "lot_id" field.
+func LotIDGTE(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldGTE(FieldLotID, v))
+}
+
+// LotIDLT applies the LT predicate on the "lot_id" field.
+func LotIDLT(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldLT(FieldLotID, v))
+}
+
+// LotIDLTE applies the LTE predicate on the "lot_id" field.
+func LotIDLTE(v uint32) predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldLTE(FieldLotID, v))
+}
+
+// LotIDIsNil applies the IsNil predicate on the "lot_id" field.
+func LotIDIsNil() predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldIsNull(FieldLotID))
+}
+
+// LotIDNotNil applies the NotNil predicate on the "lot_id" field.
+func LotIDNotNil() predicate.StockMoveLine {
+	return predicate.StockMoveLine(sql.FieldNotNull(FieldLotID))
 }
 
 // And groups predicates with the AND operator between them.

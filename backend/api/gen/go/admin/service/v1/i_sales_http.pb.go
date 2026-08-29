@@ -38,14 +38,14 @@ type CustomerServiceHTTPServer interface {
 
 func RegisterCustomerServiceHTTPServer(s *http.Server, srv CustomerServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/customers", _CustomerService_List32_HTTP_Handler(srv))
+	r.GET("/admin/v1/customers", _CustomerService_List33_HTTP_Handler(srv))
 	r.GET("/admin/v1/customers/{id}", _CustomerService_Get32_HTTP_Handler(srv))
 	r.POST("/admin/v1/customers", _CustomerService_Create25_HTTP_Handler(srv))
 	r.PUT("/admin/v1/customers/{id}", _CustomerService_Update19_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/customers/{id}", _CustomerService_Delete23_HTTP_Handler(srv))
 }
 
-func _CustomerService_List32_HTTP_Handler(srv CustomerServiceHTTPServer) func(ctx http.Context) error {
+func _CustomerService_List33_HTTP_Handler(srv CustomerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -262,7 +262,7 @@ type SalesOrderServiceHTTPServer interface {
 
 func RegisterSalesOrderServiceHTTPServer(s *http.Server, srv SalesOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/sales-orders", _SalesOrderService_List33_HTTP_Handler(srv))
+	r.GET("/admin/v1/sales-orders", _SalesOrderService_List34_HTTP_Handler(srv))
 	r.GET("/admin/v1/sales-orders/{id}", _SalesOrderService_Get33_HTTP_Handler(srv))
 	r.POST("/admin/v1/sales-orders", _SalesOrderService_Create26_HTTP_Handler(srv))
 	r.PUT("/admin/v1/sales-orders/{id}", _SalesOrderService_Update20_HTTP_Handler(srv))
@@ -274,7 +274,7 @@ func RegisterSalesOrderServiceHTTPServer(s *http.Server, srv SalesOrderServiceHT
 	r.POST("/admin/v1/sales-orders:complete", _SalesOrderService_Complete1_HTTP_Handler(srv))
 }
 
-func _SalesOrderService_List33_HTTP_Handler(srv SalesOrderServiceHTTPServer) func(ctx http.Context) error {
+func _SalesOrderService_List34_HTTP_Handler(srv SalesOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

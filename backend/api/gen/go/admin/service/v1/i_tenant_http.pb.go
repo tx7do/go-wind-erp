@@ -52,7 +52,7 @@ type TenantServiceHTTPServer interface {
 
 func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tenants", _TenantService_List35_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenants", _TenantService_List36_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants/{id}", _TenantService_Get36_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenants", _TenantService_Create28_HTTP_Handler(srv))
 	r.PUT("/admin/v1/tenants/{id}", _TenantService_Update22_HTTP_Handler(srv))
@@ -62,7 +62,7 @@ func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer
 	r.GET("/admin/v1/tenants:exists", _TenantService_TenantExists0_HTTP_Handler(srv))
 }
 
-func _TenantService_List35_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_List36_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

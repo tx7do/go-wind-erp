@@ -73,6 +73,8 @@ export * from './warehouse';
 
 export * from './stock-picking';
 
+export * from './stock-lot';
+
 export * from './stock-quant';
 
 export * from './user-profile';

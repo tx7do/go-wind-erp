@@ -64,6 +64,18 @@ const warehouse: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/wms/stock_movement/index.vue'),
       },
+
+      {
+        path: 'stock-lots',
+        name: 'StockLotManagement',
+        meta: {
+          order: 4,
+          icon: 'lucide:calendar-clock',
+          title: $t('menu.wms.stockLot'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:warehouse_keeper'],
+        },
+        component: () => import('#/views/app/wms/stock_lot/index.vue'),
+      },
     ],
   },
 ];

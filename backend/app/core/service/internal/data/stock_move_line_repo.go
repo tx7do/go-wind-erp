@@ -48,6 +48,7 @@ func (r *StockMoveLineRepo) CountAll(ctx context.Context) (int64, error) {
 // （StockPickingService.Validate）在同事务内紧接着调 ApplyDeltaTx 改 quant。
 // unitCost 记录执行时冻结的单位成本（入库=采购单价，出库=源位置 quant 的
 // cost_price），供 COGS 核算使用。
+// lotID 记录式批次：入库腿登记批次、出库腿 FEFO/指派扣减批次；0=未跟踪。
 func (r *StockMoveLineRepo) CreateTx(
 	ctx context.Context,
 	tx *ent.Tx,
@@ -58,6 +59,7 @@ func (r *StockMoveLineRepo) CreateTx(
 	destinationLocationID uint32,
 	executedQuantity int64,
 	unitCost int64,
+	lotID uint32,
 ) error {
 	builder := tx.StockMoveLine.Create().
 		SetMoveID(moveID).
@@ -67,6 +69,7 @@ func (r *StockMoveLineRepo) CreateTx(
 		SetDestinationLocationID(destinationLocationID).
 		SetExecutedQuantity(executedQuantity).
 		SetUnitCost(unitCost).
+		SetLotID(lotID).
 		SetCreatedAt(time.Now())
 
 	if _, err := builder.Save(ctx); err != nil {

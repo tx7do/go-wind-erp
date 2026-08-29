@@ -38,14 +38,14 @@ type ProductServiceHTTPServer interface {
 
 func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/products", _ProductService_List30_HTTP_Handler(srv))
+	r.GET("/admin/v1/products", _ProductService_List31_HTTP_Handler(srv))
 	r.GET("/admin/v1/products/{id}", _ProductService_Get30_HTTP_Handler(srv))
 	r.POST("/admin/v1/products", _ProductService_Create23_HTTP_Handler(srv))
 	r.PUT("/admin/v1/products/{id}", _ProductService_Update17_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/products/{id}", _ProductService_Delete21_HTTP_Handler(srv))
 }
 
-func _ProductService_List30_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_List31_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

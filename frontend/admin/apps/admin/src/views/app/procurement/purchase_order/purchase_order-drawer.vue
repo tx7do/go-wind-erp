@@ -66,6 +66,8 @@ function handleReceive(record: any) {
     poId: data.value.row.id,
     skuCode: record.skuCode,
     remaining: (record.quantity ?? 0) - (record.receivedQuantity ?? 0),
+    // 预填收货仓库（PO 明细仓库，仍可改选）
+    warehouseCode: data.value.row.warehouseCode,
   });
   receiveModalApi.open();
 }

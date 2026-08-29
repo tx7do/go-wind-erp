@@ -229,7 +229,10 @@ async function handleConfirmPicking(row: any) {
 
 async function handleValidatePicking(row: any) {
   try {
-    await apiClient.stockPickingService.Validate({ id: row.id });
+    await apiClient.stockPickingService.Validate({
+      id: row.id,
+      lotAssignments: undefined,
+    });
 
     notification.success({
       message: $t('ui.notification.operation_success'),

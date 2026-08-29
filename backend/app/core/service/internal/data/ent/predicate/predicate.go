@@ -138,6 +138,9 @@ type SalesOrderItem func(*sql.Selector)
 // StockLocation is the predicate function for stocklocation builders.
 type StockLocation func(*sql.Selector)
 
+// StockLot is the predicate function for stocklot builders.
+type StockLot func(*sql.Selector)
+
 // StockMove is the predicate function for stockmove builders.
 type StockMove func(*sql.Selector)
 

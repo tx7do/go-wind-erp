@@ -5733,26 +5733,32 @@ class InventoryServiceV1ConfirmStockPickingRequest {
 
 class InventoryServiceV1ValidateStockPickingRequest {
   int? id;
+  /// 批次指派：入库腿登记/复用批次（expiry_date 供新建批次）；出库腿指定
+  /// 批次（余量校验）。出库未指派时自动按 FEFO（效期升序）拆分扣减。
+  List<InventoryServiceV1LotAssignment>? lotAssignments;
 
   InventoryServiceV1ValidateStockPickingRequest({
     this.id,
+    this.lotAssignments,
   });
 
   factory InventoryServiceV1ValidateStockPickingRequest.fromJson(Map<String, dynamic> json) {
     return InventoryServiceV1ValidateStockPickingRequest(
       id: json['id'] as int?,
+      lotAssignments: (json['lotAssignments'] as List<dynamic>?)?.map((e) => InventoryServiceV1LotAssignment.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (id != null) json['id'] = id;
+    if (lotAssignments != null) json['lotAssignments'] = lotAssignments!.map((e) => e.toJson()).toList();
     return json;
   }
 
   @override
   String toString() {
-    return 'InventoryServiceV1ValidateStockPickingRequest(id: $id)';
+    return 'InventoryServiceV1ValidateStockPickingRequest(id: $id, lotAssignments: $lotAssignments)';
   }
 
   @override
@@ -5761,18 +5767,85 @@ class InventoryServiceV1ValidateStockPickingRequest {
     other is InventoryServiceV1ValidateStockPickingRequest &&
       runtimeType == other.runtimeType
       && id == other.id
+      && lotAssignments == other.lotAssignments
     ;
 
   @override
   int get hashCode => Object.hashAll([
     id,
+    lotAssignments,
   ]);
 
   InventoryServiceV1ValidateStockPickingRequest copyWith({
     int? id,
+    List<InventoryServiceV1LotAssignment>? lotAssignments,
   }) {
     return InventoryServiceV1ValidateStockPickingRequest(
       id: id ?? this.id,
+      lotAssignments: lotAssignments ?? this.lotAssignments,
+    );
+  }
+}
+
+/// 批次指派（Validate 入参）：product_code 匹配 picking 中的 move
+class InventoryServiceV1LotAssignment {
+  String? expiryDate;
+  String? lotName;
+  String? productCode;
+
+  InventoryServiceV1LotAssignment({
+    this.expiryDate,
+    this.lotName,
+    this.productCode,
+  });
+
+  factory InventoryServiceV1LotAssignment.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1LotAssignment(
+      expiryDate: json['expiryDate'] as String?,
+      lotName: json['lotName'] as String?,
+      productCode: json['productCode'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (expiryDate != null) json['expiryDate'] = expiryDate;
+    if (lotName != null) json['lotName'] = lotName;
+    if (productCode != null) json['productCode'] = productCode;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1LotAssignment(expiryDate: $expiryDate, lotName: $lotName, productCode: $productCode)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1LotAssignment &&
+      runtimeType == other.runtimeType
+      && expiryDate == other.expiryDate
+      && lotName == other.lotName
+      && productCode == other.productCode
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    expiryDate,
+    lotName,
+    productCode,
+  ]);
+
+  InventoryServiceV1LotAssignment copyWith({
+    String? expiryDate,
+    String? lotName,
+    String? productCode,
+  }) {
+    return InventoryServiceV1LotAssignment(
+      expiryDate: expiryDate ?? this.expiryDate,
+      lotName: lotName ?? this.lotName,
+      productCode: productCode ?? this.productCode,
     );
   }
 }

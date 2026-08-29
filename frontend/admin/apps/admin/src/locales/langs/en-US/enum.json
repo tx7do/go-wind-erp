@@ -316,5 +316,10 @@
       "Completed": "Completed",
       "Cancelled": "Cancelled"
     }
+  },
+  "stockLot": {
+    "Normal": "Normal",
+    "Expiring": "Expiring Soon",
+    "Expired": "Expired"
   }
 }

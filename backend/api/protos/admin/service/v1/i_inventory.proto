@@ -190,3 +190,13 @@ service StockPickingService {
     };
   }
 }
+
+// 批次服务（只读；批次在收货 Validate 时登记）
+service StockLotService {
+  // 批次库存列表（含剩余数量与效期状态）
+  rpc List (pagination.PagingRequest) returns (inventory.service.v1.ListStockLotResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stock-lots"
+    };
+  }
+}

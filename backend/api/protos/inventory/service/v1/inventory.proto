@@ -109,6 +109,13 @@ service StockPickingService {
   rpc Delete (DeleteStockPickingRequest) returns (google.protobuf.Empty) {}
 }
 
+// 批次服务（记录式批次/效期管理：批次在收货时登记、move line 挂批次，
+// 批次余量 = move lines 按位置 usage 聚合，不参与 quant 引擎）
+service StockLotService {
+  // 批次库存列表（含剩余数量与效期状态；支持 skuCode/lotStatus 过滤）
+  rpc List (pagination.PagingRequest) returns (ListStockLotResponse) {}
+}
+
 // 仓库
 message Warehouse {
   optional uint32 id = 1 [
@@ -832,6 +839,12 @@ message ValidateStockPickingRequest {
     (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
     json_name = "id"
   ]; // ID
+
+  // 批次指派：入库腿登记/复用批次（expiry_date 供新建批次）；出库腿指定
+  // 批次（余量校验）。出库未指派时自动按 FEFO（效期升序）拆分扣减。
+  repeated LotAssignment lot_assignments = 2 [
+    (gnostic.openapi.v3.property) = {description: "批次指派明细"}
+  ]; // 批次指派明细
 }
 
 message CancelStockPickingRequest {
@@ -839,4 +852,102 @@ message CancelStockPickingRequest {
     (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
     json_name = "id"
   ]; // ID
+}
+
+// =========== StockLot ==========
+
+// 批次效期状态（按 expiry_date 与当前时间推导；无效期为 NORMAL）
+enum LotStatus {
+  LOT_NORMAL = 0;   // 正常
+  LOT_EXPIRING = 1; // 临期（30 天内到期）
+  LOT_EXPIRED = 2;  // 已过期
+}
+
+// 批次（借鉴 Odoo stock.production.lot 的登记角色。记录式方案：批次表只
+// 登记批号与效期，剩余数量由 move lines 聚合推导，不动 quant 引擎）
+message StockLot {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "批次ID"
+    }
+  ]; // 批次ID
+
+  optional string sku_code = 2 [
+    json_name = "skuCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "产品编码"
+    }
+  ]; // 产品编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "批次号"
+    }
+  ]; // 批次号
+
+  optional google.protobuf.Timestamp expiry_date = 4 [
+    json_name = "expiryDate",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "效期（可空=不限期）"
+    }
+  ]; // 效期
+
+  optional int64 remaining_quantity = 5 [
+    json_name = "remainingQuantity",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "批次剩余数量（move lines 聚合）"
+    }
+  ]; // 批次剩余数量
+
+  optional LotStatus lot_status = 6 [
+    json_name = "lotStatus",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "效期状态"
+    }
+  ]; // 效期状态
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID，0代表系统全局
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+}
+
+message ListStockLotResponse {
+  repeated StockLot items = 1;
+  uint64 total = 2;
+}
+
+// 批次指派（Validate 入参）：product_code 匹配 picking 中的 move
+message LotAssignment {
+  string product_code = 1 [
+    json_name = "productCode",
+    (gnostic.openapi.v3.property) = {description: "产品编码"}
+  ]; // 产品编码
+
+  string lot_name = 2 [
+    json_name = "lotName",
+    (gnostic.openapi.v3.property) = {description: "批次号"}
+  ]; // 批次号
+
+  optional google.protobuf.Timestamp expiry_date = 3 [
+    json_name = "expiryDate",
+    (gnostic.openapi.v3.property) = {description: "效期（入库新建批次时可选）"}
+  ]; // 效期
 }

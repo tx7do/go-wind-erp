@@ -2714,6 +2714,40 @@ var (
 			},
 		},
 	}
+	// InvStockLotsColumns holds the columns for the "inv_stock_lots" table.
+	InvStockLotsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "批次号"},
+		{Name: "expiry_date", Type: field.TypeTime, Nullable: true, Comment: "效期（可空=不限期）"},
+	}
+	// InvStockLotsTable holds the schema information for the "inv_stock_lots" table.
+	InvStockLotsTable = &schema.Table{
+		Name:       "inv_stock_lots",
+		Comment:    "批次登记表（记录式批次/效期）",
+		Columns:    InvStockLotsColumns,
+		PrimaryKey: []*schema.Column{InvStockLotsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_inv_stock_lot_tenant_sku_name",
+				Unique:  true,
+				Columns: []*schema.Column{InvStockLotsColumns[8], InvStockLotsColumns[9], InvStockLotsColumns[10]},
+			},
+			{
+				Name:    "idx_inv_stock_lot_tenant_sku_expiry",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockLotsColumns[8], InvStockLotsColumns[9], InvStockLotsColumns[11]},
+			},
+		},
+	}
 	// InvStockMovesColumns holds the columns for the "inv_stock_moves" table.
 	InvStockMovesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2779,6 +2813,7 @@ var (
 		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "executed_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已执行数量", Default: 0},
 		{Name: "unit_cost", Type: field.TypeInt64, Nullable: true, Comment: "执行时冻结的单位成本（分，用于COGS）", Default: 0},
+		{Name: "lot_id", Type: field.TypeUint32, Nullable: true, Comment: "批次ID（可空=未跟踪）", Default: 0},
 	}
 	// InvStockMoveLinesTable holds the schema information for the "inv_stock_move_lines" table.
 	InvStockMoveLinesTable = &schema.Table{
@@ -2796,6 +2831,11 @@ var (
 				Name:    "idx_inv_stock_move_line_tenant_picking",
 				Unique:  false,
 				Columns: []*schema.Column{InvStockMoveLinesColumns[6], InvStockMoveLinesColumns[8]},
+			},
+			{
+				Name:    "idx_inv_stock_move_line_tenant_lot",
+				Unique:  false,
+				Columns: []*schema.Column{InvStockMoveLinesColumns[6], InvStockMoveLinesColumns[14]},
 			},
 		},
 	}
@@ -3565,6 +3605,7 @@ var (
 		SalSalesOrdersTable,
 		SalSalesOrderItemsTable,
 		InvStockLocationsTable,
+		InvStockLotsTable,
 		InvStockMovesTable,
 		InvStockMoveLinesTable,
 		InvStockPickingsTable,
@@ -3805,6 +3846,11 @@ func init() {
 	}
 	InvStockLocationsTable.Annotation = &entsql.Annotation{
 		Table:     "inv_stock_locations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InvStockLotsTable.Annotation = &entsql.Annotation{
+		Table:     "inv_stock_lots",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -2,6 +2,7 @@
 
 import {
   Alert,
+  DatePicker,
   Button,
   Card,
   Col,
@@ -52,5 +53,6 @@ export function registerGlobComp(app: App) {
     .use(Tabs)
     .use(Divider)
     .use(Menu)
-    .use(Tree);
+    .use(Tree)
+    .use(DatePicker);
 }

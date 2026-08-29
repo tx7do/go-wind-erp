@@ -58,7 +58,8 @@
     "warehouse": "Warehouses",
     "stockQuant": "Stock Quants",
     "stockPicking": "Stock Pickings",
-    "product": "Products"
+    "product": "Products",
+    "stockLot": "Stock Lots"
   },
   "approval": {
     "moduleName": "Approval Center",

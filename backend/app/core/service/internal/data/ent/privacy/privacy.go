@@ -1167,6 +1167,30 @@ func (f StockLocationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockLocationMutation", m)
 }
 
+// The StockLotQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type StockLotQueryRuleFunc func(context.Context, *ent.StockLotQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f StockLotQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.StockLotQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.StockLotQuery", q)
+}
+
+// The StockLotMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type StockLotMutationRuleFunc func(context.Context, *ent.StockLotMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f StockLotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.StockLotMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockLotMutation", m)
+}
+
 // The StockMoveQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type StockMoveQueryRuleFunc func(context.Context, *ent.StockMoveQuery) error
@@ -1626,6 +1650,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.StockLocationQuery:
 		return q.Filter(), nil
+	case *ent.StockLotQuery:
+		return q.Filter(), nil
 	case *ent.StockMoveQuery:
 		return q.Filter(), nil
 	case *ent.StockMoveLineQuery:
@@ -1748,6 +1774,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SalesOrderItemMutation:
 		return m.Filter(), nil
 	case *ent.StockLocationMutation:
+		return m.Filter(), nil
+	case *ent.StockLotMutation:
 		return m.Filter(), nil
 	case *ent.StockMoveMutation:
 		return m.Filter(), nil

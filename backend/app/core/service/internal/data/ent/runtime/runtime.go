@@ -50,6 +50,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/salesorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/schema"
 	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
+	"go-wind-erp/app/core/service/internal/data/ent/stocklot"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
 	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
@@ -1558,6 +1559,40 @@ func init() {
 	stocklocationDescID := stocklocationMixinFields0[0].Descriptor()
 	// stocklocation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	stocklocation.IDValidator = stocklocationDescID.Validators[0].(func(uint32) error)
+	stocklotMixin := schema.StockLot{}.Mixin()
+	stocklot.Policy = privacy.NewPolicies(stocklotMixin[5], schema.StockLot{})
+	stocklot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := stocklot.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	stocklotMixinInters2 := stocklotMixin[2].Interceptors()
+	stocklot.Interceptors[0] = stocklotMixinInters2[0]
+	stocklotMixinFields0 := stocklotMixin[0].Fields()
+	_ = stocklotMixinFields0
+	stocklotMixinFields5 := stocklotMixin[5].Fields()
+	_ = stocklotMixinFields5
+	stocklotFields := schema.StockLot{}.Fields()
+	_ = stocklotFields
+	// stocklotDescTenantID is the schema descriptor for tenant_id field.
+	stocklotDescTenantID := stocklotMixinFields5[0].Descriptor()
+	// stocklot.DefaultTenantID holds the default value on creation for the tenant_id field.
+	stocklot.DefaultTenantID = stocklotDescTenantID.Default.(uint32)
+	// stocklotDescSkuCode is the schema descriptor for sku_code field.
+	stocklotDescSkuCode := stocklotFields[0].Descriptor()
+	// stocklot.SkuCodeValidator is a validator for the "sku_code" field. It is called by the builders before save.
+	stocklot.SkuCodeValidator = stocklotDescSkuCode.Validators[0].(func(string) error)
+	// stocklotDescName is the schema descriptor for name field.
+	stocklotDescName := stocklotFields[1].Descriptor()
+	// stocklot.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	stocklot.NameValidator = stocklotDescName.Validators[0].(func(string) error)
+	// stocklotDescID is the schema descriptor for id field.
+	stocklotDescID := stocklotMixinFields0[0].Descriptor()
+	// stocklot.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stocklot.IDValidator = stocklotDescID.Validators[0].(func(uint32) error)
 	stockmoveMixin := schema.StockMove{}.Mixin()
 	stockmove.Policy = privacy.NewPolicies(stockmoveMixin[5], schema.StockMove{})
 	stockmove.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1652,6 +1687,10 @@ func init() {
 	stockmovelineDescUnitCost := stockmovelineFields[6].Descriptor()
 	// stockmoveline.DefaultUnitCost holds the default value on creation for the unit_cost field.
 	stockmoveline.DefaultUnitCost = stockmovelineDescUnitCost.Default.(int64)
+	// stockmovelineDescLotID is the schema descriptor for lot_id field.
+	stockmovelineDescLotID := stockmovelineFields[7].Descriptor()
+	// stockmoveline.DefaultLotID holds the default value on creation for the lot_id field.
+	stockmoveline.DefaultLotID = stockmovelineDescLotID.Default.(uint32)
 	// stockmovelineDescID is the schema descriptor for id field.
 	stockmovelineDescID := stockmovelineMixinFields0[0].Descriptor()
 	// stockmoveline.IDValidator is a validator for the "id" field. It is called by the builders before save.

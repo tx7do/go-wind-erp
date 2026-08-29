@@ -38,6 +38,8 @@ const (
 	FieldExecutedQuantity = "executed_quantity"
 	// FieldUnitCost holds the string denoting the unit_cost field in the database.
 	FieldUnitCost = "unit_cost"
+	// FieldLotID holds the string denoting the lot_id field in the database.
+	FieldLotID = "lot_id"
 	// Table holds the table name of the stockmoveline in the database.
 	Table = "inv_stock_move_lines"
 )
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldDestinationLocationID,
 	FieldExecutedQuantity,
 	FieldUnitCost,
+	FieldLotID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -92,6 +95,8 @@ var (
 	DefaultExecutedQuantity int64
 	// DefaultUnitCost holds the default value on creation for the "unit_cost" field.
 	DefaultUnitCost int64
+	// DefaultLotID holds the default value on creation for the "lot_id" field.
+	DefaultLotID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -167,4 +172,9 @@ func ByExecutedQuantity(opts ...sql.OrderTermOption) OrderOption {
 // ByUnitCost orders the results by the unit_cost field.
 func ByUnitCost(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUnitCost, opts...).ToFunc()
+}
+
+// ByLotID orders the results by the lot_id field.
+func ByLotID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLotID, opts...).ToFunc()
 }

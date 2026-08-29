@@ -204,6 +204,20 @@ func (_c *StockMoveLineCreate) SetNillableUnitCost(v *int64) *StockMoveLineCreat
 	return _c
 }
 
+// SetLotID sets the "lot_id" field.
+func (_c *StockMoveLineCreate) SetLotID(v uint32) *StockMoveLineCreate {
+	_c.mutation.SetLotID(v)
+	return _c
+}
+
+// SetNillableLotID sets the "lot_id" field if the given value is not nil.
+func (_c *StockMoveLineCreate) SetNillableLotID(v *uint32) *StockMoveLineCreate {
+	if v != nil {
+		_c.SetLotID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *StockMoveLineCreate) SetID(v uint32) *StockMoveLineCreate {
 	_c.mutation.SetID(v)
@@ -274,6 +288,10 @@ func (_c *StockMoveLineCreate) defaults() error {
 	if _, ok := _c.mutation.UnitCost(); !ok {
 		v := stockmoveline.DefaultUnitCost
 		_c.mutation.SetUnitCost(v)
+	}
+	if _, ok := _c.mutation.LotID(); !ok {
+		v := stockmoveline.DefaultLotID
+		_c.mutation.SetLotID(v)
 	}
 	return nil
 }
@@ -369,6 +387,10 @@ func (_c *StockMoveLineCreate) createSpec() (*StockMoveLine, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.UnitCost(); ok {
 		_spec.SetField(stockmoveline.FieldUnitCost, field.TypeInt64, value)
 		_node.UnitCost = &value
+	}
+	if value, ok := _c.mutation.LotID(); ok {
+		_spec.SetField(stockmoveline.FieldLotID, field.TypeUint32, value)
+		_node.LotID = &value
 	}
 	return _node, _spec
 }
@@ -671,6 +693,30 @@ func (u *StockMoveLineUpsert) AddUnitCost(v int64) *StockMoveLineUpsert {
 // ClearUnitCost clears the value of the "unit_cost" field.
 func (u *StockMoveLineUpsert) ClearUnitCost() *StockMoveLineUpsert {
 	u.SetNull(stockmoveline.FieldUnitCost)
+	return u
+}
+
+// SetLotID sets the "lot_id" field.
+func (u *StockMoveLineUpsert) SetLotID(v uint32) *StockMoveLineUpsert {
+	u.Set(stockmoveline.FieldLotID, v)
+	return u
+}
+
+// UpdateLotID sets the "lot_id" field to the value that was provided on create.
+func (u *StockMoveLineUpsert) UpdateLotID() *StockMoveLineUpsert {
+	u.SetExcluded(stockmoveline.FieldLotID)
+	return u
+}
+
+// AddLotID adds v to the "lot_id" field.
+func (u *StockMoveLineUpsert) AddLotID(v uint32) *StockMoveLineUpsert {
+	u.Add(stockmoveline.FieldLotID, v)
+	return u
+}
+
+// ClearLotID clears the value of the "lot_id" field.
+func (u *StockMoveLineUpsert) ClearLotID() *StockMoveLineUpsert {
+	u.SetNull(stockmoveline.FieldLotID)
 	return u
 }
 
@@ -1019,6 +1065,34 @@ func (u *StockMoveLineUpsertOne) UpdateUnitCost() *StockMoveLineUpsertOne {
 func (u *StockMoveLineUpsertOne) ClearUnitCost() *StockMoveLineUpsertOne {
 	return u.Update(func(s *StockMoveLineUpsert) {
 		s.ClearUnitCost()
+	})
+}
+
+// SetLotID sets the "lot_id" field.
+func (u *StockMoveLineUpsertOne) SetLotID(v uint32) *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.SetLotID(v)
+	})
+}
+
+// AddLotID adds v to the "lot_id" field.
+func (u *StockMoveLineUpsertOne) AddLotID(v uint32) *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.AddLotID(v)
+	})
+}
+
+// UpdateLotID sets the "lot_id" field to the value that was provided on create.
+func (u *StockMoveLineUpsertOne) UpdateLotID() *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.UpdateLotID()
+	})
+}
+
+// ClearLotID clears the value of the "lot_id" field.
+func (u *StockMoveLineUpsertOne) ClearLotID() *StockMoveLineUpsertOne {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.ClearLotID()
 	})
 }
 
@@ -1533,6 +1607,34 @@ func (u *StockMoveLineUpsertBulk) UpdateUnitCost() *StockMoveLineUpsertBulk {
 func (u *StockMoveLineUpsertBulk) ClearUnitCost() *StockMoveLineUpsertBulk {
 	return u.Update(func(s *StockMoveLineUpsert) {
 		s.ClearUnitCost()
+	})
+}
+
+// SetLotID sets the "lot_id" field.
+func (u *StockMoveLineUpsertBulk) SetLotID(v uint32) *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.SetLotID(v)
+	})
+}
+
+// AddLotID adds v to the "lot_id" field.
+func (u *StockMoveLineUpsertBulk) AddLotID(v uint32) *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.AddLotID(v)
+	})
+}
+
+// UpdateLotID sets the "lot_id" field to the value that was provided on create.
+func (u *StockMoveLineUpsertBulk) UpdateLotID() *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.UpdateLotID()
+	})
+}
+
+// ClearLotID clears the value of the "lot_id" field.
+func (u *StockMoveLineUpsertBulk) ClearLotID() *StockMoveLineUpsertBulk {
+	return u.Update(func(s *StockMoveLineUpsert) {
+		s.ClearLotID()
 	})
 }
 

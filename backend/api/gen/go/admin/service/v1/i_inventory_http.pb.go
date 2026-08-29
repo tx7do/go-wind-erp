@@ -1060,3 +1060,61 @@ func (c *StockPickingServiceHTTPClientImpl) Validate(ctx context.Context, in *v1
 	}
 	return &out, nil
 }
+
+const OperationStockLotServiceList = "/admin.service.v1.StockLotService/List"
+
+type StockLotServiceHTTPServer interface {
+	// List 批次库存列表（含剩余数量与效期状态）
+	List(context.Context, *v1.PagingRequest) (*v11.ListStockLotResponse, error)
+}
+
+func RegisterStockLotServiceHTTPServer(s *http.Server, srv StockLotServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/stock-lots", _StockLotService_List17_HTTP_Handler(srv))
+}
+
+func _StockLotService_List17_HTTP_Handler(srv StockLotServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStockLotServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListStockLotResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type StockLotServiceHTTPClient interface {
+	// List 批次库存列表（含剩余数量与效期状态）
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListStockLotResponse, err error)
+}
+
+type StockLotServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewStockLotServiceHTTPClient(client *http.Client) StockLotServiceHTTPClient {
+	return &StockLotServiceHTTPClientImpl{client}
+}
+
+// List 批次库存列表（含剩余数量与效期状态）
+func (c *StockLotServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListStockLotResponse, error) {
+	var out v11.ListStockLotResponse
+	pattern := "/admin/v1/stock-lots"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStockLotServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}

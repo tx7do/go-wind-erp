@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -12,6 +13,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-erp/app/core/service/internal/data"
+	"go-wind-erp/app/core/service/internal/data/ent"
 
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
@@ -31,6 +33,7 @@ type StockPickingService struct {
 	stockPickingRepo  *data.StockPickingRepo
 	stockQuantRepo    *data.StockQuantRepo
 	stockMoveLineRepo *data.StockMoveLineRepo
+	stockLotRepo      *data.StockLotRepo
 	purchaseOrderRepo *data.PurchaseOrderRepo
 	salesOrderRepo    *data.SalesOrderRepo
 	receivableRepo    *data.ReceivableRepo
@@ -44,6 +47,7 @@ func NewStockPickingService(
 	stockPickingRepo *data.StockPickingRepo,
 	stockQuantRepo *data.StockQuantRepo,
 	stockMoveLineRepo *data.StockMoveLineRepo,
+	stockLotRepo *data.StockLotRepo,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	salesOrderRepo *data.SalesOrderRepo,
 	receivableRepo *data.ReceivableRepo,
@@ -58,6 +62,7 @@ func NewStockPickingService(
 		stockPickingRepo:  stockPickingRepo,
 		stockQuantRepo:    stockQuantRepo,
 		stockMoveLineRepo: stockMoveLineRepo,
+		stockLotRepo:      stockLotRepo,
 		purchaseOrderRepo: purchaseOrderRepo,
 		salesOrderRepo:    salesOrderRepo,
 		receivableRepo:    receivableRepo,
@@ -492,6 +497,14 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		return nil, err
 	}
 
+	// 批次指派索引：productCode → assignment（重复以最后一条为准）。
+	assignments := map[string]*inventoryV1.LotAssignment{}
+	for _, a := range req.GetLotAssignments() {
+		if a.GetProductCode() != "" && a.GetLotName() != "" {
+			assignments[a.GetProductCode()] = a
+		}
+	}
+
 	for _, move := range confirmedMoves {
 		if move == nil {
 			continue
@@ -553,8 +566,11 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 		// move-line 始终记录完整的 source→dest 轨迹（含虚拟位置），供审计追溯。
 		// unit_cost 冻结执行时的单位成本（入库=采购单价，出库/调拨=源位置 quant
 		// 的加权平均成本），供 COGS 核算。
-		if err = s.stockMoveLineRepo.CreateTx(ctx, tx, move.GetId(), req.GetId(),
-			productCode, sourceLocID, destLocID, executedQty, unitCost); err != nil {
+		// 批次（记录式）：入库腿登记/复用批次；出库腿按指派（余量校验）或
+		// FEFO 自动拆分扣减；未跟踪部分落 lotID=0。
+		if err = s.recordMoveLinesWithLot(ctx, tx, move, req.GetId(),
+			srcUsage, dstUsage, executedQty, unitCost,
+			assignments[productCode]); err != nil {
 			return nil, err
 		}
 
@@ -673,6 +689,111 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 	// SAGA 分发由上方先注册的 defer 在 FinishTx 之后执行（读已提交数据）。
 
 	return ret, err
+}
+
+// recordMoveLinesWithLot 创建 move-line 并挂批次（记录式批次/效期）。
+//
+//   - 入库腿（dest INTERNAL，source 虚拟）：有指派 → get-or-create 批次并挂；
+//     无指派 → 未跟踪行（lotID=0）。
+//   - 出库腿（source INTERNAL，dest 虚拟）：有指派 → 批次必须存在且余量足够
+//     （不足 409）；无指派 → FEFO 自动拆分：按效期升序逐批扣到 0，余量不足
+//     的尾差落未跟踪行（兼容历史无批次库存，批次账目自洽）。
+//   - 调拨等其余腿：单行；指派批次存在则挂上（不改变批次余量）。
+func (s *StockPickingService) recordMoveLinesWithLot(
+	ctx context.Context,
+	tx *ent.Tx,
+	move *inventoryV1.StockMove,
+	pickingID uint32,
+	srcUsage inventoryV1.StockLocation_Usage,
+	dstUsage inventoryV1.StockLocation_Usage,
+	executedQty int64,
+	unitCost int64,
+	assignment *inventoryV1.LotAssignment,
+) error {
+	srcInternal := srcUsage == inventoryV1.StockLocation_INTERNAL
+	dstInternal := dstUsage == inventoryV1.StockLocation_INTERNAL
+
+	createLine := func(qty int64, lotID uint32) error {
+		return s.stockMoveLineRepo.CreateTx(ctx, tx, move.GetId(), pickingID,
+			move.GetProductCode(), move.GetSourceLocationId(), move.GetDestinationLocationId(),
+			qty, unitCost, lotID)
+	}
+
+	// 入库腿：登记批次。
+	if dstInternal && !srcInternal {
+		if assignment != nil {
+			var expiry *time.Time
+			if assignment.GetExpiryDate() != nil {
+				t := assignment.GetExpiryDate().AsTime()
+				expiry = &t
+			}
+			lotID, err := s.stockLotRepo.GetOrCreateTx(ctx, tx,
+				move.GetProductCode(), assignment.GetLotName(), expiry)
+			if err != nil {
+				return err
+			}
+			return createLine(executedQty, lotID)
+		}
+		return createLine(executedQty, 0)
+	}
+
+	// 出库腿：指定批次（余量校验）或 FEFO 自动拆分。
+	if srcInternal && !dstInternal {
+		if assignment != nil {
+			lotID, err := s.stockLotRepo.FindIdTx(ctx, tx,
+				move.GetProductCode(), assignment.GetLotName())
+			if err != nil {
+				return err
+			}
+			if lotID == 0 {
+				return inventoryV1.ErrorBadRequest(
+					"批次不存在：%s / %s", move.GetProductCode(), assignment.GetLotName())
+			}
+			remaining, err := s.stockLotRepo.LotRemainingTx(ctx, tx, lotID)
+			if err != nil {
+				return err
+			}
+			if remaining < executedQty {
+				return inventoryV1.ErrorConflict(
+					"批次 %s 余量不足：%d < %d", assignment.GetLotName(), remaining, executedQty)
+			}
+			return createLine(executedQty, lotID)
+		}
+
+		lots, err := s.stockLotRepo.ListFefoTx(ctx, tx, move.GetProductCode())
+		if err != nil {
+			return err
+		}
+		left := executedQty
+		for _, lot := range lots {
+			if left <= 0 {
+				break
+			}
+			take := lot.Remaining
+			if take > left {
+				take = left
+			}
+			if err := createLine(take, lot.LotID); err != nil {
+				return err
+			}
+			left -= take
+		}
+		// 尾差：历史无批次库存（未跟踪），不阻断业务。
+		if left > 0 {
+			return createLine(left, 0)
+		}
+		return nil
+	}
+
+	// 调拨/其余腿：单行；指派批次存在则挂上。
+	lotID := uint32(0)
+	if assignment != nil {
+		if id, err := s.stockLotRepo.FindIdTx(ctx, tx,
+			move.GetProductCode(), assignment.GetLotName()); err == nil {
+			lotID = id
+		}
+	}
+	return createLine(executedQty, lotID)
 }
 
 // Cancel 取消拣货单：将所有非终态 moves 迁至 CANCELLED（借鉴 Odoo

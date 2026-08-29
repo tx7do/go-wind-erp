@@ -43,7 +43,9 @@ type StockMoveLine struct {
 	// 已执行数量
 	ExecutedQuantity *int64 `json:"executed_quantity,omitempty"`
 	// 执行时冻结的单位成本（分，用于COGS）
-	UnitCost     *int64 `json:"unit_cost,omitempty"`
+	UnitCost *int64 `json:"unit_cost,omitempty"`
+	// 批次ID（可空=未跟踪）
+	LotID        *uint32 `json:"lot_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -52,7 +54,7 @@ func (*StockMoveLine) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case stockmoveline.FieldID, stockmoveline.FieldCreatedBy, stockmoveline.FieldUpdatedBy, stockmoveline.FieldDeletedBy, stockmoveline.FieldTenantID, stockmoveline.FieldMoveID, stockmoveline.FieldPickingID, stockmoveline.FieldSourceLocationID, stockmoveline.FieldDestinationLocationID, stockmoveline.FieldExecutedQuantity, stockmoveline.FieldUnitCost:
+		case stockmoveline.FieldID, stockmoveline.FieldCreatedBy, stockmoveline.FieldUpdatedBy, stockmoveline.FieldDeletedBy, stockmoveline.FieldTenantID, stockmoveline.FieldMoveID, stockmoveline.FieldPickingID, stockmoveline.FieldSourceLocationID, stockmoveline.FieldDestinationLocationID, stockmoveline.FieldExecutedQuantity, stockmoveline.FieldUnitCost, stockmoveline.FieldLotID:
 			values[i] = new(sql.NullInt64)
 		case stockmoveline.FieldRemark, stockmoveline.FieldProductCode:
 			values[i] = new(sql.NullString)
@@ -170,6 +172,13 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 				_m.UnitCost = new(int64)
 				*_m.UnitCost = value.Int64
 			}
+		case stockmoveline.FieldLotID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field lot_id", values[i])
+			} else if value.Valid {
+				_m.LotID = new(uint32)
+				*_m.LotID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -268,6 +277,11 @@ func (_m *StockMoveLine) String() string {
 	builder.WriteString(", ")
 	if v := _m.UnitCost; v != nil {
 		builder.WriteString("unit_cost=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.LotID; v != nil {
+		builder.WriteString("lot_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

@@ -311,6 +311,33 @@ func (_u *StockMoveLineUpdate) ClearUnitCost() *StockMoveLineUpdate {
 	return _u
 }
 
+// SetLotID sets the "lot_id" field.
+func (_u *StockMoveLineUpdate) SetLotID(v uint32) *StockMoveLineUpdate {
+	_u.mutation.ResetLotID()
+	_u.mutation.SetLotID(v)
+	return _u
+}
+
+// SetNillableLotID sets the "lot_id" field if the given value is not nil.
+func (_u *StockMoveLineUpdate) SetNillableLotID(v *uint32) *StockMoveLineUpdate {
+	if v != nil {
+		_u.SetLotID(*v)
+	}
+	return _u
+}
+
+// AddLotID adds value to the "lot_id" field.
+func (_u *StockMoveLineUpdate) AddLotID(v int32) *StockMoveLineUpdate {
+	_u.mutation.AddLotID(v)
+	return _u
+}
+
+// ClearLotID clears the value of the "lot_id" field.
+func (_u *StockMoveLineUpdate) ClearLotID() *StockMoveLineUpdate {
+	_u.mutation.ClearLotID()
+	return _u
+}
+
 // Mutation returns the StockMoveLineMutation object of the builder.
 func (_u *StockMoveLineUpdate) Mutation() *StockMoveLineMutation {
 	return _u.mutation
@@ -456,6 +483,15 @@ func (_u *StockMoveLineUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.UnitCostCleared() {
 		_spec.ClearField(stockmoveline.FieldUnitCost, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.LotID(); ok {
+		_spec.SetField(stockmoveline.FieldLotID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedLotID(); ok {
+		_spec.AddField(stockmoveline.FieldLotID, field.TypeUint32, value)
+	}
+	if _u.mutation.LotIDCleared() {
+		_spec.ClearField(stockmoveline.FieldLotID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -762,6 +798,33 @@ func (_u *StockMoveLineUpdateOne) ClearUnitCost() *StockMoveLineUpdateOne {
 	return _u
 }
 
+// SetLotID sets the "lot_id" field.
+func (_u *StockMoveLineUpdateOne) SetLotID(v uint32) *StockMoveLineUpdateOne {
+	_u.mutation.ResetLotID()
+	_u.mutation.SetLotID(v)
+	return _u
+}
+
+// SetNillableLotID sets the "lot_id" field if the given value is not nil.
+func (_u *StockMoveLineUpdateOne) SetNillableLotID(v *uint32) *StockMoveLineUpdateOne {
+	if v != nil {
+		_u.SetLotID(*v)
+	}
+	return _u
+}
+
+// AddLotID adds value to the "lot_id" field.
+func (_u *StockMoveLineUpdateOne) AddLotID(v int32) *StockMoveLineUpdateOne {
+	_u.mutation.AddLotID(v)
+	return _u
+}
+
+// ClearLotID clears the value of the "lot_id" field.
+func (_u *StockMoveLineUpdateOne) ClearLotID() *StockMoveLineUpdateOne {
+	_u.mutation.ClearLotID()
+	return _u
+}
+
 // Mutation returns the StockMoveLineMutation object of the builder.
 func (_u *StockMoveLineUpdateOne) Mutation() *StockMoveLineMutation {
 	return _u.mutation
@@ -937,6 +1000,15 @@ func (_u *StockMoveLineUpdateOne) sqlSave(ctx context.Context) (_node *StockMove
 	}
 	if _u.mutation.UnitCostCleared() {
 		_spec.ClearField(stockmoveline.FieldUnitCost, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.LotID(); ok {
+		_spec.SetField(stockmoveline.FieldLotID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedLotID(); ok {
+		_spec.AddField(stockmoveline.FieldLotID, field.TypeUint32, value)
+	}
+	if _u.mutation.LotIDCleared() {
+		_spec.ClearField(stockmoveline.FieldLotID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &StockMoveLine{config: _u.config}

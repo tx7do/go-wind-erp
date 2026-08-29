@@ -90,7 +90,7 @@ export function useValidateStockPicking(
 ) {
   return useMutation({
     mutationFn: ({ id }: { id: number }) =>
-      apiClient.stockPickingService.Validate({ id }),
+      apiClient.stockPickingService.Validate({ id, lotAssignments: undefined }),
     ...options,
   });
 }

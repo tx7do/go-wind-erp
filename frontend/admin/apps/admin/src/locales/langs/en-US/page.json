@@ -568,7 +568,11 @@
       "warehouse": "Receiving Warehouse",
       "quantity": "Receive Quantity",
       "quantityHint": "Defaults to the remaining unreceived quantity",
-      "exceedsRemaining": "Receive quantity exceeds the remaining unreceived quantity"
+      "exceedsRemaining": "Receive quantity exceeds the remaining unreceived quantity",
+      "lotSection": "Lot Registration (optional)",
+      "lotHint": "Filling a lot number tracks remaining quantity and expiry in Stock Lots; leave empty to skip",
+      "lotName": "Lot No.",
+      "expiryDate": "Expiry (optional)"
     },
     "button": {
       "create": "New Purchase Order",
@@ -770,5 +774,13 @@
     "maxUsers": "Max Users",
     "maxOrders": "Max Orders/Month",
     "planManagement": "Plan Management"
+  },
+  "stockLot": {
+    "moduleName": "Stock Lots",
+    "name": "Lot No.",
+    "skuCode": "SKU",
+    "expiryDate": "Expiry",
+    "remainingQuantity": "Remaining",
+    "lotStatus": "Status"
   }
 }

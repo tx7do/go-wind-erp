@@ -316,5 +316,10 @@
       "Completed": "已完结",
       "Cancelled": "已取消"
     }
+  },
+  "stockLot": {
+    "Normal": "正常",
+    "Expiring": "临期",
+    "Expired": "已过期"
   }
 }

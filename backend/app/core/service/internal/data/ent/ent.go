@@ -50,6 +50,7 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/salesorder"
 	"go-wind-erp/app/core/service/internal/data/ent/salesorderitem"
 	"go-wind-erp/app/core/service/internal/data/ent/stocklocation"
+	"go-wind-erp/app/core/service/internal/data/ent/stocklot"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmove"
 	"go-wind-erp/app/core/service/internal/data/ent/stockmoveline"
 	"go-wind-erp/app/core/service/internal/data/ent/stockpicking"
@@ -174,6 +175,7 @@ func checkColumn(t, c string) error {
 			salesorder.Table:               salesorder.ValidColumn,
 			salesorderitem.Table:           salesorderitem.ValidColumn,
 			stocklocation.Table:            stocklocation.ValidColumn,
+			stocklot.Table:                 stocklot.ValidColumn,
 			stockmove.Table:                stockmove.ValidColumn,
 			stockmoveline.Table:            stockmoveline.ValidColumn,
 			stockpicking.Table:             stockpicking.ValidColumn,
