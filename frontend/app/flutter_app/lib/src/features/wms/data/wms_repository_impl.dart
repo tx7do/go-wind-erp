@@ -85,6 +85,26 @@ class WmsRepositoryImpl implements WmsRepository {
     }
   }
 
+  @override
+  Future<List<LotInfo>> fetchLots(String skuCode) async {
+    try {
+      final resp = await _dataSource.listLots(skuCode);
+      final items = resp.items ?? const [];
+      return [
+        for (final l in items)
+          LotInfo(
+            name: l.name ?? '',
+            skuCode: l.skuCode ?? '',
+            expiryDate: l.expiryDate,
+            remaining: l.remainingQuantity ?? 0,
+            status: l.lotStatus?.toString() ?? 'LOT_NORMAL',
+          ),
+      ];
+    } on DioException catch (e) {
+      throw _toFailure(e);
+    }
+  }
+
   /// 将统一拦截器封装过的 [DioException]（其 `error` 为 [ApiException]）
   /// 映射为领域 [WmsFailure]。
   WmsFailure _toFailure(DioException e) {

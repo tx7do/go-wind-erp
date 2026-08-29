@@ -107,6 +107,10 @@ class _WmsPageState extends State<WmsPage> {
               label: Text(loc.stocktakeAction),
             ),
           ],
+          if (state.lots.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildLots(loc, state),
+          ],
           if (state.pickings.isNotEmpty) ...[
             const SizedBox(height: 12),
             _buildPickings(loc, state),
@@ -339,6 +343,63 @@ class _WmsPageState extends State<WmsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  /// 批次余量卡：批次号 × 效期（颜色状态）× 余量（扫码核对效期场景）。
+  Widget _buildLots(S loc, WmsReady state) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                const Icon(Icons.event_available, color: Colors.teal),
+                const SizedBox(width: 8),
+                Text(loc.lotSection,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+          for (final lot in state.lots)
+            ListTile(
+              dense: true,
+              title: Text(lot.name),
+              subtitle: Text(
+                lot.expiryDate == null
+                    ? loc.lotNoExpiry
+                    : '${loc.lotExpiry}: ${lot.expiryDate!.split('T').first}',
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (lot.expired)
+                    _lotTag(loc.lotExpired, Colors.red)
+                  else if (lot.expiring)
+                    _lotTag(loc.lotExpiring, Colors.orange)
+                  else
+                    _lotTag(loc.lotNormal, Colors.green),
+                  const SizedBox(width: 8),
+                  Text('${loc.lotRemaining}: ${lot.remaining}',
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _lotTag(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(label, style: TextStyle(color: color, fontSize: 11)),
     );
   }
 

@@ -46,6 +46,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	warehouseService := service.NewWarehouseService(context, warehouseServiceClient)
 	stockQuantServiceClient := data.NewStockQuantServiceClient(context, discovery)
 	stockQuantService := service.NewStockQuantService(context, stockQuantServiceClient)
+	stockLotServiceClient := data.NewStockLotServiceClient(context, discovery)
+	stockLotService := service.NewStockLotService(context, stockLotServiceClient)
 	stockPickingServiceClient := data.NewStockPickingServiceClient(context, discovery)
 	stockPickingService := service.NewStockPickingService(context, stockPickingServiceClient)
 	approvalRequestServiceClient := data.NewApprovalRequestServiceClient(context, discovery)
@@ -62,7 +64,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	financeSummaryService := service.NewFinanceSummaryService(context, financeReportServiceClient)
 	paymentServiceClient := data.NewPaymentServiceClient(context, discovery)
 	paymentService := service.NewPaymentService(context, paymentServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, stockQuantService, stockPickingService, approvalRequestService, dictEntryLookup, purchaseOrderService, salesOrderService, payableService, financeSummaryService, paymentService)
+	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, stockQuantService, stockLotService, stockPickingService, approvalRequestService, dictEntryLookup, purchaseOrderService, salesOrderService, payableService, financeSummaryService, paymentService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

@@ -28,4 +28,7 @@ abstract class WmsRepository {
 
   /// 拉取近期拣货单（默认 20 条）。
   Future<List<PickingRecord>> listPickings({int limit = 20});
+
+  /// 拉取某 SKU 的批次余量列表（效期跟踪）。
+  Future<List<LotInfo>> fetchLots(String skuCode);
 }

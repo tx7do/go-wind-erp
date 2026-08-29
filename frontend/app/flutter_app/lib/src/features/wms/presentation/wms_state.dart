@@ -48,6 +48,9 @@ final class WmsReady extends WmsState {
   /// 查询未命中（区别于“尚未查询”）。
   final bool lookupMiss;
 
+  /// 该 SKU 的批次余量列表（记录式批次/效期；空列表=无批次跟踪）。
+  final List<LotInfo> lots;
+
   /// 当前查询的 SKU（用于回显与流水上下文）。
   final String currentSku;
 
@@ -64,6 +67,7 @@ final class WmsReady extends WmsState {
     this.selectedWarehouseCode,
     this.inventory,
     this.lookupMiss = false,
+    this.lots = const [],
     this.currentSku = '',
     this.pickings = const [],
     this.lookingUp = false,
@@ -75,6 +79,7 @@ final class WmsReady extends WmsState {
     String? selectedWarehouseCode,
     InventoryInfo? inventory,
     bool? lookupMiss,
+    List<LotInfo>? lots,
     String? currentSku,
     List<PickingRecord>? pickings,
     bool? lookingUp,
@@ -86,9 +91,10 @@ final class WmsReady extends WmsState {
       selectedWarehouseCode: selectedWarehouseCode ?? this.selectedWarehouseCode,
       inventory: inventory ?? this.inventory,
       lookupMiss: lookupMiss ?? this.lookupMiss,
-        currentSku: currentSku ?? this.currentSku,
-        pickings: pickings ?? this.pickings,
-        lookingUp: lookingUp ?? this.lookingUp,
+      lots: lots ?? this.lots,
+      currentSku: currentSku ?? this.currentSku,
+      pickings: pickings ?? this.pickings,
+      lookingUp: lookingUp ?? this.lookingUp,
       submitting: submitting ?? this.submitting,
       message: message,
     );
@@ -100,6 +106,7 @@ final class WmsReady extends WmsState {
         selectedWarehouseCode,
         inventory,
         lookupMiss,
+        lots,
         currentSku,
         pickings,
         lookingUp,

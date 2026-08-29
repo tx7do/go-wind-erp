@@ -6017,6 +6017,261 @@ class InventoryServiceV1CancelStockPickingRequest {
   }
 }
 
+/// 批次库存（移动端只读：批次余量与效期跟踪，扫码后核对批次场景）。
+class StockLotServiceClient {
+  final ClientTransport _transport;
+
+  StockLotServiceClient(this._transport);
+
+  Future<InventoryServiceV1ListStockLotResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/stock-lots';
+    final queryParams = <String>[];
+    if (request.page != null) {
+      queryParams.add('page=${Uri.encodeComponent(request.page!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    if (request.offset != null) {
+      queryParams.add('offset=${Uri.encodeComponent(request.offset!.toString())}');
+    }
+    if (request.limit != null) {
+      queryParams.add('limit=${Uri.encodeComponent(request.limit!.toString())}');
+    }
+    if (request.token != null) {
+      queryParams.add('token=${Uri.encodeComponent(request.token!.toString())}');
+    }
+    if (request.noPaging != null) {
+      queryParams.add('noPaging=${Uri.encodeComponent(request.noPaging!.toString())}');
+    }
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.filter != null) {
+      queryParams.add('filter=${Uri.encodeComponent(request.filter!.toString())}');
+    }
+    if (request.filterExpr?.type != null) {
+      queryParams.add('filterExpr.type=${Uri.encodeComponent(request.filterExpr!.type!.toString())}');
+    }
+    if (request.orderBy != null) {
+      queryParams.add('orderBy=${Uri.encodeComponent(request.orderBy!.toString())}');
+    }
+    if (request.fieldMask != null) {
+      queryParams.add('fieldMask=${Uri.encodeComponent(request.fieldMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'StockLotService',
+      method: 'List',
+    ), headers: headers);
+    return InventoryServiceV1ListStockLotResponse.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+class InventoryServiceV1ListStockLotResponse {
+  List<InventoryServiceV1StockLot>? items;
+  int? total;
+
+  InventoryServiceV1ListStockLotResponse({
+    this.items,
+    this.total,
+  });
+
+  factory InventoryServiceV1ListStockLotResponse.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1ListStockLotResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => InventoryServiceV1StockLot.fromJson(e as Map<String, dynamic>)).toList(),
+      total: json['total'] != null ? int.parse(json['total'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    if (total != null) json['total'] = total.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1ListStockLotResponse(items: $items, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1ListStockLotResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+      && total == other.total
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+    total,
+  ]);
+
+  InventoryServiceV1ListStockLotResponse copyWith({
+    List<InventoryServiceV1StockLot>? items,
+    int? total,
+  }) {
+    return InventoryServiceV1ListStockLotResponse(
+      items: items ?? this.items,
+      total: total ?? this.total,
+    );
+  }
+}
+
+/// 批次（借鉴 Odoo stock.production.lot 的登记角色。记录式方案：批次表只
+/// 登记批号与效期，剩余数量由 move lines 聚合推导，不动 quant 引擎）
+class InventoryServiceV1StockLot {
+  String? createdAt;
+  int? createdBy;
+  ///
+  /// Behaviors: OPTIONAL
+  String? expiryDate;
+  ///
+  /// Behaviors: OPTIONAL
+  int? id;
+  ///
+  /// Behaviors: OPTIONAL
+  InventoryServiceV1LotStatus? lotStatus;
+  ///
+  /// Behaviors: OPTIONAL
+  String? name;
+  ///
+  /// Behaviors: OPTIONAL
+  int? remainingQuantity;
+  String? remark;
+  ///
+  /// Behaviors: OPTIONAL
+  String? skuCode;
+  int? tenantId;
+
+  InventoryServiceV1StockLot({
+    this.createdAt,
+    this.createdBy,
+    this.expiryDate,
+    this.id,
+    this.lotStatus,
+    this.name,
+    this.remainingQuantity,
+    this.remark,
+    this.skuCode,
+    this.tenantId,
+  });
+
+  factory InventoryServiceV1StockLot.fromJson(Map<String, dynamic> json) {
+    return InventoryServiceV1StockLot(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      expiryDate: json['expiryDate'] as String?,
+      id: json['id'] as int?,
+      lotStatus: json['lotStatus'] != null ? InventoryServiceV1LotStatus.fromString(json['lotStatus'] as String) : null,
+      name: json['name'] as String?,
+      remainingQuantity: json['remainingQuantity'] != null ? int.parse(json['remainingQuantity'].toString()) : null,
+      remark: json['remark'] as String?,
+      skuCode: json['skuCode'] as String?,
+      tenantId: json['tenantId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (expiryDate != null) json['expiryDate'] = expiryDate;
+    if (id != null) json['id'] = id;
+    if (lotStatus != null) json['lotStatus'] = lotStatus!.value;
+    if (name != null) json['name'] = name;
+    if (remainingQuantity != null) json['remainingQuantity'] = remainingQuantity.toString();
+    if (remark != null) json['remark'] = remark;
+    if (skuCode != null) json['skuCode'] = skuCode;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InventoryServiceV1StockLot(createdAt: $createdAt, createdBy: $createdBy, expiryDate: $expiryDate, id: $id, lotStatus: $lotStatus, name: $name, remainingQuantity: $remainingQuantity, remark: $remark, skuCode: $skuCode, tenantId: $tenantId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InventoryServiceV1StockLot &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && expiryDate == other.expiryDate
+      && id == other.id
+      && lotStatus == other.lotStatus
+      && name == other.name
+      && remainingQuantity == other.remainingQuantity
+      && remark == other.remark
+      && skuCode == other.skuCode
+      && tenantId == other.tenantId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    expiryDate,
+    id,
+    lotStatus,
+    name,
+    remainingQuantity,
+    remark,
+    skuCode,
+    tenantId,
+  ]);
+
+  InventoryServiceV1StockLot copyWith({
+    String? createdAt,
+    int? createdBy,
+    String? expiryDate,
+    int? id,
+    InventoryServiceV1LotStatus? lotStatus,
+    String? name,
+    int? remainingQuantity,
+    String? remark,
+    String? skuCode,
+    int? tenantId,
+  }) {
+    return InventoryServiceV1StockLot(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      expiryDate: expiryDate ?? this.expiryDate,
+      id: id ?? this.id,
+      lotStatus: lotStatus ?? this.lotStatus,
+      name: name ?? this.name,
+      remainingQuantity: remainingQuantity ?? this.remainingQuantity,
+      remark: remark ?? this.remark,
+      skuCode: skuCode ?? this.skuCode,
+      tenantId: tenantId ?? this.tenantId,
+    );
+  }
+}
+
+/// 批次效期状态（按 expiry_date 与当前时间推导；无效期为 NORMAL）
+enum InventoryServiceV1LotStatus {
+  lotExpired('LOT_EXPIRED'),
+  lotExpiring('LOT_EXPIRING'),
+  lotNormal('LOT_NORMAL');
+
+  final String value;
+  const InventoryServiceV1LotStatus(this.value);
+
+  static InventoryServiceV1LotStatus fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown InventoryServiceV1LotStatus value: ' + v));
+  @override
+  String toString() => value;
+}
+
 /// 采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
 /// 发起与维护在 PC 端完成）
 class PurchaseOrderServiceClient {
@@ -8032,6 +8287,7 @@ class ApiClient {
   ReceiptServiceClient? _receiptService;
   ReceivableServiceClient? _receivableService;
   SalesOrderServiceClient? _salesOrderService;
+  StockLotServiceClient? _stockLotService;
   StockPickingServiceClient? _stockPickingService;
   StockQuantServiceClient? _stockQuantService;
   UserProfileServiceClient? _userProfileService;
@@ -8094,6 +8350,11 @@ class ApiClient {
     return _salesOrderService!;
   }
 
+  StockLotServiceClient get stockLotService {
+    _stockLotService ??= StockLotServiceClient(_transport);
+    return _stockLotService!;
+  }
+
   StockPickingServiceClient get stockPickingService {
     _stockPickingService ??= StockPickingServiceClient(_transport);
     return _stockPickingService!;
@@ -8127,6 +8388,7 @@ class ApiClient {
     _receiptService = null;
     _receivableService = null;
     _salesOrderService = null;
+    _stockLotService = null;
     _stockPickingService = null;
     _stockQuantService = null;
     _userProfileService = null;

@@ -72,16 +72,23 @@ class WmsCubit extends Cubit<WmsState> {
             lookupMiss: true,
             currentSku: product,
             pickings: const [],
+            lots: const [],
           ),
         );
         return;
       }
-      // 命中后联动近期拣货单；拉取失败不阻塞查询结果展示。
+      // 命中后联动近期拣货单与批次余量；各自失败不阻塞查询结果展示。
       var pickings = const <PickingRecord>[];
       try {
         pickings = await _repository.listPickings();
       } on WmsFailure {
         // 忽略：仅历史区为空。
+      }
+      var lots = const <LotInfo>[];
+      try {
+        lots = await _repository.fetchLots(product);
+      } on WmsFailure {
+        // 忽略：仅批次区为空。
       }
       if (isClosed) return;
       final cur2 = state as WmsReady;
@@ -92,6 +99,7 @@ class WmsCubit extends Cubit<WmsState> {
           lookupMiss: false,
           currentSku: product,
           pickings: pickings,
+          lots: lots,
         ),
       );
     } on WmsFailure {

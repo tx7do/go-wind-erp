@@ -1,4 +1,11 @@
 {
+  "lotSection": "批次余量",
+  "lotExpiry": "效期",
+  "lotNoExpiry": "不限期",
+  "lotRemaining": "余量",
+  "lotNormal": "正常",
+  "lotExpiring": "临期",
+  "lotExpired": "过期",
   "metricRevenueMonth": "本月收入（元）",
   "metricCogsMonth": "本月成本（元）",
   "metricProfitMonth": "本月利润（元）",

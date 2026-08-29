@@ -1,4 +1,11 @@
 {
+  "lotSection": "Stock Lots",
+  "lotExpiry": "Expiry",
+  "lotNoExpiry": "No expiry",
+  "lotRemaining": "Remain",
+  "lotNormal": "OK",
+  "lotExpiring": "Expiring",
+  "lotExpired": "Expired",
   "metricRevenueMonth": "Revenue (Month)",
   "metricCogsMonth": "COGS (Month)",
   "metricProfitMonth": "Profit (Month)",

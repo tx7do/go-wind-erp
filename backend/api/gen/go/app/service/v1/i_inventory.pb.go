@@ -44,7 +44,9 @@ const file_app_service_v1_i_inventory_proto_rawDesc = "" +
 	"\x14CreatePurchaseReturn\x121.inventory.service.v1.CreatePurchaseReturnRequest\x1a\x16.google.protobuf.Empty\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/app/v1/stock-pickings:purchase-return\x12\x83\x01\n" +
 	"\aConfirm\x120.inventory.service.v1.ConfirmStockPickingRequest\x1a\x16.google.protobuf.Empty\".\x82\xd3\xe4\x93\x02(:\x01*\"#/app/v1/stock-pickings/{id}:confirm\x12\x86\x01\n" +
 	"\bValidate\x121.inventory.service.v1.ValidateStockPickingRequest\x1a\x16.google.protobuf.Empty\"/\x82\xd3\xe4\x93\x02):\x01*\"$/app/v1/stock-pickings/{id}:validate\x12\x80\x01\n" +
-	"\x06Cancel\x12/.inventory.service.v1.CancelStockPickingRequest\x1a\x16.google.protobuf.Empty\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/app/v1/stock-pickings/{id}:cancelB\xac\x01\n" +
+	"\x06Cancel\x12/.inventory.service.v1.CancelStockPickingRequest\x1a\x16.google.protobuf.Empty\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/app/v1/stock-pickings/{id}:cancel2|\n" +
+	"\x0fStockLotService\x12i\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a*.inventory.service.v1.ListStockLotResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/stock-lotsB\xac\x01\n" +
 	"\x12com.app.service.v1B\x0fIInventoryProtoP\x01Z+go-wind-erp/api/gen/go/app/service/v1;apppb\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_inventory_proto_goTypes = []any{
@@ -67,6 +69,7 @@ var file_app_service_v1_i_inventory_proto_goTypes = []any{
 	(*v11.ListStockPickingResponse)(nil),     // 16: inventory.service.v1.ListStockPickingResponse
 	(*v11.StockPicking)(nil),                 // 17: inventory.service.v1.StockPicking
 	(*emptypb.Empty)(nil),                    // 18: google.protobuf.Empty
+	(*v11.ListStockLotResponse)(nil),         // 19: inventory.service.v1.ListStockLotResponse
 }
 var file_app_service_v1_i_inventory_proto_depIdxs = []int32{
 	0,  // 0: app.service.v1.WarehouseService.List:input_type -> pagination.PagingRequest
@@ -82,21 +85,23 @@ var file_app_service_v1_i_inventory_proto_depIdxs = []int32{
 	8,  // 10: app.service.v1.StockPickingService.Confirm:input_type -> inventory.service.v1.ConfirmStockPickingRequest
 	9,  // 11: app.service.v1.StockPickingService.Validate:input_type -> inventory.service.v1.ValidateStockPickingRequest
 	10, // 12: app.service.v1.StockPickingService.Cancel:input_type -> inventory.service.v1.CancelStockPickingRequest
-	11, // 13: app.service.v1.WarehouseService.List:output_type -> inventory.service.v1.ListWarehouseResponse
-	12, // 14: app.service.v1.WarehouseService.Get:output_type -> inventory.service.v1.Warehouse
-	13, // 15: app.service.v1.StockQuantService.List:output_type -> inventory.service.v1.ListStockQuantResponse
-	14, // 16: app.service.v1.StockQuantService.Get:output_type -> inventory.service.v1.StockQuant
-	15, // 17: app.service.v1.StockQuantService.GetOverview:output_type -> inventory.service.v1.StockQuantOverview
-	16, // 18: app.service.v1.StockPickingService.List:output_type -> inventory.service.v1.ListStockPickingResponse
-	17, // 19: app.service.v1.StockPickingService.Get:output_type -> inventory.service.v1.StockPicking
-	18, // 20: app.service.v1.StockPickingService.Create:output_type -> google.protobuf.Empty
-	18, // 21: app.service.v1.StockPickingService.CreateSalesReturn:output_type -> google.protobuf.Empty
-	18, // 22: app.service.v1.StockPickingService.CreatePurchaseReturn:output_type -> google.protobuf.Empty
-	18, // 23: app.service.v1.StockPickingService.Confirm:output_type -> google.protobuf.Empty
-	18, // 24: app.service.v1.StockPickingService.Validate:output_type -> google.protobuf.Empty
-	18, // 25: app.service.v1.StockPickingService.Cancel:output_type -> google.protobuf.Empty
-	13, // [13:26] is the sub-list for method output_type
-	0,  // [0:13] is the sub-list for method input_type
+	0,  // 13: app.service.v1.StockLotService.List:input_type -> pagination.PagingRequest
+	11, // 14: app.service.v1.WarehouseService.List:output_type -> inventory.service.v1.ListWarehouseResponse
+	12, // 15: app.service.v1.WarehouseService.Get:output_type -> inventory.service.v1.Warehouse
+	13, // 16: app.service.v1.StockQuantService.List:output_type -> inventory.service.v1.ListStockQuantResponse
+	14, // 17: app.service.v1.StockQuantService.Get:output_type -> inventory.service.v1.StockQuant
+	15, // 18: app.service.v1.StockQuantService.GetOverview:output_type -> inventory.service.v1.StockQuantOverview
+	16, // 19: app.service.v1.StockPickingService.List:output_type -> inventory.service.v1.ListStockPickingResponse
+	17, // 20: app.service.v1.StockPickingService.Get:output_type -> inventory.service.v1.StockPicking
+	18, // 21: app.service.v1.StockPickingService.Create:output_type -> google.protobuf.Empty
+	18, // 22: app.service.v1.StockPickingService.CreateSalesReturn:output_type -> google.protobuf.Empty
+	18, // 23: app.service.v1.StockPickingService.CreatePurchaseReturn:output_type -> google.protobuf.Empty
+	18, // 24: app.service.v1.StockPickingService.Confirm:output_type -> google.protobuf.Empty
+	18, // 25: app.service.v1.StockPickingService.Validate:output_type -> google.protobuf.Empty
+	18, // 26: app.service.v1.StockPickingService.Cancel:output_type -> google.protobuf.Empty
+	19, // 27: app.service.v1.StockLotService.List:output_type -> inventory.service.v1.ListStockLotResponse
+	14, // [14:28] is the sub-list for method output_type
+	0,  // [0:14] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -115,7 +120,7 @@ func file_app_service_v1_i_inventory_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   3,
+			NumServices:   4,
 		},
 		GoTypes:           file_app_service_v1_i_inventory_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_inventory_proto_depIdxs,

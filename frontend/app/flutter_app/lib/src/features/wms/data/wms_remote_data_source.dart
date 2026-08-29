@@ -4,12 +4,14 @@ import 'package:go_wind_erp/generated/api/app/service/v1/index.dart'
         InventoryServiceV1ConfirmStockPickingRequest,
         InventoryServiceV1CreateStockPickingRequest,
         InventoryServiceV1ListStockPickingResponse,
+        InventoryServiceV1ListStockLotResponse,
         InventoryServiceV1ListWarehouseResponse,
         InventoryServiceV1StockMove,
         InventoryServiceV1StockPicking,
         InventoryServiceV1StockPicking$PickingType,
         InventoryServiceV1StockQuant,
         InventoryServiceV1ValidateStockPickingRequest,
+        StockLotServiceClient,
         InventoryServiceV1Warehouse,
         PaginationPagingRequest,
         StockPickingServiceClient,
@@ -26,11 +28,13 @@ class WmsRemoteDataSource {
   final WarehouseServiceClient _warehouses;
   final StockQuantServiceClient _stockQuants;
   final StockPickingServiceClient _stockPickings;
+  final StockLotServiceClient _stockLots;
 
   WmsRemoteDataSource(ApiClient api)
       : _warehouses = api.warehouseService,
         _stockQuants = api.stockQuantService,
-        _stockPickings = api.stockPickingService;
+        _stockPickings = api.stockPickingService,
+        _stockLots = api.stockLotService;
 
   /// 仓库列表 → `GET /app/v1/warehouses`（不分页，扫码端仓库数量有限）。
   Future<InventoryServiceV1ListWarehouseResponse> listWarehouses() {
@@ -107,6 +111,16 @@ class WmsRemoteDataSource {
   }) {
     return _stockPickings.list(
       PaginationPagingRequest(pageSize: limit),
+    );
+  }
+
+  /// 批次余量 → `GET /app/v1/stock-lots`（按 SKU 过滤，扫码后核对效期）。
+  Future<InventoryServiceV1ListStockLotResponse> listLots(String skuCode) {
+    return _stockLots.list(
+      PaginationPagingRequest(
+        pageSize: 50,
+        query: '{"skuCode":"$skuCode"}',
+      ),
     );
   }
 

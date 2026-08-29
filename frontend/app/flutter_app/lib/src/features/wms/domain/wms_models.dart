@@ -79,3 +79,24 @@ class PickingRecord {
     this.createdAt,
   });
 }
+
+
+/// 批次余量信息（记录式批次/效期：扫码后核对各批次效期与余量）。
+class LotInfo {
+  final String name;
+  final String skuCode;
+  final String? expiryDate;
+  final int remaining;
+  final String status;
+
+  const LotInfo({
+    required this.name,
+    required this.skuCode,
+    required this.remaining,
+    this.expiryDate,
+    this.status = 'LOT_NORMAL',
+  });
+
+  bool get expiring => status == 'LOT_EXPIRING';
+  bool get expired => status == 'LOT_EXPIRED';
+}

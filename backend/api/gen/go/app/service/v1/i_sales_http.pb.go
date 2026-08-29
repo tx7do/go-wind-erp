@@ -31,11 +31,11 @@ type SalesOrderServiceHTTPServer interface {
 
 func RegisterSalesOrderServiceHTTPServer(s *http.Server, srv SalesOrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/sales-orders", _SalesOrderService_List9_HTTP_Handler(srv))
+	r.GET("/app/v1/sales-orders", _SalesOrderService_List10_HTTP_Handler(srv))
 	r.GET("/app/v1/sales-orders/{id}", _SalesOrderService_Get9_HTTP_Handler(srv))
 }
 
-func _SalesOrderService_List9_HTTP_Handler(srv SalesOrderServiceHTTPServer) func(ctx http.Context) error {
+func _SalesOrderService_List10_HTTP_Handler(srv SalesOrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

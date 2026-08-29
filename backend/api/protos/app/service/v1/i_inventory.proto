@@ -113,3 +113,12 @@ service StockPickingService {
     };
   }
 }
+
+// 批次库存（移动端只读：批次余量与效期跟踪，扫码后核对批次场景）。
+service StockLotService {
+  rpc List (pagination.PagingRequest) returns (inventory.service.v1.ListStockLotResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/stock-lots"
+    };
+  }
+}

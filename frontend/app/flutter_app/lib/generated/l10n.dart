@@ -55,6 +55,41 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `批次余量`
+  String get lotSection {
+    return Intl.message('批次余量', name: 'lotSection', desc: '', args: []);
+  }
+
+  /// `效期`
+  String get lotExpiry {
+    return Intl.message('效期', name: 'lotExpiry', desc: '', args: []);
+  }
+
+  /// `不限期`
+  String get lotNoExpiry {
+    return Intl.message('不限期', name: 'lotNoExpiry', desc: '', args: []);
+  }
+
+  /// `余量`
+  String get lotRemaining {
+    return Intl.message('余量', name: 'lotRemaining', desc: '', args: []);
+  }
+
+  /// `正常`
+  String get lotNormal {
+    return Intl.message('正常', name: 'lotNormal', desc: '', args: []);
+  }
+
+  /// `临期`
+  String get lotExpiring {
+    return Intl.message('临期', name: 'lotExpiring', desc: '', args: []);
+  }
+
+  /// `过期`
+  String get lotExpired {
+    return Intl.message('过期', name: 'lotExpired', desc: '', args: []);
+  }
+
   /// `本月收入（元）`
   String get metricRevenueMonth {
     return Intl.message(

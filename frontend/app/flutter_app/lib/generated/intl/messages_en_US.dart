@@ -74,6 +74,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "lookupMiss": MessageLookupByLibrary.simpleMessage(
       "No inventory found for this SKU",
     ),
+    "lotExpired": MessageLookupByLibrary.simpleMessage("Expired"),
+    "lotExpiring": MessageLookupByLibrary.simpleMessage("Expiring"),
+    "lotExpiry": MessageLookupByLibrary.simpleMessage("Expiry"),
+    "lotNoExpiry": MessageLookupByLibrary.simpleMessage("No expiry"),
+    "lotNormal": MessageLookupByLibrary.simpleMessage("OK"),
+    "lotRemaining": MessageLookupByLibrary.simpleMessage("Remain"),
+    "lotSection": MessageLookupByLibrary.simpleMessage("Stock Lots"),
     "lowStockEmpty": MessageLookupByLibrary.simpleMessage("No low-stock items"),
     "lowStockTitle": MessageLookupByLibrary.simpleMessage("Low Stock"),
     "metricArApBalance": MessageLookupByLibrary.simpleMessage(
