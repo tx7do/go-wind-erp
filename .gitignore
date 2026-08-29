@@ -40,3 +40,7 @@ bin/
 
 # Agent workspace
 .zcode/
+
+# Local test artifacts (Playwright MCP screenshots etc.)
+.playwright-mcp/
+batch*.png
