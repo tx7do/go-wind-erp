@@ -202,3 +202,22 @@ func (r *PaymentRepo) Create(ctx context.Context, req *financeV1.CreatePaymentRe
 
 	return r.mapper.ToDTO(t), nil
 }
+
+
+// ListApplied 全部已入账付款（对账单核销行用）。
+func (r *PaymentRepo) ListApplied(ctx context.Context) ([]*financeV1.Payment, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	rows, err := r.entClient.Client().Payment.Query().
+		Where(payment.TenantIDEQ(tid), payment.StatusEQ(payment.StatusApplied)).
+		Order(ent.Asc(payment.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list applied payments failed: %s", err.Error())
+		return nil, financeV1.ErrorInternalServerError("list applied payments failed")
+	}
+	items := make([]*financeV1.Payment, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, r.mapper.ToDTO(row))
+	}
+	return items, nil
+}

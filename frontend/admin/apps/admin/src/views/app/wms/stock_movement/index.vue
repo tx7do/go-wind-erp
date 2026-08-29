@@ -10,6 +10,7 @@ import {
 } from '@vben/common-ui';
 import {
   LucideArrowLeftRight,
+  LucidePrinter,
   LucideTrash2,
 } from '@vben/icons';
 
@@ -29,6 +30,7 @@ import {
   type inventoryservicev1_StockPicking as StockPicking,
 } from '#/api';
 import { $t } from '#/locales';
+import { printStockPickingById } from '#/utils/order-print';
 
 import StockPickingDrawer from './stock_movement-drawer.vue';
 import AdjustmentDrawerComponent from './adjustment-drawer.vue';
@@ -227,6 +229,17 @@ async function handleConfirmPicking(row: any) {
   }
 }
 
+// 行级打印：先拉完整拣货单（列表行不含 moves）再打印。
+async function handlePrintPicking(row: any) {
+  try {
+    await printStockPickingById(row.id);
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  }
+}
+
 async function handleValidatePicking(row: any) {
   try {
     await apiClient.stockPickingService.Validate({
@@ -291,6 +304,12 @@ async function handleValidatePicking(row: any) {
         >
           {{ $t('page.stockPicking.button.validate') }}
         </a-button>
+        <a-button
+          type="link"
+          :icon="h(LucidePrinter)"
+          :title="$t('page.purchaseOrder.button.print')"
+          @click="handlePrintPicking(row)"
+        />
         <a-popconfirm
           :cancel-text="$t('ui.button.cancel')"
           :ok-text="$t('ui.button.ok')"

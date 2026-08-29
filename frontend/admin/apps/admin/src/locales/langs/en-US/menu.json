@@ -81,7 +81,8 @@
     "agingAr": "Receivable Aging",
     "profit": "Profit Report",
     "trialBalance": "Trial Balance",
-    "journal": "Journal Entries"
+    "journal": "Journal Entries",
+    "statement": "Partner Statement"
   },
   "sales": {
     "moduleName": "Sales Management",

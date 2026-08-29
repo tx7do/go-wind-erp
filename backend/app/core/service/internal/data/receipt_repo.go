@@ -202,3 +202,22 @@ func (r *ReceiptRepo) Create(ctx context.Context, req *financeV1.CreateReceiptRe
 
 	return r.mapper.ToDTO(t), nil
 }
+
+
+// ListApplied 全部已入账收款（对账单核销行用）。
+func (r *ReceiptRepo) ListApplied(ctx context.Context) ([]*financeV1.Receipt, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	rows, err := r.entClient.Client().Receipt.Query().
+		Where(receipt.TenantIDEQ(tid), receipt.StatusEQ(receipt.StatusApplied)).
+		Order(ent.Asc(receipt.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list applied receipts failed: %s", err.Error())
+		return nil, financeV1.ErrorInternalServerError("list applied receipts failed")
+	}
+	items := make([]*financeV1.Receipt, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, r.mapper.ToDTO(row))
+	}
+	return items, nil
+}

@@ -82,7 +82,8 @@
     "agingAr": "应收账龄",
     "profit": "利润报表",
     "trialBalance": "科目余额表",
-    "journal": "凭证查询"
+    "journal": "凭证查询",
+    "statement": "往来对账"
   },
   "sales": {
     "moduleName": "销售管理",

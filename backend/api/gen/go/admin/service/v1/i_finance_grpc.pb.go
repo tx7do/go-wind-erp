@@ -996,8 +996,9 @@ var ReceiptService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	FinanceReportService_ProfitReport_FullMethodName      = "/admin.service.v1.FinanceReportService/ProfitReport"
-	FinanceReportService_GetFinanceSummary_FullMethodName = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
+	FinanceReportService_ProfitReport_FullMethodName        = "/admin.service.v1.FinanceReportService/ProfitReport"
+	FinanceReportService_GetFinanceSummary_FullMethodName   = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
+	FinanceReportService_GetPartnerStatement_FullMethodName = "/admin.service.v1.FinanceReportService/GetPartnerStatement"
 )
 
 // FinanceReportServiceClient is the client API for FinanceReportService service.
@@ -1009,6 +1010,8 @@ type FinanceReportServiceClient interface {
 	ProfitReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.ProfitReportResponse, error)
 	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.FinanceSummaryResponse, error)
+	// 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+	GetPartnerStatement(ctx context.Context, in *v11.GetPartnerStatementRequest, opts ...grpc.CallOption) (*v11.PartnerStatementResponse, error)
 }
 
 type financeReportServiceClient struct {
@@ -1039,6 +1042,16 @@ func (c *financeReportServiceClient) GetFinanceSummary(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *financeReportServiceClient) GetPartnerStatement(ctx context.Context, in *v11.GetPartnerStatementRequest, opts ...grpc.CallOption) (*v11.PartnerStatementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.PartnerStatementResponse)
+	err := c.cc.Invoke(ctx, FinanceReportService_GetPartnerStatement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FinanceReportServiceServer is the server API for FinanceReportService service.
 // All implementations must embed UnimplementedFinanceReportServiceServer
 // for forward compatibility.
@@ -1048,6 +1061,8 @@ type FinanceReportServiceServer interface {
 	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
 	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
+	// 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+	GetPartnerStatement(context.Context, *v11.GetPartnerStatementRequest) (*v11.PartnerStatementResponse, error)
 	mustEmbedUnimplementedFinanceReportServiceServer()
 }
 
@@ -1063,6 +1078,9 @@ func (UnimplementedFinanceReportServiceServer) ProfitReport(context.Context, *em
 }
 func (UnimplementedFinanceReportServiceServer) GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFinanceSummary not implemented")
+}
+func (UnimplementedFinanceReportServiceServer) GetPartnerStatement(context.Context, *v11.GetPartnerStatementRequest) (*v11.PartnerStatementResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPartnerStatement not implemented")
 }
 func (UnimplementedFinanceReportServiceServer) mustEmbedUnimplementedFinanceReportServiceServer() {}
 func (UnimplementedFinanceReportServiceServer) testEmbeddedByValue()                              {}
@@ -1121,6 +1139,24 @@ func _FinanceReportService_GetFinanceSummary_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FinanceReportService_GetPartnerStatement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPartnerStatementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceReportServiceServer).GetPartnerStatement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FinanceReportService_GetPartnerStatement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceReportServiceServer).GetPartnerStatement(ctx, req.(*v11.GetPartnerStatementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FinanceReportService_ServiceDesc is the grpc.ServiceDesc for FinanceReportService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1135,6 +1171,10 @@ var FinanceReportService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFinanceSummary",
 			Handler:    _FinanceReportService_GetFinanceSummary_Handler,
+		},
+		{
+			MethodName: "GetPartnerStatement",
+			Handler:    _FinanceReportService_GetPartnerStatement_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

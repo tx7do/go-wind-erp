@@ -5411,3 +5411,490 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = FinanceSummaryResponseValidationError{}
+
+// Validate checks the field values on PartnerStatementRow with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PartnerStatementRow) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PartnerStatementRow with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PartnerStatementRowMultiError, or nil if none found.
+func (m *PartnerStatementRow) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PartnerStatementRow) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Date != nil {
+
+		if all {
+			switch v := interface{}(m.GetDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PartnerStatementRowValidationError{
+						field:  "Date",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PartnerStatementRowValidationError{
+						field:  "Date",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PartnerStatementRowValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DocType != nil {
+		// no validation rules for DocType
+	}
+
+	if m.DocRef != nil {
+		// no validation rules for DocRef
+	}
+
+	if m.Summary != nil {
+		// no validation rules for Summary
+	}
+
+	if m.Debit != nil {
+		// no validation rules for Debit
+	}
+
+	if m.Credit != nil {
+		// no validation rules for Credit
+	}
+
+	if len(errors) > 0 {
+		return PartnerStatementRowMultiError(errors)
+	}
+
+	return nil
+}
+
+// PartnerStatementRowMultiError is an error wrapping multiple validation
+// errors returned by PartnerStatementRow.ValidateAll() if the designated
+// constraints aren't met.
+type PartnerStatementRowMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PartnerStatementRowMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PartnerStatementRowMultiError) AllErrors() []error { return m }
+
+// PartnerStatementRowValidationError is the validation error returned by
+// PartnerStatementRow.Validate if the designated constraints aren't met.
+type PartnerStatementRowValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PartnerStatementRowValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PartnerStatementRowValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PartnerStatementRowValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PartnerStatementRowValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PartnerStatementRowValidationError) ErrorName() string {
+	return "PartnerStatementRowValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PartnerStatementRowValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPartnerStatementRow.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PartnerStatementRowValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PartnerStatementRowValidationError{}
+
+// Validate checks the field values on GetPartnerStatementRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPartnerStatementRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPartnerStatementRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPartnerStatementRequestMultiError, or nil if none found.
+func (m *GetPartnerStatementRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPartnerStatementRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.PartnerType != nil {
+		// no validation rules for PartnerType
+	}
+
+	if m.PartnerCode != nil {
+		// no validation rules for PartnerCode
+	}
+
+	if m.FromDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetFromDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetPartnerStatementRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetPartnerStatementRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFromDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetPartnerStatementRequestValidationError{
+					field:  "FromDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ToDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetToDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetPartnerStatementRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetPartnerStatementRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetToDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetPartnerStatementRequestValidationError{
+					field:  "ToDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetPartnerStatementRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPartnerStatementRequestMultiError is an error wrapping multiple
+// validation errors returned by GetPartnerStatementRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetPartnerStatementRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPartnerStatementRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPartnerStatementRequestMultiError) AllErrors() []error { return m }
+
+// GetPartnerStatementRequestValidationError is the validation error returned
+// by GetPartnerStatementRequest.Validate if the designated constraints aren't met.
+type GetPartnerStatementRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPartnerStatementRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPartnerStatementRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPartnerStatementRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPartnerStatementRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPartnerStatementRequestValidationError) ErrorName() string {
+	return "GetPartnerStatementRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPartnerStatementRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPartnerStatementRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPartnerStatementRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPartnerStatementRequestValidationError{}
+
+// Validate checks the field values on PartnerStatementResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PartnerStatementResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PartnerStatementResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PartnerStatementResponseMultiError, or nil if none found.
+func (m *PartnerStatementResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PartnerStatementResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetRows() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PartnerStatementResponseValidationError{
+						field:  fmt.Sprintf("Rows[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PartnerStatementResponseValidationError{
+						field:  fmt.Sprintf("Rows[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PartnerStatementResponseValidationError{
+					field:  fmt.Sprintf("Rows[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.PartnerType != nil {
+		// no validation rules for PartnerType
+	}
+
+	if m.PartnerCode != nil {
+		// no validation rules for PartnerCode
+	}
+
+	if m.TotalDebit != nil {
+		// no validation rules for TotalDebit
+	}
+
+	if m.TotalCredit != nil {
+		// no validation rules for TotalCredit
+	}
+
+	if m.Balance != nil {
+		// no validation rules for Balance
+	}
+
+	if len(errors) > 0 {
+		return PartnerStatementResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PartnerStatementResponseMultiError is an error wrapping multiple validation
+// errors returned by PartnerStatementResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PartnerStatementResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PartnerStatementResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PartnerStatementResponseMultiError) AllErrors() []error { return m }
+
+// PartnerStatementResponseValidationError is the validation error returned by
+// PartnerStatementResponse.Validate if the designated constraints aren't met.
+type PartnerStatementResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PartnerStatementResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PartnerStatementResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PartnerStatementResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PartnerStatementResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PartnerStatementResponseValidationError) ErrorName() string {
+	return "PartnerStatementResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PartnerStatementResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPartnerStatementResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PartnerStatementResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PartnerStatementResponseValidationError{}

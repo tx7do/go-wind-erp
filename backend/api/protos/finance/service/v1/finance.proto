@@ -805,3 +805,85 @@ message FinanceSummaryResponse {
     (gnostic.openapi.v3.property) = {description: "应付未清余额（分）"}
   ]; // 应付余额
 }
+
+
+// =========== 往来对账单 ==========
+
+// 对账单明细行：debit=应收/应付发生额，credit=收款/付款核销额。
+message PartnerStatementRow {
+  optional google.protobuf.Timestamp date = 1 [
+    json_name = "date",
+    (gnostic.openapi.v3.property) = {description: "业务日期"}
+  ]; // 业务日期
+
+  optional string doc_type = 2 [
+    json_name = "docType",
+    (gnostic.openapi.v3.property) = {description: "单据类型（销售应收/收款/采购应付/付款）"}
+  ]; // 单据类型
+
+  optional string doc_ref = 3 [
+    json_name = "docRef",
+    (gnostic.openapi.v3.property) = {description: "单据引用（SO/PO 号或收付款单号）"}
+  ]; // 单据引用
+
+  optional string summary = 4 [
+    json_name = "summary",
+    (gnostic.openapi.v3.property) = {description: "摘要"}
+  ]; // 摘要
+
+  optional int64 debit = 5 [
+    json_name = "debit",
+    (gnostic.openapi.v3.property) = {description: "发生额（分）：应收/应付"}
+  ]; // 发生额
+
+  optional int64 credit = 6 [
+    json_name = "credit",
+    (gnostic.openapi.v3.property) = {description: "核销额（分）：收款/付款"}
+  ]; // 核销额
+}
+
+message GetPartnerStatementRequest {
+  optional string partner_type = 1 [
+    json_name = "partnerType",
+    (gnostic.openapi.v3.property) = {description: "CUSTOMER 或 SUPPLIER"}
+  ]; // 往来类型
+
+  optional string partner_code = 2 [
+    json_name = "partnerCode",
+    (gnostic.openapi.v3.property) = {description: "往来单位编码"}
+  ]; // 往来单位编码
+
+  optional google.protobuf.Timestamp from_date = 3 [
+    json_name = "fromDate",
+    (gnostic.openapi.v3.property) = {description: "起始日期（空=全部）"}
+  ]; // 起始日期
+
+  optional google.protobuf.Timestamp to_date = 4 [
+    json_name = "toDate",
+    (gnostic.openapi.v3.property) = {description: "截止日期"}
+  ]; // 截止日期
+}
+
+message PartnerStatementResponse {
+  optional string partner_type = 1 [json_name = "partnerType", (gnostic.openapi.v3.property) = {description: "CUSTOMER 或 SUPPLIER"}];
+  optional string partner_code = 2 [json_name = "partnerCode", (gnostic.openapi.v3.property) = {description: "往来单位编码"}];
+
+  repeated PartnerStatementRow rows = 3 [
+    (gnostic.openapi.v3.property) = {description: "明细行（按日期升序）"}
+  ]; // 明细行
+
+  optional int64 total_debit = 4 [
+    json_name = "totalDebit",
+    (gnostic.openapi.v3.property) = {description: "发生额合计（分）"}
+  ]; // 发生额合计
+
+  optional int64 total_credit = 5 [
+    json_name = "totalCredit",
+    (gnostic.openapi.v3.property) = {description: "核销额合计（分）"}
+  ]; // 核销额合计
+
+  optional int64 balance = 6 [
+    json_name = "balance",
+    (gnostic.openapi.v3.property) = {description: "期末余额（分，发生−核销）"}
+  ]; // 期末余额
+}

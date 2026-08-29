@@ -50,10 +50,11 @@ const file_admin_service_v1_i_finance_proto_rawDesc = "" +
 	"\x0eReceiptService\x12f\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListReceiptResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/receipts\x12j\n" +
 	"\x03Get\x12%.finance.service.v1.GetReceiptRequest\x1a\x1b.finance.service.v1.Receipt\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/receipts/{id}\x12i\n" +
-	"\x06Create\x12(.finance.service.v1.CreateReceiptRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/receipts2\x8d\x02\n" +
+	"\x06Create\x12(.finance.service.v1.CreateReceiptRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/admin/v1/receipts2\xb0\x03\n" +
 	"\x14FinanceReportService\x12y\n" +
 	"\fProfitReport\x12\x16.google.protobuf.Empty\x1a(.finance.service.v1.ProfitReportResponse\"'\x82\xd3\xe4\x93\x02!\x12\x1f/admin/v1/finance/profit-report\x12z\n" +
-	"\x11GetFinanceSummary\x12\x16.google.protobuf.Empty\x1a*.finance.service.v1.FinanceSummaryResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/finance/summary2\xa3\x03\n" +
+	"\x11GetFinanceSummary\x12\x16.google.protobuf.Empty\x1a*.finance.service.v1.FinanceSummaryResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/finance/summary\x12\xa0\x01\n" +
+	"\x13GetPartnerStatement\x12..finance.service.v1.GetPartnerStatementRequest\x1a,.finance.service.v1.PartnerStatementResponse\"+\x82\xd3\xe4\x93\x02%\x12#/admin/v1/finance/partner-statement2\xa3\x03\n" +
 	"\x11AccountingService\x12n\n" +
 	"\fListAccounts\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListAccountResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/admin/v1/accounts\x12\x92\x01\n" +
 	"\x12ListJournalEntries\x12+.finance.service.v1.ListJournalEntryRequest\x1a,.finance.service.v1.ListJournalEntryResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/journal-entries\x12\x88\x01\n" +
@@ -61,36 +62,38 @@ const file_admin_service_v1_i_finance_proto_rawDesc = "" +
 	"\x14com.admin.service.v1B\rIFinanceProtoP\x01Z/go-wind-erp/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_finance_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),             // 0: pagination.PagingRequest
-	(*v11.GetPayableRequest)(nil),        // 1: finance.service.v1.GetPayableRequest
-	(*v11.CreatePayableRequest)(nil),     // 2: finance.service.v1.CreatePayableRequest
-	(*v11.DeletePayableRequest)(nil),     // 3: finance.service.v1.DeletePayableRequest
-	(*v11.CancelPayableRequest)(nil),     // 4: finance.service.v1.CancelPayableRequest
-	(*emptypb.Empty)(nil),                // 5: google.protobuf.Empty
-	(*v11.GetPaymentRequest)(nil),        // 6: finance.service.v1.GetPaymentRequest
-	(*v11.CreatePaymentRequest)(nil),     // 7: finance.service.v1.CreatePaymentRequest
-	(*v11.GetReceivableRequest)(nil),     // 8: finance.service.v1.GetReceivableRequest
-	(*v11.CreateReceivableRequest)(nil),  // 9: finance.service.v1.CreateReceivableRequest
-	(*v11.DeleteReceivableRequest)(nil),  // 10: finance.service.v1.DeleteReceivableRequest
-	(*v11.CancelReceivableRequest)(nil),  // 11: finance.service.v1.CancelReceivableRequest
-	(*v11.GetReceiptRequest)(nil),        // 12: finance.service.v1.GetReceiptRequest
-	(*v11.CreateReceiptRequest)(nil),     // 13: finance.service.v1.CreateReceiptRequest
-	(*v11.ListJournalEntryRequest)(nil),  // 14: finance.service.v1.ListJournalEntryRequest
-	(*v11.GetTrialBalanceRequest)(nil),   // 15: finance.service.v1.GetTrialBalanceRequest
-	(*v11.ListPayableResponse)(nil),      // 16: finance.service.v1.ListPayableResponse
-	(*v11.Payable)(nil),                  // 17: finance.service.v1.Payable
-	(*v11.AgingReportResponse)(nil),      // 18: finance.service.v1.AgingReportResponse
-	(*v11.ListPaymentResponse)(nil),      // 19: finance.service.v1.ListPaymentResponse
-	(*v11.Payment)(nil),                  // 20: finance.service.v1.Payment
-	(*v11.ListReceivableResponse)(nil),   // 21: finance.service.v1.ListReceivableResponse
-	(*v11.Receivable)(nil),               // 22: finance.service.v1.Receivable
-	(*v11.ListReceiptResponse)(nil),      // 23: finance.service.v1.ListReceiptResponse
-	(*v11.Receipt)(nil),                  // 24: finance.service.v1.Receipt
-	(*v11.ProfitReportResponse)(nil),     // 25: finance.service.v1.ProfitReportResponse
-	(*v11.FinanceSummaryResponse)(nil),   // 26: finance.service.v1.FinanceSummaryResponse
-	(*v11.ListAccountResponse)(nil),      // 27: finance.service.v1.ListAccountResponse
-	(*v11.ListJournalEntryResponse)(nil), // 28: finance.service.v1.ListJournalEntryResponse
-	(*v11.TrialBalanceResponse)(nil),     // 29: finance.service.v1.TrialBalanceResponse
+	(*v1.PagingRequest)(nil),               // 0: pagination.PagingRequest
+	(*v11.GetPayableRequest)(nil),          // 1: finance.service.v1.GetPayableRequest
+	(*v11.CreatePayableRequest)(nil),       // 2: finance.service.v1.CreatePayableRequest
+	(*v11.DeletePayableRequest)(nil),       // 3: finance.service.v1.DeletePayableRequest
+	(*v11.CancelPayableRequest)(nil),       // 4: finance.service.v1.CancelPayableRequest
+	(*emptypb.Empty)(nil),                  // 5: google.protobuf.Empty
+	(*v11.GetPaymentRequest)(nil),          // 6: finance.service.v1.GetPaymentRequest
+	(*v11.CreatePaymentRequest)(nil),       // 7: finance.service.v1.CreatePaymentRequest
+	(*v11.GetReceivableRequest)(nil),       // 8: finance.service.v1.GetReceivableRequest
+	(*v11.CreateReceivableRequest)(nil),    // 9: finance.service.v1.CreateReceivableRequest
+	(*v11.DeleteReceivableRequest)(nil),    // 10: finance.service.v1.DeleteReceivableRequest
+	(*v11.CancelReceivableRequest)(nil),    // 11: finance.service.v1.CancelReceivableRequest
+	(*v11.GetReceiptRequest)(nil),          // 12: finance.service.v1.GetReceiptRequest
+	(*v11.CreateReceiptRequest)(nil),       // 13: finance.service.v1.CreateReceiptRequest
+	(*v11.GetPartnerStatementRequest)(nil), // 14: finance.service.v1.GetPartnerStatementRequest
+	(*v11.ListJournalEntryRequest)(nil),    // 15: finance.service.v1.ListJournalEntryRequest
+	(*v11.GetTrialBalanceRequest)(nil),     // 16: finance.service.v1.GetTrialBalanceRequest
+	(*v11.ListPayableResponse)(nil),        // 17: finance.service.v1.ListPayableResponse
+	(*v11.Payable)(nil),                    // 18: finance.service.v1.Payable
+	(*v11.AgingReportResponse)(nil),        // 19: finance.service.v1.AgingReportResponse
+	(*v11.ListPaymentResponse)(nil),        // 20: finance.service.v1.ListPaymentResponse
+	(*v11.Payment)(nil),                    // 21: finance.service.v1.Payment
+	(*v11.ListReceivableResponse)(nil),     // 22: finance.service.v1.ListReceivableResponse
+	(*v11.Receivable)(nil),                 // 23: finance.service.v1.Receivable
+	(*v11.ListReceiptResponse)(nil),        // 24: finance.service.v1.ListReceiptResponse
+	(*v11.Receipt)(nil),                    // 25: finance.service.v1.Receipt
+	(*v11.ProfitReportResponse)(nil),       // 26: finance.service.v1.ProfitReportResponse
+	(*v11.FinanceSummaryResponse)(nil),     // 27: finance.service.v1.FinanceSummaryResponse
+	(*v11.PartnerStatementResponse)(nil),   // 28: finance.service.v1.PartnerStatementResponse
+	(*v11.ListAccountResponse)(nil),        // 29: finance.service.v1.ListAccountResponse
+	(*v11.ListJournalEntryResponse)(nil),   // 30: finance.service.v1.ListJournalEntryResponse
+	(*v11.TrialBalanceResponse)(nil),       // 31: finance.service.v1.TrialBalanceResponse
 }
 var file_admin_service_v1_i_finance_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.PayableService.List:input_type -> pagination.PagingRequest
@@ -113,34 +116,36 @@ var file_admin_service_v1_i_finance_proto_depIdxs = []int32{
 	13, // 17: admin.service.v1.ReceiptService.Create:input_type -> finance.service.v1.CreateReceiptRequest
 	5,  // 18: admin.service.v1.FinanceReportService.ProfitReport:input_type -> google.protobuf.Empty
 	5,  // 19: admin.service.v1.FinanceReportService.GetFinanceSummary:input_type -> google.protobuf.Empty
-	0,  // 20: admin.service.v1.AccountingService.ListAccounts:input_type -> pagination.PagingRequest
-	14, // 21: admin.service.v1.AccountingService.ListJournalEntries:input_type -> finance.service.v1.ListJournalEntryRequest
-	15, // 22: admin.service.v1.AccountingService.GetTrialBalance:input_type -> finance.service.v1.GetTrialBalanceRequest
-	16, // 23: admin.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	17, // 24: admin.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	5,  // 25: admin.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	5,  // 26: admin.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	5,  // 27: admin.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	18, // 28: admin.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	19, // 29: admin.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	20, // 30: admin.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	5,  // 31: admin.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	21, // 32: admin.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
-	22, // 33: admin.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
-	5,  // 34: admin.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
-	5,  // 35: admin.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
-	5,  // 36: admin.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
-	18, // 37: admin.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	23, // 38: admin.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
-	24, // 39: admin.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
-	5,  // 40: admin.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
-	25, // 41: admin.service.v1.FinanceReportService.ProfitReport:output_type -> finance.service.v1.ProfitReportResponse
-	26, // 42: admin.service.v1.FinanceReportService.GetFinanceSummary:output_type -> finance.service.v1.FinanceSummaryResponse
-	27, // 43: admin.service.v1.AccountingService.ListAccounts:output_type -> finance.service.v1.ListAccountResponse
-	28, // 44: admin.service.v1.AccountingService.ListJournalEntries:output_type -> finance.service.v1.ListJournalEntryResponse
-	29, // 45: admin.service.v1.AccountingService.GetTrialBalance:output_type -> finance.service.v1.TrialBalanceResponse
-	23, // [23:46] is the sub-list for method output_type
-	0,  // [0:23] is the sub-list for method input_type
+	14, // 20: admin.service.v1.FinanceReportService.GetPartnerStatement:input_type -> finance.service.v1.GetPartnerStatementRequest
+	0,  // 21: admin.service.v1.AccountingService.ListAccounts:input_type -> pagination.PagingRequest
+	15, // 22: admin.service.v1.AccountingService.ListJournalEntries:input_type -> finance.service.v1.ListJournalEntryRequest
+	16, // 23: admin.service.v1.AccountingService.GetTrialBalance:input_type -> finance.service.v1.GetTrialBalanceRequest
+	17, // 24: admin.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	18, // 25: admin.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	5,  // 26: admin.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	5,  // 27: admin.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	5,  // 28: admin.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 29: admin.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	20, // 30: admin.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	21, // 31: admin.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	5,  // 32: admin.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	22, // 33: admin.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
+	23, // 34: admin.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
+	5,  // 35: admin.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
+	5,  // 36: admin.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
+	5,  // 37: admin.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 38: admin.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	24, // 39: admin.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
+	25, // 40: admin.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
+	5,  // 41: admin.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
+	26, // 42: admin.service.v1.FinanceReportService.ProfitReport:output_type -> finance.service.v1.ProfitReportResponse
+	27, // 43: admin.service.v1.FinanceReportService.GetFinanceSummary:output_type -> finance.service.v1.FinanceSummaryResponse
+	28, // 44: admin.service.v1.FinanceReportService.GetPartnerStatement:output_type -> finance.service.v1.PartnerStatementResponse
+	29, // 45: admin.service.v1.AccountingService.ListAccounts:output_type -> finance.service.v1.ListAccountResponse
+	30, // 46: admin.service.v1.AccountingService.ListJournalEntries:output_type -> finance.service.v1.ListJournalEntryResponse
+	31, // 47: admin.service.v1.AccountingService.GetTrialBalance:output_type -> finance.service.v1.TrialBalanceResponse
+	24, // [24:48] is the sub-list for method output_type
+	0,  // [0:24] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

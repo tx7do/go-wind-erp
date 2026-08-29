@@ -452,6 +452,24 @@ func protoTime(t *timestamppb.Timestamp) *time.Time {
 }
 
 
+// ListBySupplier 按供应商取全部应付单（对账单用）。
+func (r *PayableRepo) ListBySupplier(ctx context.Context, supplierCode string) ([]*financeV1.Payable, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	rows, err := r.entClient.Client().Payable.Query().
+		Where(payable.TenantIDEQ(tid), payable.SupplierCodeEQ(supplierCode)).
+		Order(ent.Asc(payable.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list payables by supplier failed: %s", err.Error())
+		return nil, financeV1.ErrorInternalServerError("list payables by supplier failed")
+	}
+	items := make([]*financeV1.Payable, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, r.mapper.ToDTO(row))
+	}
+	return items, nil
+}
+
 // OutstandingBalance 未清余额合计（amount − paid_amount，非取消单）。
 // Go 侧求和（镜像 aging 模式——租户单据量有限，避免脆弱的 SQL 表达式）。
 func (r *PayableRepo) OutstandingBalance(ctx context.Context) (int64, error) {

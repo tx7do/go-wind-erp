@@ -157,6 +157,13 @@ service FinanceReportService {
       get: "/admin/v1/finance/summary"
     };
   }
+
+  // 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+  rpc GetPartnerStatement (finance.service.v1.GetPartnerStatementRequest) returns (finance.service.v1.PartnerStatementResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/finance/partner-statement"
+    };
+  }
 }
 
 // 会计服务（简易总账：科目/凭证/余额表，只读查询）

@@ -4393,6 +4393,10 @@ export interface FinanceReportService {
   GetFinanceSummary(
     request: wellKnownEmpty,
   ): Promise<financeservicev1_FinanceSummaryResponse>;
+  // 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+  GetPartnerStatement(
+    request: financeservicev1_GetPartnerStatementRequest,
+  ): Promise<financeservicev1_PartnerStatementResponse>;
 }
 
 export function createFinanceReportServiceClient(
@@ -4415,6 +4419,39 @@ export function createFinanceReportServiceClient(
         method: 'GetFinanceSummary',
       }) as Promise<financeservicev1_FinanceSummaryResponse>;
     },
+    GetPartnerStatement(request) {
+      const path = `admin/v1/finance/partner-statement`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.partnerType) {
+        queryParams.push(
+          `partnerType=${encodeURIComponent(request.partnerType.toString())}`,
+        );
+      }
+      if (request.partnerCode) {
+        queryParams.push(
+          `partnerCode=${encodeURIComponent(request.partnerCode.toString())}`,
+        );
+      }
+      if (request.fromDate) {
+        queryParams.push(
+          `fromDate=${encodeURIComponent(request.fromDate.toString())}`,
+        );
+      }
+      if (request.toDate) {
+        queryParams.push(
+          `toDate=${encodeURIComponent(request.toDate.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FinanceReportService',
+        method: 'GetPartnerStatement',
+      }) as Promise<financeservicev1_PartnerStatementResponse>;
+    },
   };
 }
 export type financeservicev1_ProfitReportResponse = {
@@ -4436,6 +4473,32 @@ export type financeservicev1_FinanceSummaryResponse = {
   cogsMonth?: number;
   profitMonth?: number;
   revenueMonth?: number;
+};
+
+export type financeservicev1_GetPartnerStatementRequest = {
+  fromDate?: wellKnownTimestamp;
+  partnerCode?: string;
+  partnerType?: string;
+  toDate?: wellKnownTimestamp;
+};
+
+export type financeservicev1_PartnerStatementResponse = {
+  balance?: number;
+  partnerCode?: string;
+  partnerType?: string;
+  rows: financeservicev1_PartnerStatementRow[] | undefined;
+  totalCredit?: number;
+  totalDebit?: number;
+};
+
+// 对账单明细行：debit=应收/应付发生额，credit=收款/付款核销额。
+export type financeservicev1_PartnerStatementRow = {
+  credit?: number;
+  date?: wellKnownTimestamp;
+  debit?: number;
+  docRef?: string;
+  docType?: string;
+  summary?: string;
 };
 
 // 会计服务（简易总账：科目/凭证/余额表，只读查询）

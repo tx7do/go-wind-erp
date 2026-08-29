@@ -810,11 +810,14 @@ func (c *ReceiptServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 }
 
 const OperationFinanceReportServiceGetFinanceSummary = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
+const OperationFinanceReportServiceGetPartnerStatement = "/admin.service.v1.FinanceReportService/GetPartnerStatement"
 const OperationFinanceReportServiceProfitReport = "/admin.service.v1.FinanceReportService/ProfitReport"
 
 type FinanceReportServiceHTTPServer interface {
 	// GetFinanceSummary 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
+	// GetPartnerStatement 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+	GetPartnerStatement(context.Context, *v11.GetPartnerStatementRequest) (*v11.PartnerStatementResponse, error)
 	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
 }
 
@@ -822,6 +825,7 @@ func RegisterFinanceReportServiceHTTPServer(s *http.Server, srv FinanceReportSer
 	r := s.Route("/")
 	r.GET("/admin/v1/finance/profit-report", _FinanceReportService_ProfitReport0_HTTP_Handler(srv))
 	r.GET("/admin/v1/finance/summary", _FinanceReportService_GetFinanceSummary0_HTTP_Handler(srv))
+	r.GET("/admin/v1/finance/partner-statement", _FinanceReportService_GetPartnerStatement0_HTTP_Handler(srv))
 }
 
 func _FinanceReportService_ProfitReport0_HTTP_Handler(srv FinanceReportServiceHTTPServer) func(ctx http.Context) error {
@@ -862,9 +866,30 @@ func _FinanceReportService_GetFinanceSummary0_HTTP_Handler(srv FinanceReportServ
 	}
 }
 
+func _FinanceReportService_GetPartnerStatement0_HTTP_Handler(srv FinanceReportServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetPartnerStatementRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFinanceReportServiceGetPartnerStatement)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetPartnerStatement(ctx, req.(*v11.GetPartnerStatementRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.PartnerStatementResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type FinanceReportServiceHTTPClient interface {
 	// GetFinanceSummary 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.FinanceSummaryResponse, err error)
+	// GetPartnerStatement 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+	GetPartnerStatement(ctx context.Context, req *v11.GetPartnerStatementRequest, opts ...http.CallOption) (rsp *v11.PartnerStatementResponse, err error)
 	ProfitReport(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.ProfitReportResponse, err error)
 }
 
@@ -882,6 +907,20 @@ func (c *FinanceReportServiceHTTPClientImpl) GetFinanceSummary(ctx context.Conte
 	pattern := "/admin/v1/finance/summary"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationFinanceReportServiceGetFinanceSummary))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetPartnerStatement 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
+func (c *FinanceReportServiceHTTPClientImpl) GetPartnerStatement(ctx context.Context, in *v11.GetPartnerStatementRequest, opts ...http.CallOption) (*v11.PartnerStatementResponse, error) {
+	var out v11.PartnerStatementResponse
+	pattern := "/admin/v1/finance/partner-statement"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationFinanceReportServiceGetPartnerStatement))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

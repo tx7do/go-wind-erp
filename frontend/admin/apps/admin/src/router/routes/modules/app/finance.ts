@@ -42,6 +42,18 @@ const finance: RouteRecordRaw[] = [
       },
 
       {
+        path: 'partner-statement',
+        name: 'PartnerStatement',
+        meta: {
+          order: 3,
+          icon: 'lucide:file-text',
+          title: $t('menu.finance.statement'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/statement/index.vue'),
+      },
+
+      {
         path: 'journal-entries',
         name: 'JournalEntryManagement',
         meta: {

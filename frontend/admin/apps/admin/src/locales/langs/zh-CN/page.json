@@ -580,8 +580,14 @@
       "supplierConfirm": "供应商确认",
       "receiver": "收货人",
       "customerConfirm": "客户确认",
-      "dispatcher": "发货人"
-    }
+      "dispatcher": "发货人",
+      "warehouseKeeper": "仓管员",
+      "checker": "复核人"
+    },
+    "pickingType": "类型",
+    "partner": "往来单位",
+    "fromWarehouse": "源仓库",
+    "toWarehouse": "目的仓库"
   },
   "purchaseOrder": {
     "moduleName": "采购单",
@@ -864,5 +870,23 @@
     "lineSummary": "摘要",
     "debit": "借方",
     "credit": "贷方"
+  },
+  "statement": {
+    "title": "往来对账单",
+    "customer": "客户",
+    "supplier": "供应商",
+    "partnerPlaceholder": "请选择往来单位",
+    "partnerRequired": "请先选择往来单位",
+    "date": "日期",
+    "docType": "类型",
+    "docRef": "单据",
+    "summary": "摘要",
+    "debit": "发生额（元）",
+    "credit": "核销额（元）",
+    "totalDebit": "发生合计",
+    "totalCredit": "核销合计",
+    "balance": "期末余额",
+    "partnerConfirm": "对方确认",
+    "empty": "暂无对账数据"
   }
 }

@@ -446,6 +446,24 @@ func (r *ReceivableRepo) ApplyReturnOffsetTx(
 }
 
 
+// ListByCustomer 按客户取全部应收单（对账单用，含冲抵后净额）。
+func (r *ReceivableRepo) ListByCustomer(ctx context.Context, customerCode string) ([]*financeV1.Receivable, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	rows, err := r.entClient.Client().Receivable.Query().
+		Where(receivable.TenantIDEQ(tid), receivable.CustomerCodeEQ(customerCode)).
+		Order(ent.Asc(receivable.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list receivables by customer failed: %s", err.Error())
+		return nil, financeV1.ErrorInternalServerError("list receivables by customer failed")
+	}
+	items := make([]*financeV1.Receivable, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, r.mapper.ToDTO(row))
+	}
+	return items, nil
+}
+
 // OutstandingBalance 未清余额合计（amount − paid_amount，非取消单）。
 // Go 侧求和（镜像 aging 模式——租户单据量有限，避免脆弱的 SQL 表达式）。
 func (r *ReceivableRepo) OutstandingBalance(ctx context.Context) (int64, error) {

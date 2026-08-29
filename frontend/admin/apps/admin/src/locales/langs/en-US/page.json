@@ -551,8 +551,14 @@
       "supplierConfirm": "Supplier Confirmation",
       "receiver": "Received By",
       "customerConfirm": "Customer Confirmation",
-      "dispatcher": "Dispatched By"
-    }
+      "dispatcher": "Dispatched By",
+      "warehouseKeeper": "Warehouse Keeper",
+      "checker": "Checker"
+    },
+    "pickingType": "Type",
+    "partner": "Partner",
+    "fromWarehouse": "From Warehouse",
+    "toWarehouse": "To Warehouse"
   },
   "purchaseOrder": {
     "moduleName": "Purchase Order",
@@ -835,5 +841,23 @@
     "lineSummary": "Summary",
     "debit": "Debit",
     "credit": "Credit"
+  },
+  "statement": {
+    "title": "Partner Statement",
+    "customer": "Customer",
+    "supplier": "Supplier",
+    "partnerPlaceholder": "Select partner",
+    "partnerRequired": "Select a partner first",
+    "date": "Date",
+    "docType": "Type",
+    "docRef": "Doc",
+    "summary": "Summary",
+    "debit": "Debit",
+    "credit": "Credit",
+    "totalDebit": "Total Debit",
+    "totalCredit": "Total Credit",
+    "balance": "Balance",
+    "partnerConfirm": "Partner Confirmation",
+    "empty": "No data"
   }
 }

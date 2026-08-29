@@ -103,7 +103,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	payableService := service.NewPayableService(context, payableRepo)
 	accountingService := service.NewAccountingService(context, accountRepo, journalRepo)
 	receivableService := service.NewReceivableService(context, receivableRepo)
-	financeReportService := service.NewFinanceReportService(context, salesOrderRepo, stockPickingRepo, stockMoveLineRepo, journalRepo, receivableRepo, payableRepo)
+	financeReportService := service.NewFinanceReportService(context, salesOrderRepo, stockPickingRepo, stockMoveLineRepo, journalRepo, receivableRepo, payableRepo, receiptRepo, paymentRepo)
 	billingService := service.NewBillingService(context, planRepo, subscriptionRepo, userRepo, purchaseOrderRepo, salesOrderRepo)
 	planAdminService := service.NewPlanAdminService(context, planRepo)
 	fileRepo := data.NewFileRepo(context, entClient)

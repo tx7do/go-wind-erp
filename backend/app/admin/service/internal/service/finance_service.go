@@ -251,3 +251,8 @@ func (s *FinanceReportService) ProfitReport(ctx context.Context, req *emptypb.Em
 func (s *FinanceReportService) GetFinanceSummary(ctx context.Context, req *emptypb.Empty) (*financeV1.FinanceSummaryResponse, error) {
 	return s.financeReportServiceClient.GetFinanceSummary(ctx, req)
 }
+
+// GetPartnerStatement 往来对账单（客户/供应商）。
+func (s *FinanceReportService) GetPartnerStatement(ctx context.Context, req *financeV1.GetPartnerStatementRequest) (*financeV1.PartnerStatementResponse, error) {
+	return s.financeReportServiceClient.GetPartnerStatement(ctx, req)
+}
