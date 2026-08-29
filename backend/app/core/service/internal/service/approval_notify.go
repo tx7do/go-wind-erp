@@ -50,6 +50,44 @@ func (n *approvalNotifier) notifyResolved(ctx context.Context, approval *approva
 	return err
 }
 
+// notifyStepApprovers 多级审批级进通知：告知下一级候选审批人（持有
+// role_code 的用户）有待办。收件人剔除申请人（自审已被拦截）。
+func (n *approvalNotifier) notifyStepApprovers(
+	ctx context.Context,
+	approval *approvalV1.ApprovalRequest,
+	step, total uint32,
+	userIDs []uint32,
+) error {
+	if n == nil || len(userIDs) == 0 {
+		return nil
+	}
+
+	msg, err := n.messageRepo.Create(ctx, &internalMessageV1.CreateInternalMessageRequest{
+		Data: &internalMessageV1.InternalMessage{
+			Title:   strPtr(fmt.Sprintf("待审批（第 %d/%d 级）：%s", step, total, approval.GetTitle())),
+			Content: strPtr(fmt.Sprintf("多级审批推进到你所在级别（%s / %s），请到审批中心处理。", approval.GetBizType(), approval.GetBizRef())),
+			Status:  internalMessageV1.InternalMessage_PUBLISHED.Enum(),
+			Type:    internalMessageV1.InternalMessage_NOTIFICATION.Enum(),
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, uid := range userIDs {
+		if uid == approval.GetApplicantId() {
+			continue
+		}
+		if _, err := n.recipientRepo.Create(ctx, &internalMessageV1.InternalMessageRecipient{
+			MessageId:       msg.Id,
+			RecipientUserId: &uid,
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // notifyReplenishmentDraft 补货审批通过后的下游事件通知：告知申请人草稿
 // 采购单已自动创建、待完善提交。收件人=审批申请人。
 func (n *approvalNotifier) notifyReplenishmentDraft(

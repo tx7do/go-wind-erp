@@ -159,6 +159,54 @@ func (f ApiAuditLogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApiAuditLogMutation", m)
 }
 
+// The ApprovalFlowQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ApprovalFlowQueryRuleFunc func(context.Context, *ent.ApprovalFlowQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ApprovalFlowQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ApprovalFlowQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ApprovalFlowQuery", q)
+}
+
+// The ApprovalFlowMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ApprovalFlowMutationRuleFunc func(context.Context, *ent.ApprovalFlowMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ApprovalFlowMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ApprovalFlowMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApprovalFlowMutation", m)
+}
+
+// The ApprovalFlowStepQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ApprovalFlowStepQueryRuleFunc func(context.Context, *ent.ApprovalFlowStepQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ApprovalFlowStepQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ApprovalFlowStepQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ApprovalFlowStepQuery", q)
+}
+
+// The ApprovalFlowStepMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ApprovalFlowStepMutationRuleFunc func(context.Context, *ent.ApprovalFlowStepMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ApprovalFlowStepMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ApprovalFlowStepMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ApprovalFlowStepMutation", m)
+}
+
 // The ApprovalRequestQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ApprovalRequestQueryRuleFunc func(context.Context, *ent.ApprovalRequestQuery) error
@@ -1566,6 +1614,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ApiAuditLogQuery:
 		return q.Filter(), nil
+	case *ent.ApprovalFlowQuery:
+		return q.Filter(), nil
+	case *ent.ApprovalFlowStepQuery:
+		return q.Filter(), nil
 	case *ent.ApprovalRequestQuery:
 		return q.Filter(), nil
 	case *ent.CustomerQuery:
@@ -1690,6 +1742,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.APIMutation:
 		return m.Filter(), nil
 	case *ent.ApiAuditLogMutation:
+		return m.Filter(), nil
+	case *ent.ApprovalFlowMutation:
+		return m.Filter(), nil
+	case *ent.ApprovalFlowStepMutation:
 		return m.Filter(), nil
 	case *ent.ApprovalRequestMutation:
 		return m.Filter(), nil

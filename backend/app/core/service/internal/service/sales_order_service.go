@@ -243,6 +243,15 @@ func (s *SalesOrderService) transition(
 		}
 	}
 
+	// 多级审批守卫：审批单在途且未到终级时，禁止管理端直审绕过级进。
+	if to == salesV1.SalesOrder_APPROVED || to == salesV1.SalesOrder_REJECTED {
+		if cur, total, ok, gerr := s.approvalRequestRepo.PendingStepsByBizRef(ctx,
+			fmt.Sprintf(soApprovalBizRef, id)); gerr == nil && ok && total > 1 && cur < total {
+			return nil, salesV1.ErrorConflict(
+				"多级审批进行中（第 %d/%d 级），请在审批中心逐级审批", cur, total)
+		}
+	}
+
 	if err := s.salesOrderRepo.TransitionStatus(ctx, id, old.GetStatus(), to); err != nil {
 		return nil, err
 	}

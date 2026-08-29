@@ -46,6 +46,12 @@ const (
 	FieldApproverID = "approver_id"
 	// FieldComment holds the string denoting the comment field in the database.
 	FieldComment = "comment"
+	// FieldCurrentStep holds the string denoting the current_step field in the database.
+	FieldCurrentStep = "current_step"
+	// FieldTotalSteps holds the string denoting the total_steps field in the database.
+	FieldTotalSteps = "total_steps"
+	// FieldFlowID holds the string denoting the flow_id field in the database.
+	FieldFlowID = "flow_id"
 	// Table holds the table name of the approvalrequest in the database.
 	Table = "apr_approval_requests"
 )
@@ -69,6 +75,9 @@ var Columns = []string{
 	FieldApplicantID,
 	FieldApproverID,
 	FieldComment,
+	FieldCurrentStep,
+	FieldTotalSteps,
+	FieldFlowID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -94,6 +103,12 @@ var (
 	DefaultTenantID uint32
 	// DefaultApplicantID holds the default value on creation for the "applicant_id" field.
 	DefaultApplicantID uint32
+	// DefaultCurrentStep holds the default value on creation for the "current_step" field.
+	DefaultCurrentStep uint32
+	// DefaultTotalSteps holds the default value on creation for the "total_steps" field.
+	DefaultTotalSteps uint32
+	// DefaultFlowID holds the default value on creation for the "flow_id" field.
+	DefaultFlowID uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -212,4 +227,19 @@ func ByApproverID(opts ...sql.OrderTermOption) OrderOption {
 // ByComment orders the results by the comment field.
 func ByComment(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldComment, opts...).ToFunc()
+}
+
+// ByCurrentStep orders the results by the current_step field.
+func ByCurrentStep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentStep, opts...).ToFunc()
+}
+
+// ByTotalSteps orders the results by the total_steps field.
+func ByTotalSteps(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalSteps, opts...).ToFunc()
+}
+
+// ByFlowID orders the results by the flow_id field.
+func ByFlowID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFlowID, opts...).ToFunc()
 }

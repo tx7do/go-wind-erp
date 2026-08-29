@@ -12,6 +12,12 @@ type Api func(*sql.Selector)
 // ApiAuditLog is the predicate function for apiauditlog builders.
 type ApiAuditLog func(*sql.Selector)
 
+// ApprovalFlow is the predicate function for approvalflow builders.
+type ApprovalFlow func(*sql.Selector)
+
+// ApprovalFlowStep is the predicate function for approvalflowstep builders.
+type ApprovalFlowStep func(*sql.Selector)
+
 // ApprovalRequest is the predicate function for approvalrequest builders.
 type ApprovalRequest func(*sql.Selector)
 

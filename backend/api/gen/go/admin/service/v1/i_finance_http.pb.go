@@ -46,15 +46,15 @@ type PayableServiceHTTPServer interface {
 
 func RegisterPayableServiceHTTPServer(s *http.Server, srv PayableServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/payables", _PayableService_List8_HTTP_Handler(srv))
-	r.GET("/admin/v1/payables/{id}", _PayableService_Get8_HTTP_Handler(srv))
-	r.POST("/admin/v1/payables", _PayableService_Create6_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/payables/{id}", _PayableService_Delete6_HTTP_Handler(srv))
+	r.GET("/admin/v1/payables", _PayableService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/payables/{id}", _PayableService_Get9_HTTP_Handler(srv))
+	r.POST("/admin/v1/payables", _PayableService_Create7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/payables/{id}", _PayableService_Delete7_HTTP_Handler(srv))
 	r.POST("/admin/v1/payables:cancel", _PayableService_Cancel1_HTTP_Handler(srv))
 	r.GET("/admin/v1/payables:aging-report", _PayableService_AgingReport0_HTTP_Handler(srv))
 }
 
-func _PayableService_List8_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
+func _PayableService_List9_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _PayableService_List8_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx h
 	}
 }
 
-func _PayableService_Get8_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
+func _PayableService_Get9_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPayableRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _PayableService_Get8_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _PayableService_Create6_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
+func _PayableService_Create7_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePayableRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _PayableService_Create6_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx
 	}
 }
 
-func _PayableService_Delete6_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
+func _PayableService_Delete7_HTTP_Handler(srv PayableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePayableRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -302,12 +302,12 @@ type PaymentServiceHTTPServer interface {
 
 func RegisterPaymentServiceHTTPServer(s *http.Server, srv PaymentServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/payments", _PaymentService_List9_HTTP_Handler(srv))
-	r.GET("/admin/v1/payments/{id}", _PaymentService_Get9_HTTP_Handler(srv))
-	r.POST("/admin/v1/payments", _PaymentService_Create7_HTTP_Handler(srv))
+	r.GET("/admin/v1/payments", _PaymentService_List10_HTTP_Handler(srv))
+	r.GET("/admin/v1/payments/{id}", _PaymentService_Get10_HTTP_Handler(srv))
+	r.POST("/admin/v1/payments", _PaymentService_Create8_HTTP_Handler(srv))
 }
 
-func _PaymentService_List9_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentService_List10_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -326,7 +326,7 @@ func _PaymentService_List9_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx h
 	}
 }
 
-func _PaymentService_Get9_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentService_Get10_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPaymentRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -348,7 +348,7 @@ func _PaymentService_Get9_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _PaymentService_Create7_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentService_Create8_HTTP_Handler(srv PaymentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -447,15 +447,15 @@ type ReceivableServiceHTTPServer interface {
 
 func RegisterReceivableServiceHTTPServer(s *http.Server, srv ReceivableServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/receivables", _ReceivableService_List10_HTTP_Handler(srv))
-	r.GET("/admin/v1/receivables/{id}", _ReceivableService_Get10_HTTP_Handler(srv))
-	r.POST("/admin/v1/receivables", _ReceivableService_Create8_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/receivables/{id}", _ReceivableService_Delete7_HTTP_Handler(srv))
+	r.GET("/admin/v1/receivables", _ReceivableService_List11_HTTP_Handler(srv))
+	r.GET("/admin/v1/receivables/{id}", _ReceivableService_Get11_HTTP_Handler(srv))
+	r.POST("/admin/v1/receivables", _ReceivableService_Create9_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/receivables/{id}", _ReceivableService_Delete8_HTTP_Handler(srv))
 	r.POST("/admin/v1/receivables:cancel", _ReceivableService_Cancel2_HTTP_Handler(srv))
 	r.GET("/admin/v1/receivables:aging-report", _ReceivableService_AgingReport1_HTTP_Handler(srv))
 }
 
-func _ReceivableService_List10_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+func _ReceivableService_List11_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -474,7 +474,7 @@ func _ReceivableService_List10_HTTP_Handler(srv ReceivableServiceHTTPServer) fun
 	}
 }
 
-func _ReceivableService_Get10_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+func _ReceivableService_Get11_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetReceivableRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -496,7 +496,7 @@ func _ReceivableService_Get10_HTTP_Handler(srv ReceivableServiceHTTPServer) func
 	}
 }
 
-func _ReceivableService_Create8_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+func _ReceivableService_Create9_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateReceivableRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -518,7 +518,7 @@ func _ReceivableService_Create8_HTTP_Handler(srv ReceivableServiceHTTPServer) fu
 	}
 }
 
-func _ReceivableService_Delete7_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
+func _ReceivableService_Delete8_HTTP_Handler(srv ReceivableServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteReceivableRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -688,12 +688,12 @@ type ReceiptServiceHTTPServer interface {
 
 func RegisterReceiptServiceHTTPServer(s *http.Server, srv ReceiptServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/receipts", _ReceiptService_List11_HTTP_Handler(srv))
-	r.GET("/admin/v1/receipts/{id}", _ReceiptService_Get11_HTTP_Handler(srv))
-	r.POST("/admin/v1/receipts", _ReceiptService_Create9_HTTP_Handler(srv))
+	r.GET("/admin/v1/receipts", _ReceiptService_List12_HTTP_Handler(srv))
+	r.GET("/admin/v1/receipts/{id}", _ReceiptService_Get12_HTTP_Handler(srv))
+	r.POST("/admin/v1/receipts", _ReceiptService_Create10_HTTP_Handler(srv))
 }
 
-func _ReceiptService_List11_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+func _ReceiptService_List12_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -712,7 +712,7 @@ func _ReceiptService_List11_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ReceiptService_Get11_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+func _ReceiptService_Get12_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetReceiptRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -734,7 +734,7 @@ func _ReceiptService_Get11_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ReceiptService_Create9_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
+func _ReceiptService_Create10_HTTP_Handler(srv ReceiptServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateReceiptRequest
 		if err := ctx.Bind(&in); err != nil {

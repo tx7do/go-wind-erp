@@ -40,6 +40,9 @@ type ApprovalRequestService struct {
 
 	approvalRequestRepo *data.ApprovalRequestRepo
 
+	// 多级审批：流程模板仓储（级进角色校验 + 创建时快照）
+	approvalFlowRepo *data.ApprovalFlowRepo
+
 	// 采购联动：biz_type=PURCHASE_ORDER 的审批通过/驳回时回写采购单状态。
 	// 经 PurchaseOrderService 动作走单一通路（自审守卫、应付生成等
 	// 服务层逻辑全部生效），而非直连 repo 绕过。
@@ -63,6 +66,7 @@ type ApprovalRequestService struct {
 func NewApprovalRequestService(
 	ctx *bootstrap.Context,
 	approvalRequestRepo *data.ApprovalRequestRepo,
+	approvalFlowRepo *data.ApprovalFlowRepo,
 	purchaseOrderService *PurchaseOrderService,
 	salesOrderService *SalesOrderService,
 	paymentService *PaymentService,
@@ -74,6 +78,7 @@ func NewApprovalRequestService(
 	svc := &ApprovalRequestService{
 		log:                  l,
 		approvalRequestRepo:  approvalRequestRepo,
+		approvalFlowRepo:     approvalFlowRepo,
 		purchaseOrderService: purchaseOrderService,
 		salesOrderService:    salesOrderService,
 		paymentService:       paymentService,
@@ -114,6 +119,8 @@ func (s *ApprovalRequestService) Create(ctx context.Context, req *approvalV1.Cre
 		return nil, err
 	}
 
+	// 多级审批快照在仓储层单点完成（PO/SO/付款/收款/补货提交路径均
+	// 直连仓储建单），此处无需重复。
 	if _, err := s.approvalRequestRepo.Create(ctx, req); err != nil {
 		return nil, err
 	}
@@ -184,6 +191,15 @@ func (s *ApprovalRequestService) transition(
 		}
 	}
 
+	// 多级审批：非终级通过 = 级进（保持 PENDING，通知下一级），不触发
+	// 业务回写；终级通过或驳回才走终态迁移 + 业务联动。
+	if to == approvalV1.ApprovalRequest_APPROVED && old.GetTotalSteps() > 1 {
+		if err := s.advanceOrFinalize(ctx, old, comment); err != nil {
+			return nil, err
+		}
+		return &emptypb.Empty{}, nil
+	}
+
 	if _, err := s.approvalRequestRepo.TransitionStatus(ctx, id, old.GetStatus(), to, comment); err != nil {
 		return nil, err
 	}
@@ -198,6 +214,67 @@ func (s *ApprovalRequestService) transition(
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// advanceOrFinalize 多级审批的通过动作：校验当前用户持有本级审批角色，
+// 非终级 → current_step+1 保持 PENDING 并通知下一级候选审批人；
+// 终级 → 落 APPROVED 终态（业务联动与审结通知由调用方 transition 继续）。
+func (s *ApprovalRequestService) advanceOrFinalize(
+	ctx context.Context,
+	old *approvalV1.ApprovalRequest,
+	comment *string,
+) error {
+	current := old.GetCurrentStep()
+	total := old.GetTotalSteps()
+
+	// 级角色校验：持有本级 role_code 的用户方可审批（申请人自审已在
+	// transition 前置拦截）。流程或级定义缺失（被删改）→ 放行为终态，
+	// 避免在途单卡死。
+	if old.GetFlowId() != 0 {
+		roleCode, err := s.approvalFlowRepo.GetStepRole(ctx, old.GetFlowId(), current)
+		if err != nil {
+			return err
+		}
+		if roleCode != "" {
+			caller, ok := approvalViewerUserID(ctx)
+			if !ok {
+				return approvalV1.ErrorBadRequest("caller context required")
+			}
+			holds, err := s.approvalFlowRepo.UserHoldsRole(ctx, caller, roleCode)
+			if err != nil {
+				return err
+			}
+			if !holds {
+				return approvalV1.ErrorForbidden(
+					"第 %d 级需持有角色 %s 的用户审批", current, roleCode)
+			}
+		}
+	}
+
+	if current < total {
+		// 级进：原子推进（并发安全），通知下一级候选审批人（尽力而为）。
+		if err := s.approvalRequestRepo.AdvanceStep(ctx, old.GetId(), current, current+1, comment); err != nil {
+			return err
+		}
+		if roleCode, err := s.approvalFlowRepo.GetStepRole(ctx, old.GetFlowId(), current+1); err == nil && roleCode != "" {
+			if userIDs, uerr := s.approvalFlowRepo.UserIDsByRole(ctx, roleCode); uerr == nil {
+				if nerr := s.notifier.notifyStepApprovers(ctx, old, current+1, total, userIDs); nerr != nil {
+					s.log.Errorf("notify next step approvers failed: %s", nerr.Error())
+				}
+			}
+		}
+		return nil
+	}
+
+	// 终级通过：落 APPROVED + 业务联动 + 审结通知（复用 transition 尾部）。
+	if _, err := s.approvalRequestRepo.TransitionStatus(ctx, old.GetId(), old.GetStatus(), approvalV1.ApprovalRequest_APPROVED, comment); err != nil {
+		return err
+	}
+	s.syncBusiness(ctx, old, approvalV1.ApprovalRequest_APPROVED)
+	if nerr := s.notifier.notifyResolved(ctx, old, true); nerr != nil {
+		s.log.Errorf("notify approval resolved failed: %s", nerr.Error())
+	}
+	return nil
 }
 
 // syncBusiness 按 biz_type 分发审批结果联动。

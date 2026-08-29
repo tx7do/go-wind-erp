@@ -1215,8 +1215,11 @@ export type approvalservicev1_ApprovalRequest = {
   comment?: string;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
+  // 多级审批：创建时从生效流程快照（<=1 为传统单级审批）
+  currentStep?: number;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  flowId?: number;
   //
   // Behaviors: OPTIONAL
   id?: number;
@@ -1231,6 +1234,7 @@ export type approvalservicev1_ApprovalRequest = {
   //
   // Behaviors: OPTIONAL
   title?: string;
+  totalSteps?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
 };
@@ -1272,6 +1276,260 @@ export type approvalservicev1_RejectApprovalRequestRequest = {
 // 撤销审批 - 请求
 export type approvalservicev1_CancelApprovalRequestRequest = {
   id: number | undefined;
+};
+
+// 审批流模板服务（多级审批配置）
+export interface ApprovalFlowService {
+  // 查询审批流列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<approvalservicev1_ListApprovalFlowResponse>;
+  // 查询审批流详情
+  Get(
+    request: approvalservicev1_GetApprovalFlowRequest,
+  ): Promise<approvalservicev1_ApprovalFlow>;
+  // 创建审批流
+  Create(
+    request: approvalservicev1_CreateApprovalFlowRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新审批流（级整体替换）
+  Update(
+    request: approvalservicev1_UpdateApprovalFlowRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除审批流
+  Delete(
+    request: approvalservicev1_DeleteApprovalFlowRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createApprovalFlowServiceClient(
+  transport: ClientTransport,
+): ApprovalFlowService {
+  return {
+    List(request) {
+      const path = `admin/v1/approval-flows`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ApprovalFlowService',
+        method: 'List',
+      }) as Promise<approvalservicev1_ListApprovalFlowResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/approval-flows/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ApprovalFlowService',
+        method: 'Get',
+      }) as Promise<approvalservicev1_ApprovalFlow>;
+    },
+    Create(request) {
+      const path = `admin/v1/approval-flows`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ApprovalFlowService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.data?.id === undefined || request.data?.id === null) {
+        throw new Error('missing required field request.data.id');
+      }
+      const path = `admin/v1/approval-flows/${request.data.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ApprovalFlowService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/approval-flows/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ApprovalFlowService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type approvalservicev1_ListApprovalFlowResponse = {
+  items: approvalservicev1_ApprovalFlow[] | undefined;
+  total: number | undefined;
+};
+
+// 审批流模板：每租户每业务类型至多一条生效流程；steps 为级定义（seq 1..N）。
+export type approvalservicev1_ApprovalFlow = {
+  //
+  // Behaviors: OPTIONAL
+  bizType?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  remark?: string;
+  //
+  // Behaviors: OPTIONAL
+  status?: string;
+  steps: approvalservicev1_ApprovalFlowStep[] | undefined;
+  tenantId?: number;
+};
+
+// 审批级定义：持有 role_code 角色的用户即本级候选审批人（申请人除外）。
+export type approvalservicev1_ApprovalFlowStep = {
+  flowId?: number;
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+  //
+  // Behaviors: OPTIONAL
+  roleCode?: string;
+  seq?: number;
+};
+
+export type approvalservicev1_GetApprovalFlowRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type approvalservicev1_CreateApprovalFlowRequest = {
+  data: approvalservicev1_ApprovalFlow | undefined;
+};
+
+export type approvalservicev1_UpdateApprovalFlowRequest = {
+  allowMissing?: boolean;
+  data: approvalservicev1_ApprovalFlow | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type approvalservicev1_DeleteApprovalFlowRequest = {
+  id?: number;
 };
 
 // 用户后台登录认证服务
@@ -11963,6 +12221,7 @@ export class ApiClient {
   private _adminPortalService?: AdminPortalService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
+  private _approvalFlowService?: ApprovalFlowService;
   private _approvalRequestService?: ApprovalRequestService;
   private _authenticationService?: AuthenticationService;
   private _billingService?: BillingService;
@@ -12022,6 +12281,10 @@ export class ApiClient {
 
   get apiService(): ApiService {
     return this._apiService ??= createApiServiceClient(this._transport);
+  }
+
+  get approvalFlowService(): ApprovalFlowService {
+    return this._approvalFlowService ??= createApprovalFlowServiceClient(this._transport);
   }
 
   get approvalRequestService(): ApprovalRequestService {

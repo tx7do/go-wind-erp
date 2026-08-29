@@ -50,6 +50,7 @@ var ProviderSet = wire.NewSet(
 	data.NewStockPickingRepo,
 
 	data.NewApprovalRequestRepo,
+	data.NewApprovalFlowRepo,
 
 	data.NewSupplierRepo,
 

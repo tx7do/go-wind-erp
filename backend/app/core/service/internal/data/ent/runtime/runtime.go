@@ -7,6 +7,8 @@ import (
 	permissionpb "go-wind-erp/api/gen/go/permission/service/v1"
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflowstep"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
 	"go-wind-erp/app/core/service/internal/data/ent/customer"
 	"go-wind-erp/app/core/service/internal/data/ent/dataaccessauditlog"
@@ -126,6 +128,80 @@ func init() {
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint32) error)
+	approvalflowMixin := schema.ApprovalFlow{}.Mixin()
+	approvalflow.Policy = privacy.NewPolicies(approvalflowMixin[5], schema.ApprovalFlow{})
+	approvalflow.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := approvalflow.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	approvalflowMixinInters2 := approvalflowMixin[2].Interceptors()
+	approvalflow.Interceptors[0] = approvalflowMixinInters2[0]
+	approvalflowMixinFields0 := approvalflowMixin[0].Fields()
+	_ = approvalflowMixinFields0
+	approvalflowMixinFields5 := approvalflowMixin[5].Fields()
+	_ = approvalflowMixinFields5
+	approvalflowFields := schema.ApprovalFlow{}.Fields()
+	_ = approvalflowFields
+	// approvalflowDescTenantID is the schema descriptor for tenant_id field.
+	approvalflowDescTenantID := approvalflowMixinFields5[0].Descriptor()
+	// approvalflow.DefaultTenantID holds the default value on creation for the tenant_id field.
+	approvalflow.DefaultTenantID = approvalflowDescTenantID.Default.(uint32)
+	// approvalflowDescBizType is the schema descriptor for biz_type field.
+	approvalflowDescBizType := approvalflowFields[0].Descriptor()
+	// approvalflow.BizTypeValidator is a validator for the "biz_type" field. It is called by the builders before save.
+	approvalflow.BizTypeValidator = approvalflowDescBizType.Validators[0].(func(string) error)
+	// approvalflowDescName is the schema descriptor for name field.
+	approvalflowDescName := approvalflowFields[1].Descriptor()
+	// approvalflow.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	approvalflow.NameValidator = approvalflowDescName.Validators[0].(func(string) error)
+	// approvalflowDescID is the schema descriptor for id field.
+	approvalflowDescID := approvalflowMixinFields0[0].Descriptor()
+	// approvalflow.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	approvalflow.IDValidator = approvalflowDescID.Validators[0].(func(uint32) error)
+	approvalflowstepMixin := schema.ApprovalFlowStep{}.Mixin()
+	approvalflowstep.Policy = privacy.NewPolicies(approvalflowstepMixin[2], schema.ApprovalFlowStep{})
+	approvalflowstep.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := approvalflowstep.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	approvalflowstepMixinFields0 := approvalflowstepMixin[0].Fields()
+	_ = approvalflowstepMixinFields0
+	approvalflowstepMixinFields2 := approvalflowstepMixin[2].Fields()
+	_ = approvalflowstepMixinFields2
+	approvalflowstepFields := schema.ApprovalFlowStep{}.Fields()
+	_ = approvalflowstepFields
+	// approvalflowstepDescTenantID is the schema descriptor for tenant_id field.
+	approvalflowstepDescTenantID := approvalflowstepMixinFields2[0].Descriptor()
+	// approvalflowstep.DefaultTenantID holds the default value on creation for the tenant_id field.
+	approvalflowstep.DefaultTenantID = approvalflowstepDescTenantID.Default.(uint32)
+	// approvalflowstepDescFlowID is the schema descriptor for flow_id field.
+	approvalflowstepDescFlowID := approvalflowstepFields[0].Descriptor()
+	// approvalflowstep.DefaultFlowID holds the default value on creation for the flow_id field.
+	approvalflowstep.DefaultFlowID = approvalflowstepDescFlowID.Default.(uint32)
+	// approvalflowstepDescSeq is the schema descriptor for seq field.
+	approvalflowstepDescSeq := approvalflowstepFields[1].Descriptor()
+	// approvalflowstep.DefaultSeq holds the default value on creation for the seq field.
+	approvalflowstep.DefaultSeq = approvalflowstepDescSeq.Default.(uint32)
+	// approvalflowstepDescName is the schema descriptor for name field.
+	approvalflowstepDescName := approvalflowstepFields[2].Descriptor()
+	// approvalflowstep.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	approvalflowstep.NameValidator = approvalflowstepDescName.Validators[0].(func(string) error)
+	// approvalflowstepDescRoleCode is the schema descriptor for role_code field.
+	approvalflowstepDescRoleCode := approvalflowstepFields[3].Descriptor()
+	// approvalflowstep.RoleCodeValidator is a validator for the "role_code" field. It is called by the builders before save.
+	approvalflowstep.RoleCodeValidator = approvalflowstepDescRoleCode.Validators[0].(func(string) error)
+	// approvalflowstepDescID is the schema descriptor for id field.
+	approvalflowstepDescID := approvalflowstepMixinFields0[0].Descriptor()
+	// approvalflowstep.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	approvalflowstep.IDValidator = approvalflowstepDescID.Validators[0].(func(uint32) error)
 	approvalrequestMixin := schema.ApprovalRequest{}.Mixin()
 	approvalrequest.Policy = privacy.NewPolicies(approvalrequestMixin[5], schema.ApprovalRequest{})
 	approvalrequest.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -152,6 +228,18 @@ func init() {
 	approvalrequestDescApplicantID := approvalrequestFields[5].Descriptor()
 	// approvalrequest.DefaultApplicantID holds the default value on creation for the applicant_id field.
 	approvalrequest.DefaultApplicantID = approvalrequestDescApplicantID.Default.(uint32)
+	// approvalrequestDescCurrentStep is the schema descriptor for current_step field.
+	approvalrequestDescCurrentStep := approvalrequestFields[8].Descriptor()
+	// approvalrequest.DefaultCurrentStep holds the default value on creation for the current_step field.
+	approvalrequest.DefaultCurrentStep = approvalrequestDescCurrentStep.Default.(uint32)
+	// approvalrequestDescTotalSteps is the schema descriptor for total_steps field.
+	approvalrequestDescTotalSteps := approvalrequestFields[9].Descriptor()
+	// approvalrequest.DefaultTotalSteps holds the default value on creation for the total_steps field.
+	approvalrequest.DefaultTotalSteps = approvalrequestDescTotalSteps.Default.(uint32)
+	// approvalrequestDescFlowID is the schema descriptor for flow_id field.
+	approvalrequestDescFlowID := approvalrequestFields[10].Descriptor()
+	// approvalrequest.DefaultFlowID holds the default value on creation for the flow_id field.
+	approvalrequest.DefaultFlowID = approvalrequestDescFlowID.Default.(uint32)
 	// approvalrequestDescID is the schema descriptor for id field.
 	approvalrequestDescID := approvalrequestMixinFields0[0].Descriptor()
 	// approvalrequest.IDValidator is a validator for the "id" field. It is called by the builders before save.

@@ -16,6 +16,10 @@ type Tx struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// ApprovalFlow is the client for interacting with the ApprovalFlow builders.
+	ApprovalFlow *ApprovalFlowClient
+	// ApprovalFlowStep is the client for interacting with the ApprovalFlowStep builders.
+	ApprovalFlowStep *ApprovalFlowStepClient
 	// ApprovalRequest is the client for interacting with the ApprovalRequest builders.
 	ApprovalRequest *ApprovalRequestClient
 	// Customer is the client for interacting with the Customer builders.
@@ -263,6 +267,8 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
+	tx.ApprovalFlow = NewApprovalFlowClient(tx.config)
+	tx.ApprovalFlowStep = NewApprovalFlowStepClient(tx.config)
 	tx.ApprovalRequest = NewApprovalRequestClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)

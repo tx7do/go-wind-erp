@@ -78,6 +78,26 @@ func (ApprovalRequest) Fields() []ent.Field {
 			Comment("审批意见").
 			Optional().
 			Nillable(),
+
+		// 多级审批：创建时从生效流程快照级数（在途单不受流程后续编辑影响）。
+		// total_steps<=1 = 传统单级审批（无流程），行为与历史完全一致。
+		field.Uint32("current_step").
+			Comment("当前审批级（从 1 起）").
+			Default(1).
+			Optional().
+			Nillable(),
+
+		field.Uint32("total_steps").
+			Comment("总级数（<=1 为单级审批）").
+			Default(1).
+			Optional().
+			Nillable(),
+
+		field.Uint32("flow_id").
+			Comment("快照来源流程ID（0=无流程）").
+			Default(0).
+			Optional().
+			Nillable(),
 	}
 }
 

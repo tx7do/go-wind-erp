@@ -52,17 +52,17 @@ type TenantServiceHTTPServer interface {
 
 func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tenants", _TenantService_List36_HTTP_Handler(srv))
-	r.GET("/admin/v1/tenants/{id}", _TenantService_Get36_HTTP_Handler(srv))
-	r.POST("/admin/v1/tenants", _TenantService_Create28_HTTP_Handler(srv))
-	r.PUT("/admin/v1/tenants/{id}", _TenantService_Update22_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/tenants/{id}", _TenantService_Delete26_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenants", _TenantService_List37_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenants/{id}", _TenantService_Get37_HTTP_Handler(srv))
+	r.POST("/admin/v1/tenants", _TenantService_Create29_HTTP_Handler(srv))
+	r.PUT("/admin/v1/tenants/{id}", _TenantService_Update23_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/tenants/{id}", _TenantService_Delete27_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenants:with-admin", _TenantService_CreateTenantWithAdminUser0_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenant-registration", _TenantService_SelfRegisterTenant0_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants:exists", _TenantService_TenantExists0_HTTP_Handler(srv))
 }
 
-func _TenantService_List36_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_List37_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -81,7 +81,7 @@ func _TenantService_List36_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _TenantService_Get36_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Get37_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTenantRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -103,7 +103,7 @@ func _TenantService_Get36_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _TenantService_Create28_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Create29_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateTenantRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -125,7 +125,7 @@ func _TenantService_Create28_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx 
 	}
 }
 
-func _TenantService_Update22_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Update23_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateTenantRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -150,7 +150,7 @@ func _TenantService_Update22_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx 
 	}
 }
 
-func _TenantService_Delete26_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Delete27_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteTenantRequest
 		if err := ctx.BindQuery(&in); err != nil {

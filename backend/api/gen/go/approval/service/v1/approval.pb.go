@@ -82,24 +82,28 @@ func (ApprovalRequest_Status) EnumDescriptor() ([]byte, []int) {
 
 // 审批请求
 type ApprovalRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Id            *uint32                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 审批请求ID
-	Title         *string                 `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`                                                    // 审批标题
-	BizType       *string                 `protobuf:"bytes,3,opt,name=biz_type,json=bizType,proto3,oneof" json:"biz_type,omitempty"`                                 // 业务类型
-	BizRef        *string                 `protobuf:"bytes,4,opt,name=biz_ref,json=bizRef,proto3,oneof" json:"biz_ref,omitempty"`                                    // 业务单据引用
-	Summary       *string                 `protobuf:"bytes,5,opt,name=summary,proto3,oneof" json:"summary,omitempty"`                                                // 事由摘要
-	Status        *ApprovalRequest_Status `protobuf:"varint,6,opt,name=status,proto3,enum=approval.service.v1.ApprovalRequest_Status,oneof" json:"status,omitempty"` // 审批状态
-	ApplicantId   *uint32                 `protobuf:"varint,7,opt,name=applicant_id,json=applicantId,proto3,oneof" json:"applicant_id,omitempty"`                    // 申请人
-	ApproverId    *uint32                 `protobuf:"varint,8,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`                       // 审批人
-	Comment       *string                 `protobuf:"bytes,9,opt,name=comment,proto3,oneof" json:"comment,omitempty"`                                                // 审批意见
-	Remark        *string                 `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                                 // 备注
-	TenantId      *uint32                 `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                            // 租户ID
-	CreatedBy     *uint32                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                        // 创建者用户ID
-	UpdatedBy     *uint32                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                        // 更新者用户ID
-	DeletedBy     *uint32                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                        // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp  `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                         // 创建时间
-	UpdatedAt     *timestamppb.Timestamp  `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                         // 更新时间
-	DeletedAt     *timestamppb.Timestamp  `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                         // 删除时间
+	state       protoimpl.MessageState  `protogen:"open.v1"`
+	Id          *uint32                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                         // 审批请求ID
+	Title       *string                 `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`                                                    // 审批标题
+	BizType     *string                 `protobuf:"bytes,3,opt,name=biz_type,json=bizType,proto3,oneof" json:"biz_type,omitempty"`                                 // 业务类型
+	BizRef      *string                 `protobuf:"bytes,4,opt,name=biz_ref,json=bizRef,proto3,oneof" json:"biz_ref,omitempty"`                                    // 业务单据引用
+	Summary     *string                 `protobuf:"bytes,5,opt,name=summary,proto3,oneof" json:"summary,omitempty"`                                                // 事由摘要
+	Status      *ApprovalRequest_Status `protobuf:"varint,6,opt,name=status,proto3,enum=approval.service.v1.ApprovalRequest_Status,oneof" json:"status,omitempty"` // 审批状态
+	ApplicantId *uint32                 `protobuf:"varint,7,opt,name=applicant_id,json=applicantId,proto3,oneof" json:"applicant_id,omitempty"`                    // 申请人
+	ApproverId  *uint32                 `protobuf:"varint,8,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`                       // 审批人
+	Comment     *string                 `protobuf:"bytes,9,opt,name=comment,proto3,oneof" json:"comment,omitempty"`                                                // 审批意见
+	Remark      *string                 `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                                 // 备注
+	// 多级审批：创建时从生效流程快照（<=1 为传统单级审批）
+	CurrentStep   *uint32                `protobuf:"varint,10,opt,name=current_step,json=currentStep,proto3,oneof" json:"current_step,omitempty"` // 当前审批级
+	TotalSteps    *uint32                `protobuf:"varint,12,opt,name=total_steps,json=totalSteps,proto3,oneof" json:"total_steps,omitempty"`    // 总级数
+	FlowId        *uint32                `protobuf:"varint,13,opt,name=flow_id,json=flowId,proto3,oneof" json:"flow_id,omitempty"`                // 快照来源流程ID
+	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`          // 租户ID
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`      // 创建者用户ID
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`      // 更新者用户ID
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`      // 删除者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`       // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`       // 更新时间
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`       // 删除时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -202,6 +206,27 @@ func (x *ApprovalRequest) GetRemark() string {
 		return *x.Remark
 	}
 	return ""
+}
+
+func (x *ApprovalRequest) GetCurrentStep() uint32 {
+	if x != nil && x.CurrentStep != nil {
+		return *x.CurrentStep
+	}
+	return 0
+}
+
+func (x *ApprovalRequest) GetTotalSteps() uint32 {
+	if x != nil && x.TotalSteps != nil {
+		return *x.TotalSteps
+	}
+	return 0
+}
+
+func (x *ApprovalRequest) GetFlowId() uint32 {
+	if x != nil && x.FlowId != nil {
+		return *x.FlowId
+	}
+	return 0
 }
 
 func (x *ApprovalRequest) GetTenantId() uint32 {
@@ -688,11 +713,493 @@ func (x *CountApprovalRequestResponse) GetCount() uint64 {
 	return 0
 }
 
+// 审批流模板：每租户每业务类型至多一条生效流程；steps 为级定义（seq 1..N）。
+type ApprovalFlow struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 流程ID
+	BizType       *string                `protobuf:"bytes,2,opt,name=biz_type,json=bizType,proto3,oneof" json:"biz_type,omitempty"`          // 业务类型
+	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`                               // 流程名称
+	Status        *string                `protobuf:"bytes,4,opt,name=status,proto3,oneof" json:"status,omitempty"`                           // 启用状态
+	Steps         []*ApprovalFlowStep    `protobuf:"bytes,5,rep,name=steps,proto3" json:"steps,omitempty"`                                   // 级定义
+	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                          // 备注
+	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`     // 租户ID
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApprovalFlow) Reset() {
+	*x = ApprovalFlow{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApprovalFlow) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApprovalFlow) ProtoMessage() {}
+
+func (x *ApprovalFlow) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApprovalFlow.ProtoReflect.Descriptor instead.
+func (*ApprovalFlow) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ApprovalFlow) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *ApprovalFlow) GetBizType() string {
+	if x != nil && x.BizType != nil {
+		return *x.BizType
+	}
+	return ""
+}
+
+func (x *ApprovalFlow) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *ApprovalFlow) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+func (x *ApprovalFlow) GetSteps() []*ApprovalFlowStep {
+	if x != nil {
+		return x.Steps
+	}
+	return nil
+}
+
+func (x *ApprovalFlow) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
+	}
+	return ""
+}
+
+func (x *ApprovalFlow) GetTenantId() uint32 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *ApprovalFlow) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *ApprovalFlow) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+// 审批级定义：持有 role_code 角色的用户即本级候选审批人（申请人除外）。
+type ApprovalFlowStep struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                            // 级ID
+	FlowId        *uint32                `protobuf:"varint,2,opt,name=flow_id,json=flowId,proto3,oneof" json:"flow_id,omitempty"`      // 所属流程ID
+	Seq           *uint32                `protobuf:"varint,3,opt,name=seq,proto3,oneof" json:"seq,omitempty"`                          // 级序
+	Name          *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`                         // 级名称
+	RoleCode      *string                `protobuf:"bytes,5,opt,name=role_code,json=roleCode,proto3,oneof" json:"role_code,omitempty"` // 审批人角色编码
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApprovalFlowStep) Reset() {
+	*x = ApprovalFlowStep{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApprovalFlowStep) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApprovalFlowStep) ProtoMessage() {}
+
+func (x *ApprovalFlowStep) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApprovalFlowStep.ProtoReflect.Descriptor instead.
+func (*ApprovalFlowStep) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ApprovalFlowStep) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *ApprovalFlowStep) GetFlowId() uint32 {
+	if x != nil && x.FlowId != nil {
+		return *x.FlowId
+	}
+	return 0
+}
+
+func (x *ApprovalFlowStep) GetSeq() uint32 {
+	if x != nil && x.Seq != nil {
+		return *x.Seq
+	}
+	return 0
+}
+
+func (x *ApprovalFlowStep) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *ApprovalFlowStep) GetRoleCode() string {
+	if x != nil && x.RoleCode != nil {
+		return *x.RoleCode
+	}
+	return ""
+}
+
+type ListApprovalFlowResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*ApprovalFlow        `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListApprovalFlowResponse) Reset() {
+	*x = ListApprovalFlowResponse{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListApprovalFlowResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListApprovalFlowResponse) ProtoMessage() {}
+
+func (x *ListApprovalFlowResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListApprovalFlowResponse.ProtoReflect.Descriptor instead.
+func (*ListApprovalFlowResponse) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListApprovalFlowResponse) GetItems() []*ApprovalFlow {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListApprovalFlowResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type GetApprovalFlowRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*GetApprovalFlowRequest_Id
+	QueryBy       isGetApprovalFlowRequest_QueryBy `protobuf_oneof:"query_by"`
+	ViewMask      *fieldmaskpb.FieldMask           `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 字段掩码
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetApprovalFlowRequest) Reset() {
+	*x = GetApprovalFlowRequest{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetApprovalFlowRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetApprovalFlowRequest) ProtoMessage() {}
+
+func (x *GetApprovalFlowRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetApprovalFlowRequest.ProtoReflect.Descriptor instead.
+func (*GetApprovalFlowRequest) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetApprovalFlowRequest) GetQueryBy() isGetApprovalFlowRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
+func (x *GetApprovalFlowRequest) GetId() uint32 {
+	if x != nil {
+		if x, ok := x.QueryBy.(*GetApprovalFlowRequest_Id); ok {
+			return x.Id
+		}
+	}
+	return 0
+}
+
+func (x *GetApprovalFlowRequest) GetViewMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.ViewMask
+	}
+	return nil
+}
+
+type isGetApprovalFlowRequest_QueryBy interface {
+	isGetApprovalFlowRequest_QueryBy()
+}
+
+type GetApprovalFlowRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+func (*GetApprovalFlowRequest_Id) isGetApprovalFlowRequest_QueryBy() {}
+
+type CreateApprovalFlowRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *ApprovalFlow          `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"` // 审批流
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateApprovalFlowRequest) Reset() {
+	*x = CreateApprovalFlowRequest{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateApprovalFlowRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateApprovalFlowRequest) ProtoMessage() {}
+
+func (x *CreateApprovalFlowRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateApprovalFlowRequest.ProtoReflect.Descriptor instead.
+func (*CreateApprovalFlowRequest) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CreateApprovalFlowRequest) GetData() *ApprovalFlow {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type UpdateApprovalFlowRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *ApprovalFlow          `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`                                            // 审批流
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3,oneof" json:"update_mask,omitempty"`        // 更新掩码
+	AllowMissing  *bool                  `protobuf:"varint,3,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 不存在时创建
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateApprovalFlowRequest) Reset() {
+	*x = UpdateApprovalFlowRequest{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateApprovalFlowRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateApprovalFlowRequest) ProtoMessage() {}
+
+func (x *UpdateApprovalFlowRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateApprovalFlowRequest.ProtoReflect.Descriptor instead.
+func (*UpdateApprovalFlowRequest) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UpdateApprovalFlowRequest) GetData() *ApprovalFlow {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *UpdateApprovalFlowRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+func (x *UpdateApprovalFlowRequest) GetAllowMissing() bool {
+	if x != nil && x.AllowMissing != nil {
+		return *x.AllowMissing
+	}
+	return false
+}
+
+type DeleteApprovalFlowRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to QueryBy:
+	//
+	//	*DeleteApprovalFlowRequest_Id
+	QueryBy       isDeleteApprovalFlowRequest_QueryBy `protobuf_oneof:"query_by"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteApprovalFlowRequest) Reset() {
+	*x = DeleteApprovalFlowRequest{}
+	mi := &file_approval_service_v1_approval_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteApprovalFlowRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteApprovalFlowRequest) ProtoMessage() {}
+
+func (x *DeleteApprovalFlowRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_approval_service_v1_approval_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteApprovalFlowRequest.ProtoReflect.Descriptor instead.
+func (*DeleteApprovalFlowRequest) Descriptor() ([]byte, []int) {
+	return file_approval_service_v1_approval_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteApprovalFlowRequest) GetQueryBy() isDeleteApprovalFlowRequest_QueryBy {
+	if x != nil {
+		return x.QueryBy
+	}
+	return nil
+}
+
+func (x *DeleteApprovalFlowRequest) GetId() uint32 {
+	if x != nil {
+		if x, ok := x.QueryBy.(*DeleteApprovalFlowRequest_Id); ok {
+			return x.Id
+		}
+	}
+	return 0
+}
+
+type isDeleteApprovalFlowRequest_QueryBy interface {
+	isDeleteApprovalFlowRequest_QueryBy()
+}
+
+type DeleteApprovalFlowRequest_Id struct {
+	Id uint32 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+}
+
+func (*DeleteApprovalFlowRequest_Id) isDeleteApprovalFlowRequest_QueryBy() {}
+
 var File_approval_service_v1_approval_proto protoreflect.FileDescriptor
 
 const file_approval_service_v1_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"approval/service/v1/approval.proto\x12\x13approval.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x9b\f\n" +
+	"\"approval/service/v1/approval.proto\x12\x13approval.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xb1\x0e\n" +
 	"\x0fApprovalRequest\x12,\n" +
 	"\x02id\x18\x01 \x01(\rB\x17\xe0A\x01\xbaG\x11\x92\x02\x0e审批请求IDH\x00R\x02id\x88\x01\x01\x120\n" +
 	"\x05title\x18\x02 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f审批标题H\x01R\x05title\x88\x01\x01\x12a\n" +
@@ -704,21 +1211,26 @@ const file_approval_service_v1_approval_proto_rawDesc = "" +
 	"\vapprover_id\x18\b \x01(\rB;\xbaG8\x92\x025审批人用户ID（审批动作时服务端推导）H\aR\n" +
 	"approverId\x88\x01\x01\x12P\n" +
 	"\acomment\x18\t \x01(\tB1\xe0A\x01\xbaG+\x92\x02(审批意见（通过/驳回时填写）H\bR\acomment\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\tR\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\n" +
-	"R\btenantId\x88\x01\x01\x12;\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\tR\x06remark\x88\x01\x01\x12L\n" +
+	"\fcurrent_step\x18\n" +
+	" \x01(\rB$\xbaG!\x92\x02\x1e当前审批级（从 1 起）H\n" +
+	"R\vcurrentStep\x88\x01\x01\x12N\n" +
+	"\vtotal_steps\x18\f \x01(\rB(\xbaG%\x92\x02\"总级数（<=1 为单级审批）H\vR\n" +
+	"totalSteps\x88\x01\x01\x12I\n" +
+	"\aflow_id\x18\r \x01(\rB+\xbaG(\x92\x02%快照来源流程ID（0=无流程）H\fR\x06flowId\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\rR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x0eR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x10R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x11R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x12R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\"@\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x13R\tdeletedAt\x88\x01\x01\"@\n" +
 	"\x06Status\x12\v\n" +
 	"\aPENDING\x10\x00\x12\f\n" +
 	"\bAPPROVED\x10\x01\x12\f\n" +
@@ -736,7 +1248,11 @@ const file_approval_service_v1_approval_proto_rawDesc = "" +
 	"\f_approver_idB\n" +
 	"\n" +
 	"\b_commentB\t\n" +
-	"\a_remarkB\f\n" +
+	"\a_remarkB\x0f\n" +
+	"\r_current_stepB\x0e\n" +
+	"\f_total_stepsB\n" +
+	"\n" +
+	"\b_flow_idB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +
@@ -776,7 +1292,66 @@ const file_approval_service_v1_approval_proto_rawDesc = "" +
 	"\x1cCancelApprovalRequestRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\"4\n" +
 	"\x1cCountApprovalRequestResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count2\xdc\x05\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"\xd6\x05\n" +
+	"\fApprovalFlow\x12&\n" +
+	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b流程IDH\x00R\x02id\x88\x01\x01\x12b\n" +
+	"\bbiz_type\x18\x02 \x01(\tBB\xe0A\x01\xbaG<\x92\x029业务类型：PURCHASE_ORDER/SALES_ORDER/PAYMENT/RECEIPTH\x01R\abizType\x88\x01\x01\x12.\n" +
+	"\x04name\x18\x03 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f流程名称H\x02R\x04name\x88\x01\x01\x12;\n" +
+	"\x06status\x18\x04 \x01(\tB\x1e\xe0A\x01\xbaG\x18\x92\x02\x15启用状态：ON/OFFH\x03R\x06status\x88\x01\x01\x12i\n" +
+	"\x05steps\x18\x05 \x03(\v2%.approval.service.v1.ApprovalFlowStepB,\xbaG)\x92\x02&级定义（seq 1..N，整体替换）R\x05steps\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x04R\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\x05R\btenantId\x88\x01\x01\x12;\n" +
+	"\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x06R\tcreatedBy\x88\x01\x01\x12S\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\aR\tcreatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\v\n" +
+	"\t_biz_typeB\a\n" +
+	"\x05_nameB\t\n" +
+	"\a_statusB\t\n" +
+	"\a_remarkB\f\n" +
+	"\n" +
+	"_tenant_idB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_created_at\"\xd6\x02\n" +
+	"\x10ApprovalFlowStep\x12 \n" +
+	"\x02id\x18\x01 \x01(\rB\v\xbaG\b\x92\x02\x05级IDH\x00R\x02id\x88\x01\x01\x122\n" +
+	"\aflow_id\x18\x02 \x01(\rB\x14\xbaG\x11\x92\x02\x0e所属流程IDH\x01R\x06flowId\x88\x01\x01\x12-\n" +
+	"\x03seq\x18\x03 \x01(\rB\x16\xbaG\x13\x92\x02\x10级序（1..N）H\x02R\x03seq\x88\x01\x01\x12C\n" +
+	"\x04name\x18\x04 \x01(\tB*\xe0A\x01\xbaG$\x92\x02!级名称（如：主管复核）H\x03R\x04name\x88\x01\x01\x12F\n" +
+	"\trole_code\x18\x05 \x01(\tB$\xe0A\x01\xbaG\x1e\x92\x02\x1b本级审批人角色编码H\x04R\broleCode\x88\x01\x01B\x05\n" +
+	"\x03_idB\n" +
+	"\n" +
+	"\b_flow_idB\x06\n" +
+	"\x04_seqB\a\n" +
+	"\x05_nameB\f\n" +
+	"\n" +
+	"_role_code\"i\n" +
+	"\x18ListApprovalFlowResponse\x127\n" +
+	"\x05items\x18\x01 \x03(\v2!.approval.service.v1.ApprovalFlowR\x05items\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xa2\x01\n" +
+	"\x16GetApprovalFlowRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12P\n" +
+	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB\x12\xbaG\x0f\x92\x02\f字段掩码H\x01R\bviewMask\x88\x01\x01B\n" +
+	"\n" +
+	"\bquery_byB\f\n" +
+	"\n" +
+	"_view_mask\"u\n" +
+	"\x19CreateApprovalFlowRequest\x12X\n" +
+	"\x04data\x18\x01 \x01(\v2!.approval.service.v1.ApprovalFlowB!\xbaG\x1e\x92\x02\x1b审批流（含级定义）R\x04data\"\xc6\x02\n" +
+	"\x19UpdateApprovalFlowRequest\x12g\n" +
+	"\x04data\x18\x01 \x01(\v2!.approval.service.v1.ApprovalFlowB0\xbaG-\x92\x02*审批流（含级定义，整体替换）R\x04data\x12T\n" +
+	"\vupdate_mask\x18\x02 \x01(\v2\x1a.google.protobuf.FieldMaskB\x12\xbaG\x0f\x92\x02\f更新掩码H\x00R\n" +
+	"updateMask\x88\x01\x01\x12H\n" +
+	"\rallow_missing\x18\x03 \x01(\bB\x1e\xbaG\x1b\x92\x02\x18不存在时是否创建H\x01R\fallowMissing\x88\x01\x01B\x0e\n" +
+	"\f_update_maskB\x10\n" +
+	"\x0e_allow_missing\"E\n" +
+	"\x19DeleteApprovalFlowRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\n" +
+	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
+	"\n" +
+	"\bquery_by2\xdc\x05\n" +
 	"\x16ApprovalRequestService\x12U\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a0.approval.service.v1.ListApprovalRequestResponse\"\x00\x12W\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a1.approval.service.v1.CountApprovalRequestResponse\"\x00\x12]\n" +
@@ -785,7 +1360,13 @@ const file_approval_service_v1_approval_proto_rawDesc = "" +
 	"\x06Delete\x121.approval.service.v1.DeleteApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"\x00\x12W\n" +
 	"\aApprove\x122.approval.service.v1.ApproveApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"\x00\x12U\n" +
 	"\x06Reject\x121.approval.service.v1.RejectApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"\x00\x12U\n" +
-	"\x06Cancel\x121.approval.service.v1.CancelApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcd\x01\n" +
+	"\x06Cancel\x121.approval.service.v1.CancelApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"\x002\xbe\x03\n" +
+	"\x13ApprovalFlowService\x12R\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a-.approval.service.v1.ListApprovalFlowResponse\"\x00\x12W\n" +
+	"\x03Get\x12+.approval.service.v1.GetApprovalFlowRequest\x1a!.approval.service.v1.ApprovalFlow\"\x00\x12R\n" +
+	"\x06Create\x12..approval.service.v1.CreateApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
+	"\x06Update\x12..approval.service.v1.UpdateApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
+	"\x06Delete\x12..approval.service.v1.DeleteApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcd\x01\n" +
 	"\x17com.approval.service.v1B\rApprovalProtoP\x01Z5go-wind-erp/api/gen/go/approval/service/v1;approvalpb\xa2\x02\x03ASX\xaa\x02\x13Approval.Service.V1\xca\x02\x13Approval\\Service\\V1\xe2\x02\x1fApproval\\Service\\V1\\GPBMetadata\xea\x02\x15Approval::Service::V1b\x06proto3"
 
 var (
@@ -801,7 +1382,7 @@ func file_approval_service_v1_approval_proto_rawDescGZIP() []byte {
 }
 
 var file_approval_service_v1_approval_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_approval_service_v1_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_approval_service_v1_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_approval_service_v1_approval_proto_goTypes = []any{
 	(ApprovalRequest_Status)(0),           // 0: approval.service.v1.ApprovalRequest.Status
 	(*ApprovalRequest)(nil),               // 1: approval.service.v1.ApprovalRequest
@@ -813,40 +1394,64 @@ var file_approval_service_v1_approval_proto_goTypes = []any{
 	(*RejectApprovalRequestRequest)(nil),  // 7: approval.service.v1.RejectApprovalRequestRequest
 	(*CancelApprovalRequestRequest)(nil),  // 8: approval.service.v1.CancelApprovalRequestRequest
 	(*CountApprovalRequestResponse)(nil),  // 9: approval.service.v1.CountApprovalRequestResponse
-	(*timestamppb.Timestamp)(nil),         // 10: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 11: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 12: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 13: google.protobuf.Empty
+	(*ApprovalFlow)(nil),                  // 10: approval.service.v1.ApprovalFlow
+	(*ApprovalFlowStep)(nil),              // 11: approval.service.v1.ApprovalFlowStep
+	(*ListApprovalFlowResponse)(nil),      // 12: approval.service.v1.ListApprovalFlowResponse
+	(*GetApprovalFlowRequest)(nil),        // 13: approval.service.v1.GetApprovalFlowRequest
+	(*CreateApprovalFlowRequest)(nil),     // 14: approval.service.v1.CreateApprovalFlowRequest
+	(*UpdateApprovalFlowRequest)(nil),     // 15: approval.service.v1.UpdateApprovalFlowRequest
+	(*DeleteApprovalFlowRequest)(nil),     // 16: approval.service.v1.DeleteApprovalFlowRequest
+	(*timestamppb.Timestamp)(nil),         // 17: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 18: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 19: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 20: google.protobuf.Empty
 }
 var file_approval_service_v1_approval_proto_depIdxs = []int32{
 	0,  // 0: approval.service.v1.ApprovalRequest.status:type_name -> approval.service.v1.ApprovalRequest.Status
-	10, // 1: approval.service.v1.ApprovalRequest.created_at:type_name -> google.protobuf.Timestamp
-	10, // 2: approval.service.v1.ApprovalRequest.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 3: approval.service.v1.ApprovalRequest.deleted_at:type_name -> google.protobuf.Timestamp
+	17, // 1: approval.service.v1.ApprovalRequest.created_at:type_name -> google.protobuf.Timestamp
+	17, // 2: approval.service.v1.ApprovalRequest.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 3: approval.service.v1.ApprovalRequest.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: approval.service.v1.ListApprovalRequestResponse.items:type_name -> approval.service.v1.ApprovalRequest
-	11, // 5: approval.service.v1.GetApprovalRequestRequest.view_mask:type_name -> google.protobuf.FieldMask
+	18, // 5: approval.service.v1.GetApprovalRequestRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 6: approval.service.v1.CreateApprovalRequestRequest.data:type_name -> approval.service.v1.ApprovalRequest
-	12, // 7: approval.service.v1.ApprovalRequestService.List:input_type -> pagination.PagingRequest
-	12, // 8: approval.service.v1.ApprovalRequestService.Count:input_type -> pagination.PagingRequest
-	3,  // 9: approval.service.v1.ApprovalRequestService.Get:input_type -> approval.service.v1.GetApprovalRequestRequest
-	4,  // 10: approval.service.v1.ApprovalRequestService.Create:input_type -> approval.service.v1.CreateApprovalRequestRequest
-	5,  // 11: approval.service.v1.ApprovalRequestService.Delete:input_type -> approval.service.v1.DeleteApprovalRequestRequest
-	6,  // 12: approval.service.v1.ApprovalRequestService.Approve:input_type -> approval.service.v1.ApproveApprovalRequestRequest
-	7,  // 13: approval.service.v1.ApprovalRequestService.Reject:input_type -> approval.service.v1.RejectApprovalRequestRequest
-	8,  // 14: approval.service.v1.ApprovalRequestService.Cancel:input_type -> approval.service.v1.CancelApprovalRequestRequest
-	2,  // 15: approval.service.v1.ApprovalRequestService.List:output_type -> approval.service.v1.ListApprovalRequestResponse
-	9,  // 16: approval.service.v1.ApprovalRequestService.Count:output_type -> approval.service.v1.CountApprovalRequestResponse
-	1,  // 17: approval.service.v1.ApprovalRequestService.Get:output_type -> approval.service.v1.ApprovalRequest
-	13, // 18: approval.service.v1.ApprovalRequestService.Create:output_type -> google.protobuf.Empty
-	13, // 19: approval.service.v1.ApprovalRequestService.Delete:output_type -> google.protobuf.Empty
-	13, // 20: approval.service.v1.ApprovalRequestService.Approve:output_type -> google.protobuf.Empty
-	13, // 21: approval.service.v1.ApprovalRequestService.Reject:output_type -> google.protobuf.Empty
-	13, // 22: approval.service.v1.ApprovalRequestService.Cancel:output_type -> google.protobuf.Empty
-	15, // [15:23] is the sub-list for method output_type
-	7,  // [7:15] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	11, // 7: approval.service.v1.ApprovalFlow.steps:type_name -> approval.service.v1.ApprovalFlowStep
+	17, // 8: approval.service.v1.ApprovalFlow.created_at:type_name -> google.protobuf.Timestamp
+	10, // 9: approval.service.v1.ListApprovalFlowResponse.items:type_name -> approval.service.v1.ApprovalFlow
+	18, // 10: approval.service.v1.GetApprovalFlowRequest.view_mask:type_name -> google.protobuf.FieldMask
+	10, // 11: approval.service.v1.CreateApprovalFlowRequest.data:type_name -> approval.service.v1.ApprovalFlow
+	10, // 12: approval.service.v1.UpdateApprovalFlowRequest.data:type_name -> approval.service.v1.ApprovalFlow
+	18, // 13: approval.service.v1.UpdateApprovalFlowRequest.update_mask:type_name -> google.protobuf.FieldMask
+	19, // 14: approval.service.v1.ApprovalRequestService.List:input_type -> pagination.PagingRequest
+	19, // 15: approval.service.v1.ApprovalRequestService.Count:input_type -> pagination.PagingRequest
+	3,  // 16: approval.service.v1.ApprovalRequestService.Get:input_type -> approval.service.v1.GetApprovalRequestRequest
+	4,  // 17: approval.service.v1.ApprovalRequestService.Create:input_type -> approval.service.v1.CreateApprovalRequestRequest
+	5,  // 18: approval.service.v1.ApprovalRequestService.Delete:input_type -> approval.service.v1.DeleteApprovalRequestRequest
+	6,  // 19: approval.service.v1.ApprovalRequestService.Approve:input_type -> approval.service.v1.ApproveApprovalRequestRequest
+	7,  // 20: approval.service.v1.ApprovalRequestService.Reject:input_type -> approval.service.v1.RejectApprovalRequestRequest
+	8,  // 21: approval.service.v1.ApprovalRequestService.Cancel:input_type -> approval.service.v1.CancelApprovalRequestRequest
+	19, // 22: approval.service.v1.ApprovalFlowService.List:input_type -> pagination.PagingRequest
+	13, // 23: approval.service.v1.ApprovalFlowService.Get:input_type -> approval.service.v1.GetApprovalFlowRequest
+	14, // 24: approval.service.v1.ApprovalFlowService.Create:input_type -> approval.service.v1.CreateApprovalFlowRequest
+	15, // 25: approval.service.v1.ApprovalFlowService.Update:input_type -> approval.service.v1.UpdateApprovalFlowRequest
+	16, // 26: approval.service.v1.ApprovalFlowService.Delete:input_type -> approval.service.v1.DeleteApprovalFlowRequest
+	2,  // 27: approval.service.v1.ApprovalRequestService.List:output_type -> approval.service.v1.ListApprovalRequestResponse
+	9,  // 28: approval.service.v1.ApprovalRequestService.Count:output_type -> approval.service.v1.CountApprovalRequestResponse
+	1,  // 29: approval.service.v1.ApprovalRequestService.Get:output_type -> approval.service.v1.ApprovalRequest
+	20, // 30: approval.service.v1.ApprovalRequestService.Create:output_type -> google.protobuf.Empty
+	20, // 31: approval.service.v1.ApprovalRequestService.Delete:output_type -> google.protobuf.Empty
+	20, // 32: approval.service.v1.ApprovalRequestService.Approve:output_type -> google.protobuf.Empty
+	20, // 33: approval.service.v1.ApprovalRequestService.Reject:output_type -> google.protobuf.Empty
+	20, // 34: approval.service.v1.ApprovalRequestService.Cancel:output_type -> google.protobuf.Empty
+	12, // 35: approval.service.v1.ApprovalFlowService.List:output_type -> approval.service.v1.ListApprovalFlowResponse
+	10, // 36: approval.service.v1.ApprovalFlowService.Get:output_type -> approval.service.v1.ApprovalFlow
+	20, // 37: approval.service.v1.ApprovalFlowService.Create:output_type -> google.protobuf.Empty
+	20, // 38: approval.service.v1.ApprovalFlowService.Update:output_type -> google.protobuf.Empty
+	20, // 39: approval.service.v1.ApprovalFlowService.Delete:output_type -> google.protobuf.Empty
+	27, // [27:40] is the sub-list for method output_type
+	14, // [14:27] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_approval_service_v1_approval_proto_init() }
@@ -863,15 +1468,24 @@ func file_approval_service_v1_approval_proto_init() {
 	}
 	file_approval_service_v1_approval_proto_msgTypes[5].OneofWrappers = []any{}
 	file_approval_service_v1_approval_proto_msgTypes[6].OneofWrappers = []any{}
+	file_approval_service_v1_approval_proto_msgTypes[9].OneofWrappers = []any{}
+	file_approval_service_v1_approval_proto_msgTypes[10].OneofWrappers = []any{}
+	file_approval_service_v1_approval_proto_msgTypes[12].OneofWrappers = []any{
+		(*GetApprovalFlowRequest_Id)(nil),
+	}
+	file_approval_service_v1_approval_proto_msgTypes[14].OneofWrappers = []any{}
+	file_approval_service_v1_approval_proto_msgTypes[15].OneofWrappers = []any{
+		(*DeleteApprovalFlowRequest_Id)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_approval_service_v1_approval_proto_rawDesc), len(file_approval_service_v1_approval_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   9,
+			NumMessages:   16,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_approval_service_v1_approval_proto_goTypes,
 		DependencyIndexes: file_approval_service_v1_approval_proto_depIdxs,

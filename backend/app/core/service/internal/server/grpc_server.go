@@ -55,6 +55,7 @@ func NewGrpcServer(
 	stockPickingService *service.StockPickingService,
 
 	approvalRequestService *service.ApprovalRequestService,
+	approvalFlowService   *service.ApprovalFlowService,
 
 	supplierService *service.SupplierService,
 	productService *service.ProductService,
@@ -122,6 +123,7 @@ func NewGrpcServer(
 	inventoryV1.RegisterStockPickingServiceServer(srv, stockPickingService)
 
 	approvalV1.RegisterApprovalRequestServiceServer(srv, approvalRequestService)
+	approvalV1.RegisterApprovalFlowServiceServer(srv, approvalFlowService)
 
 	procurementV1.RegisterSupplierServiceServer(srv, supplierService)
 	productV1.RegisterProductServiceServer(srv, productService)

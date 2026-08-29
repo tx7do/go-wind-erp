@@ -28,6 +28,18 @@ const approval: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/approval/index.vue'),
       },
+
+      {
+        path: 'flows',
+        name: 'ApprovalFlowManagement',
+        meta: {
+          order: 2,
+          icon: 'lucide:git-branch',
+          title: $t('menu.approval.flow'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+        component: () => import('#/views/app/approval/flow/index.vue'),
+      },
     ],
   },
 ];

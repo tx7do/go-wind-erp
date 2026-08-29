@@ -16,6 +16,8 @@ import (
 	"github.com/tx7do/go-utils/trans"
 
 	"go-wind-erp/app/core/service/internal/data/ent"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflowstep"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
 	"go-wind-erp/app/core/service/internal/data/ent/predicate"
 
@@ -162,6 +164,15 @@ func (r *ApprovalRequestRepo) Create(ctx context.Context, req *approvalV1.Create
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
 
+	// 多级审批快照：按 (租户, biz_type) 取生效流程固化级数（在途单不受
+	// 流程后续编辑影响）。在此下沉而非服务层，是因为 PO/SO/付款/收款/
+	// 补货的提交路径均直连本仓储建单——单点覆盖全部入口。无流程 → 1/1。
+	cur, total, flowID := r.snapshotFlowSteps(ctx, req.Data.GetBizType())
+	builder = builder.
+		SetCurrentStep(cur).
+		SetTotalSteps(total).
+		SetFlowID(flowID)
+
 	if req.Data.Id != nil {
 		builder.SetID(req.GetData().GetId())
 	}
@@ -173,6 +184,33 @@ func (r *ApprovalRequestRepo) Create(ctx context.Context, req *approvalV1.Create
 	}
 
 	return r.mapper.ToDTO(t), nil
+}
+
+// snapshotFlowSteps 取生效流程的级数快照（current=1, total=N, flowID）；
+// 无流程返回 1/1/0（传统单级审批）。
+func (r *ApprovalRequestRepo) snapshotFlowSteps(
+	ctx context.Context,
+	bizType string,
+) (current, total, flowID uint32) {
+	tid, _ := maybeTenantFromViewer(ctx)
+
+	flow, err := r.entClient.Client().ApprovalFlow.Query().
+		Where(
+			approvalflow.TenantIDEQ(tid),
+			approvalflow.BizTypeEQ(bizType),
+			approvalflow.StatusEQ(approvalflow.StatusOn),
+		).
+		Only(ctx)
+	if err != nil || flow == nil {
+		return 1, 1, 0
+	}
+	stepCount, err := r.entClient.Client().ApprovalFlowStep.Query().
+		Where(approvalflowstep.FlowIDEQ(flow.ID)).
+		Count(ctx)
+	if err != nil || stepCount == 0 {
+		return 1, 1, 0
+	}
+	return 1, uint32(stepCount), flow.ID
 }
 
 // HasPendingByBizRef 是否存在指定 biz_ref 的待审批单（补货建议幂等检查）。
@@ -225,6 +263,73 @@ func (r *ApprovalRequestRepo) TransitionStatus(
 	return r.Get(ctx, &approvalV1.GetApprovalRequestRequest{
 		QueryBy: &approvalV1.GetApprovalRequestRequest_Id{Id: id},
 	})
+}
+
+// AdvanceStep 多级审批级进：仅当 PENDING 且 current_step=from 时推进到
+// to（保持 PENDING），盖章审批人。0 行→409 并发冲突。
+func (r *ApprovalRequestRepo) AdvanceStep(
+	ctx context.Context,
+	id uint32,
+	from, to uint32,
+	comment *string,
+) error {
+	callerUserID, hasUser := viewerUserIDFromContext(ctx)
+
+	builder := r.entClient.Client().ApprovalRequest.Update().
+		Where(approvalrequest.IDEQ(id)).
+		Where(approvalrequest.StatusEQ(approvalrequest.StatusPending)).
+		Where(approvalrequest.CurrentStepEQ(from)).
+		SetCurrentStep(to).
+		SetUpdatedAt(time.Now())
+
+	if hasUser {
+		builder.SetApproverID(callerUserID)
+		builder.SetUpdatedBy(callerUserID)
+	}
+	if comment != nil {
+		builder.SetNillableComment(comment)
+	}
+
+	n, err := builder.Save(ctx)
+	if err != nil {
+		r.log.Errorf("advance approval step failed: %s", err.Error())
+		return approvalV1.ErrorInternalServerError("advance approval step failed")
+	}
+	if n == 0 {
+		return approvalV1.ErrorConflict("approval request step changed concurrently")
+	}
+	return nil
+}
+
+// PendingStepsByBizRef 查 biz_ref 对应 PENDING 单的级进度（多级直审守卫）。
+// 无在途单返回 ok=false。
+func (r *ApprovalRequestRepo) PendingStepsByBizRef(
+	ctx context.Context,
+	bizRef string,
+) (current, total uint32, ok bool, err error) {
+	row, err := r.entClient.Client().ApprovalRequest.Query().
+		Where(
+			approvalrequest.BizRefEQ(bizRef),
+			approvalrequest.StatusEQ(approvalrequest.StatusPending),
+		).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return 0, 0, false, nil
+		}
+		r.log.Errorf("query pending approval by biz_ref failed: %s", err.Error())
+		return 0, 0, false, approvalV1.ErrorInternalServerError("query pending approval failed")
+	}
+	cur, t := row.CurrentStep, row.TotalSteps
+	if cur == nil {
+		c := uint32(1)
+		cur = &c
+	}
+	if t == nil {
+		tt := uint32(1)
+		t = &tt
+	}
+	return *cur, *t, true, nil
 }
 
 // CancelAsApplicant 撤销：仅当 PENDING 且申请人为 caller 时更新为 CANCELLED。

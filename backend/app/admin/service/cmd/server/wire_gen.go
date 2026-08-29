@@ -72,6 +72,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	stockPickingService := service.NewStockPickingService(context, stockPickingServiceClient)
 	approvalRequestServiceClient := data.NewApprovalRequestServiceClient(context, discovery)
 	approvalRequestService := service.NewApprovalRequestService(context, approvalRequestServiceClient)
+	approvalFlowServiceClient := data.NewApprovalFlowServiceClient(context, discovery)
+	approvalFlowService := service.NewApprovalFlowService(context, approvalFlowServiceClient)
 	supplierServiceClient := data.NewSupplierServiceClient(context, discovery)
 	supplierService := service.NewSupplierService(context, supplierServiceClient)
 	productServiceClient := data.NewProductServiceClient(context, discovery)
@@ -125,7 +127,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	operationAuditLogService := service.NewOperationAuditLogService(context, operationAuditLogServiceClient)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(context, discovery)
 	permissionAuditLogService := service.NewPermissionAuditLogService(context, permissionAuditLogServiceClient)
-	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, warehouseService, locationService, stockQuantService, stockLotService, stockPickingService, approvalRequestService, supplierService, productService, purchaseOrderService, customerService, salesOrderService, payableService, paymentService, receivableService, receiptService, financeReportService, billingService, planAdminService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, fileService, fileTransferService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
+	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, warehouseService, locationService, stockQuantService, stockLotService, stockPickingService, approvalRequestService, approvalFlowService, supplierService, productService, purchaseOrderService, customerService, salesOrderService, payableService, paymentService, receivableService, receiptService, financeReportService, billingService, planAdminService, authenticationService, loginPolicyService, dictTypeService, dictEntryService, languageService, fileService, fileTransferService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

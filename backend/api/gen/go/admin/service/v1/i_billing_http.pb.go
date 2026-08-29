@@ -221,15 +221,15 @@ type PlanAdminServiceHTTPServer interface {
 
 func RegisterPlanAdminServiceHTTPServer(s *http.Server, srv PlanAdminServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/plans", _PlanAdminService_List3_HTTP_Handler(srv))
+	r.GET("/admin/v1/plans", _PlanAdminService_List4_HTTP_Handler(srv))
 	r.GET("/admin/v1/plans:count", _PlanAdminService_Count0_HTTP_Handler(srv))
-	r.GET("/admin/v1/plans/{id}", _PlanAdminService_Get3_HTTP_Handler(srv))
-	r.POST("/admin/v1/plans", _PlanAdminService_Create2_HTTP_Handler(srv))
-	r.PUT("/admin/v1/plans/{data.id}", _PlanAdminService_Update1_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/plans/{id}", _PlanAdminService_Delete2_HTTP_Handler(srv))
+	r.GET("/admin/v1/plans/{id}", _PlanAdminService_Get4_HTTP_Handler(srv))
+	r.POST("/admin/v1/plans", _PlanAdminService_Create3_HTTP_Handler(srv))
+	r.PUT("/admin/v1/plans/{data.id}", _PlanAdminService_Update2_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/plans/{id}", _PlanAdminService_Delete3_HTTP_Handler(srv))
 }
 
-func _PlanAdminService_List3_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
+func _PlanAdminService_List4_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -267,7 +267,7 @@ func _PlanAdminService_Count0_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(
 	}
 }
 
-func _PlanAdminService_Get3_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
+func _PlanAdminService_Get4_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.GetPlanRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -289,7 +289,7 @@ func _PlanAdminService_Get3_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ct
 	}
 }
 
-func _PlanAdminService_Create2_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
+func _PlanAdminService_Create3_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.CreatePlanRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -311,7 +311,7 @@ func _PlanAdminService_Create2_HTTP_Handler(srv PlanAdminServiceHTTPServer) func
 	}
 }
 
-func _PlanAdminService_Update1_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
+func _PlanAdminService_Update2_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.UpdatePlanRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -336,7 +336,7 @@ func _PlanAdminService_Update1_HTTP_Handler(srv PlanAdminServiceHTTPServer) func
 	}
 }
 
-func _PlanAdminService_Delete2_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
+func _PlanAdminService_Delete3_HTTP_Handler(srv PlanAdminServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.DeletePlanRequest
 		if err := ctx.BindQuery(&in); err != nil {

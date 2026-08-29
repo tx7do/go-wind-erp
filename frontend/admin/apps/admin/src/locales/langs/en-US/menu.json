@@ -63,7 +63,8 @@
   },
   "approval": {
     "moduleName": "Approval Center",
-    "request": "Approval Requests"
+    "request": "Approval Requests",
+    "flow": "Approval Flows"
   },
   "procurement": {
     "moduleName": "Procurement",

@@ -369,3 +369,271 @@ var ApprovalRequestService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "admin/service/v1/i_approval.proto",
 }
+
+const (
+	ApprovalFlowService_List_FullMethodName   = "/admin.service.v1.ApprovalFlowService/List"
+	ApprovalFlowService_Get_FullMethodName    = "/admin.service.v1.ApprovalFlowService/Get"
+	ApprovalFlowService_Create_FullMethodName = "/admin.service.v1.ApprovalFlowService/Create"
+	ApprovalFlowService_Update_FullMethodName = "/admin.service.v1.ApprovalFlowService/Update"
+	ApprovalFlowService_Delete_FullMethodName = "/admin.service.v1.ApprovalFlowService/Delete"
+)
+
+// ApprovalFlowServiceClient is the client API for ApprovalFlowService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 审批流模板服务（多级审批配置）
+type ApprovalFlowServiceClient interface {
+	// 查询审批流列表
+	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListApprovalFlowResponse, error)
+	// 查询审批流详情
+	Get(ctx context.Context, in *v11.GetApprovalFlowRequest, opts ...grpc.CallOption) (*v11.ApprovalFlow, error)
+	// 创建审批流
+	Create(ctx context.Context, in *v11.CreateApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 更新审批流（级整体替换）
+	Update(ctx context.Context, in *v11.UpdateApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 删除审批流
+	Delete(ctx context.Context, in *v11.DeleteApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type approvalFlowServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewApprovalFlowServiceClient(cc grpc.ClientConnInterface) ApprovalFlowServiceClient {
+	return &approvalFlowServiceClient{cc}
+}
+
+func (c *approvalFlowServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListApprovalFlowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListApprovalFlowResponse)
+	err := c.cc.Invoke(ctx, ApprovalFlowService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalFlowServiceClient) Get(ctx context.Context, in *v11.GetApprovalFlowRequest, opts ...grpc.CallOption) (*v11.ApprovalFlow, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ApprovalFlow)
+	err := c.cc.Invoke(ctx, ApprovalFlowService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalFlowServiceClient) Create(ctx context.Context, in *v11.CreateApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ApprovalFlowService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalFlowServiceClient) Update(ctx context.Context, in *v11.UpdateApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ApprovalFlowService_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalFlowServiceClient) Delete(ctx context.Context, in *v11.DeleteApprovalFlowRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ApprovalFlowService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ApprovalFlowServiceServer is the server API for ApprovalFlowService service.
+// All implementations must embed UnimplementedApprovalFlowServiceServer
+// for forward compatibility.
+//
+// 审批流模板服务（多级审批配置）
+type ApprovalFlowServiceServer interface {
+	// 查询审批流列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListApprovalFlowResponse, error)
+	// 查询审批流详情
+	Get(context.Context, *v11.GetApprovalFlowRequest) (*v11.ApprovalFlow, error)
+	// 创建审批流
+	Create(context.Context, *v11.CreateApprovalFlowRequest) (*emptypb.Empty, error)
+	// 更新审批流（级整体替换）
+	Update(context.Context, *v11.UpdateApprovalFlowRequest) (*emptypb.Empty, error)
+	// 删除审批流
+	Delete(context.Context, *v11.DeleteApprovalFlowRequest) (*emptypb.Empty, error)
+	mustEmbedUnimplementedApprovalFlowServiceServer()
+}
+
+// UnimplementedApprovalFlowServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedApprovalFlowServiceServer struct{}
+
+func (UnimplementedApprovalFlowServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListApprovalFlowResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedApprovalFlowServiceServer) Get(context.Context, *v11.GetApprovalFlowRequest) (*v11.ApprovalFlow, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedApprovalFlowServiceServer) Create(context.Context, *v11.CreateApprovalFlowRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedApprovalFlowServiceServer) Update(context.Context, *v11.UpdateApprovalFlowRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedApprovalFlowServiceServer) Delete(context.Context, *v11.DeleteApprovalFlowRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedApprovalFlowServiceServer) mustEmbedUnimplementedApprovalFlowServiceServer() {}
+func (UnimplementedApprovalFlowServiceServer) testEmbeddedByValue()                             {}
+
+// UnsafeApprovalFlowServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ApprovalFlowServiceServer will
+// result in compilation errors.
+type UnsafeApprovalFlowServiceServer interface {
+	mustEmbedUnimplementedApprovalFlowServiceServer()
+}
+
+func RegisterApprovalFlowServiceServer(s grpc.ServiceRegistrar, srv ApprovalFlowServiceServer) {
+	// If the following call panics, it indicates UnimplementedApprovalFlowServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ApprovalFlowService_ServiceDesc, srv)
+}
+
+func _ApprovalFlowService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalFlowServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalFlowService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalFlowServiceServer).List(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalFlowService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetApprovalFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalFlowServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalFlowService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalFlowServiceServer).Get(ctx, req.(*v11.GetApprovalFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalFlowService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreateApprovalFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalFlowServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalFlowService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalFlowServiceServer).Create(ctx, req.(*v11.CreateApprovalFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalFlowService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.UpdateApprovalFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalFlowServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalFlowService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalFlowServiceServer).Update(ctx, req.(*v11.UpdateApprovalFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalFlowService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.DeleteApprovalFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalFlowServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalFlowService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalFlowServiceServer).Delete(ctx, req.(*v11.DeleteApprovalFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ApprovalFlowService_ServiceDesc is the grpc.ServiceDesc for ApprovalFlowService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ApprovalFlowService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.service.v1.ApprovalFlowService",
+	HandlerType: (*ApprovalFlowServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "List",
+			Handler:    _ApprovalFlowService_List_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _ApprovalFlowService_Get_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _ApprovalFlowService_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _ApprovalFlowService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _ApprovalFlowService_Delete_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "admin/service/v1/i_approval.proto",
+}

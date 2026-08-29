@@ -246,6 +246,48 @@ func (_c *ApprovalRequestCreate) SetNillableComment(v *string) *ApprovalRequestC
 	return _c
 }
 
+// SetCurrentStep sets the "current_step" field.
+func (_c *ApprovalRequestCreate) SetCurrentStep(v uint32) *ApprovalRequestCreate {
+	_c.mutation.SetCurrentStep(v)
+	return _c
+}
+
+// SetNillableCurrentStep sets the "current_step" field if the given value is not nil.
+func (_c *ApprovalRequestCreate) SetNillableCurrentStep(v *uint32) *ApprovalRequestCreate {
+	if v != nil {
+		_c.SetCurrentStep(*v)
+	}
+	return _c
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (_c *ApprovalRequestCreate) SetTotalSteps(v uint32) *ApprovalRequestCreate {
+	_c.mutation.SetTotalSteps(v)
+	return _c
+}
+
+// SetNillableTotalSteps sets the "total_steps" field if the given value is not nil.
+func (_c *ApprovalRequestCreate) SetNillableTotalSteps(v *uint32) *ApprovalRequestCreate {
+	if v != nil {
+		_c.SetTotalSteps(*v)
+	}
+	return _c
+}
+
+// SetFlowID sets the "flow_id" field.
+func (_c *ApprovalRequestCreate) SetFlowID(v uint32) *ApprovalRequestCreate {
+	_c.mutation.SetFlowID(v)
+	return _c
+}
+
+// SetNillableFlowID sets the "flow_id" field if the given value is not nil.
+func (_c *ApprovalRequestCreate) SetNillableFlowID(v *uint32) *ApprovalRequestCreate {
+	if v != nil {
+		_c.SetFlowID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ApprovalRequestCreate) SetID(v uint32) *ApprovalRequestCreate {
 	_c.mutation.SetID(v)
@@ -300,6 +342,18 @@ func (_c *ApprovalRequestCreate) defaults() error {
 	if _, ok := _c.mutation.ApplicantID(); !ok {
 		v := approvalrequest.DefaultApplicantID
 		_c.mutation.SetApplicantID(v)
+	}
+	if _, ok := _c.mutation.CurrentStep(); !ok {
+		v := approvalrequest.DefaultCurrentStep
+		_c.mutation.SetCurrentStep(v)
+	}
+	if _, ok := _c.mutation.TotalSteps(); !ok {
+		v := approvalrequest.DefaultTotalSteps
+		_c.mutation.SetTotalSteps(v)
+	}
+	if _, ok := _c.mutation.FlowID(); !ok {
+		v := approvalrequest.DefaultFlowID
+		_c.mutation.SetFlowID(v)
 	}
 	return nil
 }
@@ -412,6 +466,18 @@ func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.Creat
 	if value, ok := _c.mutation.Comment(); ok {
 		_spec.SetField(approvalrequest.FieldComment, field.TypeString, value)
 		_node.Comment = &value
+	}
+	if value, ok := _c.mutation.CurrentStep(); ok {
+		_spec.SetField(approvalrequest.FieldCurrentStep, field.TypeUint32, value)
+		_node.CurrentStep = &value
+	}
+	if value, ok := _c.mutation.TotalSteps(); ok {
+		_spec.SetField(approvalrequest.FieldTotalSteps, field.TypeUint32, value)
+		_node.TotalSteps = &value
+	}
+	if value, ok := _c.mutation.FlowID(); ok {
+		_spec.SetField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+		_node.FlowID = &value
 	}
 	return _node, _spec
 }
@@ -744,6 +810,78 @@ func (u *ApprovalRequestUpsert) UpdateComment() *ApprovalRequestUpsert {
 // ClearComment clears the value of the "comment" field.
 func (u *ApprovalRequestUpsert) ClearComment() *ApprovalRequestUpsert {
 	u.SetNull(approvalrequest.FieldComment)
+	return u
+}
+
+// SetCurrentStep sets the "current_step" field.
+func (u *ApprovalRequestUpsert) SetCurrentStep(v uint32) *ApprovalRequestUpsert {
+	u.Set(approvalrequest.FieldCurrentStep, v)
+	return u
+}
+
+// UpdateCurrentStep sets the "current_step" field to the value that was provided on create.
+func (u *ApprovalRequestUpsert) UpdateCurrentStep() *ApprovalRequestUpsert {
+	u.SetExcluded(approvalrequest.FieldCurrentStep)
+	return u
+}
+
+// AddCurrentStep adds v to the "current_step" field.
+func (u *ApprovalRequestUpsert) AddCurrentStep(v uint32) *ApprovalRequestUpsert {
+	u.Add(approvalrequest.FieldCurrentStep, v)
+	return u
+}
+
+// ClearCurrentStep clears the value of the "current_step" field.
+func (u *ApprovalRequestUpsert) ClearCurrentStep() *ApprovalRequestUpsert {
+	u.SetNull(approvalrequest.FieldCurrentStep)
+	return u
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (u *ApprovalRequestUpsert) SetTotalSteps(v uint32) *ApprovalRequestUpsert {
+	u.Set(approvalrequest.FieldTotalSteps, v)
+	return u
+}
+
+// UpdateTotalSteps sets the "total_steps" field to the value that was provided on create.
+func (u *ApprovalRequestUpsert) UpdateTotalSteps() *ApprovalRequestUpsert {
+	u.SetExcluded(approvalrequest.FieldTotalSteps)
+	return u
+}
+
+// AddTotalSteps adds v to the "total_steps" field.
+func (u *ApprovalRequestUpsert) AddTotalSteps(v uint32) *ApprovalRequestUpsert {
+	u.Add(approvalrequest.FieldTotalSteps, v)
+	return u
+}
+
+// ClearTotalSteps clears the value of the "total_steps" field.
+func (u *ApprovalRequestUpsert) ClearTotalSteps() *ApprovalRequestUpsert {
+	u.SetNull(approvalrequest.FieldTotalSteps)
+	return u
+}
+
+// SetFlowID sets the "flow_id" field.
+func (u *ApprovalRequestUpsert) SetFlowID(v uint32) *ApprovalRequestUpsert {
+	u.Set(approvalrequest.FieldFlowID, v)
+	return u
+}
+
+// UpdateFlowID sets the "flow_id" field to the value that was provided on create.
+func (u *ApprovalRequestUpsert) UpdateFlowID() *ApprovalRequestUpsert {
+	u.SetExcluded(approvalrequest.FieldFlowID)
+	return u
+}
+
+// AddFlowID adds v to the "flow_id" field.
+func (u *ApprovalRequestUpsert) AddFlowID(v uint32) *ApprovalRequestUpsert {
+	u.Add(approvalrequest.FieldFlowID, v)
+	return u
+}
+
+// ClearFlowID clears the value of the "flow_id" field.
+func (u *ApprovalRequestUpsert) ClearFlowID() *ApprovalRequestUpsert {
+	u.SetNull(approvalrequest.FieldFlowID)
 	return u
 }
 
@@ -1127,6 +1265,90 @@ func (u *ApprovalRequestUpsertOne) UpdateComment() *ApprovalRequestUpsertOne {
 func (u *ApprovalRequestUpsertOne) ClearComment() *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.ClearComment()
+	})
+}
+
+// SetCurrentStep sets the "current_step" field.
+func (u *ApprovalRequestUpsertOne) SetCurrentStep(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetCurrentStep(v)
+	})
+}
+
+// AddCurrentStep adds v to the "current_step" field.
+func (u *ApprovalRequestUpsertOne) AddCurrentStep(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddCurrentStep(v)
+	})
+}
+
+// UpdateCurrentStep sets the "current_step" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertOne) UpdateCurrentStep() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateCurrentStep()
+	})
+}
+
+// ClearCurrentStep clears the value of the "current_step" field.
+func (u *ApprovalRequestUpsertOne) ClearCurrentStep() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearCurrentStep()
+	})
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (u *ApprovalRequestUpsertOne) SetTotalSteps(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetTotalSteps(v)
+	})
+}
+
+// AddTotalSteps adds v to the "total_steps" field.
+func (u *ApprovalRequestUpsertOne) AddTotalSteps(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddTotalSteps(v)
+	})
+}
+
+// UpdateTotalSteps sets the "total_steps" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertOne) UpdateTotalSteps() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateTotalSteps()
+	})
+}
+
+// ClearTotalSteps clears the value of the "total_steps" field.
+func (u *ApprovalRequestUpsertOne) ClearTotalSteps() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearTotalSteps()
+	})
+}
+
+// SetFlowID sets the "flow_id" field.
+func (u *ApprovalRequestUpsertOne) SetFlowID(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetFlowID(v)
+	})
+}
+
+// AddFlowID adds v to the "flow_id" field.
+func (u *ApprovalRequestUpsertOne) AddFlowID(v uint32) *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddFlowID(v)
+	})
+}
+
+// UpdateFlowID sets the "flow_id" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertOne) UpdateFlowID() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateFlowID()
+	})
+}
+
+// ClearFlowID clears the value of the "flow_id" field.
+func (u *ApprovalRequestUpsertOne) ClearFlowID() *ApprovalRequestUpsertOne {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearFlowID()
 	})
 }
 
@@ -1676,6 +1898,90 @@ func (u *ApprovalRequestUpsertBulk) UpdateComment() *ApprovalRequestUpsertBulk {
 func (u *ApprovalRequestUpsertBulk) ClearComment() *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.ClearComment()
+	})
+}
+
+// SetCurrentStep sets the "current_step" field.
+func (u *ApprovalRequestUpsertBulk) SetCurrentStep(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetCurrentStep(v)
+	})
+}
+
+// AddCurrentStep adds v to the "current_step" field.
+func (u *ApprovalRequestUpsertBulk) AddCurrentStep(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddCurrentStep(v)
+	})
+}
+
+// UpdateCurrentStep sets the "current_step" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertBulk) UpdateCurrentStep() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateCurrentStep()
+	})
+}
+
+// ClearCurrentStep clears the value of the "current_step" field.
+func (u *ApprovalRequestUpsertBulk) ClearCurrentStep() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearCurrentStep()
+	})
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (u *ApprovalRequestUpsertBulk) SetTotalSteps(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetTotalSteps(v)
+	})
+}
+
+// AddTotalSteps adds v to the "total_steps" field.
+func (u *ApprovalRequestUpsertBulk) AddTotalSteps(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddTotalSteps(v)
+	})
+}
+
+// UpdateTotalSteps sets the "total_steps" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertBulk) UpdateTotalSteps() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateTotalSteps()
+	})
+}
+
+// ClearTotalSteps clears the value of the "total_steps" field.
+func (u *ApprovalRequestUpsertBulk) ClearTotalSteps() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearTotalSteps()
+	})
+}
+
+// SetFlowID sets the "flow_id" field.
+func (u *ApprovalRequestUpsertBulk) SetFlowID(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.SetFlowID(v)
+	})
+}
+
+// AddFlowID adds v to the "flow_id" field.
+func (u *ApprovalRequestUpsertBulk) AddFlowID(v uint32) *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.AddFlowID(v)
+	})
+}
+
+// UpdateFlowID sets the "flow_id" field to the value that was provided on create.
+func (u *ApprovalRequestUpsertBulk) UpdateFlowID() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.UpdateFlowID()
+	})
+}
+
+// ClearFlowID clears the value of the "flow_id" field.
+func (u *ApprovalRequestUpsertBulk) ClearFlowID() *ApprovalRequestUpsertBulk {
+	return u.Update(func(s *ApprovalRequestUpsert) {
+		s.ClearFlowID()
 	})
 }
 

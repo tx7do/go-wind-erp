@@ -247,6 +247,16 @@ func (s *PurchaseOrderService) transition(
 		}
 	}
 
+	// 多级审批守卫：审批单在途且未到终级时，禁止管理端直审绕过级进
+	// （审批中心逐级推进是唯一通路）。
+	if to == procurementV1.PurchaseOrder_APPROVED || to == procurementV1.PurchaseOrder_REJECTED {
+		if cur, total, ok, gerr := s.approvalRequestRepo.PendingStepsByBizRef(ctx,
+			fmt.Sprintf(poApprovalBizRef, id)); gerr == nil && ok && total > 1 && cur < total {
+			return nil, procurementV1.ErrorConflict(
+				"多级审批进行中（第 %d/%d 级），请在审批中心逐级审批", cur, total)
+		}
+	}
+
 	if err := s.purchaseOrderRepo.TransitionStatus(ctx, id, old.GetStatus(), to); err != nil {
 		return nil, err
 	}

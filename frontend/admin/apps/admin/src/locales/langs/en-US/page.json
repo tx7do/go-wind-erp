@@ -504,7 +504,9 @@
       "approve": "Approve",
       "reject": "Reject",
       "cancelRequest": "Cancel"
-    }
+    },
+    "progress": "Progress",
+    "stepOf": "Step {current}/{total}"
   },
   "supplier": {
     "moduleName": "Supplier",
@@ -782,5 +784,27 @@
     "expiryDate": "Expiry",
     "remainingQuantity": "Remaining",
     "lotStatus": "Status"
+  },
+  "approvalFlow": {
+    "moduleName": "Approval Flows",
+    "stepsCount": "Steps",
+    "stepsOverview": "Step Definitions",
+    "steps": "Approval Steps (advance in order)",
+    "stepName": "Step name (e.g. Manager Review)",
+    "stepRole": "Approver Role (holders may approve)",
+    "addStep": "Add Step",
+    "stepsRequired": "At least one step is required",
+    "formInvalid": "Fill biz type and flow name",
+    "bizType": {
+      "PURCHASE_ORDER": "Purchase Order",
+      "SALES_ORDER": "Sales Order",
+      "PAYMENT": "Payment",
+      "RECEIPT": "Receipt"
+    },
+    "name": "Flow Name",
+    "button": {
+      "create": "New Flow"
+    },
+    "bizTypeLabel": "Biz Type"
   }
 }

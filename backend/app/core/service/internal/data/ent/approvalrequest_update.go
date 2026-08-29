@@ -344,6 +344,87 @@ func (_u *ApprovalRequestUpdate) ClearComment() *ApprovalRequestUpdate {
 	return _u
 }
 
+// SetCurrentStep sets the "current_step" field.
+func (_u *ApprovalRequestUpdate) SetCurrentStep(v uint32) *ApprovalRequestUpdate {
+	_u.mutation.ResetCurrentStep()
+	_u.mutation.SetCurrentStep(v)
+	return _u
+}
+
+// SetNillableCurrentStep sets the "current_step" field if the given value is not nil.
+func (_u *ApprovalRequestUpdate) SetNillableCurrentStep(v *uint32) *ApprovalRequestUpdate {
+	if v != nil {
+		_u.SetCurrentStep(*v)
+	}
+	return _u
+}
+
+// AddCurrentStep adds value to the "current_step" field.
+func (_u *ApprovalRequestUpdate) AddCurrentStep(v int32) *ApprovalRequestUpdate {
+	_u.mutation.AddCurrentStep(v)
+	return _u
+}
+
+// ClearCurrentStep clears the value of the "current_step" field.
+func (_u *ApprovalRequestUpdate) ClearCurrentStep() *ApprovalRequestUpdate {
+	_u.mutation.ClearCurrentStep()
+	return _u
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (_u *ApprovalRequestUpdate) SetTotalSteps(v uint32) *ApprovalRequestUpdate {
+	_u.mutation.ResetTotalSteps()
+	_u.mutation.SetTotalSteps(v)
+	return _u
+}
+
+// SetNillableTotalSteps sets the "total_steps" field if the given value is not nil.
+func (_u *ApprovalRequestUpdate) SetNillableTotalSteps(v *uint32) *ApprovalRequestUpdate {
+	if v != nil {
+		_u.SetTotalSteps(*v)
+	}
+	return _u
+}
+
+// AddTotalSteps adds value to the "total_steps" field.
+func (_u *ApprovalRequestUpdate) AddTotalSteps(v int32) *ApprovalRequestUpdate {
+	_u.mutation.AddTotalSteps(v)
+	return _u
+}
+
+// ClearTotalSteps clears the value of the "total_steps" field.
+func (_u *ApprovalRequestUpdate) ClearTotalSteps() *ApprovalRequestUpdate {
+	_u.mutation.ClearTotalSteps()
+	return _u
+}
+
+// SetFlowID sets the "flow_id" field.
+func (_u *ApprovalRequestUpdate) SetFlowID(v uint32) *ApprovalRequestUpdate {
+	_u.mutation.ResetFlowID()
+	_u.mutation.SetFlowID(v)
+	return _u
+}
+
+// SetNillableFlowID sets the "flow_id" field if the given value is not nil.
+func (_u *ApprovalRequestUpdate) SetNillableFlowID(v *uint32) *ApprovalRequestUpdate {
+	if v != nil {
+		_u.SetFlowID(*v)
+	}
+	return _u
+}
+
+// AddFlowID adds value to the "flow_id" field.
+func (_u *ApprovalRequestUpdate) AddFlowID(v int32) *ApprovalRequestUpdate {
+	_u.mutation.AddFlowID(v)
+	return _u
+}
+
+// ClearFlowID clears the value of the "flow_id" field.
+func (_u *ApprovalRequestUpdate) ClearFlowID() *ApprovalRequestUpdate {
+	_u.mutation.ClearFlowID()
+	return _u
+}
+
 // Mutation returns the ApprovalRequestMutation object of the builder.
 func (_u *ApprovalRequestUpdate) Mutation() *ApprovalRequestMutation {
 	return _u.mutation
@@ -508,6 +589,33 @@ func (_u *ApprovalRequestUpdate) sqlSave(ctx context.Context) (_node int, err er
 	}
 	if _u.mutation.CommentCleared() {
 		_spec.ClearField(approvalrequest.FieldComment, field.TypeString)
+	}
+	if value, ok := _u.mutation.CurrentStep(); ok {
+		_spec.SetField(approvalrequest.FieldCurrentStep, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentStep(); ok {
+		_spec.AddField(approvalrequest.FieldCurrentStep, field.TypeUint32, value)
+	}
+	if _u.mutation.CurrentStepCleared() {
+		_spec.ClearField(approvalrequest.FieldCurrentStep, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.TotalSteps(); ok {
+		_spec.SetField(approvalrequest.FieldTotalSteps, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedTotalSteps(); ok {
+		_spec.AddField(approvalrequest.FieldTotalSteps, field.TypeUint32, value)
+	}
+	if _u.mutation.TotalStepsCleared() {
+		_spec.ClearField(approvalrequest.FieldTotalSteps, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.FlowID(); ok {
+		_spec.SetField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedFlowID(); ok {
+		_spec.AddField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+	}
+	if _u.mutation.FlowIDCleared() {
+		_spec.ClearField(approvalrequest.FieldFlowID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -846,6 +954,87 @@ func (_u *ApprovalRequestUpdateOne) ClearComment() *ApprovalRequestUpdateOne {
 	return _u
 }
 
+// SetCurrentStep sets the "current_step" field.
+func (_u *ApprovalRequestUpdateOne) SetCurrentStep(v uint32) *ApprovalRequestUpdateOne {
+	_u.mutation.ResetCurrentStep()
+	_u.mutation.SetCurrentStep(v)
+	return _u
+}
+
+// SetNillableCurrentStep sets the "current_step" field if the given value is not nil.
+func (_u *ApprovalRequestUpdateOne) SetNillableCurrentStep(v *uint32) *ApprovalRequestUpdateOne {
+	if v != nil {
+		_u.SetCurrentStep(*v)
+	}
+	return _u
+}
+
+// AddCurrentStep adds value to the "current_step" field.
+func (_u *ApprovalRequestUpdateOne) AddCurrentStep(v int32) *ApprovalRequestUpdateOne {
+	_u.mutation.AddCurrentStep(v)
+	return _u
+}
+
+// ClearCurrentStep clears the value of the "current_step" field.
+func (_u *ApprovalRequestUpdateOne) ClearCurrentStep() *ApprovalRequestUpdateOne {
+	_u.mutation.ClearCurrentStep()
+	return _u
+}
+
+// SetTotalSteps sets the "total_steps" field.
+func (_u *ApprovalRequestUpdateOne) SetTotalSteps(v uint32) *ApprovalRequestUpdateOne {
+	_u.mutation.ResetTotalSteps()
+	_u.mutation.SetTotalSteps(v)
+	return _u
+}
+
+// SetNillableTotalSteps sets the "total_steps" field if the given value is not nil.
+func (_u *ApprovalRequestUpdateOne) SetNillableTotalSteps(v *uint32) *ApprovalRequestUpdateOne {
+	if v != nil {
+		_u.SetTotalSteps(*v)
+	}
+	return _u
+}
+
+// AddTotalSteps adds value to the "total_steps" field.
+func (_u *ApprovalRequestUpdateOne) AddTotalSteps(v int32) *ApprovalRequestUpdateOne {
+	_u.mutation.AddTotalSteps(v)
+	return _u
+}
+
+// ClearTotalSteps clears the value of the "total_steps" field.
+func (_u *ApprovalRequestUpdateOne) ClearTotalSteps() *ApprovalRequestUpdateOne {
+	_u.mutation.ClearTotalSteps()
+	return _u
+}
+
+// SetFlowID sets the "flow_id" field.
+func (_u *ApprovalRequestUpdateOne) SetFlowID(v uint32) *ApprovalRequestUpdateOne {
+	_u.mutation.ResetFlowID()
+	_u.mutation.SetFlowID(v)
+	return _u
+}
+
+// SetNillableFlowID sets the "flow_id" field if the given value is not nil.
+func (_u *ApprovalRequestUpdateOne) SetNillableFlowID(v *uint32) *ApprovalRequestUpdateOne {
+	if v != nil {
+		_u.SetFlowID(*v)
+	}
+	return _u
+}
+
+// AddFlowID adds value to the "flow_id" field.
+func (_u *ApprovalRequestUpdateOne) AddFlowID(v int32) *ApprovalRequestUpdateOne {
+	_u.mutation.AddFlowID(v)
+	return _u
+}
+
+// ClearFlowID clears the value of the "flow_id" field.
+func (_u *ApprovalRequestUpdateOne) ClearFlowID() *ApprovalRequestUpdateOne {
+	_u.mutation.ClearFlowID()
+	return _u
+}
+
 // Mutation returns the ApprovalRequestMutation object of the builder.
 func (_u *ApprovalRequestUpdateOne) Mutation() *ApprovalRequestMutation {
 	return _u.mutation
@@ -1040,6 +1229,33 @@ func (_u *ApprovalRequestUpdateOne) sqlSave(ctx context.Context) (_node *Approva
 	}
 	if _u.mutation.CommentCleared() {
 		_spec.ClearField(approvalrequest.FieldComment, field.TypeString)
+	}
+	if value, ok := _u.mutation.CurrentStep(); ok {
+		_spec.SetField(approvalrequest.FieldCurrentStep, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentStep(); ok {
+		_spec.AddField(approvalrequest.FieldCurrentStep, field.TypeUint32, value)
+	}
+	if _u.mutation.CurrentStepCleared() {
+		_spec.ClearField(approvalrequest.FieldCurrentStep, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.TotalSteps(); ok {
+		_spec.SetField(approvalrequest.FieldTotalSteps, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedTotalSteps(); ok {
+		_spec.AddField(approvalrequest.FieldTotalSteps, field.TypeUint32, value)
+	}
+	if _u.mutation.TotalStepsCleared() {
+		_spec.ClearField(approvalrequest.FieldTotalSteps, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.FlowID(); ok {
+		_spec.SetField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedFlowID(); ok {
+		_spec.AddField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+	}
+	if _u.mutation.FlowIDCleared() {
+		_spec.ClearField(approvalrequest.FieldFlowID, field.TypeUint32)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &ApprovalRequest{config: _u.config}

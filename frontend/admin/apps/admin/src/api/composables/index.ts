@@ -9,6 +9,8 @@ export * from './api';
 
 export * from './approval';
 
+export * from './approval-flow';
+
 export * from './api-audit-log';
 
 export * from './auth';

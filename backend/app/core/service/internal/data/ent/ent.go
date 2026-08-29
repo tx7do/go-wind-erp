@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflowstep"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
 	"go-wind-erp/app/core/service/internal/data/ent/customer"
 	"go-wind-erp/app/core/service/internal/data/ent/dataaccessauditlog"
@@ -133,6 +135,8 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			api.Table:                      api.ValidColumn,
 			apiauditlog.Table:              apiauditlog.ValidColumn,
+			approvalflow.Table:             approvalflow.ValidColumn,
+			approvalflowstep.Table:         approvalflowstep.ValidColumn,
 			approvalrequest.Table:          approvalrequest.ValidColumn,
 			customer.Table:                 customer.ValidColumn,
 			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,

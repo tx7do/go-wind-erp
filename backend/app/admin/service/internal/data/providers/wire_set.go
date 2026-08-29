@@ -64,6 +64,7 @@ var ProviderSet = wire.NewSet(
 	data.NewStockPickingServiceClient,
 
 	data.NewApprovalRequestServiceClient,
+	data.NewApprovalFlowServiceClient,
 
 	data.NewSupplierServiceClient,
 

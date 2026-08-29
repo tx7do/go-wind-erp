@@ -162,6 +162,59 @@ var (
 			},
 		},
 	}
+	// AprApprovalFlowsColumns holds the columns for the "apr_approval_flows" table.
+	AprApprovalFlowsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "biz_type", Type: field.TypeString, Nullable: true, Comment: "业务类型：PURCHASE_ORDER/SALES_ORDER/PAYMENT/RECEIPT"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "流程名称"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "启用状态：ON=生效（同业务类型唯一），OFF=停用", Enums: []string{"ON", "OFF"}, Default: "ON"},
+	}
+	// AprApprovalFlowsTable holds the schema information for the "apr_approval_flows" table.
+	AprApprovalFlowsTable = &schema.Table{
+		Name:       "apr_approval_flows",
+		Comment:    "审批流模板表（多级审批）",
+		Columns:    AprApprovalFlowsColumns,
+		PrimaryKey: []*schema.Column{AprApprovalFlowsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_apr_flow_tenant_biz_type",
+				Unique:  false,
+				Columns: []*schema.Column{AprApprovalFlowsColumns[8], AprApprovalFlowsColumns[9]},
+			},
+		},
+	}
+	// AprApprovalFlowStepsColumns holds the columns for the "apr_approval_flow_steps" table.
+	AprApprovalFlowStepsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "flow_id", Type: field.TypeUint32, Nullable: true, Comment: "所属流程ID", Default: 0},
+		{Name: "seq", Type: field.TypeUint32, Nullable: true, Comment: "级序（1..N，从 1 起）", Default: 1},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "级名称（如：主管复核/经理终审）"},
+		{Name: "role_code", Type: field.TypeString, Nullable: true, Comment: "本级审批人角色编码"},
+	}
+	// AprApprovalFlowStepsTable holds the schema information for the "apr_approval_flow_steps" table.
+	AprApprovalFlowStepsTable = &schema.Table{
+		Name:       "apr_approval_flow_steps",
+		Comment:    "审批级定义表（多级审批）",
+		Columns:    AprApprovalFlowStepsColumns,
+		PrimaryKey: []*schema.Column{AprApprovalFlowStepsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_apr_flow_step_tenant_flow_seq",
+				Unique:  false,
+				Columns: []*schema.Column{AprApprovalFlowStepsColumns[2], AprApprovalFlowStepsColumns[3], AprApprovalFlowStepsColumns[4]},
+			},
+		},
+	}
 	// AprApprovalRequestsColumns holds the columns for the "apr_approval_requests" table.
 	AprApprovalRequestsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -181,6 +234,9 @@ var (
 		{Name: "applicant_id", Type: field.TypeUint32, Nullable: true, Comment: "申请人用户ID", Default: 0},
 		{Name: "approver_id", Type: field.TypeUint32, Nullable: true, Comment: "审批人用户ID"},
 		{Name: "comment", Type: field.TypeString, Nullable: true, Comment: "审批意见"},
+		{Name: "current_step", Type: field.TypeUint32, Nullable: true, Comment: "当前审批级（从 1 起）", Default: 1},
+		{Name: "total_steps", Type: field.TypeUint32, Nullable: true, Comment: "总级数（<=1 为单级审批）", Default: 1},
+		{Name: "flow_id", Type: field.TypeUint32, Nullable: true, Comment: "快照来源流程ID（0=无流程）", Default: 0},
 	}
 	// AprApprovalRequestsTable holds the schema information for the "apr_approval_requests" table.
 	AprApprovalRequestsTable = &schema.Table{
@@ -3563,6 +3619,8 @@ var (
 	Tables = []*schema.Table{
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		AprApprovalFlowsTable,
+		AprApprovalFlowStepsTable,
 		AprApprovalRequestsTable,
 		SalCustomersTable,
 		SysDataAccessAuditLogsTable,
@@ -3631,6 +3689,16 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	AprApprovalFlowsTable.Annotation = &entsql.Annotation{
+		Table:     "apr_approval_flows",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	AprApprovalFlowStepsTable.Annotation = &entsql.Annotation{
+		Table:     "apr_approval_flow_steps",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

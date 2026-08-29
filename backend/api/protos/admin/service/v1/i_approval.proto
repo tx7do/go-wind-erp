@@ -63,3 +63,43 @@ service ApprovalRequestService {
     };
   }
 }
+
+// 审批流模板服务（多级审批配置）
+service ApprovalFlowService {
+  // 查询审批流列表
+  rpc List (pagination.PagingRequest) returns (approval.service.v1.ListApprovalFlowResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/approval-flows"
+    };
+  }
+
+  // 查询审批流详情
+  rpc Get (approval.service.v1.GetApprovalFlowRequest) returns (approval.service.v1.ApprovalFlow) {
+    option (google.api.http) = {
+      get: "/admin/v1/approval-flows/{id}"
+    };
+  }
+
+  // 创建审批流
+  rpc Create (approval.service.v1.CreateApprovalFlowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/approval-flows"
+      body: "*"
+    };
+  }
+
+  // 更新审批流（级整体替换）
+  rpc Update (approval.service.v1.UpdateApprovalFlowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/approval-flows/{data.id}"
+      body: "*"
+    };
+  }
+
+  // 删除审批流
+  rpc Delete (approval.service.v1.DeleteApprovalFlowRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/approval-flows/{id}"
+    };
+  }
+}

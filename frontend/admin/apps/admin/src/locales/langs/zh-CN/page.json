@@ -533,7 +533,9 @@
       "approve": "通过",
       "reject": "驳回",
       "cancelRequest": "撤销"
-    }
+    },
+    "progress": "审批进度",
+    "stepOf": "第 {current}/{total} 级"
   },
   "supplier": {
     "moduleName": "供应商",
@@ -811,5 +813,27 @@
     "expiryDate": "效期",
     "remainingQuantity": "批次余量",
     "lotStatus": "效期状态"
+  },
+  "approvalFlow": {
+    "moduleName": "审批流配置",
+    "stepsCount": "级数",
+    "stepsOverview": "级定义",
+    "steps": "审批级（按顺序逐级推进）",
+    "stepName": "级名称（如：主管复核）",
+    "stepRole": "审批角色（持有者可审本级）",
+    "addStep": "添加级",
+    "stepsRequired": "至少需要一级审批",
+    "formInvalid": "请填写业务类型与流程名称",
+    "bizType": {
+      "PURCHASE_ORDER": "采购单",
+      "SALES_ORDER": "销售单",
+      "PAYMENT": "付款",
+      "RECEIPT": "收款"
+    },
+    "name": "流程名称",
+    "button": {
+      "create": "创建审批流"
+    },
+    "bizTypeLabel": "业务类型"
   }
 }

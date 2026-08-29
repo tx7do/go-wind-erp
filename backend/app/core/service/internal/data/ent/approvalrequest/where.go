@@ -129,6 +129,21 @@ func Comment(v string) predicate.ApprovalRequest {
 	return predicate.ApprovalRequest(sql.FieldEQ(FieldComment, v))
 }
 
+// CurrentStep applies equality check predicate on the "current_step" field. It's identical to CurrentStepEQ.
+func CurrentStep(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldCurrentStep, v))
+}
+
+// TotalSteps applies equality check predicate on the "total_steps" field. It's identical to TotalStepsEQ.
+func TotalSteps(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldTotalSteps, v))
+}
+
+// FlowID applies equality check predicate on the "flow_id" field. It's identical to FlowIDEQ.
+func FlowID(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldFlowID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.ApprovalRequest {
 	return predicate.ApprovalRequest(sql.FieldEQ(FieldCreatedAt, v))
@@ -1057,6 +1072,156 @@ func CommentEqualFold(v string) predicate.ApprovalRequest {
 // CommentContainsFold applies the ContainsFold predicate on the "comment" field.
 func CommentContainsFold(v string) predicate.ApprovalRequest {
 	return predicate.ApprovalRequest(sql.FieldContainsFold(FieldComment, v))
+}
+
+// CurrentStepEQ applies the EQ predicate on the "current_step" field.
+func CurrentStepEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldCurrentStep, v))
+}
+
+// CurrentStepNEQ applies the NEQ predicate on the "current_step" field.
+func CurrentStepNEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNEQ(FieldCurrentStep, v))
+}
+
+// CurrentStepIn applies the In predicate on the "current_step" field.
+func CurrentStepIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIn(FieldCurrentStep, vs...))
+}
+
+// CurrentStepNotIn applies the NotIn predicate on the "current_step" field.
+func CurrentStepNotIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotIn(FieldCurrentStep, vs...))
+}
+
+// CurrentStepGT applies the GT predicate on the "current_step" field.
+func CurrentStepGT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGT(FieldCurrentStep, v))
+}
+
+// CurrentStepGTE applies the GTE predicate on the "current_step" field.
+func CurrentStepGTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGTE(FieldCurrentStep, v))
+}
+
+// CurrentStepLT applies the LT predicate on the "current_step" field.
+func CurrentStepLT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLT(FieldCurrentStep, v))
+}
+
+// CurrentStepLTE applies the LTE predicate on the "current_step" field.
+func CurrentStepLTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLTE(FieldCurrentStep, v))
+}
+
+// CurrentStepIsNil applies the IsNil predicate on the "current_step" field.
+func CurrentStepIsNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIsNull(FieldCurrentStep))
+}
+
+// CurrentStepNotNil applies the NotNil predicate on the "current_step" field.
+func CurrentStepNotNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotNull(FieldCurrentStep))
+}
+
+// TotalStepsEQ applies the EQ predicate on the "total_steps" field.
+func TotalStepsEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldTotalSteps, v))
+}
+
+// TotalStepsNEQ applies the NEQ predicate on the "total_steps" field.
+func TotalStepsNEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNEQ(FieldTotalSteps, v))
+}
+
+// TotalStepsIn applies the In predicate on the "total_steps" field.
+func TotalStepsIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIn(FieldTotalSteps, vs...))
+}
+
+// TotalStepsNotIn applies the NotIn predicate on the "total_steps" field.
+func TotalStepsNotIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotIn(FieldTotalSteps, vs...))
+}
+
+// TotalStepsGT applies the GT predicate on the "total_steps" field.
+func TotalStepsGT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGT(FieldTotalSteps, v))
+}
+
+// TotalStepsGTE applies the GTE predicate on the "total_steps" field.
+func TotalStepsGTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGTE(FieldTotalSteps, v))
+}
+
+// TotalStepsLT applies the LT predicate on the "total_steps" field.
+func TotalStepsLT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLT(FieldTotalSteps, v))
+}
+
+// TotalStepsLTE applies the LTE predicate on the "total_steps" field.
+func TotalStepsLTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLTE(FieldTotalSteps, v))
+}
+
+// TotalStepsIsNil applies the IsNil predicate on the "total_steps" field.
+func TotalStepsIsNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIsNull(FieldTotalSteps))
+}
+
+// TotalStepsNotNil applies the NotNil predicate on the "total_steps" field.
+func TotalStepsNotNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotNull(FieldTotalSteps))
+}
+
+// FlowIDEQ applies the EQ predicate on the "flow_id" field.
+func FlowIDEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldEQ(FieldFlowID, v))
+}
+
+// FlowIDNEQ applies the NEQ predicate on the "flow_id" field.
+func FlowIDNEQ(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNEQ(FieldFlowID, v))
+}
+
+// FlowIDIn applies the In predicate on the "flow_id" field.
+func FlowIDIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIn(FieldFlowID, vs...))
+}
+
+// FlowIDNotIn applies the NotIn predicate on the "flow_id" field.
+func FlowIDNotIn(vs ...uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotIn(FieldFlowID, vs...))
+}
+
+// FlowIDGT applies the GT predicate on the "flow_id" field.
+func FlowIDGT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGT(FieldFlowID, v))
+}
+
+// FlowIDGTE applies the GTE predicate on the "flow_id" field.
+func FlowIDGTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldGTE(FieldFlowID, v))
+}
+
+// FlowIDLT applies the LT predicate on the "flow_id" field.
+func FlowIDLT(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLT(FieldFlowID, v))
+}
+
+// FlowIDLTE applies the LTE predicate on the "flow_id" field.
+func FlowIDLTE(v uint32) predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldLTE(FieldFlowID, v))
+}
+
+// FlowIDIsNil applies the IsNil predicate on the "flow_id" field.
+func FlowIDIsNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldIsNull(FieldFlowID))
+}
+
+// FlowIDNotNil applies the NotNil predicate on the "flow_id" field.
+func FlowIDNotNil() predicate.ApprovalRequest {
+	return predicate.ApprovalRequest(sql.FieldNotNull(FieldFlowID))
 }
 
 // And groups predicates with the AND operator between them.

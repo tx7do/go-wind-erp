@@ -97,6 +97,18 @@ func (m *ApprovalRequest) validate(all bool) error {
 		// no validation rules for Remark
 	}
 
+	if m.CurrentStep != nil {
+		// no validation rules for CurrentStep
+	}
+
+	if m.TotalSteps != nil {
+		// no validation rules for TotalSteps
+	}
+
+	if m.FlowId != nil {
+		// no validation rules for FlowId
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}
@@ -1260,3 +1272,1025 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CountApprovalRequestResponseValidationError{}
+
+// Validate checks the field values on ApprovalFlow with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ApprovalFlow) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApprovalFlow with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ApprovalFlowMultiError, or
+// nil if none found.
+func (m *ApprovalFlow) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApprovalFlow) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetSteps() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ApprovalFlowValidationError{
+						field:  fmt.Sprintf("Steps[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ApprovalFlowValidationError{
+						field:  fmt.Sprintf("Steps[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ApprovalFlowValidationError{
+					field:  fmt.Sprintf("Steps[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.BizType != nil {
+		// no validation rules for BizType
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ApprovalFlowValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ApprovalFlowValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ApprovalFlowValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ApprovalFlowMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApprovalFlowMultiError is an error wrapping multiple validation errors
+// returned by ApprovalFlow.ValidateAll() if the designated constraints aren't met.
+type ApprovalFlowMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApprovalFlowMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApprovalFlowMultiError) AllErrors() []error { return m }
+
+// ApprovalFlowValidationError is the validation error returned by
+// ApprovalFlow.Validate if the designated constraints aren't met.
+type ApprovalFlowValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApprovalFlowValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApprovalFlowValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApprovalFlowValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApprovalFlowValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApprovalFlowValidationError) ErrorName() string { return "ApprovalFlowValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ApprovalFlowValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApprovalFlow.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApprovalFlowValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApprovalFlowValidationError{}
+
+// Validate checks the field values on ApprovalFlowStep with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ApprovalFlowStep) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApprovalFlowStep with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApprovalFlowStepMultiError, or nil if none found.
+func (m *ApprovalFlowStep) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApprovalFlowStep) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.FlowId != nil {
+		// no validation rules for FlowId
+	}
+
+	if m.Seq != nil {
+		// no validation rules for Seq
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.RoleCode != nil {
+		// no validation rules for RoleCode
+	}
+
+	if len(errors) > 0 {
+		return ApprovalFlowStepMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApprovalFlowStepMultiError is an error wrapping multiple validation errors
+// returned by ApprovalFlowStep.ValidateAll() if the designated constraints
+// aren't met.
+type ApprovalFlowStepMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApprovalFlowStepMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApprovalFlowStepMultiError) AllErrors() []error { return m }
+
+// ApprovalFlowStepValidationError is the validation error returned by
+// ApprovalFlowStep.Validate if the designated constraints aren't met.
+type ApprovalFlowStepValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApprovalFlowStepValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApprovalFlowStepValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApprovalFlowStepValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApprovalFlowStepValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApprovalFlowStepValidationError) ErrorName() string { return "ApprovalFlowStepValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ApprovalFlowStepValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApprovalFlowStep.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApprovalFlowStepValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApprovalFlowStepValidationError{}
+
+// Validate checks the field values on ListApprovalFlowResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListApprovalFlowResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListApprovalFlowResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListApprovalFlowResponseMultiError, or nil if none found.
+func (m *ListApprovalFlowResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListApprovalFlowResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListApprovalFlowResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListApprovalFlowResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListApprovalFlowResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListApprovalFlowResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListApprovalFlowResponseMultiError is an error wrapping multiple validation
+// errors returned by ListApprovalFlowResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListApprovalFlowResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListApprovalFlowResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListApprovalFlowResponseMultiError) AllErrors() []error { return m }
+
+// ListApprovalFlowResponseValidationError is the validation error returned by
+// ListApprovalFlowResponse.Validate if the designated constraints aren't met.
+type ListApprovalFlowResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListApprovalFlowResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListApprovalFlowResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListApprovalFlowResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListApprovalFlowResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListApprovalFlowResponseValidationError) ErrorName() string {
+	return "ListApprovalFlowResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListApprovalFlowResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListApprovalFlowResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListApprovalFlowResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListApprovalFlowResponseValidationError{}
+
+// Validate checks the field values on GetApprovalFlowRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetApprovalFlowRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetApprovalFlowRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetApprovalFlowRequestMultiError, or nil if none found.
+func (m *GetApprovalFlowRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetApprovalFlowRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.QueryBy.(type) {
+	case *GetApprovalFlowRequest_Id:
+		if v == nil {
+			err := GetApprovalFlowRequestValidationError{
+				field:  "QueryBy",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Id
+	default:
+		_ = v // ensures v is used
+	}
+
+	if m.ViewMask != nil {
+
+		if all {
+			switch v := interface{}(m.GetViewMask()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetApprovalFlowRequestValidationError{
+						field:  "ViewMask",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetApprovalFlowRequestValidationError{
+						field:  "ViewMask",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetViewMask()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetApprovalFlowRequestValidationError{
+					field:  "ViewMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetApprovalFlowRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetApprovalFlowRequestMultiError is an error wrapping multiple validation
+// errors returned by GetApprovalFlowRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetApprovalFlowRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetApprovalFlowRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetApprovalFlowRequestMultiError) AllErrors() []error { return m }
+
+// GetApprovalFlowRequestValidationError is the validation error returned by
+// GetApprovalFlowRequest.Validate if the designated constraints aren't met.
+type GetApprovalFlowRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetApprovalFlowRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetApprovalFlowRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetApprovalFlowRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetApprovalFlowRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetApprovalFlowRequestValidationError) ErrorName() string {
+	return "GetApprovalFlowRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetApprovalFlowRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetApprovalFlowRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetApprovalFlowRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetApprovalFlowRequestValidationError{}
+
+// Validate checks the field values on CreateApprovalFlowRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateApprovalFlowRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateApprovalFlowRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateApprovalFlowRequestMultiError, or nil if none found.
+func (m *CreateApprovalFlowRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateApprovalFlowRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateApprovalFlowRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateApprovalFlowRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateApprovalFlowRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateApprovalFlowRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateApprovalFlowRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateApprovalFlowRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CreateApprovalFlowRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateApprovalFlowRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateApprovalFlowRequestMultiError) AllErrors() []error { return m }
+
+// CreateApprovalFlowRequestValidationError is the validation error returned by
+// CreateApprovalFlowRequest.Validate if the designated constraints aren't met.
+type CreateApprovalFlowRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateApprovalFlowRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateApprovalFlowRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateApprovalFlowRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateApprovalFlowRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateApprovalFlowRequestValidationError) ErrorName() string {
+	return "CreateApprovalFlowRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateApprovalFlowRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateApprovalFlowRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateApprovalFlowRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateApprovalFlowRequestValidationError{}
+
+// Validate checks the field values on UpdateApprovalFlowRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateApprovalFlowRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateApprovalFlowRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateApprovalFlowRequestMultiError, or nil if none found.
+func (m *UpdateApprovalFlowRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateApprovalFlowRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateApprovalFlowRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateApprovalFlowRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateApprovalFlowRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.UpdateMask != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdateMask()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateApprovalFlowRequestValidationError{
+						field:  "UpdateMask",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateApprovalFlowRequestValidationError{
+						field:  "UpdateMask",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateApprovalFlowRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.AllowMissing != nil {
+		// no validation rules for AllowMissing
+	}
+
+	if len(errors) > 0 {
+		return UpdateApprovalFlowRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateApprovalFlowRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateApprovalFlowRequest.ValidateAll() if the
+// designated constraints aren't met.
+type UpdateApprovalFlowRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateApprovalFlowRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateApprovalFlowRequestMultiError) AllErrors() []error { return m }
+
+// UpdateApprovalFlowRequestValidationError is the validation error returned by
+// UpdateApprovalFlowRequest.Validate if the designated constraints aren't met.
+type UpdateApprovalFlowRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateApprovalFlowRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateApprovalFlowRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateApprovalFlowRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateApprovalFlowRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateApprovalFlowRequestValidationError) ErrorName() string {
+	return "UpdateApprovalFlowRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateApprovalFlowRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateApprovalFlowRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateApprovalFlowRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateApprovalFlowRequestValidationError{}
+
+// Validate checks the field values on DeleteApprovalFlowRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteApprovalFlowRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteApprovalFlowRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteApprovalFlowRequestMultiError, or nil if none found.
+func (m *DeleteApprovalFlowRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteApprovalFlowRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.QueryBy.(type) {
+	case *DeleteApprovalFlowRequest_Id:
+		if v == nil {
+			err := DeleteApprovalFlowRequestValidationError{
+				field:  "QueryBy",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Id
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return DeleteApprovalFlowRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteApprovalFlowRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteApprovalFlowRequest.ValidateAll() if the
+// designated constraints aren't met.
+type DeleteApprovalFlowRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteApprovalFlowRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteApprovalFlowRequestMultiError) AllErrors() []error { return m }
+
+// DeleteApprovalFlowRequestValidationError is the validation error returned by
+// DeleteApprovalFlowRequest.Validate if the designated constraints aren't met.
+type DeleteApprovalFlowRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteApprovalFlowRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteApprovalFlowRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteApprovalFlowRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteApprovalFlowRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteApprovalFlowRequestValidationError) ErrorName() string {
+	return "DeleteApprovalFlowRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteApprovalFlowRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteApprovalFlowRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteApprovalFlowRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteApprovalFlowRequestValidationError{}

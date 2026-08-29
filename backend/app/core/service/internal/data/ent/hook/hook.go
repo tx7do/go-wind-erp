@@ -32,6 +32,30 @@ func (f ApiAuditLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiAuditLogMutation", m)
 }
 
+// The ApprovalFlowFunc type is an adapter to allow the use of ordinary
+// function as ApprovalFlow mutator.
+type ApprovalFlowFunc func(context.Context, *ent.ApprovalFlowMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApprovalFlowFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApprovalFlowMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApprovalFlowMutation", m)
+}
+
+// The ApprovalFlowStepFunc type is an adapter to allow the use of ordinary
+// function as ApprovalFlowStep mutator.
+type ApprovalFlowStepFunc func(context.Context, *ent.ApprovalFlowStepMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApprovalFlowStepFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApprovalFlowStepMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApprovalFlowStepMutation", m)
+}
+
 // The ApprovalRequestFunc type is an adapter to allow the use of ordinary
 // function as ApprovalRequest mutator.
 type ApprovalRequestFunc func(context.Context, *ent.ApprovalRequestMutation) (ent.Value, error)

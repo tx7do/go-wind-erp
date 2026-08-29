@@ -98,6 +98,12 @@ const gridOptions: VxeGridProps<ApprovalRequest> = {
       field: 'status',
       slots: { default: 'status' },
     },
+    {
+      title: $t('page.approval.progress'),
+      field: 'currentStep',
+      slots: { default: 'progress' },
+      width: 110,
+    },
     { title: $t('page.approval.comment'), field: 'comment' },
     {
       title: $t('ui.table.createdAt'),
@@ -166,6 +172,12 @@ async function handleDelete(row: any) {
         </a-button>
       </template>
 
+      <template #progress="{ row }">
+        <span v-if="(row.totalSteps ?? 1) > 1">
+          {{ $t('page.approval.stepOf', { current: row.currentStep ?? 1, total: row.totalSteps }) }}
+        </span>
+        <span v-else>—</span>
+      </template>
       <template #status="{ row }">
         <a-tag :color="approvalStatusToColor(row.status)">
           {{ approvalStatusToName(row.status) }}

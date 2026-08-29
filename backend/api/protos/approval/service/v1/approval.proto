@@ -40,6 +40,25 @@ service ApprovalRequestService {
   rpc Cancel (CancelApprovalRequestRequest) returns (google.protobuf.Empty) {}
 }
 
+// 审批流模板服务（多级审批）：每租户每业务类型至多一条生效流程；
+// 提交业务单时按流程快照级数进审批请求，逐级角色制推进。
+service ApprovalFlowService {
+  // 查询审批流列表（含级定义）
+  rpc List (pagination.PagingRequest) returns (ListApprovalFlowResponse) {}
+
+  // 查询审批流详情（含级定义）
+  rpc Get (GetApprovalFlowRequest) returns (ApprovalFlow) {}
+
+  // 创建审批流（级整体写入；同租户同业务类型唯一）
+  rpc Create (CreateApprovalFlowRequest) returns (google.protobuf.Empty) {}
+
+  // 更新审批流（级整体替换）
+  rpc Update (UpdateApprovalFlowRequest) returns (google.protobuf.Empty) {}
+
+  // 删除审批流（连带级定义；不影响在途审批单的快照级数）
+  rpc Delete (DeleteApprovalFlowRequest) returns (google.protobuf.Empty) {}
+}
+
 // 审批请求
 message ApprovalRequest {
   // 审批状态
@@ -121,6 +140,22 @@ message ApprovalRequest {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
+  // 多级审批：创建时从生效流程快照（<=1 为传统单级审批）
+  optional uint32 current_step = 10 [
+    json_name = "currentStep",
+    (gnostic.openapi.v3.property) = {description: "当前审批级（从 1 起）"}
+  ]; // 当前审批级
+
+  optional uint32 total_steps = 12 [
+    json_name = "totalSteps",
+    (gnostic.openapi.v3.property) = {description: "总级数（<=1 为单级审批）"}
+  ]; // 总级数
+
+  optional uint32 flow_id = 13 [
+    json_name = "flowId",
+    (gnostic.openapi.v3.property) = {description: "快照来源流程ID（0=无流程）"}
+  ]; // 快照来源流程ID
+
   optional uint32 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
@@ -200,4 +235,133 @@ message CancelApprovalRequestRequest {
 
 message CountApprovalRequestResponse {
   uint64 count = 1;
+}
+
+// =========== ApprovalFlow ==========
+
+// 审批流模板：每租户每业务类型至多一条生效流程；steps 为级定义（seq 1..N）。
+message ApprovalFlow {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "流程ID"}
+  ]; // 流程ID
+
+  optional string biz_type = 2 [
+    json_name = "bizType",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "业务类型：PURCHASE_ORDER/SALES_ORDER/PAYMENT/RECEIPT"}
+  ]; // 业务类型
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "流程名称"}
+  ]; // 流程名称
+
+  optional string status = 4 [
+    json_name = "status",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "启用状态：ON/OFF"}
+  ]; // 启用状态
+
+  repeated ApprovalFlowStep steps = 5 [
+    (gnostic.openapi.v3.property) = {description: "级定义（seq 1..N，整体替换）"}
+  ]; // 级定义
+
+  optional string remark = 11 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ]; // 备注
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
+  ];  // 租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+}
+
+// 审批级定义：持有 role_code 角色的用户即本级候选审批人（申请人除外）。
+message ApprovalFlowStep {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "级ID"}
+  ]; // 级ID
+
+  optional uint32 flow_id = 2 [
+    json_name = "flowId",
+    (gnostic.openapi.v3.property) = {description: "所属流程ID"}
+  ]; // 所属流程ID
+
+  optional uint32 seq = 3 [
+    json_name = "seq",
+    (gnostic.openapi.v3.property) = {description: "级序（1..N）"}
+  ]; // 级序
+
+  optional string name = 4 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "级名称（如：主管复核）"}
+  ]; // 级名称
+
+  optional string role_code = 5 [
+    json_name = "roleCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "本级审批人角色编码"}
+  ]; // 审批人角色编码
+}
+
+message ListApprovalFlowResponse {
+  repeated ApprovalFlow items = 1;
+  uint64 total = 2;
+}
+
+message GetApprovalFlowRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "字段掩码",
+    }
+  ]; // 字段掩码
+}
+
+message CreateApprovalFlowRequest {
+  ApprovalFlow data = 1 [
+    (gnostic.openapi.v3.property) = {description: "审批流（含级定义）"}
+  ]; // 审批流
+}
+
+message UpdateApprovalFlowRequest {
+  ApprovalFlow data = 1 [
+    (gnostic.openapi.v3.property) = {description: "审批流（含级定义，整体替换）"}
+  ]; // 审批流
+
+  optional google.protobuf.FieldMask update_mask = 2 [
+    json_name = "updateMask",
+    (gnostic.openapi.v3.property) = {description: "更新掩码"}
+  ]; // 更新掩码
+
+  optional bool allow_missing = 3 [
+    json_name = "allowMissing",
+    (gnostic.openapi.v3.property) = {description: "不存在时是否创建"}
+  ]; // 不存在时创建
+}
+
+message DeleteApprovalFlowRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
 }

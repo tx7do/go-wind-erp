@@ -331,3 +331,232 @@ func (c *ApprovalRequestServiceHTTPClientImpl) Reject(ctx context.Context, in *v
 	}
 	return &out, nil
 }
+
+const OperationApprovalFlowServiceCreate = "/admin.service.v1.ApprovalFlowService/Create"
+const OperationApprovalFlowServiceDelete = "/admin.service.v1.ApprovalFlowService/Delete"
+const OperationApprovalFlowServiceGet = "/admin.service.v1.ApprovalFlowService/Get"
+const OperationApprovalFlowServiceList = "/admin.service.v1.ApprovalFlowService/List"
+const OperationApprovalFlowServiceUpdate = "/admin.service.v1.ApprovalFlowService/Update"
+
+type ApprovalFlowServiceHTTPServer interface {
+	// Create 创建审批流
+	Create(context.Context, *v11.CreateApprovalFlowRequest) (*emptypb.Empty, error)
+	// Delete 删除审批流
+	Delete(context.Context, *v11.DeleteApprovalFlowRequest) (*emptypb.Empty, error)
+	// Get 查询审批流详情
+	Get(context.Context, *v11.GetApprovalFlowRequest) (*v11.ApprovalFlow, error)
+	// List 查询审批流列表
+	List(context.Context, *v1.PagingRequest) (*v11.ListApprovalFlowResponse, error)
+	// Update 更新审批流（级整体替换）
+	Update(context.Context, *v11.UpdateApprovalFlowRequest) (*emptypb.Empty, error)
+}
+
+func RegisterApprovalFlowServiceHTTPServer(s *http.Server, srv ApprovalFlowServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/approval-flows", _ApprovalFlowService_List3_HTTP_Handler(srv))
+	r.GET("/admin/v1/approval-flows/{id}", _ApprovalFlowService_Get3_HTTP_Handler(srv))
+	r.POST("/admin/v1/approval-flows", _ApprovalFlowService_Create2_HTTP_Handler(srv))
+	r.PUT("/admin/v1/approval-flows/{data.id}", _ApprovalFlowService_Update1_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/approval-flows/{id}", _ApprovalFlowService_Delete2_HTTP_Handler(srv))
+}
+
+func _ApprovalFlowService_List3_HTTP_Handler(srv ApprovalFlowServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApprovalFlowServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListApprovalFlowResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ApprovalFlowService_Get3_HTTP_Handler(srv ApprovalFlowServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetApprovalFlowRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApprovalFlowServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetApprovalFlowRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ApprovalFlow)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ApprovalFlowService_Create2_HTTP_Handler(srv ApprovalFlowServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CreateApprovalFlowRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApprovalFlowServiceCreate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Create(ctx, req.(*v11.CreateApprovalFlowRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ApprovalFlowService_Update1_HTTP_Handler(srv ApprovalFlowServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.UpdateApprovalFlowRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApprovalFlowServiceUpdate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Update(ctx, req.(*v11.UpdateApprovalFlowRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ApprovalFlowService_Delete2_HTTP_Handler(srv ApprovalFlowServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.DeleteApprovalFlowRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApprovalFlowServiceDelete)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Delete(ctx, req.(*v11.DeleteApprovalFlowRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+type ApprovalFlowServiceHTTPClient interface {
+	// Create 创建审批流
+	Create(ctx context.Context, req *v11.CreateApprovalFlowRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Delete 删除审批流
+	Delete(ctx context.Context, req *v11.DeleteApprovalFlowRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// Get 查询审批流详情
+	Get(ctx context.Context, req *v11.GetApprovalFlowRequest, opts ...http.CallOption) (rsp *v11.ApprovalFlow, err error)
+	// List 查询审批流列表
+	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListApprovalFlowResponse, err error)
+	// Update 更新审批流（级整体替换）
+	Update(ctx context.Context, req *v11.UpdateApprovalFlowRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+}
+
+type ApprovalFlowServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewApprovalFlowServiceHTTPClient(client *http.Client) ApprovalFlowServiceHTTPClient {
+	return &ApprovalFlowServiceHTTPClientImpl{client}
+}
+
+// Create 创建审批流
+func (c *ApprovalFlowServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateApprovalFlowRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/approval-flows"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationApprovalFlowServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete 删除审批流
+func (c *ApprovalFlowServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteApprovalFlowRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/approval-flows/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationApprovalFlowServiceDelete))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get 查询审批流详情
+func (c *ApprovalFlowServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetApprovalFlowRequest, opts ...http.CallOption) (*v11.ApprovalFlow, error) {
+	var out v11.ApprovalFlow
+	pattern := "/admin/v1/approval-flows/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationApprovalFlowServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// List 查询审批流列表
+func (c *ApprovalFlowServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListApprovalFlowResponse, error) {
+	var out v11.ListApprovalFlowResponse
+	pattern := "/admin/v1/approval-flows"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationApprovalFlowServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update 更新审批流（级整体替换）
+func (c *ApprovalFlowServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdateApprovalFlowRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/approval-flows/{data.id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationApprovalFlowServiceUpdate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}

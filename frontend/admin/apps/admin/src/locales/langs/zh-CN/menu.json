@@ -64,7 +64,8 @@
   },
   "approval": {
     "moduleName": "审批中心",
-    "request": "审批管理"
+    "request": "审批管理",
+    "flow": "审批流配置"
   },
   "procurement": {
     "moduleName": "采购管理",

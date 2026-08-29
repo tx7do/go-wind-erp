@@ -49,7 +49,13 @@ type ApprovalRequest struct {
 	// 审批人用户ID
 	ApproverID *uint32 `json:"approver_id,omitempty"`
 	// 审批意见
-	Comment      *string `json:"comment,omitempty"`
+	Comment *string `json:"comment,omitempty"`
+	// 当前审批级（从 1 起）
+	CurrentStep *uint32 `json:"current_step,omitempty"`
+	// 总级数（<=1 为单级审批）
+	TotalSteps *uint32 `json:"total_steps,omitempty"`
+	// 快照来源流程ID（0=无流程）
+	FlowID       *uint32 `json:"flow_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -58,7 +64,7 @@ func (*ApprovalRequest) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case approvalrequest.FieldID, approvalrequest.FieldCreatedBy, approvalrequest.FieldUpdatedBy, approvalrequest.FieldDeletedBy, approvalrequest.FieldTenantID, approvalrequest.FieldApplicantID, approvalrequest.FieldApproverID:
+		case approvalrequest.FieldID, approvalrequest.FieldCreatedBy, approvalrequest.FieldUpdatedBy, approvalrequest.FieldDeletedBy, approvalrequest.FieldTenantID, approvalrequest.FieldApplicantID, approvalrequest.FieldApproverID, approvalrequest.FieldCurrentStep, approvalrequest.FieldTotalSteps, approvalrequest.FieldFlowID:
 			values[i] = new(sql.NullInt64)
 		case approvalrequest.FieldRemark, approvalrequest.FieldTitle, approvalrequest.FieldBizType, approvalrequest.FieldBizRef, approvalrequest.FieldSummary, approvalrequest.FieldStatus, approvalrequest.FieldComment:
 			values[i] = new(sql.NullString)
@@ -197,6 +203,27 @@ func (_m *ApprovalRequest) assignValues(columns []string, values []any) error {
 				_m.Comment = new(string)
 				*_m.Comment = value.String
 			}
+		case approvalrequest.FieldCurrentStep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_step", values[i])
+			} else if value.Valid {
+				_m.CurrentStep = new(uint32)
+				*_m.CurrentStep = uint32(value.Int64)
+			}
+		case approvalrequest.FieldTotalSteps:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_steps", values[i])
+			} else if value.Valid {
+				_m.TotalSteps = new(uint32)
+				*_m.TotalSteps = uint32(value.Int64)
+			}
+		case approvalrequest.FieldFlowID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field flow_id", values[i])
+			} else if value.Valid {
+				_m.FlowID = new(uint32)
+				*_m.FlowID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -311,6 +338,21 @@ func (_m *ApprovalRequest) String() string {
 	if v := _m.Comment; v != nil {
 		builder.WriteString("comment=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.CurrentStep; v != nil {
+		builder.WriteString("current_step=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TotalSteps; v != nil {
+		builder.WriteString("total_steps=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.FlowID; v != nil {
+		builder.WriteString("flow_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')
 	return builder.String()

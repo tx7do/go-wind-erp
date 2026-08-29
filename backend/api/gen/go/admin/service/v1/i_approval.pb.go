@@ -36,7 +36,13 @@ const file_admin_service_v1_i_approval_proto_rawDesc = "" +
 	"\x06Delete\x121.approval.service.v1.DeleteApprovalRequestRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a*\x18/admin/v1/approvals/{id}\x12}\n" +
 	"\aApprove\x122.approval.service.v1.ApproveApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/admin/v1/approvals:approve\x12z\n" +
 	"\x06Reject\x121.approval.service.v1.RejectApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/admin/v1/approvals:reject\x12z\n" +
-	"\x06Cancel\x121.approval.service.v1.CancelApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/admin/v1/approvals:cancelB\xb9\x01\n" +
+	"\x06Cancel\x121.approval.service.v1.CancelApprovalRequestRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/admin/v1/approvals:cancel2\xf8\x04\n" +
+	"\x13ApprovalFlowService\x12r\n" +
+	"\x04List\x12\x19.pagination.PagingRequest\x1a-.approval.service.v1.ListApprovalFlowResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/approval-flows\x12|\n" +
+	"\x03Get\x12+.approval.service.v1.GetApprovalFlowRequest\x1a!.approval.service.v1.ApprovalFlow\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/approval-flows/{id}\x12u\n" +
+	"\x06Create\x12..approval.service.v1.CreateApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/admin/v1/approval-flows\x12\x7f\n" +
+	"\x06Update\x12..approval.service.v1.UpdateApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"-\x82\xd3\xe4\x93\x02':\x01*\x1a\"/admin/v1/approval-flows/{data.id}\x12w\n" +
+	"\x06Delete\x12..approval.service.v1.DeleteApprovalFlowRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/admin/v1/approval-flows/{id}B\xb9\x01\n" +
 	"\x14com.admin.service.v1B\x0eIApprovalProtoP\x01Z/go-wind-erp/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_approval_proto_goTypes = []any{
@@ -47,30 +53,46 @@ var file_admin_service_v1_i_approval_proto_goTypes = []any{
 	(*v11.ApproveApprovalRequestRequest)(nil), // 4: approval.service.v1.ApproveApprovalRequestRequest
 	(*v11.RejectApprovalRequestRequest)(nil),  // 5: approval.service.v1.RejectApprovalRequestRequest
 	(*v11.CancelApprovalRequestRequest)(nil),  // 6: approval.service.v1.CancelApprovalRequestRequest
-	(*v11.ListApprovalRequestResponse)(nil),   // 7: approval.service.v1.ListApprovalRequestResponse
-	(*v11.ApprovalRequest)(nil),               // 8: approval.service.v1.ApprovalRequest
-	(*emptypb.Empty)(nil),                     // 9: google.protobuf.Empty
+	(*v11.GetApprovalFlowRequest)(nil),        // 7: approval.service.v1.GetApprovalFlowRequest
+	(*v11.CreateApprovalFlowRequest)(nil),     // 8: approval.service.v1.CreateApprovalFlowRequest
+	(*v11.UpdateApprovalFlowRequest)(nil),     // 9: approval.service.v1.UpdateApprovalFlowRequest
+	(*v11.DeleteApprovalFlowRequest)(nil),     // 10: approval.service.v1.DeleteApprovalFlowRequest
+	(*v11.ListApprovalRequestResponse)(nil),   // 11: approval.service.v1.ListApprovalRequestResponse
+	(*v11.ApprovalRequest)(nil),               // 12: approval.service.v1.ApprovalRequest
+	(*emptypb.Empty)(nil),                     // 13: google.protobuf.Empty
+	(*v11.ListApprovalFlowResponse)(nil),      // 14: approval.service.v1.ListApprovalFlowResponse
+	(*v11.ApprovalFlow)(nil),                  // 15: approval.service.v1.ApprovalFlow
 }
 var file_admin_service_v1_i_approval_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.ApprovalRequestService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.ApprovalRequestService.Get:input_type -> approval.service.v1.GetApprovalRequestRequest
-	2, // 2: admin.service.v1.ApprovalRequestService.Create:input_type -> approval.service.v1.CreateApprovalRequestRequest
-	3, // 3: admin.service.v1.ApprovalRequestService.Delete:input_type -> approval.service.v1.DeleteApprovalRequestRequest
-	4, // 4: admin.service.v1.ApprovalRequestService.Approve:input_type -> approval.service.v1.ApproveApprovalRequestRequest
-	5, // 5: admin.service.v1.ApprovalRequestService.Reject:input_type -> approval.service.v1.RejectApprovalRequestRequest
-	6, // 6: admin.service.v1.ApprovalRequestService.Cancel:input_type -> approval.service.v1.CancelApprovalRequestRequest
-	7, // 7: admin.service.v1.ApprovalRequestService.List:output_type -> approval.service.v1.ListApprovalRequestResponse
-	8, // 8: admin.service.v1.ApprovalRequestService.Get:output_type -> approval.service.v1.ApprovalRequest
-	9, // 9: admin.service.v1.ApprovalRequestService.Create:output_type -> google.protobuf.Empty
-	9, // 10: admin.service.v1.ApprovalRequestService.Delete:output_type -> google.protobuf.Empty
-	9, // 11: admin.service.v1.ApprovalRequestService.Approve:output_type -> google.protobuf.Empty
-	9, // 12: admin.service.v1.ApprovalRequestService.Reject:output_type -> google.protobuf.Empty
-	9, // 13: admin.service.v1.ApprovalRequestService.Cancel:output_type -> google.protobuf.Empty
-	7, // [7:14] is the sub-list for method output_type
-	0, // [0:7] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.ApprovalRequestService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.ApprovalRequestService.Get:input_type -> approval.service.v1.GetApprovalRequestRequest
+	2,  // 2: admin.service.v1.ApprovalRequestService.Create:input_type -> approval.service.v1.CreateApprovalRequestRequest
+	3,  // 3: admin.service.v1.ApprovalRequestService.Delete:input_type -> approval.service.v1.DeleteApprovalRequestRequest
+	4,  // 4: admin.service.v1.ApprovalRequestService.Approve:input_type -> approval.service.v1.ApproveApprovalRequestRequest
+	5,  // 5: admin.service.v1.ApprovalRequestService.Reject:input_type -> approval.service.v1.RejectApprovalRequestRequest
+	6,  // 6: admin.service.v1.ApprovalRequestService.Cancel:input_type -> approval.service.v1.CancelApprovalRequestRequest
+	0,  // 7: admin.service.v1.ApprovalFlowService.List:input_type -> pagination.PagingRequest
+	7,  // 8: admin.service.v1.ApprovalFlowService.Get:input_type -> approval.service.v1.GetApprovalFlowRequest
+	8,  // 9: admin.service.v1.ApprovalFlowService.Create:input_type -> approval.service.v1.CreateApprovalFlowRequest
+	9,  // 10: admin.service.v1.ApprovalFlowService.Update:input_type -> approval.service.v1.UpdateApprovalFlowRequest
+	10, // 11: admin.service.v1.ApprovalFlowService.Delete:input_type -> approval.service.v1.DeleteApprovalFlowRequest
+	11, // 12: admin.service.v1.ApprovalRequestService.List:output_type -> approval.service.v1.ListApprovalRequestResponse
+	12, // 13: admin.service.v1.ApprovalRequestService.Get:output_type -> approval.service.v1.ApprovalRequest
+	13, // 14: admin.service.v1.ApprovalRequestService.Create:output_type -> google.protobuf.Empty
+	13, // 15: admin.service.v1.ApprovalRequestService.Delete:output_type -> google.protobuf.Empty
+	13, // 16: admin.service.v1.ApprovalRequestService.Approve:output_type -> google.protobuf.Empty
+	13, // 17: admin.service.v1.ApprovalRequestService.Reject:output_type -> google.protobuf.Empty
+	13, // 18: admin.service.v1.ApprovalRequestService.Cancel:output_type -> google.protobuf.Empty
+	14, // 19: admin.service.v1.ApprovalFlowService.List:output_type -> approval.service.v1.ListApprovalFlowResponse
+	15, // 20: admin.service.v1.ApprovalFlowService.Get:output_type -> approval.service.v1.ApprovalFlow
+	13, // 21: admin.service.v1.ApprovalFlowService.Create:output_type -> google.protobuf.Empty
+	13, // 22: admin.service.v1.ApprovalFlowService.Update:output_type -> google.protobuf.Empty
+	13, // 23: admin.service.v1.ApprovalFlowService.Delete:output_type -> google.protobuf.Empty
+	12, // [12:24] is the sub-list for method output_type
+	0,  // [0:12] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_approval_proto_init() }
@@ -86,7 +108,7 @@ func file_admin_service_v1_i_approval_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_admin_service_v1_i_approval_proto_goTypes,
 		DependencyIndexes: file_admin_service_v1_i_approval_proto_depIdxs,

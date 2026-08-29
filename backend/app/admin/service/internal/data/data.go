@@ -385,6 +385,15 @@ func NewApprovalRequestServiceClient(ctx *bootstrap.Context, r registry.Discover
 	return approvalV1.NewApprovalRequestServiceClient(cli)
 }
 
+func NewApprovalFlowServiceClient(ctx *bootstrap.Context, r registry.Discovery) approvalV1.ApprovalFlowServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return approvalV1.NewApprovalFlowServiceClient(cli)
+}
+
 func NewSupplierServiceClient(ctx *bootstrap.Context, r registry.Discovery) procurementV1.SupplierServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

@@ -13,6 +13,8 @@ import (
 
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
+	"go-wind-erp/app/core/service/internal/data/ent/approvalflowstep"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalrequest"
 	"go-wind-erp/app/core/service/internal/data/ent/customer"
 	"go-wind-erp/app/core/service/internal/data/ent/dataaccessauditlog"
@@ -86,6 +88,10 @@ type Client struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// ApprovalFlow is the client for interacting with the ApprovalFlow builders.
+	ApprovalFlow *ApprovalFlowClient
+	// ApprovalFlowStep is the client for interacting with the ApprovalFlowStep builders.
+	ApprovalFlowStep *ApprovalFlowStepClient
 	// ApprovalRequest is the client for interacting with the ApprovalRequest builders.
 	ApprovalRequest *ApprovalRequestClient
 	// Customer is the client for interacting with the Customer builders.
@@ -213,6 +219,8 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Api = NewAPIClient(c.config)
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
+	c.ApprovalFlow = NewApprovalFlowClient(c.config)
+	c.ApprovalFlowStep = NewApprovalFlowStepClient(c.config)
 	c.ApprovalRequest = NewApprovalRequestClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
@@ -364,6 +372,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:                   cfg,
 		Api:                      NewAPIClient(cfg),
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
+		ApprovalFlow:             NewApprovalFlowClient(cfg),
+		ApprovalFlowStep:         NewApprovalFlowStepClient(cfg),
 		ApprovalRequest:          NewApprovalRequestClient(cfg),
 		Customer:                 NewCustomerClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
@@ -442,6 +452,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:                   cfg,
 		Api:                      NewAPIClient(cfg),
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
+		ApprovalFlow:             NewApprovalFlowClient(cfg),
+		ApprovalFlowStep:         NewApprovalFlowStepClient(cfg),
 		ApprovalRequest:          NewApprovalRequestClient(cfg),
 		Customer:                 NewCustomerClient(cfg),
 		DataAccessAuditLog:       NewDataAccessAuditLogClient(cfg),
@@ -528,19 +540,19 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.ApiAuditLog, c.ApprovalRequest, c.Customer, c.DataAccessAuditLog,
-		c.DictEntry, c.DictEntryI18n, c.DictType, c.File, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.PurchaseOrder,
-		c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role, c.RoleMetadata,
-		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockLot,
-		c.StockMove, c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription,
-		c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Warehouse,
+		c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep, c.ApprovalRequest,
+		c.Customer, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.Plan, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.PurchaseOrder, c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role,
+		c.RoleMetadata, c.RolePermission, c.SalesOrder, c.SalesOrderItem,
+		c.StockLocation, c.StockLot, c.StockMove, c.StockMoveLine, c.StockPicking,
+		c.StockQuant, c.Subscription, c.Supplier, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Use(hooks...)
 	}
@@ -550,19 +562,19 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.ApiAuditLog, c.ApprovalRequest, c.Customer, c.DataAccessAuditLog,
-		c.DictEntry, c.DictEntryI18n, c.DictType, c.File, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.OrgUnit,
-		c.Payable, c.Payment, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.PurchaseOrder,
-		c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role, c.RoleMetadata,
-		c.RolePermission, c.SalesOrder, c.SalesOrderItem, c.StockLocation, c.StockLot,
-		c.StockMove, c.StockMoveLine, c.StockPicking, c.StockQuant, c.Subscription,
-		c.Supplier, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Warehouse,
+		c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep, c.ApprovalRequest,
+		c.Customer, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.Plan, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.PurchaseOrder, c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role,
+		c.RoleMetadata, c.RolePermission, c.SalesOrder, c.SalesOrderItem,
+		c.StockLocation, c.StockLot, c.StockMove, c.StockMoveLine, c.StockPicking,
+		c.StockQuant, c.Subscription, c.Supplier, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Warehouse,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -575,6 +587,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Api.mutate(ctx, m)
 	case *ApiAuditLogMutation:
 		return c.ApiAuditLog.mutate(ctx, m)
+	case *ApprovalFlowMutation:
+		return c.ApprovalFlow.mutate(ctx, m)
+	case *ApprovalFlowStepMutation:
+		return c.ApprovalFlowStep.mutate(ctx, m)
 	case *ApprovalRequestMutation:
 		return c.ApprovalRequest.mutate(ctx, m)
 	case *CustomerMutation:
@@ -960,6 +976,275 @@ func (c *ApiAuditLogClient) mutate(ctx context.Context, m *ApiAuditLogMutation) 
 		return (&ApiAuditLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ApiAuditLog mutation op: %q", m.Op())
+	}
+}
+
+// ApprovalFlowClient is a client for the ApprovalFlow schema.
+type ApprovalFlowClient struct {
+	config
+}
+
+// NewApprovalFlowClient returns a client for the ApprovalFlow from the given config.
+func NewApprovalFlowClient(c config) *ApprovalFlowClient {
+	return &ApprovalFlowClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `approvalflow.Hooks(f(g(h())))`.
+func (c *ApprovalFlowClient) Use(hooks ...Hook) {
+	c.hooks.ApprovalFlow = append(c.hooks.ApprovalFlow, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `approvalflow.Intercept(f(g(h())))`.
+func (c *ApprovalFlowClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApprovalFlow = append(c.inters.ApprovalFlow, interceptors...)
+}
+
+// Create returns a builder for creating a ApprovalFlow entity.
+func (c *ApprovalFlowClient) Create() *ApprovalFlowCreate {
+	mutation := newApprovalFlowMutation(c.config, OpCreate)
+	return &ApprovalFlowCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApprovalFlow entities.
+func (c *ApprovalFlowClient) CreateBulk(builders ...*ApprovalFlowCreate) *ApprovalFlowCreateBulk {
+	return &ApprovalFlowCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ApprovalFlowClient) MapCreateBulk(slice any, setFunc func(*ApprovalFlowCreate, int)) *ApprovalFlowCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ApprovalFlowCreateBulk{err: fmt.Errorf("calling to ApprovalFlowClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ApprovalFlowCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ApprovalFlowCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApprovalFlow.
+func (c *ApprovalFlowClient) Update() *ApprovalFlowUpdate {
+	mutation := newApprovalFlowMutation(c.config, OpUpdate)
+	return &ApprovalFlowUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApprovalFlowClient) UpdateOne(_m *ApprovalFlow) *ApprovalFlowUpdateOne {
+	mutation := newApprovalFlowMutation(c.config, OpUpdateOne, withApprovalFlow(_m))
+	return &ApprovalFlowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApprovalFlowClient) UpdateOneID(id uint32) *ApprovalFlowUpdateOne {
+	mutation := newApprovalFlowMutation(c.config, OpUpdateOne, withApprovalFlowID(id))
+	return &ApprovalFlowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApprovalFlow.
+func (c *ApprovalFlowClient) Delete() *ApprovalFlowDelete {
+	mutation := newApprovalFlowMutation(c.config, OpDelete)
+	return &ApprovalFlowDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApprovalFlowClient) DeleteOne(_m *ApprovalFlow) *ApprovalFlowDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApprovalFlowClient) DeleteOneID(id uint32) *ApprovalFlowDeleteOne {
+	builder := c.Delete().Where(approvalflow.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApprovalFlowDeleteOne{builder}
+}
+
+// Query returns a query builder for ApprovalFlow.
+func (c *ApprovalFlowClient) Query() *ApprovalFlowQuery {
+	return &ApprovalFlowQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApprovalFlow},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApprovalFlow entity by its id.
+func (c *ApprovalFlowClient) Get(ctx context.Context, id uint32) (*ApprovalFlow, error) {
+	return c.Query().Where(approvalflow.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApprovalFlowClient) GetX(ctx context.Context, id uint32) *ApprovalFlow {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApprovalFlowClient) Hooks() []Hook {
+	hooks := c.hooks.ApprovalFlow
+	return append(hooks[:len(hooks):len(hooks)], approvalflow.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApprovalFlowClient) Interceptors() []Interceptor {
+	inters := c.inters.ApprovalFlow
+	return append(inters[:len(inters):len(inters)], approvalflow.Interceptors[:]...)
+}
+
+func (c *ApprovalFlowClient) mutate(ctx context.Context, m *ApprovalFlowMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApprovalFlowCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApprovalFlowUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApprovalFlowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApprovalFlowDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApprovalFlow mutation op: %q", m.Op())
+	}
+}
+
+// ApprovalFlowStepClient is a client for the ApprovalFlowStep schema.
+type ApprovalFlowStepClient struct {
+	config
+}
+
+// NewApprovalFlowStepClient returns a client for the ApprovalFlowStep from the given config.
+func NewApprovalFlowStepClient(c config) *ApprovalFlowStepClient {
+	return &ApprovalFlowStepClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `approvalflowstep.Hooks(f(g(h())))`.
+func (c *ApprovalFlowStepClient) Use(hooks ...Hook) {
+	c.hooks.ApprovalFlowStep = append(c.hooks.ApprovalFlowStep, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `approvalflowstep.Intercept(f(g(h())))`.
+func (c *ApprovalFlowStepClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApprovalFlowStep = append(c.inters.ApprovalFlowStep, interceptors...)
+}
+
+// Create returns a builder for creating a ApprovalFlowStep entity.
+func (c *ApprovalFlowStepClient) Create() *ApprovalFlowStepCreate {
+	mutation := newApprovalFlowStepMutation(c.config, OpCreate)
+	return &ApprovalFlowStepCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApprovalFlowStep entities.
+func (c *ApprovalFlowStepClient) CreateBulk(builders ...*ApprovalFlowStepCreate) *ApprovalFlowStepCreateBulk {
+	return &ApprovalFlowStepCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ApprovalFlowStepClient) MapCreateBulk(slice any, setFunc func(*ApprovalFlowStepCreate, int)) *ApprovalFlowStepCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ApprovalFlowStepCreateBulk{err: fmt.Errorf("calling to ApprovalFlowStepClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ApprovalFlowStepCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ApprovalFlowStepCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApprovalFlowStep.
+func (c *ApprovalFlowStepClient) Update() *ApprovalFlowStepUpdate {
+	mutation := newApprovalFlowStepMutation(c.config, OpUpdate)
+	return &ApprovalFlowStepUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApprovalFlowStepClient) UpdateOne(_m *ApprovalFlowStep) *ApprovalFlowStepUpdateOne {
+	mutation := newApprovalFlowStepMutation(c.config, OpUpdateOne, withApprovalFlowStep(_m))
+	return &ApprovalFlowStepUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApprovalFlowStepClient) UpdateOneID(id uint32) *ApprovalFlowStepUpdateOne {
+	mutation := newApprovalFlowStepMutation(c.config, OpUpdateOne, withApprovalFlowStepID(id))
+	return &ApprovalFlowStepUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApprovalFlowStep.
+func (c *ApprovalFlowStepClient) Delete() *ApprovalFlowStepDelete {
+	mutation := newApprovalFlowStepMutation(c.config, OpDelete)
+	return &ApprovalFlowStepDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApprovalFlowStepClient) DeleteOne(_m *ApprovalFlowStep) *ApprovalFlowStepDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApprovalFlowStepClient) DeleteOneID(id uint32) *ApprovalFlowStepDeleteOne {
+	builder := c.Delete().Where(approvalflowstep.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApprovalFlowStepDeleteOne{builder}
+}
+
+// Query returns a query builder for ApprovalFlowStep.
+func (c *ApprovalFlowStepClient) Query() *ApprovalFlowStepQuery {
+	return &ApprovalFlowStepQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApprovalFlowStep},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApprovalFlowStep entity by its id.
+func (c *ApprovalFlowStepClient) Get(ctx context.Context, id uint32) (*ApprovalFlowStep, error) {
+	return c.Query().Where(approvalflowstep.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApprovalFlowStepClient) GetX(ctx context.Context, id uint32) *ApprovalFlowStep {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApprovalFlowStepClient) Hooks() []Hook {
+	hooks := c.hooks.ApprovalFlowStep
+	return append(hooks[:len(hooks):len(hooks)], approvalflowstep.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApprovalFlowStepClient) Interceptors() []Interceptor {
+	return c.inters.ApprovalFlowStep
+}
+
+func (c *ApprovalFlowStepClient) mutate(ctx context.Context, m *ApprovalFlowStepMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApprovalFlowStepCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApprovalFlowStepUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApprovalFlowStepUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApprovalFlowStepDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApprovalFlowStep mutation op: %q", m.Op())
 	}
 }
 
@@ -8811,29 +9096,30 @@ func (c *WarehouseClient) mutate(ctx context.Context, m *WarehouseMutation) (Val
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiAuditLog, ApprovalRequest, Customer, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, File, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Payable, Payment, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
-		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
-		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
-		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
-		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole, Warehouse []ent.Hook
+		Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest, Customer,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
+		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
+		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem,
+		Receipt, Receivable, Role, RoleMetadata, RolePermission, SalesOrder,
+		SalesOrderItem, StockLocation, StockLot, StockMove, StockMoveLine,
+		StockPicking, StockQuant, Subscription, Supplier, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Warehouse []ent.Hook
 	}
 	inters struct {
-		Api, ApiAuditLog, ApprovalRequest, Customer, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, File, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		OrgUnit, Payable, Payment, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
-		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
-		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
-		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
-		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole, Warehouse []ent.Interceptor
+		Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest, Customer,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
+		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
+		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
+		Menu, OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
+		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem,
+		Receipt, Receivable, Role, RoleMetadata, RolePermission, SalesOrder,
+		SalesOrderItem, StockLocation, StockLot, StockMove, StockMoveLine,
+		StockPicking, StockQuant, Subscription, Supplier, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole,
+		Warehouse []ent.Interceptor
 	}
 )
