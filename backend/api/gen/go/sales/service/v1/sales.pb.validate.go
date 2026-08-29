@@ -77,6 +77,10 @@ func (m *Customer) validate(all bool) error {
 		// no validation rules for Phone
 	}
 
+	if m.CreditLimit != nil {
+		// no validation rules for CreditLimit
+	}
+
 	if m.Enable != nil {
 		// no validation rules for Enable
 	}

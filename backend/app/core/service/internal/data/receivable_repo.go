@@ -486,3 +486,37 @@ func (r *ReceivableRepo) OutstandingBalance(ctx context.Context) (int64, error) 
 	}
 	return balance, nil
 }
+
+
+// OutstandingByCustomer 指定客户的应收未清余额（amount − paid），可排除
+// 某张销售单（信用额度校验时排除本单，避免重复计入）。Go 侧求和。
+func (r *ReceivableRepo) OutstandingByCustomer(
+	ctx context.Context,
+	customerCode string,
+	excludeSoRef string,
+) (int64, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	q := r.entClient.Client().Receivable.Query().
+		Where(
+			receivable.TenantIDEQ(tid),
+			receivable.CustomerCodeEQ(customerCode),
+		)
+	if excludeSoRef != "" {
+		q = q.Where(receivable.SoRefNEQ(excludeSoRef))
+	}
+	rows, err := q.All(ctx)
+	if err != nil {
+		r.log.Errorf("query outstanding by customer failed: %s", err.Error())
+		return 0, financeV1.ErrorInternalServerError("query outstanding by customer failed")
+	}
+	var balance int64
+	for _, row := range rows {
+		if row.Amount != nil {
+			balance += *row.Amount
+		}
+		if row.PaidAmount != nil {
+			balance -= *row.PaidAmount
+		}
+	}
+	return balance, nil
+}

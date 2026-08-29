@@ -736,7 +736,10 @@
     "enable": "Enabled",
     "moduleName": "Customer",
     "name": "Customer Name",
-    "phone": "Phone"
+    "phone": "Phone",
+    "creditLimit": "Credit Limit",
+    "creditLimitHint": "0 or empty = unlimited",
+    "unlimited": "Unlimited"
   },
   "register": {
     "tenantName": "Company Name",

@@ -765,7 +765,10 @@
     "enable": "启用状态",
     "moduleName": "客户",
     "name": "客户名称",
-    "phone": "联系电话"
+    "phone": "联系电话",
+    "creditLimit": "信用额度（元）",
+    "creditLimitHint": "0 或留空 = 不限",
+    "unlimited": "不限"
   },
   "register": {
     "tenantName": "企业名称",

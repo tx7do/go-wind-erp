@@ -34,6 +34,7 @@ type SalesOrderService struct {
 	salesOrderRepo      *data.SalesOrderRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
 	receivableRepo      *data.ReceivableRepo
+	customerRepo        *data.CustomerRepo
 	billingGuard        *BillingGuard
 	locationRepo        *data.LocationRepo
 	stockPickingRepo    *data.StockPickingRepo
@@ -45,6 +46,7 @@ func NewSalesOrderService(
 	salesOrderRepo *data.SalesOrderRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
 	receivableRepo *data.ReceivableRepo,
+	customerRepo *data.CustomerRepo,
 	billingGuard *BillingGuard,
 	locationRepo *data.LocationRepo,
 	stockPickingRepo *data.StockPickingRepo,
@@ -55,6 +57,7 @@ func NewSalesOrderService(
 		salesOrderRepo:      salesOrderRepo,
 		approvalRequestRepo: approvalRequestRepo,
 		receivableRepo:      receivableRepo,
+		customerRepo:        customerRepo,
 		billingGuard:        billingGuard,
 		locationRepo:        locationRepo,
 		stockPickingRepo:    stockPickingRepo,
@@ -255,6 +258,14 @@ func (s *SalesOrderService) transition(
 		}
 	}
 
+	// 信用额度守卫：客户设了额度（>0）时，本单获批需满足
+	// （该客户现有应收未清余额（排除本单）+ 本单金额）≤ 额度，否则 409。
+	if to == salesV1.SalesOrder_APPROVED {
+		if cerr := s.ensureCreditLimit(ctx, old); cerr != nil {
+			return nil, cerr
+		}
+	}
+
 	if err := s.salesOrderRepo.TransitionStatus(ctx, id, old.GetStatus(), to); err != nil {
 		return nil, err
 	}
@@ -398,5 +409,35 @@ func computeSalesOrderAmounts(so *salesV1.SalesOrder) error {
 	}
 
 	so.TotalAmount = trans.Ptr(total)
+	return nil
+}
+
+
+// ensureCreditLimit 信用额度校验：额度 0 = 不限；客户不存在（历史数据）
+// 放行。排除本单避免销退重开场景重复计入。
+func (s *SalesOrderService) ensureCreditLimit(
+	ctx context.Context,
+	so *salesV1.SalesOrder,
+) error {
+	if so == nil || so.GetCustomerCode() == "" {
+		return nil
+	}
+	cust, err := s.customerRepo.GetByCode(ctx, so.GetCustomerCode())
+	if err != nil {
+		return err
+	}
+	if cust == nil || cust.GetCreditLimit() <= 0 {
+		return nil
+	}
+	outstanding, err := s.receivableRepo.OutstandingByCustomer(
+		ctx, so.GetCustomerCode(), fmt.Sprintf(soApprovalBizRef, so.GetId()))
+	if err != nil {
+		return err
+	}
+	if outstanding+so.GetTotalAmount() > cust.GetCreditLimit() {
+		return salesV1.ErrorConflict(
+			"信用额度不足：客户 %s 额度 %d 分，现有应收 %d 分 + 本单 %d 分超出",
+			so.GetCustomerCode(), cust.GetCreditLimit(), outstanding, so.GetTotalAmount())
+	}
 	return nil
 }

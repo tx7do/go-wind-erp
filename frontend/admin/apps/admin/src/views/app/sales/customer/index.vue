@@ -11,6 +11,7 @@ import { notification } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   apiClient,
+  centsToYuan,
   enableList,
   fetchListCustomers,
   makeUpdateMask,
@@ -102,6 +103,12 @@ const gridOptions: VxeGridProps<Customer> = {
       field: 'createdAt',
       formatter: 'formatDateTime',
       width: 140,
+    },
+    {
+      title: $t('page.customer.creditLimit'),
+      field: 'creditLimit',
+      formatter: ({ cellValue }) =>
+        cellValue ? centsToYuan(cellValue) : $t('page.customer.unlimited'),
     },
     {
       title: $t('ui.table.action'),

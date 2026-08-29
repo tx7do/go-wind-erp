@@ -10995,6 +10995,9 @@ export type salesservicev1_Customer = {
   contact?: string;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
+  //
+  // Behaviors: OPTIONAL
+  creditLimit?: number;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   enable?: boolean;

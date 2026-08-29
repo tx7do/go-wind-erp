@@ -50,6 +50,14 @@ func (Customer) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		// credit_limit：信用额度（分，0=不限额）。销售单审批时校验：
+		// 该客户应收未清余额 + 本单金额 > 额度 → 拦截。
+		field.Int64("credit_limit").
+			Comment("信用额度（分，0=不限）").
+			Default(0).
+			Optional().
+			Nillable(),
+
 		field.Bool("enable").
 			Comment("启用/禁用客户").
 			Default(false).

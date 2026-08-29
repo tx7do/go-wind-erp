@@ -36,6 +36,8 @@ const (
 	FieldContact = "contact"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
+	// FieldCreditLimit holds the string denoting the credit_limit field in the database.
+	FieldCreditLimit = "credit_limit"
 	// FieldEnable holds the string denoting the enable field in the database.
 	FieldEnable = "enable"
 	// Table holds the table name of the customer in the database.
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldName,
 	FieldContact,
 	FieldPhone,
+	FieldCreditLimit,
 	FieldEnable,
 }
 
@@ -81,6 +84,8 @@ var (
 	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
+	// DefaultCreditLimit holds the default value on creation for the "credit_limit" field.
+	DefaultCreditLimit int64
 	// DefaultEnable holds the default value on creation for the "enable" field.
 	DefaultEnable bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -153,6 +158,11 @@ func ByContact(opts ...sql.OrderTermOption) OrderOption {
 // ByPhone orders the results by the phone field.
 func ByPhone(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPhone, opts...).ToFunc()
+}
+
+// ByCreditLimit orders the results by the credit_limit field.
+func ByCreditLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreditLimit, opts...).ToFunc()
 }
 
 // ByEnable orders the results by the enable field.

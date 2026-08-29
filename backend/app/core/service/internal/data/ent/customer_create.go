@@ -190,6 +190,20 @@ func (_c *CustomerCreate) SetNillablePhone(v *string) *CustomerCreate {
 	return _c
 }
 
+// SetCreditLimit sets the "credit_limit" field.
+func (_c *CustomerCreate) SetCreditLimit(v int64) *CustomerCreate {
+	_c.mutation.SetCreditLimit(v)
+	return _c
+}
+
+// SetNillableCreditLimit sets the "credit_limit" field if the given value is not nil.
+func (_c *CustomerCreate) SetNillableCreditLimit(v *int64) *CustomerCreate {
+	if v != nil {
+		_c.SetCreditLimit(*v)
+	}
+	return _c
+}
+
 // SetEnable sets the "enable" field.
 func (_c *CustomerCreate) SetEnable(v bool) *CustomerCreate {
 	_c.mutation.SetEnable(v)
@@ -250,6 +264,10 @@ func (_c *CustomerCreate) defaults() error {
 	if _, ok := _c.mutation.TenantID(); !ok {
 		v := customer.DefaultTenantID
 		_c.mutation.SetTenantID(v)
+	}
+	if _, ok := _c.mutation.CreditLimit(); !ok {
+		v := customer.DefaultCreditLimit
+		_c.mutation.SetCreditLimit(v)
 	}
 	if _, ok := _c.mutation.Enable(); !ok {
 		v := customer.DefaultEnable
@@ -345,6 +363,10 @@ func (_c *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Phone(); ok {
 		_spec.SetField(customer.FieldPhone, field.TypeString, value)
 		_node.Phone = &value
+	}
+	if value, ok := _c.mutation.CreditLimit(); ok {
+		_spec.SetField(customer.FieldCreditLimit, field.TypeInt64, value)
+		_node.CreditLimit = &value
 	}
 	if value, ok := _c.mutation.Enable(); ok {
 		_spec.SetField(customer.FieldEnable, field.TypeBool, value)
@@ -597,6 +619,30 @@ func (u *CustomerUpsert) UpdatePhone() *CustomerUpsert {
 // ClearPhone clears the value of the "phone" field.
 func (u *CustomerUpsert) ClearPhone() *CustomerUpsert {
 	u.SetNull(customer.FieldPhone)
+	return u
+}
+
+// SetCreditLimit sets the "credit_limit" field.
+func (u *CustomerUpsert) SetCreditLimit(v int64) *CustomerUpsert {
+	u.Set(customer.FieldCreditLimit, v)
+	return u
+}
+
+// UpdateCreditLimit sets the "credit_limit" field to the value that was provided on create.
+func (u *CustomerUpsert) UpdateCreditLimit() *CustomerUpsert {
+	u.SetExcluded(customer.FieldCreditLimit)
+	return u
+}
+
+// AddCreditLimit adds v to the "credit_limit" field.
+func (u *CustomerUpsert) AddCreditLimit(v int64) *CustomerUpsert {
+	u.Add(customer.FieldCreditLimit, v)
+	return u
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (u *CustomerUpsert) ClearCreditLimit() *CustomerUpsert {
+	u.SetNull(customer.FieldCreditLimit)
 	return u
 }
 
@@ -900,6 +946,34 @@ func (u *CustomerUpsertOne) UpdatePhone() *CustomerUpsertOne {
 func (u *CustomerUpsertOne) ClearPhone() *CustomerUpsertOne {
 	return u.Update(func(s *CustomerUpsert) {
 		s.ClearPhone()
+	})
+}
+
+// SetCreditLimit sets the "credit_limit" field.
+func (u *CustomerUpsertOne) SetCreditLimit(v int64) *CustomerUpsertOne {
+	return u.Update(func(s *CustomerUpsert) {
+		s.SetCreditLimit(v)
+	})
+}
+
+// AddCreditLimit adds v to the "credit_limit" field.
+func (u *CustomerUpsertOne) AddCreditLimit(v int64) *CustomerUpsertOne {
+	return u.Update(func(s *CustomerUpsert) {
+		s.AddCreditLimit(v)
+	})
+}
+
+// UpdateCreditLimit sets the "credit_limit" field to the value that was provided on create.
+func (u *CustomerUpsertOne) UpdateCreditLimit() *CustomerUpsertOne {
+	return u.Update(func(s *CustomerUpsert) {
+		s.UpdateCreditLimit()
+	})
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (u *CustomerUpsertOne) ClearCreditLimit() *CustomerUpsertOne {
+	return u.Update(func(s *CustomerUpsert) {
+		s.ClearCreditLimit()
 	})
 }
 
@@ -1372,6 +1446,34 @@ func (u *CustomerUpsertBulk) UpdatePhone() *CustomerUpsertBulk {
 func (u *CustomerUpsertBulk) ClearPhone() *CustomerUpsertBulk {
 	return u.Update(func(s *CustomerUpsert) {
 		s.ClearPhone()
+	})
+}
+
+// SetCreditLimit sets the "credit_limit" field.
+func (u *CustomerUpsertBulk) SetCreditLimit(v int64) *CustomerUpsertBulk {
+	return u.Update(func(s *CustomerUpsert) {
+		s.SetCreditLimit(v)
+	})
+}
+
+// AddCreditLimit adds v to the "credit_limit" field.
+func (u *CustomerUpsertBulk) AddCreditLimit(v int64) *CustomerUpsertBulk {
+	return u.Update(func(s *CustomerUpsert) {
+		s.AddCreditLimit(v)
+	})
+}
+
+// UpdateCreditLimit sets the "credit_limit" field to the value that was provided on create.
+func (u *CustomerUpsertBulk) UpdateCreditLimit() *CustomerUpsertBulk {
+	return u.Update(func(s *CustomerUpsert) {
+		s.UpdateCreditLimit()
+	})
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (u *CustomerUpsertBulk) ClearCreditLimit() *CustomerUpsertBulk {
+	return u.Update(func(s *CustomerUpsert) {
+		s.ClearCreditLimit()
 	})
 }
 

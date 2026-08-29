@@ -194,6 +194,8 @@ func (r *CustomerRepo) Update(ctx context.Context, req *salesV1.UpdateCustomerRe
 				SetNillableName(req.Data.Name).
 				SetNillableContact(req.Data.Contact).
 				SetNillablePhone(req.Data.Phone).
+				SetNillableCreditLimit(req.Data.CreditLimit).
+				SetNillableCreditLimit(req.Data.CreditLimit).
 				SetNillableEnable(req.Data.Enable).
 				SetNillableRemark(req.Data.Remark).
 				SetUpdatedAt(time.Now())
@@ -232,4 +234,21 @@ func (r *CustomerRepo) Delete(ctx context.Context, req *salesV1.DeleteCustomerRe
 	}
 
 	return nil
+}
+
+
+// GetByCode 按编码取客户（信用额度校验用）；不存在返回 nil, nil。
+func (r *CustomerRepo) GetByCode(ctx context.Context, code string) (*salesV1.Customer, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	row, err := r.entClient.Client().Customer.Query().
+		Where(customer.TenantIDEQ(tid), customer.CodeEQ(code)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, nil
+		}
+		r.log.Errorf("query customer by code failed: %s", err.Error())
+		return nil, salesV1.ErrorInternalServerError("query customer failed")
+	}
+	return r.mapper.ToDTO(row), nil
 }

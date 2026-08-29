@@ -250,6 +250,33 @@ func (_u *CustomerUpdate) ClearPhone() *CustomerUpdate {
 	return _u
 }
 
+// SetCreditLimit sets the "credit_limit" field.
+func (_u *CustomerUpdate) SetCreditLimit(v int64) *CustomerUpdate {
+	_u.mutation.ResetCreditLimit()
+	_u.mutation.SetCreditLimit(v)
+	return _u
+}
+
+// SetNillableCreditLimit sets the "credit_limit" field if the given value is not nil.
+func (_u *CustomerUpdate) SetNillableCreditLimit(v *int64) *CustomerUpdate {
+	if v != nil {
+		_u.SetCreditLimit(*v)
+	}
+	return _u
+}
+
+// AddCreditLimit adds value to the "credit_limit" field.
+func (_u *CustomerUpdate) AddCreditLimit(v int64) *CustomerUpdate {
+	_u.mutation.AddCreditLimit(v)
+	return _u
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (_u *CustomerUpdate) ClearCreditLimit() *CustomerUpdate {
+	_u.mutation.ClearCreditLimit()
+	return _u
+}
+
 // SetEnable sets the "enable" field.
 func (_u *CustomerUpdate) SetEnable(v bool) *CustomerUpdate {
 	_u.mutation.SetEnable(v)
@@ -391,6 +418,15 @@ func (_u *CustomerUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.PhoneCleared() {
 		_spec.ClearField(customer.FieldPhone, field.TypeString)
+	}
+	if value, ok := _u.mutation.CreditLimit(); ok {
+		_spec.SetField(customer.FieldCreditLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCreditLimit(); ok {
+		_spec.AddField(customer.FieldCreditLimit, field.TypeInt64, value)
+	}
+	if _u.mutation.CreditLimitCleared() {
+		_spec.ClearField(customer.FieldCreditLimit, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Enable(); ok {
 		_spec.SetField(customer.FieldEnable, field.TypeBool, value)
@@ -641,6 +677,33 @@ func (_u *CustomerUpdateOne) ClearPhone() *CustomerUpdateOne {
 	return _u
 }
 
+// SetCreditLimit sets the "credit_limit" field.
+func (_u *CustomerUpdateOne) SetCreditLimit(v int64) *CustomerUpdateOne {
+	_u.mutation.ResetCreditLimit()
+	_u.mutation.SetCreditLimit(v)
+	return _u
+}
+
+// SetNillableCreditLimit sets the "credit_limit" field if the given value is not nil.
+func (_u *CustomerUpdateOne) SetNillableCreditLimit(v *int64) *CustomerUpdateOne {
+	if v != nil {
+		_u.SetCreditLimit(*v)
+	}
+	return _u
+}
+
+// AddCreditLimit adds value to the "credit_limit" field.
+func (_u *CustomerUpdateOne) AddCreditLimit(v int64) *CustomerUpdateOne {
+	_u.mutation.AddCreditLimit(v)
+	return _u
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (_u *CustomerUpdateOne) ClearCreditLimit() *CustomerUpdateOne {
+	_u.mutation.ClearCreditLimit()
+	return _u
+}
+
 // SetEnable sets the "enable" field.
 func (_u *CustomerUpdateOne) SetEnable(v bool) *CustomerUpdateOne {
 	_u.mutation.SetEnable(v)
@@ -812,6 +875,15 @@ func (_u *CustomerUpdateOne) sqlSave(ctx context.Context) (_node *Customer, err 
 	}
 	if _u.mutation.PhoneCleared() {
 		_spec.ClearField(customer.FieldPhone, field.TypeString)
+	}
+	if value, ok := _u.mutation.CreditLimit(); ok {
+		_spec.SetField(customer.FieldCreditLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCreditLimit(); ok {
+		_spec.AddField(customer.FieldCreditLimit, field.TypeInt64, value)
+	}
+	if _u.mutation.CreditLimitCleared() {
+		_spec.ClearField(customer.FieldCreditLimit, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Enable(); ok {
 		_spec.SetField(customer.FieldEnable, field.TypeBool, value)

@@ -68,6 +68,18 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
 
     {
+      component: 'InputNumber',
+      fieldName: 'creditLimitYuan',
+      label: $t('page.customer.creditLimit'),
+      componentProps: {
+        placeholder: $t('page.customer.creditLimitHint'),
+        allowClear: true,
+        min: 0,
+        precision: 2,
+      },
+    },
+
+    {
       component: 'RadioGroup',
       fieldName: 'enable',
       defaultValue: true,
@@ -108,13 +120,20 @@ const [Drawer, drawerApi] = useVbenDrawer({
 
     const values = await baseFormApi.getValues();
 
+    // 信用额度：界面元 → 存储分；空 = 不限（0）。
+    const { creditLimitYuan, ...rest } = values as Record<string, any>;
+    const payload = {
+      ...rest,
+      creditLimit: Math.round((Number(creditLimitYuan) || 0) * 100),
+    };
+
     try {
       await (data.value?.create
-        ? apiClient.customerService.Create({ data: { ...values } })
+        ? apiClient.customerService.Create({ data: { ...payload } })
         : apiClient.customerService.Update({
             id: data.value.row.id,
-            data: { ...values },
-            updateMask: makeUpdateMask(Object.keys(values)),
+            data: { ...payload },
+            updateMask: makeUpdateMask(Object.keys(payload)),
           }));
 
       notification.success({
@@ -138,7 +157,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
     if (isOpen) {
       data.value = drawerApi.getData<Record<string, any>>();
 
-      baseFormApi.setValues(data.value?.row);
+      baseFormApi.setValues({
+        ...data.value?.row,
+        creditLimitYuan:
+          data.value?.row?.creditLimit != null
+            ? data.value.row.creditLimit / 100
+            : undefined,
+      });
 
       setLoading(false);
     }

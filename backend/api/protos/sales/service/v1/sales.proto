@@ -95,6 +95,14 @@ message Customer {
     }
   ];
 
+  optional int64 credit_limit = 12 [
+    json_name = "creditLimit",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "信用额度（分，0=不限额；销售审批时校验）"
+    }
+  ]; // 信用额度
+
   optional bool enable = 10 [
     json_name = "enable",
     (gnostic.openapi.v3.property) = {

@@ -302,6 +302,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "客户名称"},
 		{Name: "contact", Type: field.TypeString, Nullable: true, Comment: "联系人"},
 		{Name: "phone", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
+		{Name: "credit_limit", Type: field.TypeInt64, Nullable: true, Comment: "信用额度（分，0=不限）", Default: 0},
 		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用客户", Default: false},
 	}
 	// SalCustomersTable holds the schema information for the "sal_customers" table.

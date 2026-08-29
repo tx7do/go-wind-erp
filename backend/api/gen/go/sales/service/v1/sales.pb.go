@@ -93,6 +93,7 @@ type Customer struct {
 	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Contact       *string                `protobuf:"bytes,4,opt,name=contact,proto3,oneof" json:"contact,omitempty"`
 	Phone         *string                `protobuf:"bytes,5,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
+	CreditLimit   *int64                 `protobuf:"varint,12,opt,name=credit_limit,json=creditLimit,proto3,oneof" json:"credit_limit,omitempty"` // 信用额度
 	Enable        *bool                  `protobuf:"varint,10,opt,name=enable,proto3,oneof" json:"enable,omitempty"`
 	Remark        *string                `protobuf:"bytes,11,opt,name=remark,proto3,oneof" json:"remark,omitempty"`
 	TenantId      *uint32                `protobuf:"varint,20,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
@@ -169,6 +170,13 @@ func (x *Customer) GetPhone() string {
 		return *x.Phone
 	}
 	return ""
+}
+
+func (x *Customer) GetCreditLimit() int64 {
+	if x != nil && x.CreditLimit != nil {
+		return *x.CreditLimit
+	}
+	return 0
 }
 
 func (x *Customer) GetEnable() bool {
@@ -1404,36 +1412,38 @@ var File_sales_service_v1_sales_proto protoreflect.FileDescriptor
 
 const file_sales_service_v1_sales_proto_rawDesc = "" +
 	"\n" +
-	"\x1csales/service/v1/sales.proto\x12\x10sales.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x9d\b\n" +
+	"\x1csales/service/v1/sales.proto\x12\x10sales.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x9c\t\n" +
 	"\bCustomer\x12&\n" +
 	"\x02id\x18\x01 \x01(\rB\x11\xe0A\x01\xbaG\v\x92\x02\b客户IDH\x00R\x02id\x88\x01\x01\x12F\n" +
 	"\x04code\x18\x02 \x01(\tB-\xe0A\x01\xbaG'\x92\x02$客户编码，租户范围内唯一H\x01R\x04code\x88\x01\x01\x12.\n" +
 	"\x04name\x18\x03 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f客户名称H\x02R\x04name\x88\x01\x01\x121\n" +
 	"\acontact\x18\x04 \x01(\tB\x12\xe0A\x01\xbaG\f\x92\x02\t联系人H\x03R\acontact\x88\x01\x01\x120\n" +
-	"\x05phone\x18\x05 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f联系电话H\x04R\x05phone\x88\x01\x01\x126\n" +
+	"\x05phone\x18\x05 \x01(\tB\x15\xe0A\x01\xbaG\x0f\x92\x02\f联系电话H\x04R\x05phone\x88\x01\x01\x12l\n" +
+	"\fcredit_limit\x18\f \x01(\x03BD\xe0A\x01\xbaG>\x92\x02;信用额度（分，0=不限额；销售审批时校验）H\x05R\vcreditLimit\x88\x01\x01\x126\n" +
 	"\x06enable\x18\n" +
-	" \x01(\bB\x19\xbaG\x16\x92\x02\x13启用/禁用客户H\x05R\x06enable\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x06R\x06remark\x88\x01\x01\x12F\n" +
-	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\aR\btenantId\x88\x01\x01\x12;\n" +
+	" \x01(\bB\x19\xbaG\x16\x92\x02\x13启用/禁用客户H\x06R\x06enable\x88\x01\x01\x12)\n" +
+	"\x06remark\x18\v \x01(\tB\f\xbaG\t\x92\x02\x06备注H\aR\x06remark\x88\x01\x01\x12F\n" +
+	"\ttenant_id\x18\x14 \x01(\rB$\xbaG!\x92\x02\x1e租户ID，0代表系统全局H\bR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\n" +
+	"R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
-	"R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\rR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\rR\tdeletedAt\x88\x01\x01B\x05\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0eR\tdeletedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_codeB\a\n" +
 	"\x05_nameB\n" +
 	"\n" +
 	"\b_contactB\b\n" +
-	"\x06_phoneB\t\n" +
+	"\x06_phoneB\x0f\n" +
+	"\r_credit_limitB\t\n" +
 	"\a_enableB\t\n" +
 	"\a_remarkB\f\n" +
 	"\n" +

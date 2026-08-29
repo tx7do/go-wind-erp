@@ -257,19 +257,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Customer",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			customer.FieldCreatedAt: {Type: field.TypeTime, Column: customer.FieldCreatedAt},
-			customer.FieldUpdatedAt: {Type: field.TypeTime, Column: customer.FieldUpdatedAt},
-			customer.FieldDeletedAt: {Type: field.TypeTime, Column: customer.FieldDeletedAt},
-			customer.FieldCreatedBy: {Type: field.TypeUint32, Column: customer.FieldCreatedBy},
-			customer.FieldUpdatedBy: {Type: field.TypeUint32, Column: customer.FieldUpdatedBy},
-			customer.FieldDeletedBy: {Type: field.TypeUint32, Column: customer.FieldDeletedBy},
-			customer.FieldRemark:    {Type: field.TypeString, Column: customer.FieldRemark},
-			customer.FieldTenantID:  {Type: field.TypeUint32, Column: customer.FieldTenantID},
-			customer.FieldCode:      {Type: field.TypeString, Column: customer.FieldCode},
-			customer.FieldName:      {Type: field.TypeString, Column: customer.FieldName},
-			customer.FieldContact:   {Type: field.TypeString, Column: customer.FieldContact},
-			customer.FieldPhone:     {Type: field.TypeString, Column: customer.FieldPhone},
-			customer.FieldEnable:    {Type: field.TypeBool, Column: customer.FieldEnable},
+			customer.FieldCreatedAt:   {Type: field.TypeTime, Column: customer.FieldCreatedAt},
+			customer.FieldUpdatedAt:   {Type: field.TypeTime, Column: customer.FieldUpdatedAt},
+			customer.FieldDeletedAt:   {Type: field.TypeTime, Column: customer.FieldDeletedAt},
+			customer.FieldCreatedBy:   {Type: field.TypeUint32, Column: customer.FieldCreatedBy},
+			customer.FieldUpdatedBy:   {Type: field.TypeUint32, Column: customer.FieldUpdatedBy},
+			customer.FieldDeletedBy:   {Type: field.TypeUint32, Column: customer.FieldDeletedBy},
+			customer.FieldRemark:      {Type: field.TypeString, Column: customer.FieldRemark},
+			customer.FieldTenantID:    {Type: field.TypeUint32, Column: customer.FieldTenantID},
+			customer.FieldCode:        {Type: field.TypeString, Column: customer.FieldCode},
+			customer.FieldName:        {Type: field.TypeString, Column: customer.FieldName},
+			customer.FieldContact:     {Type: field.TypeString, Column: customer.FieldContact},
+			customer.FieldPhone:       {Type: field.TypeString, Column: customer.FieldPhone},
+			customer.FieldCreditLimit: {Type: field.TypeInt64, Column: customer.FieldCreditLimit},
+			customer.FieldEnable:      {Type: field.TypeBool, Column: customer.FieldEnable},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -2766,6 +2767,11 @@ func (f *CustomerFilter) WhereContact(p entql.StringP) {
 // WherePhone applies the entql string predicate on the phone field.
 func (f *CustomerFilter) WherePhone(p entql.StringP) {
 	f.Where(p.Field(customer.FieldPhone))
+}
+
+// WhereCreditLimit applies the entql int64 predicate on the credit_limit field.
+func (f *CustomerFilter) WhereCreditLimit(p entql.Int64P) {
+	f.Where(p.Field(customer.FieldCreditLimit))
 }
 
 // WhereEnable applies the entql bool predicate on the enable field.

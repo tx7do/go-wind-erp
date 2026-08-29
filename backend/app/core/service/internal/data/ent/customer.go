@@ -42,6 +42,8 @@ type Customer struct {
 	Contact *string `json:"contact,omitempty"`
 	// 联系电话
 	Phone *string `json:"phone,omitempty"`
+	// 信用额度（分，0=不限）
+	CreditLimit *int64 `json:"credit_limit,omitempty"`
 	// 启用/禁用客户
 	Enable       *bool `json:"enable,omitempty"`
 	selectValues sql.SelectValues
@@ -54,7 +56,7 @@ func (*Customer) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case customer.FieldEnable:
 			values[i] = new(sql.NullBool)
-		case customer.FieldID, customer.FieldCreatedBy, customer.FieldUpdatedBy, customer.FieldDeletedBy, customer.FieldTenantID:
+		case customer.FieldID, customer.FieldCreatedBy, customer.FieldUpdatedBy, customer.FieldDeletedBy, customer.FieldTenantID, customer.FieldCreditLimit:
 			values[i] = new(sql.NullInt64)
 		case customer.FieldRemark, customer.FieldCode, customer.FieldName, customer.FieldContact, customer.FieldPhone:
 			values[i] = new(sql.NullString)
@@ -165,6 +167,13 @@ func (_m *Customer) assignValues(columns []string, values []any) error {
 				_m.Phone = new(string)
 				*_m.Phone = value.String
 			}
+		case customer.FieldCreditLimit:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field credit_limit", values[i])
+			} else if value.Valid {
+				_m.CreditLimit = new(int64)
+				*_m.CreditLimit = value.Int64
+			}
 		case customer.FieldEnable:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enable", values[i])
@@ -266,6 +275,11 @@ func (_m *Customer) String() string {
 	if v := _m.Phone; v != nil {
 		builder.WriteString("phone=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.CreditLimit; v != nil {
+		builder.WriteString("credit_limit=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.Enable; v != nil {

@@ -114,6 +114,11 @@ func Phone(v string) predicate.Customer {
 	return predicate.Customer(sql.FieldEQ(FieldPhone, v))
 }
 
+// CreditLimit applies equality check predicate on the "credit_limit" field. It's identical to CreditLimitEQ.
+func CreditLimit(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldEQ(FieldCreditLimit, v))
+}
+
 // Enable applies equality check predicate on the "enable" field. It's identical to EnableEQ.
 func Enable(v bool) predicate.Customer {
 	return predicate.Customer(sql.FieldEQ(FieldEnable, v))
@@ -842,6 +847,56 @@ func PhoneEqualFold(v string) predicate.Customer {
 // PhoneContainsFold applies the ContainsFold predicate on the "phone" field.
 func PhoneContainsFold(v string) predicate.Customer {
 	return predicate.Customer(sql.FieldContainsFold(FieldPhone, v))
+}
+
+// CreditLimitEQ applies the EQ predicate on the "credit_limit" field.
+func CreditLimitEQ(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldEQ(FieldCreditLimit, v))
+}
+
+// CreditLimitNEQ applies the NEQ predicate on the "credit_limit" field.
+func CreditLimitNEQ(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldNEQ(FieldCreditLimit, v))
+}
+
+// CreditLimitIn applies the In predicate on the "credit_limit" field.
+func CreditLimitIn(vs ...int64) predicate.Customer {
+	return predicate.Customer(sql.FieldIn(FieldCreditLimit, vs...))
+}
+
+// CreditLimitNotIn applies the NotIn predicate on the "credit_limit" field.
+func CreditLimitNotIn(vs ...int64) predicate.Customer {
+	return predicate.Customer(sql.FieldNotIn(FieldCreditLimit, vs...))
+}
+
+// CreditLimitGT applies the GT predicate on the "credit_limit" field.
+func CreditLimitGT(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldGT(FieldCreditLimit, v))
+}
+
+// CreditLimitGTE applies the GTE predicate on the "credit_limit" field.
+func CreditLimitGTE(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldGTE(FieldCreditLimit, v))
+}
+
+// CreditLimitLT applies the LT predicate on the "credit_limit" field.
+func CreditLimitLT(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldLT(FieldCreditLimit, v))
+}
+
+// CreditLimitLTE applies the LTE predicate on the "credit_limit" field.
+func CreditLimitLTE(v int64) predicate.Customer {
+	return predicate.Customer(sql.FieldLTE(FieldCreditLimit, v))
+}
+
+// CreditLimitIsNil applies the IsNil predicate on the "credit_limit" field.
+func CreditLimitIsNil() predicate.Customer {
+	return predicate.Customer(sql.FieldIsNull(FieldCreditLimit))
+}
+
+// CreditLimitNotNil applies the NotNil predicate on the "credit_limit" field.
+func CreditLimitNotNil() predicate.Customer {
+	return predicate.Customer(sql.FieldNotNull(FieldCreditLimit))
 }
 
 // EnableEQ applies the EQ predicate on the "enable" field.

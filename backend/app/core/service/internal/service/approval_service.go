@@ -200,13 +200,16 @@ func (s *ApprovalRequestService) transition(
 		return &emptypb.Empty{}, nil
 	}
 
+	// 业务联动先行：审批结果按 biz_type 分发回写（销售/采购/付款/收款/
+	// 补货）。业务守卫（自审/信用额度/状态机）拒绝 → 整个审批动作失败，
+	// 审批单保持 PENDING 可重试——审批通过必须是业务生效的同义词。
+	if serr := s.syncBusiness(ctx, old, to); serr != nil {
+		return nil, serr
+	}
+
 	if _, err := s.approvalRequestRepo.TransitionStatus(ctx, id, old.GetStatus(), to, comment); err != nil {
 		return nil, err
 	}
-
-	// 业务联动：审批结果按 biz_type 分发回写（采购单/付款/补货）。回写
-	// 失败不回滚审批（审批已是事实），仅记录，业务侧可经管理端动作对齐。
-	s.syncBusiness(ctx, old, to)
 
 	// 审结通知申请人（尽力而为）。
 	if nerr := s.notifier.notifyResolved(ctx, old, to == approvalV1.ApprovalRequest_APPROVED); nerr != nil {
@@ -266,11 +269,15 @@ func (s *ApprovalRequestService) advanceOrFinalize(
 		return nil
 	}
 
-	// 终级通过：落 APPROVED + 业务联动 + 审结通知（复用 transition 尾部）。
+	// 终级通过：业务联动先行（守卫拒绝→错误上抛，级数不推进），成功再
+	// 落 APPROVED 终态 + 审结通知。
+	if serr := s.syncBusiness(ctx, old, approvalV1.ApprovalRequest_APPROVED); serr != nil {
+		return serr
+	}
 	if _, err := s.approvalRequestRepo.TransitionStatus(ctx, old.GetId(), old.GetStatus(), approvalV1.ApprovalRequest_APPROVED, comment); err != nil {
 		return err
 	}
-	s.syncBusiness(ctx, old, approvalV1.ApprovalRequest_APPROVED)
+
 	if nerr := s.notifier.notifyResolved(ctx, old, true); nerr != nil {
 		s.log.Errorf("notify approval resolved failed: %s", nerr.Error())
 	}
@@ -282,19 +289,20 @@ func (s *ApprovalRequestService) syncBusiness(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	switch old.GetBizType() {
 	case poApprovalBizType:
-		s.syncPurchaseOrder(ctx, old, to)
+		return s.syncPurchaseOrder(ctx, old, to)
 	case soApprovalBizType:
-		s.syncSalesOrder(ctx, old, to)
+		return s.syncSalesOrder(ctx, old, to)
 	case paymentApprovalBizType:
-		s.syncPayment(ctx, old, to)
+		return s.syncPayment(ctx, old, to)
 	case receiptApprovalBizType:
-		s.syncReceipt(ctx, old, to)
+		return s.syncReceipt(ctx, old, to)
 	case replenishmentBizType:
-		s.syncReplenishment(ctx, old, to)
+		return s.syncReplenishment(ctx, old, to)
 	}
+	return nil
 }
 
 // syncReplenishment 对 biz_type=REPLENISHMENT 的审批，通过后自动创建
@@ -304,28 +312,29 @@ func (s *ApprovalRequestService) syncReplenishment(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	if to != approvalV1.ApprovalRequest_APPROVED {
-		return
+		return nil
 	}
 
 	raw := strings.TrimPrefix(old.GetBizRef(), "REPLENISHMENT:")
 	parts := strings.SplitN(raw, ":", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		s.log.Errorf("parse replenishment ref failed: %s", old.GetBizRef())
-		return
+		return approvalV1.ErrorBadRequest("invalid biz_ref")
 	}
 
 	po, err := s.purchaseOrderService.CreateReplenishmentDraft(ctx, parts[0], parts[1])
 	if err != nil {
 		s.log.Errorf("create replenishment draft for %s failed: %s", old.GetBizRef(), err.Error())
-		return
+		return err
 	}
 
 	// 下游事件通知：草稿采购单已创建，待完善提交（失败仅记录，不阻塞）。
 	if nerr := s.notifier.notifyReplenishmentDraft(ctx, old, po.GetPoNumber()); nerr != nil {
 		s.log.Errorf("notify replenishment draft for %s failed: %s", old.GetBizRef(), nerr.Error())
 	}
+	return nil
 }
 
 // syncPayment 对 biz_type=PAYMENT 的审批，驱动付款入账/拒绝。
@@ -334,24 +343,27 @@ func (s *ApprovalRequestService) syncPayment(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	raw := strings.TrimPrefix(old.GetBizRef(), "PAYMENT:")
 	paymentID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse payment ref failed: %s", old.GetBizRef())
-		return
+		return approvalV1.ErrorBadRequest("invalid biz_ref")
 	}
 
 	switch to {
 	case approvalV1.ApprovalRequest_APPROVED:
 		if err := s.paymentService.ApplyApproved(ctx, uint32(paymentID)); err != nil {
 			s.log.Errorf("apply payment %d failed: %s", paymentID, err.Error())
+			return err
 		}
 	case approvalV1.ApprovalRequest_REJECTED:
 		if err := s.paymentService.RejectApplied(ctx, uint32(paymentID)); err != nil {
 			s.log.Errorf("reject payment %d failed: %s", paymentID, err.Error())
+			return err
 		}
 	}
+	return nil
 }
 
 // syncReceipt 对 biz_type=RECEIPT 的审批，驱动收款入账/拒绝。
@@ -360,24 +372,27 @@ func (s *ApprovalRequestService) syncReceipt(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	raw := strings.TrimPrefix(old.GetBizRef(), "RECEIPT:")
 	receiptID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse receipt ref failed: %s", old.GetBizRef())
-		return
+		return approvalV1.ErrorBadRequest("invalid biz_ref")
 	}
 
 	switch to {
 	case approvalV1.ApprovalRequest_APPROVED:
 		if err := s.receiptService.ApplyApproved(ctx, uint32(receiptID)); err != nil {
 			s.log.Errorf("apply receipt %d failed: %s", receiptID, err.Error())
+			return err
 		}
 	case approvalV1.ApprovalRequest_REJECTED:
 		if err := s.receiptService.RejectApplied(ctx, uint32(receiptID)); err != nil {
 			s.log.Errorf("reject receipt %d failed: %s", receiptID, err.Error())
+			return err
 		}
 	}
+	return nil
 }
 
 // syncPurchaseOrder 对 biz_type=PURCHASE_ORDER 的审批，将其结果同步到
@@ -386,15 +401,15 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	if old.GetBizType() != "PURCHASE_ORDER" {
-		return
+		return nil
 	}
 	raw := strings.TrimPrefix(old.GetBizRef(), "PURCHASE_ORDER:")
 	poID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse purchase order ref failed: %s", old.GetBizRef())
-		return
+		return approvalV1.ErrorBadRequest("invalid biz_ref")
 	}
 
 	// 经 PO 服务动作同步：享受与直审完全相同的守卫（自审拦截、
@@ -404,16 +419,19 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 			Id: uint32(poID),
 		}); err != nil {
 			s.log.Errorf("sync purchase order %d to APPROVED failed: %s", poID, err.Error())
+			return err
 		}
-		return
+		return nil
 	}
 	if to == approvalV1.ApprovalRequest_REJECTED {
 		if _, err := s.purchaseOrderService.Reject(ctx, &procurementV1.RejectPurchaseOrderRequest{
 			Id: uint32(poID),
 		}); err != nil {
 			s.log.Errorf("sync purchase order %d to REJECTED failed: %s", poID, err.Error())
+			return err
 		}
 	}
+	return nil
 }
 
 // syncSalesOrder 对 biz_type=SALES_ORDER 的审批，将其结果同步到
@@ -422,34 +440,37 @@ func (s *ApprovalRequestService) syncSalesOrder(
 	ctx context.Context,
 	old *approvalV1.ApprovalRequest,
 	to approvalV1.ApprovalRequest_Status,
-) {
+) error {
 	if old.GetBizType() != soApprovalBizType {
-		return
+		return nil
 	}
 	raw := strings.TrimPrefix(old.GetBizRef(), "SALES_ORDER:")
 	soID, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		s.log.Errorf("parse sales order ref failed: %s", old.GetBizRef())
-		return
+		return approvalV1.ErrorBadRequest("invalid biz_ref")
 	}
 
 	// 经 SO 服务动作同步：享受与直审完全相同的守卫（自审拦截、
-	// 原子迁移、获批生成应收单）。
+	// 原子迁移、信用额度、获批生成应收单）。
 	if to == approvalV1.ApprovalRequest_APPROVED {
 		if _, err := s.salesOrderService.Approve(ctx, &salesV1.ApproveSalesOrderRequest{
 			Id: uint32(soID),
 		}); err != nil {
 			s.log.Errorf("sync sales order %d to APPROVED failed: %s", soID, err.Error())
+			return err
 		}
-		return
+		return nil
 	}
 	if to == approvalV1.ApprovalRequest_REJECTED {
 		if _, err := s.salesOrderService.Reject(ctx, &salesV1.RejectSalesOrderRequest{
 			Id: uint32(soID),
 		}); err != nil {
 			s.log.Errorf("sync sales order %d to REJECTED failed: %s", soID, err.Error())
+			return err
 		}
 	}
+	return nil
 }
 
 // Approve 通过审批（仅 PENDING）。

@@ -303,8 +303,12 @@ func init() {
 	customerDescTenantID := customerMixinFields5[0].Descriptor()
 	// customer.DefaultTenantID holds the default value on creation for the tenant_id field.
 	customer.DefaultTenantID = customerDescTenantID.Default.(uint32)
+	// customerDescCreditLimit is the schema descriptor for credit_limit field.
+	customerDescCreditLimit := customerFields[4].Descriptor()
+	// customer.DefaultCreditLimit holds the default value on creation for the credit_limit field.
+	customer.DefaultCreditLimit = customerDescCreditLimit.Default.(int64)
 	// customerDescEnable is the schema descriptor for enable field.
-	customerDescEnable := customerFields[4].Descriptor()
+	customerDescEnable := customerFields[5].Descriptor()
 	// customer.DefaultEnable holds the default value on creation for the enable field.
 	customer.DefaultEnable = customerDescEnable.Default.(bool)
 	// customerDescID is the schema descriptor for id field.

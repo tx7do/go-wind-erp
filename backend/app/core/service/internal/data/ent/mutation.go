@@ -9366,30 +9366,32 @@ func (m *ApprovalRequestMutation) ResetEdge(name string) error {
 // CustomerMutation represents an operation that mutates the Customer nodes in the graph.
 type CustomerMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	created_by    *uint32
-	addcreated_by *int32
-	updated_by    *uint32
-	addupdated_by *int32
-	deleted_by    *uint32
-	adddeleted_by *int32
-	remark        *string
-	tenant_id     *uint32
-	addtenant_id  *int32
-	code          *string
-	name          *string
-	contact       *string
-	phone         *string
-	enable        *bool
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Customer, error)
-	predicates    []predicate.Customer
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	updated_by      *uint32
+	addupdated_by   *int32
+	deleted_by      *uint32
+	adddeleted_by   *int32
+	remark          *string
+	tenant_id       *uint32
+	addtenant_id    *int32
+	code            *string
+	name            *string
+	contact         *string
+	phone           *string
+	credit_limit    *int64
+	addcredit_limit *int64
+	enable          *bool
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*Customer, error)
+	predicates      []predicate.Customer
 }
 
 var _ ent.Mutation = (*CustomerMutation)(nil)
@@ -10168,6 +10170,76 @@ func (m *CustomerMutation) ResetPhone() {
 	delete(m.clearedFields, customer.FieldPhone)
 }
 
+// SetCreditLimit sets the "credit_limit" field.
+func (m *CustomerMutation) SetCreditLimit(i int64) {
+	m.credit_limit = &i
+	m.addcredit_limit = nil
+}
+
+// CreditLimit returns the value of the "credit_limit" field in the mutation.
+func (m *CustomerMutation) CreditLimit() (r int64, exists bool) {
+	v := m.credit_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreditLimit returns the old "credit_limit" field's value of the Customer entity.
+// If the Customer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CustomerMutation) OldCreditLimit(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreditLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreditLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreditLimit: %w", err)
+	}
+	return oldValue.CreditLimit, nil
+}
+
+// AddCreditLimit adds i to the "credit_limit" field.
+func (m *CustomerMutation) AddCreditLimit(i int64) {
+	if m.addcredit_limit != nil {
+		*m.addcredit_limit += i
+	} else {
+		m.addcredit_limit = &i
+	}
+}
+
+// AddedCreditLimit returns the value that was added to the "credit_limit" field in this mutation.
+func (m *CustomerMutation) AddedCreditLimit() (r int64, exists bool) {
+	v := m.addcredit_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreditLimit clears the value of the "credit_limit" field.
+func (m *CustomerMutation) ClearCreditLimit() {
+	m.credit_limit = nil
+	m.addcredit_limit = nil
+	m.clearedFields[customer.FieldCreditLimit] = struct{}{}
+}
+
+// CreditLimitCleared returns if the "credit_limit" field was cleared in this mutation.
+func (m *CustomerMutation) CreditLimitCleared() bool {
+	_, ok := m.clearedFields[customer.FieldCreditLimit]
+	return ok
+}
+
+// ResetCreditLimit resets all changes to the "credit_limit" field.
+func (m *CustomerMutation) ResetCreditLimit() {
+	m.credit_limit = nil
+	m.addcredit_limit = nil
+	delete(m.clearedFields, customer.FieldCreditLimit)
+}
+
 // SetEnable sets the "enable" field.
 func (m *CustomerMutation) SetEnable(b bool) {
 	m.enable = &b
@@ -10251,7 +10323,7 @@ func (m *CustomerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CustomerMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, customer.FieldCreatedAt)
 	}
@@ -10288,6 +10360,9 @@ func (m *CustomerMutation) Fields() []string {
 	if m.phone != nil {
 		fields = append(fields, customer.FieldPhone)
 	}
+	if m.credit_limit != nil {
+		fields = append(fields, customer.FieldCreditLimit)
+	}
 	if m.enable != nil {
 		fields = append(fields, customer.FieldEnable)
 	}
@@ -10323,6 +10398,8 @@ func (m *CustomerMutation) Field(name string) (ent.Value, bool) {
 		return m.Contact()
 	case customer.FieldPhone:
 		return m.Phone()
+	case customer.FieldCreditLimit:
+		return m.CreditLimit()
 	case customer.FieldEnable:
 		return m.Enable()
 	}
@@ -10358,6 +10435,8 @@ func (m *CustomerMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldContact(ctx)
 	case customer.FieldPhone:
 		return m.OldPhone(ctx)
+	case customer.FieldCreditLimit:
+		return m.OldCreditLimit(ctx)
 	case customer.FieldEnable:
 		return m.OldEnable(ctx)
 	}
@@ -10453,6 +10532,13 @@ func (m *CustomerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPhone(v)
 		return nil
+	case customer.FieldCreditLimit:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreditLimit(v)
+		return nil
 	case customer.FieldEnable:
 		v, ok := value.(bool)
 		if !ok {
@@ -10480,6 +10566,9 @@ func (m *CustomerMutation) AddedFields() []string {
 	if m.addtenant_id != nil {
 		fields = append(fields, customer.FieldTenantID)
 	}
+	if m.addcredit_limit != nil {
+		fields = append(fields, customer.FieldCreditLimit)
+	}
 	return fields
 }
 
@@ -10496,6 +10585,8 @@ func (m *CustomerMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedBy()
 	case customer.FieldTenantID:
 		return m.AddedTenantID()
+	case customer.FieldCreditLimit:
+		return m.AddedCreditLimit()
 	}
 	return nil, false
 }
@@ -10532,6 +10623,13 @@ func (m *CustomerMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTenantID(v)
+		return nil
+	case customer.FieldCreditLimit:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreditLimit(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Customer numeric field %s", name)
@@ -10576,6 +10674,9 @@ func (m *CustomerMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(customer.FieldPhone) {
 		fields = append(fields, customer.FieldPhone)
+	}
+	if m.FieldCleared(customer.FieldCreditLimit) {
+		fields = append(fields, customer.FieldCreditLimit)
 	}
 	if m.FieldCleared(customer.FieldEnable) {
 		fields = append(fields, customer.FieldEnable)
@@ -10630,6 +10731,9 @@ func (m *CustomerMutation) ClearField(name string) error {
 	case customer.FieldPhone:
 		m.ClearPhone()
 		return nil
+	case customer.FieldCreditLimit:
+		m.ClearCreditLimit()
+		return nil
 	case customer.FieldEnable:
 		m.ClearEnable()
 		return nil
@@ -10676,6 +10780,9 @@ func (m *CustomerMutation) ResetField(name string) error {
 		return nil
 	case customer.FieldPhone:
 		m.ResetPhone()
+		return nil
+	case customer.FieldCreditLimit:
+		m.ResetCreditLimit()
 		return nil
 	case customer.FieldEnable:
 		m.ResetEnable()
