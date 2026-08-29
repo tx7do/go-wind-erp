@@ -33,3 +33,24 @@ class LowStockItem {
     required this.quantity,
   });
 }
+
+
+/// 财务经营汇总（移动端驾驶舱；金额单位分，展示层转元）。
+class FinanceSummaryInfo {
+  final int revenueMonth;
+  final int cogsMonth;
+  final int profitMonth;
+  final int arBalance;
+  final int apBalance;
+
+  const FinanceSummaryInfo({
+    required this.revenueMonth,
+    required this.cogsMonth,
+    required this.profitMonth,
+    required this.arBalance,
+    required this.apBalance,
+  });
+
+  /// 分转元（两位小数字符串）。
+  static String yuan(int cents) => (cents / 100).toStringAsFixed(2);
+}

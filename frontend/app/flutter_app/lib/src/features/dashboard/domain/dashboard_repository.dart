@@ -12,4 +12,7 @@ abstract class DashboardRepository {
     int? lowStockThreshold,
     int? lowStockLimit,
   });
+
+  /// 拉取财务经营汇总（本月收入/成本/利润 + 应收应付余额）。
+  Future<FinanceSummaryInfo> fetchFinanceSummary();
 }

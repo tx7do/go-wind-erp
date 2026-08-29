@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -52,6 +53,41 @@ class S {
 
   static S? maybeOf(BuildContext context) {
     return Localizations.of<S>(context, S);
+  }
+
+  /// `本月收入（元）`
+  String get metricRevenueMonth {
+    return Intl.message(
+      '本月收入（元）',
+      name: 'metricRevenueMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `本月成本（元）`
+  String get metricCogsMonth {
+    return Intl.message('本月成本（元）', name: 'metricCogsMonth', desc: '', args: []);
+  }
+
+  /// `本月利润（元）`
+  String get metricProfitMonth {
+    return Intl.message(
+      '本月利润（元）',
+      name: 'metricProfitMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `应收 / 应付（元）`
+  String get metricArApBalance {
+    return Intl.message(
+      '应收 / 应付（元）',
+      name: 'metricArApBalance',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `GoWind ERP`

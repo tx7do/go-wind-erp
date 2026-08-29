@@ -44,6 +44,10 @@ class DashboardPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: [
                   _buildMetricGrid(context, loc, state.overview),
+                  if (state.finance != null) ...[
+                    const SizedBox(height: 16),
+                    _buildFinanceGrid(context, loc, state.finance!),
+                  ],
                   const SizedBox(height: 16),
                   _buildLowStock(context, loc, state.overview.lowStockItems),
                 ],
@@ -107,6 +111,50 @@ class DashboardPage extends StatelessWidget {
           value: overview.movementCount.toString(),
           icon: Icons.swap_vert,
           color: Colors.deepOrange,
+        ),
+      ],
+    );
+  }
+
+  /// 财务汇总卡片行（本月收入/成本/利润 + 应收应付）。
+  Widget _buildFinanceGrid(
+    BuildContext context,
+    S loc,
+    FinanceSummaryInfo finance,
+  ) {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.6,
+      children: [
+        _MetricCard(
+          label: loc.metricRevenueMonth,
+          value: FinanceSummaryInfo.yuan(finance.revenueMonth),
+          icon: Icons.trending_up,
+          color: Colors.green,
+        ),
+        _MetricCard(
+          label: loc.metricCogsMonth,
+          value: FinanceSummaryInfo.yuan(finance.cogsMonth),
+          icon: Icons.trending_down,
+          color: Colors.orange,
+        ),
+        _MetricCard(
+          label: loc.metricProfitMonth,
+          value: FinanceSummaryInfo.yuan(finance.profitMonth),
+          icon: Icons.paid,
+          color: Colors.blue,
+        ),
+        _MetricCard(
+          label: loc.metricArApBalance,
+          value:
+              '${FinanceSummaryInfo.yuan(finance.arBalance)} / '
+              '${FinanceSummaryInfo.yuan(finance.apBalance)}',
+          icon: Icons.account_balance_wallet,
+          color: Colors.purple,
         ),
       ],
     );

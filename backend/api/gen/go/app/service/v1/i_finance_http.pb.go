@@ -12,6 +12,7 @@ import (
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-erp/api/gen/go/finance/service/v1"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -401,6 +402,61 @@ func (c *ReceiptServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 	pattern := "/app/v1/receipts"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationReceiptServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+const OperationFinanceSummaryServiceGetFinanceSummary = "/app.service.v1.FinanceSummaryService/GetFinanceSummary"
+
+type FinanceSummaryServiceHTTPServer interface {
+	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
+}
+
+func RegisterFinanceSummaryServiceHTTPServer(s *http.Server, srv FinanceSummaryServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/app/v1/finance/summary", _FinanceSummaryService_GetFinanceSummary0_HTTP_Handler(srv))
+}
+
+func _FinanceSummaryService_GetFinanceSummary0_HTTP_Handler(srv FinanceSummaryServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFinanceSummaryServiceGetFinanceSummary)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetFinanceSummary(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.FinanceSummaryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type FinanceSummaryServiceHTTPClient interface {
+	GetFinanceSummary(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.FinanceSummaryResponse, err error)
+}
+
+type FinanceSummaryServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewFinanceSummaryServiceHTTPClient(client *http.Client) FinanceSummaryServiceHTTPClient {
+	return &FinanceSummaryServiceHTTPClientImpl{client}
+}
+
+func (c *FinanceSummaryServiceHTTPClientImpl) GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.FinanceSummaryResponse, error) {
+	var out v11.FinanceSummaryResponse
+	pattern := "/app/v1/finance/summary"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationFinanceSummaryServiceGetFinanceSummary))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

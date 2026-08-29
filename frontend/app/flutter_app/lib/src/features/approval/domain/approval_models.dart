@@ -16,6 +16,10 @@ class ApprovalInfo {
   final String? comment;
   final String? createdAt;
 
+  /// 多级审批进度（快照自审批流；totalSteps<=1 为传统单级）。
+  final int currentStep;
+  final int totalSteps;
+
   const ApprovalInfo({
     required this.id,
     required this.title,
@@ -27,7 +31,12 @@ class ApprovalInfo {
     this.approverId,
     this.comment,
     this.createdAt,
+    this.currentStep = 1,
+    this.totalSteps = 1,
   });
+
+  /// 是否多级审批（>1 级时 UI 显示进度）。
+  bool get isMultiStep => totalSteps > 1;
 }
 
 /// 审批状态筛选。

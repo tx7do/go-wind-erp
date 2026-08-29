@@ -54,6 +54,8 @@ class ApprovalRepositoryImpl implements ApprovalRepository {
             approverId: item.approverId,
             comment: item.comment,
             createdAt: item.createdAt,
+            currentStep: item.currentStep ?? 1,
+            totalSteps: item.totalSteps ?? 1,
           ),
       ];
     } on DioException catch (e) {

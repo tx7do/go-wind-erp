@@ -58,9 +58,11 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	salesOrderService := service.NewSalesOrderService(context, salesOrderServiceClient)
 	payableServiceClient := data.NewPayableServiceClient(context, discovery)
 	payableService := service.NewPayableService(context, payableServiceClient)
+	financeReportServiceClient := data.NewFinanceReportServiceClient(context, discovery)
+	financeSummaryService := service.NewFinanceSummaryService(context, financeReportServiceClient)
 	paymentServiceClient := data.NewPaymentServiceClient(context, discovery)
 	paymentService := service.NewPaymentService(context, paymentServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, stockQuantService, stockPickingService, approvalRequestService, dictEntryLookup, purchaseOrderService, salesOrderService, payableService, paymentService)
+	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, warehouseService, stockQuantService, stockPickingService, approvalRequestService, dictEntryLookup, purchaseOrderService, salesOrderService, payableService, financeSummaryService, paymentService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

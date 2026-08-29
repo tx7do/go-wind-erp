@@ -3,6 +3,7 @@ syntax = "proto3";
 package app.service.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 import "pagination/v1/pagination.proto";
 import "finance/service/v1/finance.proto";
@@ -67,6 +68,15 @@ service ReceiptService {
   rpc Get (finance.service.v1.GetReceiptRequest) returns (finance.service.v1.Receipt) {
     option (google.api.http) = {
       get: "/app/v1/receipts/{id}"
+    };
+  }
+}
+
+// 财务汇总（移动端驾驶舱：本月收入/成本/利润 + 应收应付余额，只读）。
+service FinanceSummaryService {
+  rpc GetFinanceSummary (google.protobuf.Empty) returns (finance.service.v1.FinanceSummaryResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/finance/summary"
     };
   }
 }

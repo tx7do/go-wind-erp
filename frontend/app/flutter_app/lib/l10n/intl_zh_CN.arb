@@ -1,4 +1,8 @@
 {
+  "metricRevenueMonth": "本月收入（元）",
+  "metricCogsMonth": "本月成本（元）",
+  "metricProfitMonth": "本月利润（元）",
+  "metricArApBalance": "应收 / 应付（元）",
   "appName": "GoWind ERP",
   "@@locale": "zh_CN",
   "login": "登录",

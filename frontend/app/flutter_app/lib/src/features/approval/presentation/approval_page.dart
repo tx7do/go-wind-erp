@@ -188,6 +188,10 @@ class _ApprovalBodyState extends State<_ApprovalBody> {
         title: Row(
           children: [
             Expanded(child: Text(item.title, overflow: TextOverflow.ellipsis)),
+            if (item.isMultiStep) ...[
+              _stepChip(item),
+              const SizedBox(width: 4),
+            ],
             _statusChip(loc, item.status),
           ],
         ),
@@ -254,6 +258,21 @@ class _ApprovalBodyState extends State<_ApprovalBody> {
         onLongPress: isPending
             ? () => _confirmCancel(context, loc, item)
             : null,
+      ),
+    );
+  }
+
+  /// 多级审批进度徽标（第 x/N 级）。
+  Widget _stepChip(ApprovalInfo item) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.blue.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '${item.currentStep}/${item.totalSteps}',
+        style: const TextStyle(color: Colors.blue, fontSize: 12),
       ),
     );
   }

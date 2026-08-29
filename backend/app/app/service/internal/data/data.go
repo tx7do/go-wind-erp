@@ -21,6 +21,7 @@ import (
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	dictV1 "go-wind-erp/api/gen/go/dict/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
+	adminV1 "go-wind-erp/api/gen/go/admin/service/v1"
 	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
 	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
@@ -238,6 +239,15 @@ func NewPayableServiceClient(ctx *bootstrap.Context, r registry.Discovery) finan
 	}
 
 	return financeV1.NewPayableServiceClient(cli)
+}
+
+func NewFinanceReportServiceClient(ctx *bootstrap.Context, r registry.Discovery) adminV1.FinanceReportServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return adminV1.NewFinanceReportServiceClient(cli)
 }
 
 func NewPaymentServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.PaymentServiceClient {

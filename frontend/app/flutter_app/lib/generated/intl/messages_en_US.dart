@@ -76,7 +76,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "lowStockEmpty": MessageLookupByLibrary.simpleMessage("No low-stock items"),
     "lowStockTitle": MessageLookupByLibrary.simpleMessage("Low Stock"),
+    "metricArApBalance": MessageLookupByLibrary.simpleMessage(
+      "AR / AP Balance",
+    ),
+    "metricCogsMonth": MessageLookupByLibrary.simpleMessage("COGS (Month)"),
     "metricMovements": MessageLookupByLibrary.simpleMessage("Movements"),
+    "metricProfitMonth": MessageLookupByLibrary.simpleMessage("Profit (Month)"),
+    "metricRevenueMonth": MessageLookupByLibrary.simpleMessage(
+      "Revenue (Month)",
+    ),
     "metricSkus": MessageLookupByLibrary.simpleMessage("SKUs in Stock"),
     "metricTotalQuantity": MessageLookupByLibrary.simpleMessage(
       "Total Quantity",

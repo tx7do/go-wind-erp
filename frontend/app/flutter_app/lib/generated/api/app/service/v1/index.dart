@@ -3879,6 +3879,102 @@ class FinanceServiceV1GetReceiptRequest {
   }
 }
 
+/// 财务汇总（移动端驾驶舱：本月收入/成本/利润 + 应收应付余额，只读）。
+class FinanceSummaryServiceClient {
+  final ClientTransport _transport;
+
+  FinanceSummaryServiceClient(this._transport);
+
+  Future<FinanceServiceV1FinanceSummaryResponse> getFinanceSummary(Map<String, dynamic> _request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/finance/summary';
+    final result = await _transport.unary(path, 'GET', null, TransportMeta(
+      service: 'FinanceSummaryService',
+      method: 'GetFinanceSummary',
+    ), headers: headers);
+    return FinanceServiceV1FinanceSummaryResponse.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+/// 经营汇总（驾驶舱）：本月收入/成本/利润（总账 6001/6401 当月净额）+
+/// 应收/应付未清余额。金额单位分。
+class FinanceServiceV1FinanceSummaryResponse {
+  int? apBalance;
+  int? arBalance;
+  int? cogsMonth;
+  int? profitMonth;
+  int? revenueMonth;
+
+  FinanceServiceV1FinanceSummaryResponse({
+    this.apBalance,
+    this.arBalance,
+    this.cogsMonth,
+    this.profitMonth,
+    this.revenueMonth,
+  });
+
+  factory FinanceServiceV1FinanceSummaryResponse.fromJson(Map<String, dynamic> json) {
+    return FinanceServiceV1FinanceSummaryResponse(
+      apBalance: json['apBalance'] != null ? int.parse(json['apBalance'].toString()) : null,
+      arBalance: json['arBalance'] != null ? int.parse(json['arBalance'].toString()) : null,
+      cogsMonth: json['cogsMonth'] != null ? int.parse(json['cogsMonth'].toString()) : null,
+      profitMonth: json['profitMonth'] != null ? int.parse(json['profitMonth'].toString()) : null,
+      revenueMonth: json['revenueMonth'] != null ? int.parse(json['revenueMonth'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (apBalance != null) json['apBalance'] = apBalance.toString();
+    if (arBalance != null) json['arBalance'] = arBalance.toString();
+    if (cogsMonth != null) json['cogsMonth'] = cogsMonth.toString();
+    if (profitMonth != null) json['profitMonth'] = profitMonth.toString();
+    if (revenueMonth != null) json['revenueMonth'] = revenueMonth.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'FinanceServiceV1FinanceSummaryResponse(apBalance: $apBalance, arBalance: $arBalance, cogsMonth: $cogsMonth, profitMonth: $profitMonth, revenueMonth: $revenueMonth)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is FinanceServiceV1FinanceSummaryResponse &&
+      runtimeType == other.runtimeType
+      && apBalance == other.apBalance
+      && arBalance == other.arBalance
+      && cogsMonth == other.cogsMonth
+      && profitMonth == other.profitMonth
+      && revenueMonth == other.revenueMonth
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    apBalance,
+    arBalance,
+    cogsMonth,
+    profitMonth,
+    revenueMonth,
+  ]);
+
+  FinanceServiceV1FinanceSummaryResponse copyWith({
+    int? apBalance,
+    int? arBalance,
+    int? cogsMonth,
+    int? profitMonth,
+    int? revenueMonth,
+  }) {
+    return FinanceServiceV1FinanceSummaryResponse(
+      apBalance: apBalance ?? this.apBalance,
+      arBalance: arBalance ?? this.arBalance,
+      cogsMonth: cogsMonth ?? this.cogsMonth,
+      profitMonth: profitMonth ?? this.profitMonth,
+      revenueMonth: revenueMonth ?? this.revenueMonth,
+    );
+  }
+}
+
 /// 仓库服务（移动端只读：扫码场景选择仓库）
 class WarehouseServiceClient {
   final ClientTransport _transport;
@@ -7929,6 +8025,7 @@ class ApiClient {
   AuthenticationServiceClient? _authenticationService;
   DictEntryLookupClient? _dictEntryLookup;
   FileTransferServiceClient? _fileTransferService;
+  FinanceSummaryServiceClient? _financeSummaryService;
   PayableServiceClient? _payableService;
   PaymentServiceClient? _paymentService;
   PurchaseOrderServiceClient? _purchaseOrderService;
@@ -7960,6 +8057,11 @@ class ApiClient {
   FileTransferServiceClient get fileTransferService {
     _fileTransferService ??= FileTransferServiceClient(_transport);
     return _fileTransferService!;
+  }
+
+  FinanceSummaryServiceClient get financeSummaryService {
+    _financeSummaryService ??= FinanceSummaryServiceClient(_transport);
+    return _financeSummaryService!;
   }
 
   PayableServiceClient get payableService {
@@ -8018,6 +8120,7 @@ class ApiClient {
     _authenticationService = null;
     _dictEntryLookup = null;
     _fileTransferService = null;
+    _financeSummaryService = null;
     _payableService = null;
     _paymentService = null;
     _purchaseOrderService = null;
