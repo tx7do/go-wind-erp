@@ -2,13 +2,11 @@
 
 # GoWind ERP
 
-### 风行 · 基于 Golang 微服务的企业级 ERP 基座平台
+### 风行 · 专为中小团队打造的轻量级、一体化 ERP 基座
+
+**免实施顾问 · 半天上手 · 核心业务数据全打通**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
-[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
-[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
 
 **[English](./README.en-US.md)** · **中文** · **[日本語](./README.ja-JP.md)**
 
@@ -16,52 +14,19 @@
 
 ---
 
-GoWind ERP 是一款基于 Golang 微服务架构的企业级 ERP 基座平台，采用 API 优先、前后端分离架构。平台提供组织权限、认证、审计、文件存储、字典、站内消息、任务调度、多语言等通用基座能力，为库存 / WMS、采购 / SRM、财务 / AP 等 ERP 业务模块的迭代演进提供统一底座。
+采购、库存、财务——中小团队最核心的业务，在同一个系统里闭环：采购单审批完成自动生成应付单，收货自动回写库存，低库存自动给出补货建议，应付账龄随时可查。数据一次录入、处处生效，不需要实施顾问，也不需要漫长的实施周期。
 
-**核心亮点：**
+**三句话讲清楚 GoWind ERP：**
 
-- **API 优先** — 完整的 RESTful / gRPC 双协议接口，OpenAPI 文档自动生成
-- **多端适配** — 管理后台（Vue3）与移动端（Flutter）两套前端
-- **多租户架构** — 租户数据隔离，新增租户自动初始化部门、角色与管理员
-- **精细化权限** — 菜单权限、接口权限、数据权限三级管控，策略引擎驱动鉴权，关键操作全程审计
-- **原生多语言** — 内容、菜单、提示信息统一翻译管理
-- **微服务架构** — 基于 go-kratos，支持服务发现与链路追踪
+- **免实施顾问** — 注册即开通：租户、部门、角色、管理员自动初始化，权限、审批、站内消息、审计等基座能力全部内置，开箱即用
+- **半天上手** — 管理后台 + 手机 App 双端齐备，采购 → 审批 → 收货 → 库存 → 付款的核心链路开箱即走；仓库现场用扫码，管理层看经营看板
+- **核心业务数据全打通** — 单据驱动单据：审批完的采购单自动生成应付，收货自动回写库存，低库存自动起草补货采购单；数据在一处录入，全链路生效
+
+对开发者同样友好：API 优先（RESTful / gRPC 双协议，OpenAPI 文档自动生成）、微服务架构、原生多语言——技术细节见下方[技术栈](#技术栈)。
 
 ## 项目状态
 
 GoWind ERP 的通用基座能力（组织权限、认证、审计、文件存储、字典、站内消息、任务调度、多语言）与三大 ERP 业务模块（库存 / WMS、采购 / SRM、财务 / AP）均已实现，覆盖后端核心服务、管理后台与移动端。核心业务链路——采购单审批收货入库、应付付款结算、库存调拨与冲正、低库存自动补货——已端到端闭环，关键一致性逻辑（收货审批闸门、调拨单事务原子性、账龄未清余额口径）有回归测试覆盖。
-
-## 技术栈
-
-### 后端
-
-| 层级     | 技术                                                                     | 说明            |
-|:-------|:-------------------------------------------------------------------------|:--------------|
-| 语言     | [Go 1.25+](https://go.dev/)                                             | 高性能编译型语言    |
-| 框架     | [go-kratos](https://go-kratos.dev/)                                     | 微服务框架       |
-| 依赖注入   | [Wire](https://github.com/google/wire)                                  | 编译时依赖注入      |
-| ORM    | [Ent](https://entgo.io/)                                                | Go 实体框架      |
-| 数据库    | [PostgreSQL](https://www.postgresql.org/)                               | 关系型数据库       |
-| 缓存     | [Redis](https://redis.io/)                                              | 内存数据库       |
-| 对象存储   | [MinIO](https://min.io/)                                                | 兼容 S3 的对象存储 |
-| 服务注册   | [Etcd](https://etcd.io/)                                                | 服务发现与配置      |
-| 链路追踪   | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分布式可观测       |
-| API 定义 | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/)     | 接口契约优先       |
-
-### 管理后台前端
-
-| 技术                                            | 说明         |
-|:----------------------------------------------|:-----------|
-| [Vue 3](https://vuejs.org/)                   | 渐进式前端框架    |
-| [TypeScript](https://www.typescriptlang.org/) | 类型安全       |
-| [Ant Design Vue](https://antdv.com/)          | 企业级 UI 组件库 |
-| [Vben Admin](https://doc.vben.pro/)           | 后台管理框架     |
-
-### 移动端前端
-
-| 版本      | 技术栈                                 | 适用场景       |
-|:--------|:-------------------------------------|:-----------|
-| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | 跨平台原生应用 |
 
 ## 核心功能
 
@@ -97,6 +62,43 @@ GoWind ERP 的通用基座能力（组织权限、认证、审计、文件存储
 | 财务 / AP     | 应付单（采购单获批自动生成）、付款申请（经审批轨入账）、部分付款与结清状态机、应付账龄报告 |
 | 审批轨（通用）    | 采购单 / 付款 / 补货三类单据统一审批；申请人与审批人由服务端推导，禁止自审自批，审结站内信通知申请人，补货草稿创建与采购单自动完结触发下游通知 |
 | 移动端业务功能    | WMS 扫码（出入库 / 调拨 / 冲正）、审批中心、经营看板 |
+
+## 技术栈
+
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
+
+### 后端
+
+| 层级     | 技术                                                                     | 说明            |
+|:-------|:-------------------------------------------------------------------------|:--------------|
+| 语言     | [Go 1.25+](https://go.dev/)                                             | 高性能编译型语言    |
+| 框架     | [go-kratos](https://go-kratos.dev/)                                     | 微服务框架       |
+| 依赖注入   | [Wire](https://github.com/google/wire)                                  | 编译时依赖注入      |
+| ORM    | [Ent](https://entgo.io/)                                                | Go 实体框架      |
+| 数据库    | [PostgreSQL](https://www.postgresql.org/)                               | 关系型数据库       |
+| 缓存     | [Redis](https://redis.io/)                                              | 内存数据库       |
+| 对象存储   | [MinIO](https://min.io/)                                                | 兼容 S3 的对象存储 |
+| 服务注册   | [Etcd](https://etcd.io/)                                                | 服务发现与配置      |
+| 链路追踪   | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分布式可观测       |
+| API 定义 | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/)     | 接口契约优先       |
+
+### 管理后台前端
+
+| 技术                                            | 说明         |
+|:----------------------------------------------|:-----------|
+| [Vue 3](https://vuejs.org/)                   | 渐进式前端框架    |
+| [TypeScript](https://www.typescriptlang.org/) | 类型安全       |
+| [Ant Design Vue](https://antdv.com/)          | 企业级 UI 组件库 |
+| [Vben Admin](https://doc.vben.pro/)           | 后台管理框架     |
+
+### 移动端前端
+
+| 版本      | 技术栈                                 | 适用场景       |
+|:--------|:-------------------------------------|:-----------|
+| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | 跨平台原生应用 |
 
 ## 项目结构
 

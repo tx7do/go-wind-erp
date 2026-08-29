@@ -2,13 +2,11 @@
 
 # GoWind ERP
 
-### 風行 · Golang マイクロサービスに基づくエンタープライズ向け ERP 基盤プラットフォーム
+### 風行 · 中小チームのための軽量・オールインワン ERP 基盤
+
+**導入コンサルタント不要 · 半日で使い始められる · コア業務データを完全に連携**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
-[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
-[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
 
 **[English](./README.en-US.md)** · **[中文](./README.md)** · **日本語**
 
@@ -16,52 +14,19 @@
 
 ---
 
-GoWind ERP は、Golang マイクロサービスアーキテクチャに基づくエンタープライズ向け ERP 基盤プラットフォームであり、API ファースト、フロントエンド・バックエンド分離の設計を採用しています。本プラットフォームは、組織と権限、認証、監査、ファイルストレージ、辞書、サイト内メッセージ、タスクスケジューリング、国際化といった汎用基盤機能を提供し、在庫 / WMS、調達 / SRM、財務 / AP などの ERP 業務モジュールを段階的に発展させるための統一基盤となります。
+調達・在庫・財務——中小チームのビジネスの核心を、ひとつのシステムで閉じます。承認済みの発注から買掛金が自動生成され、入庫は在庫へ自動反映、低在庫は補充案を自動提案、買掛金エイジングもいつでも確認できます。データは一度入力すれば全体に行き渡ります。導入コンサルタントも、長い導入期間も不要です。
 
-**主な特徴：**
+**GoWind ERP を 3 文で：**
 
-- **API ファースト** — 完全な RESTful / gRPC デュアルプロトコルインターフェース、OpenAPI ドキュメント自動生成
-- **マルチプラットフォーム** — 管理コンソール（Vue3）とモバイルアプリ（Flutter）の 2 つのフロントエンド
-- **マルチテナント** — テナントデータの分離、部門・ロール・管理者の自動初期化
-- **きめ細かい権限管理** — メニュー権限、API 権限、データ権限の 3 レベル制御、ポリシーエンジンによる認可、機微な操作の全リンク監査
-- **ネイティブ i18n** — コンテンツ、メニュー、UI テキストの統一翻訳管理
-- **マイクロサービス** — go-kratos ベース、サービスディスカバリと分散トレーシング対応
+- **導入コンサルタント不要** — 登録すればすぐ開始：テナント・部門・ロール・管理者は自動初期化、権限・承認・サイト内メッセージ・監査などの基盤機能をすべて内蔵
+- **半日で使い始められる** — 管理コンソールとモバイルアプリを同梱。調達 → 承認 → 入庫 → 在庫 → 支払のコアフローがそのまま動き、倉庫の現場はスキャンで、経営層はダッシュボードで
+- **コア業務データを完全に連携** — ドキュメントがドキュメントを駆動：承認済み発注は買掛金を自動生成、入庫は在庫を自動更新、低在庫は補充発注のドラフトを自動作成。データは一度の入力で全リンクに反映
+
+開発者にも扱いやすい設計：API ファースト（RESTful / gRPC デュアルプロトコル、OpenAPI ドキュメント自動生成）、マイクロサービス、ネイティブ多言語対応——詳しくは下記の[テクノロジースタック](#テクノロジースタック)を参照してください。
 
 ## プロジェクトの状況
 
 GoWind ERP は、組織と権限、認証、監査、ファイルストレージ、辞書、サイト内メッセージ、タスクスケジューリング、国際化といった汎用基盤機能に加え、3 つの ERP 業務モジュール（在庫 / WMS、調達 / SRM、財務 / AP）も実装済みであり、コアバックエンドサービス・管理コンソール・モバイルアプリの三層をすべてカバーしています。主要な業務フロー（発注承認から入庫まで、買掛金の支払・決済、在庫転送と取消、低在庫の自動補充）はエンドツーエンドで閉じており、重要な一貫性ロジック（入庫承認ゲート、転送の単一トランザクション原子性、エイジングレポートの未払残高集計）には回帰テストが付いています。
-
-## テクノロジースタック
-
-### バックエンド
-
-| レイヤー | 技術 | 説明 |
-|:---|:---|:---|
-| 言語 | [Go 1.25+](https://go.dev/) | 高性能コンパイル言語 |
-| フレームワーク | [go-kratos](https://go-kratos.dev/) | マイクロサービスフレームワーク |
-| DI | [Wire](https://github.com/google/wire) | コンパイル時依存性注入 |
-| ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
-| データベース | [PostgreSQL](https://www.postgresql.org/) | リレーショナルデータベース |
-| キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
-| オブジェクトストレージ | [MinIO](https://min.io/) | S3 互換オブジェクトストレージ |
-| サービスレジストリ | [Etcd](https://etcd.io/) | サービスディスカバリ & 設定管理 |
-| トレーシング | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分散オブザーバビリティ |
-| API 定義 | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | コントラクトファースト API 設計 |
-
-### 管理コンソールフロントエンド
-
-| 技術 | 説明 |
-|:---|:---|
-| [Vue 3](https://vuejs.org/) | プログレッシブフロントエンドフレームワーク |
-| [TypeScript](https://www.typescriptlang.org/) | 型安全開発 |
-| [Ant Design Vue](https://antdv.com/) | エンタープライズ UI コンポーネントライブラリ |
-| [Vben Admin](https://doc.vben.pro/) | 管理画面フレームワーク |
-
-### モバイルフロントエンド
-
-| バージョン | 技術スタック | 用途 |
-|:---|:---|:---|
-| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | クロスプラットフォームネイティブアプリ |
 
 ## コア機能
 
@@ -97,6 +62,43 @@ GoWind ERP は、組織と権限、認証、監査、ファイルストレージ
 | 財務 / AP | 買掛金（発注承認時に自動生成）、支払申請（承認レール経由で計上）、部分支払と決済の状態機械、買掛金エイジングレポート |
 | 承認レール（横断） | 発注 / 支払 / 補充の統一承認。申請者と承認者はサーバー側で導出し自己承認を禁止。承認結果は申請者にサイト内メッセージで通知し、補充ドラフト生成・発注自動完了の下流通知も発火 |
 | モバイル業務機能 | WMS スキャン（入出庫 / 転送 / 取消）、承認センター、経営ダッシュボード |
+
+## テクノロジースタック
+
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
+
+### バックエンド
+
+| レイヤー | 技術 | 説明 |
+|:---|:---|:---|
+| 言語 | [Go 1.25+](https://go.dev/) | 高性能コンパイル言語 |
+| フレームワーク | [go-kratos](https://go-kratos.dev/) | マイクロサービスフレームワーク |
+| DI | [Wire](https://github.com/google/wire) | コンパイル時依存性注入 |
+| ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
+| データベース | [PostgreSQL](https://www.postgresql.org/) | リレーショナルデータベース |
+| キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
+| オブジェクトストレージ | [MinIO](https://min.io/) | S3 互換オブジェクトストレージ |
+| サービスレジストリ | [Etcd](https://etcd.io/) | サービスディスカバリ & 設定管理 |
+| トレーシング | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分散オブザーバビリティ |
+| API 定義 | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | コントラクトファースト API 設計 |
+
+### 管理コンソールフロントエンド
+
+| 技術 | 説明 |
+|:---|:---|
+| [Vue 3](https://vuejs.org/) | プログレッシブフロントエンドフレームワーク |
+| [TypeScript](https://www.typescriptlang.org/) | 型安全開発 |
+| [Ant Design Vue](https://antdv.com/) | エンタープライズ UI コンポーネントライブラリ |
+| [Vben Admin](https://doc.vben.pro/) | 管理画面フレームワーク |
+
+### モバイルフロントエンド
+
+| バージョン | 技術スタック | 用途 |
+|:---|:---|:---|
+| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | クロスプラットフォームネイティブアプリ |
 
 ## プロジェクト構造
 

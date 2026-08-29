@@ -2,13 +2,11 @@
 
 # GoWind ERP
 
-### FengXing · An Enterprise-Grade ERP Foundation Platform Built on Golang Microservices
+### FengXing · A Lightweight, All-in-One ERP Foundation for Small & Medium Teams
+
+**No implementation consultants · Up and running in half a day · Core business data fully connected**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
-[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
-[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
 
 **English** · **[中文](./README.md)** · **[日本語](./README.ja-JP.md)**
 
@@ -16,52 +14,19 @@
 
 ---
 
-GoWind ERP is an enterprise-grade ERP foundation platform built on a Golang microservice architecture, following an API-first, decoupled frontend-backend design. The platform delivers common foundation capabilities — organization and permissions, authentication, audit, file storage, dictionaries, internal messaging, task scheduling, and internationalization — providing a unified base on which ERP business modules such as Inventory/WMS, Procurement/SRM, and Finance/AP can evolve.
+Procurement, inventory, and finance — the core of a small business — run as one system: approved purchase orders automatically create payables, goods receipts write stock back, low stock triggers replenishment proposals, and AP aging is always one click away. Data is entered once and flows everywhere. No implementation consultants, no months-long rollout.
 
-**Key Highlights:**
+**GoWind ERP in three sentences:**
 
-- **API First** — Complete RESTful / gRPC dual-protocol interfaces with auto-generated OpenAPI docs
-- **Multi-platform** — Two frontends: an admin console (Vue3) and a mobile app (Flutter)
-- **Multi-tenant** — Tenant data isolation with auto-initialized departments, roles, and admins
-- **Fine-grained Permissions** — Three-level access control (menu, API, data) driven by a policy engine, with full audit of sensitive operations
-- **Native i18n** — Unified translation management for content, menus, and UI text
-- **Microservices** — Built on go-kratos with service discovery and distributed tracing
+- **No implementation consultants** — Sign up and go: tenant, departments, roles, and admin are initialized automatically; permissions, approvals, internal messaging, and audit are all built in
+- **Up and running in half a day** — Admin console plus mobile app out of the box; the core flow — procure → approve → receive → stock → pay — works from day one, with warehouse scanning on the floor and an executive dashboard for management
+- **Core business data fully connected** — Documents drive documents: an approved PO auto-creates its payable, receipts write stock back, low stock drafts a replenishment PO; data is entered once and takes effect across the whole chain
+
+Developers are well served too: API-first (RESTful / gRPC dual protocol with auto-generated OpenAPI docs), microservices, and native i18n — see the [Tech Stack](#tech-stack) below.
 
 ## Project Status
 
 Both the common foundation capabilities of GoWind ERP — organization and permissions, authentication, audit, file storage, dictionaries, internal messaging, task scheduling, internationalization — and the three ERP business modules (Inventory/WMS, Procurement/SRM, Finance/AP) are implemented across the core backend service, the admin console, and the mobile app. The core business loops — PO approval through goods receipt into stock, payable-to-payment settlement, stock transfer and reversal, and low-stock auto-replenishment — are closed end to end, with regression tests covering the key consistency logic (receiving approval gate, single-transaction stock transfer, aging outstanding-balance reporting).
-
-## Tech Stack
-
-### Backend
-
-| Layer | Technology | Description |
-|:---|:---|:---|
-| Language | [Go 1.25+](https://go.dev/) | High-performance compiled language |
-| Framework | [go-kratos](https://go-kratos.dev/) | Microservice framework |
-| DI | [Wire](https://github.com/google/wire) | Compile-time dependency injection |
-| ORM | [Ent](https://entgo.io/) | Go entity framework |
-| Database | [PostgreSQL](https://www.postgresql.org/) | Relational database |
-| Cache | [Redis](https://redis.io/) | In-memory data store |
-| Object Storage | [MinIO](https://min.io/) | S3-compatible object storage |
-| Service Registry | [Etcd](https://etcd.io/) | Service discovery & configuration |
-| Tracing | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | Distributed observability |
-| API Definition | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | Contract-first API design |
-
-### Admin Frontend
-
-| Technology | Description |
-|:---|:---|
-| [Vue 3](https://vuejs.org/) | Progressive frontend framework |
-| [TypeScript](https://www.typescriptlang.org/) | Type-safe development |
-| [Ant Design Vue](https://antdv.com/) | Enterprise UI component library |
-| [Vben Admin](https://doc.vben.pro/) | Admin management framework |
-
-### Mobile Frontend
-
-| Version | Tech Stack | Use Case |
-|:---|:---|:---|
-| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | Cross-platform native app |
 
 ## Core Features
 
@@ -97,6 +62,43 @@ Both the common foundation capabilities of GoWind ERP — organization and permi
 | Finance / AP | Payables (auto-created on PO approval), payment requests (applied via the approval rail), partial-payment & settlement state machine, AP aging report |
 | Approval Rail (cross-module) | Unified approval for POs / payments / replenishments; applicant & approver derived server-side, self-approval blocked; resolution notifies the applicant, with downstream notifications on replenishment-draft creation and PO auto-completion |
 | Mobile business features | WMS scanning (in/out / transfer / reversal), approval center, executive dashboard |
+
+## Tech Stack
+
+[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Kratos](https://img.shields.io/badge/Kratos-2.9-00ADD8?logo=go&logoColor=white)](https://go-kratos.dev/)
+
+### Backend
+
+| Layer | Technology | Description |
+|:---|:---|:---|
+| Language | [Go 1.25+](https://go.dev/) | High-performance compiled language |
+| Framework | [go-kratos](https://go-kratos.dev/) | Microservice framework |
+| DI | [Wire](https://github.com/google/wire) | Compile-time dependency injection |
+| ORM | [Ent](https://entgo.io/) | Go entity framework |
+| Database | [PostgreSQL](https://www.postgresql.org/) | Relational database |
+| Cache | [Redis](https://redis.io/) | In-memory data store |
+| Object Storage | [MinIO](https://min.io/) | S3-compatible object storage |
+| Service Registry | [Etcd](https://etcd.io/) | Service discovery & configuration |
+| Tracing | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | Distributed observability |
+| API Definition | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | Contract-first API design |
+
+### Admin Frontend
+
+| Technology | Description |
+|:---|:---|
+| [Vue 3](https://vuejs.org/) | Progressive frontend framework |
+| [TypeScript](https://www.typescriptlang.org/) | Type-safe development |
+| [Ant Design Vue](https://antdv.com/) | Enterprise UI component library |
+| [Vben Admin](https://doc.vben.pro/) | Admin management framework |
+
+### Mobile Frontend
+
+| Version | Tech Stack | Use Case |
+|:---|:---|:---|
+| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | Cross-platform native app |
 
 ## Project Structure
 
