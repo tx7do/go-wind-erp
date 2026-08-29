@@ -1,155 +1,157 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page } from '@vben/common-ui';
-import { $t } from '@vben/locales';
+import { ref } from 'vue';
 
-import { notification } from 'ant-design-vue';
+import { Page, type VbenFormProps } from '@vben/common-ui';
 
-import { exportRowsToExcel } from '#/utils/export-excel';
-
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { centsToYuanLedger, fetchJournalEntries } from '#/api';
+import { $t } from '#/locales';
+import { exportRowsToExcel } from '#/utils/export-excel';
 
 defineOptions({ name: 'JournalEntryManagement' });
 
-const loading = ref(true);
-const items = ref<any[]>([]);
-const total = ref(0);
-const page = ref(1);
-const pageSize = ref(20);
-const fromDate = ref<string | undefined>(undefined);
-const toDate = ref<string | undefined>(undefined);
+// 行数状态（导出按钮 disabled 用，避免模板里调 grid 实例方法）。
+const rowCount = ref(0);
 
-async function load() {
-  loading.value = true;
-  try {
-    const resp = await fetchJournalEntries({
-      page: page.value,
-      pageSize: pageSize.value,
-      fromDate: fromDate.value
-        ? new Date(`${fromDate.value}T00:00:00Z`)
-        : undefined,
-      toDate: toDate.value ? new Date(`${toDate.value}T23:59:59Z`) : undefined,
-    } as any);
-    items.value = resp?.items ?? [];
-    total.value = Number(resp?.total ?? 0);
-  } catch {
-    notification.error({ message: $t('ui.notification.load_failed') });
-  } finally {
-    loading.value = false;
-  }
-}
+const formOptions: VbenFormProps = {
+  collapsed: false,
+  showCollapseButton: false,
+  submitOnEnter: true,
+  schema: [
+    {
+      component: 'DatePicker',
+      fieldName: 'fromDate',
+      label: $t('page.trialBalance.fromDate'),
+      componentProps: {
+        valueFormat: 'YYYY-MM-DD',
+        placeholder: $t('ui.placeholder.select'),
+        allowClear: true,
+      },
+    },
+    {
+      component: 'DatePicker',
+      fieldName: 'toDate',
+      label: $t('page.trialBalance.toDate'),
+      componentProps: {
+        valueFormat: 'YYYY-MM-DD',
+        placeholder: $t('ui.placeholder.select'),
+        allowClear: true,
+      },
+    },
+  ],
+};
 
-onMounted(load);
+const gridOptions: VxeGridProps<any> = {
+  toolbarConfig: { custom: true, refresh: true, zoom: true },
+  height: 'auto',
+  exportConfig: {},
+  pagerConfig: {},
+  proxyConfig: {
+    ajax: {
+      query: async ({ page }, formValues) => {
+        const resp = await fetchJournalEntries({
+          page: page.currentPage,
+          pageSize: page.pageSize,
+          fromDate: formValues?.fromDate
+            ? new Date(`${formValues.fromDate}T00:00:00Z`)
+            : undefined,
+          toDate: formValues?.toDate
+            ? new Date(`${formValues.toDate}T23:59:59Z`)
+            : undefined,
+        } as any);
+        const items = resp?.items ?? [];
+        rowCount.value = Number(resp?.total ?? 0);
+        return { items, total: Number(resp?.total ?? 0) };
+      },
+    },
+  },
+  columns: [
+    { type: 'expand', width: 50, slots: { content: 'expandContent' } },
+    {
+      title: $t('page.journal.entryNumber'),
+      field: 'entryNumber',
+      width: 170,
+    },
+    {
+      title: $t('page.journal.entryDate'),
+      field: 'entryDate',
+      formatter: ({ cellValue }) =>
+        cellValue ? String(cellValue).slice(0, 10) : '—',
+      width: 120,
+    },
+    { title: $t('page.journal.summary'), field: 'summary' },
+    { title: $t('page.journal.bizRef'), field: 'bizRef' },
+    {
+      title: $t('page.journal.amount'),
+      field: 'amount',
+      align: 'right',
+      formatter: ({ row }) =>
+        centsToYuanLedger(
+          (row.lines ?? []).reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+        ),
+    },
+  ],
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 function handleExport() {
+  const tableData = gridApi.grid?.getTableData().fullData ?? [];
   exportRowsToExcel(
     '凭证流水_' + new Date().toISOString().slice(0, 10),
     '凭证流水',
     ['凭证号', '日期', '摘要', '业务来源', '金额'],
-    items.value.map((e: any) => [
+    tableData.map((e: any) => [
       e.entryNumber ?? '',
       String(e.entryDate ?? '').slice(0, 10),
       e.summary ?? '',
       e.bizRef ?? '',
-      entryAmount(e),
+      centsToYuanLedger(
+        (e.lines ?? []).reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
+      ),
     ]),
-  );
-}
-
-const columns = [
-  { title: $t('page.journal.entryNumber'), dataIndex: 'entryNumber', width: 170 },
-  {
-    title: $t('page.journal.entryDate'),
-    dataIndex: 'entryDate',
-    width: 130,
-    customRender: ({ text }: any) => (text ? String(text).slice(0, 10) : '—'),
-  },
-  { title: $t('page.journal.summary'), dataIndex: 'summary' },
-  { title: $t('page.journal.bizRef'), dataIndex: 'bizRef' },
-  {
-    title: $t('page.journal.amount'),
-    key: 'amount',
-    align: 'right' as const,
-    width: 120,
-  },
-];
-
-function entryAmount(record: any) {
-  return centsToYuanLedger(
-    (record.lines ?? []).reduce((s: number, l: any) => s + (l.debit ?? 0), 0),
   );
 }
 </script>
 
 <template>
-  <Page :title="$t('menu.finance.journal')">
-    <div class="p-2">
-      <div class="mb-2 flex flex-wrap items-center gap-2">
-        <a-date-picker
-          v-model:value="fromDate"
-          :placeholder="$t('page.trialBalance.fromDate')"
-          value-format="YYYY-MM-DD"
-          style="width: 160px"
-        />
-        <span>—</span>
-        <a-date-picker
-          v-model:value="toDate"
-          :placeholder="$t('page.trialBalance.toDate')"
-          value-format="YYYY-MM-DD"
-          style="width: 160px"
-        />
-        <a-button type="primary" @click="load">
-          {{ $t('ui.button.search') }}
-        </a-button>
-        <a-button :disabled="items.length === 0" @click="handleExport">
+  <Page auto-content-height>
+    <Grid :table-title="$t('menu.finance.journal')">
+      <template #toolbar-tools>
+        <a-button
+          class="mr-2"
+          :disabled="rowCount === 0"
+          @click="handleExport"
+        >
           {{ $t('page.salesRanking.export') }}
         </a-button>
-      </div>
-
-      <a-table
-        :columns="columns"
-        :data-source="items"
-        :loading="loading"
-        :pagination="{
-          current: page,
-          pageSize: pageSize,
-          total: total,
-          showSizeChanger: false,
-          onChange: (p: number) => { page = p; load(); },
-        }"
-        row-key="id"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'amount'">
-            {{ entryAmount(record) }}
-          </template>
-        </template>
-
-        <template #expandedRowRender="{ record }">
-          <a-table
-            :columns="[
-              { title: $t('page.journal.account'), dataIndex: 'accountCode' },
-              { title: $t('page.journal.lineSummary'), dataIndex: 'summary' },
-              { title: $t('page.journal.debit'), dataIndex: 'debit', align: 'right' },
-              { title: $t('page.journal.credit'), dataIndex: 'credit', align: 'right' },
-            ]"
-            :data-source="record.lines ?? []"
-            :pagination="false"
-            row-key="id"
-            size="small"
-          >
-            <template #bodyCell="{ column: col, text }">
-              <template v-if="col.dataIndex === 'debit'">
-                {{ centsToYuanLedger(text) }}
-              </template>
-              <template v-else-if="col.dataIndex === 'credit'">
-                {{ centsToYuanLedger(text) }}
-              </template>
+      </template>
+      <!-- 分录行放在展开行（与原 a-table expandedRowRender 等价） -->
+      <template #expandContent="{ row }">
+        <a-table
+          :columns="[
+            { title: $t('page.journal.account'), dataIndex: 'accountCode' },
+            { title: $t('page.journal.lineSummary'), dataIndex: 'summary' },
+            { title: $t('page.journal.debit'), dataIndex: 'debit', align: 'right' },
+            { title: $t('page.journal.credit'), dataIndex: 'credit', align: 'right' },
+          ]"
+          :data-source="row.lines ?? []"
+          :pagination="false"
+          row-key="id"
+          size="small"
+        >
+          <template #bodyCell="{ column, text }">
+            <template v-if="column.dataIndex === 'debit'">
+              {{ centsToYuanLedger(text) }}
             </template>
-          </a-table>
-        </template>
-      </a-table>
-    </div>
+            <template v-else-if="column.dataIndex === 'credit'">
+              {{ centsToYuanLedger(text) }}
+            </template>
+          </template>
+        </a-table>
+      </template>
+    </Grid>
   </Page>
 </template>

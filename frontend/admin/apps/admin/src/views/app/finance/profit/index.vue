@@ -1,92 +1,58 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { Page } from '@vben/common-ui';
 
-import { notification } from 'ant-design-vue';
-
-import type { financeservicev1_MonthlyProfit } from '#/api/generated/admin/service/v1';
-
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { apiClient, centsToYuan } from '#/api';
 import { $t } from '#/locales';
 
-const loading = ref(true);
-const items = ref<financeservicev1_MonthlyProfit[]>([]);
+defineOptions({ name: 'ProfitReport' });
 
-const columns = [
-  {
-    title: $t('page.profit.month'),
-    dataIndex: 'month',
-    key: 'month',
+const gridOptions: VxeGridProps<any> = {
+  toolbarConfig: { custom: true, refresh: true, zoom: true },
+  height: 'auto',
+  pagerConfig: { enabled: false },
+  proxyConfig: {
+    ajax: {
+      query: async () => {
+        const resp = await apiClient.financeReportService.ProfitReport({});
+        const items = resp?.items ?? [];
+        return { items, total: items.length };
+      },
+    },
   },
-  {
-    title: $t('page.profit.revenue'),
-    dataIndex: 'revenue',
-    key: 'revenue',
-    slots: { default: 'revenue' },
-  },
-  {
-    title: $t('page.profit.cogs'),
-    dataIndex: 'cogs',
-    key: 'cogs',
-    slots: { default: 'cogs' },
-  },
-  {
-    title: $t('page.profit.profit'),
-    dataIndex: 'profit',
-    key: 'profit',
-    slots: { default: 'profit' },
-  },
-];
+  columns: [
+    { title: $t('page.profit.month'), field: 'month', width: 120 },
+    {
+      title: $t('page.profit.revenue'),
+      field: 'revenue',
+      formatter: ({ cellValue }) => centsToYuan(cellValue as number),
+    },
+    {
+      title: $t('page.profit.cogs'),
+      field: 'cogs',
+      formatter: ({ cellValue }) => centsToYuan(cellValue as number),
+    },
+    {
+      title: $t('page.profit.profit'),
+      field: 'profit',
+      formatter: ({ cellValue }) => centsToYuan(cellValue as number),
+    },
+  ],
+};
 
-async function load() {
-  loading.value = true;
-  try {
-    const resp = await apiClient.financeReportService.ProfitReport({});
-    items.value = resp.items ?? [];
-  } catch {
-    notification.error({
-      message: $t('ui.notification.operation_failed'),
-    });
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(() => {
-  load();
-});
+const [Grid] = useVbenVxeGrid({ gridOptions });
 </script>
 
 <template>
   <Page auto-content-height>
-    <a-card :title="$t('page.profit.title')">
-      <a-alert
-        class="mb-3"
-        type="warning"
-        :message="$t('page.profit.disclaimer')"
-        show-icon
-      />
-      <a-table
-        :columns="columns"
-        :data-source="items"
-        :loading="loading"
-        :pagination="false"
-        row-key="month"
-        size="small"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'revenue'">
-            {{ centsToYuan(record.revenue) }}
-          </template>
-          <template v-else-if="column.key === 'cogs'">
-            {{ centsToYuan(record.cogs) }}
-          </template>
-          <template v-else-if="column.key === 'profit'">
-            {{ centsToYuan(record.profit) }}
-          </template>
-        </template>
-      </a-table>
-    </a-card>
+    <Grid :table-title="$t('page.profit.title')">
+      <template #toolbar-tools>
+        <span class="px-2 text-xs text-gray-400">
+          {{ $t('page.profit.disclaimer') }}
+        </span>
+      </template>
+    </Grid>
   </Page>
 </template>

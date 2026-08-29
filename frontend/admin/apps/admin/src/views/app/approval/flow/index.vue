@@ -1,7 +1,11 @@
 <script lang="ts" setup>
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
 import { onMounted, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
+
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
@@ -17,7 +21,6 @@ import {
 
 defineOptions({ name: 'ApprovalFlowManagement' });
 
-const loading = ref(true);
 const flows = ref<ApprovalFlow[]>([]);
 const roleOptions = ref<{ label: string; value: string }[]>([]);
 
@@ -28,19 +31,7 @@ const form = ref({ bizType: '', name: '' });
 const stepRows = ref<{ name: string; roleCode: string }[]>([]);
 const saving = ref(false);
 
-async function load() {
-  loading.value = true;
-  try {
-    const resp = await fetchListApprovalFlows(
-      new PaginationQuery({ paging: { page: 1, pageSize: 100 } }),
-    );
-    flows.value = (resp?.items ?? []) as ApprovalFlow[];
-  } catch {
-    notification.error({ message: $t('ui.notification.load_failed') });
-  } finally {
-    loading.value = false;
-  }
-}
+
 
 async function loadRoles() {
   try {
@@ -58,10 +49,7 @@ async function loadRoles() {
   }
 }
 
-onMounted(() => {
-  load();
-  loadRoles();
-});
+onMounted(loadRoles);
 
 const bizTypeOptions = [
   { value: 'PURCHASE_ORDER', label: $t('page.approvalFlow.bizType.PURCHASE_ORDER') },
@@ -70,14 +58,56 @@ const bizTypeOptions = [
   { value: 'RECEIPT', label: $t('page.approvalFlow.bizType.RECEIPT') },
 ];
 
-const columns = [
-  { title: $t('page.approvalFlow.bizTypeLabel'), dataIndex: 'bizType' },
-  { title: $t('page.approvalFlow.name'), dataIndex: 'name' },
-  { title: $t('page.approvalFlow.stepsCount'), key: 'stepsCount', width: 90 },
-  { title: $t('page.approvalFlow.stepsOverview'), key: 'steps' },
-  { title: $t('ui.table.createdAt'), dataIndex: 'createdAt', width: 150 },
-  { title: $t('ui.table.action'), key: 'op', width: 110 },
-];
+const gridOptions: VxeGridProps<ApprovalFlow> = {
+  toolbarConfig: { custom: true, refresh: true, zoom: true },
+  height: 'auto',
+  pagerConfig: { enabled: false },
+  proxyConfig: {
+    ajax: {
+      query: async () => {
+        try {
+          const resp = await fetchListApprovalFlows(
+            new PaginationQuery({ paging: { page: 1, pageSize: 100 } }),
+          );
+          const items = (resp?.items ?? []) as ApprovalFlow[];
+          flows.value = items;
+          return { items, total: items.length };
+        } catch {
+          notification.error({ message: $t('ui.notification.load_failed') });
+          return { items: [], total: 0 };
+        }
+      },
+    },
+  },
+  columns: [
+    {
+      title: $t('page.approvalFlow.bizTypeLabel'),
+      field: 'bizType',
+      formatter: ({ cellValue }) => flowBizTypeToName(cellValue as string),
+    },
+    { title: $t('page.approvalFlow.name'), field: 'name' },
+    {
+      title: $t('page.approvalFlow.stepsCount'),
+      field: 'steps',
+      formatter: ({ row }) => (row.steps ?? []).length,
+      width: 90,
+    },
+    {
+      title: $t('page.approvalFlow.stepsOverview'),
+      field: 'steps',
+      formatter: ({ row }) => stepsText(row),
+    },
+    {
+      title: $t('ui.table.createdAt'),
+      field: 'createdAt',
+      formatter: 'formatDateTime',
+      width: 150,
+    },
+    { title: $t('ui.table.action'), field: 'op', slots: { default: 'op' }, width: 130 },
+  ],
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
 
 function stepsText(record: any) {
   return (record.steps ?? [])
@@ -106,7 +136,7 @@ async function handleDelete(record: any) {
   try {
     await apiClient.approvalFlowService.Delete({ id: record.id });
     notification.success({ message: $t('ui.notification.delete_success') });
-    await load();
+    await gridApi.query();
   } catch {
     notification.error({ message: $t('ui.notification.delete_failed') });
   }
@@ -147,7 +177,7 @@ async function handleSave() {
     }
     notification.success({ message: $t('ui.notification.operation_success') });
     modalOpen.value = false;
-    await load();
+    await gridApi.query();
   } catch (e: any) {
     notification.error({
       message: e?.message || $t('ui.notification.operation_failed'),
@@ -159,49 +189,29 @@ async function handleSave() {
 </script>
 
 <template>
-  <Page :title="$t('page.approvalFlow.moduleName')">
-    <div class="p-2">
-      <div class="mb-2 flex justify-end gap-2">
-        <a-button type="primary" @click="handleCreate">
+  <Page auto-content-height>
+    <Grid :table-title="$t('page.approvalFlow.moduleName')">
+      <template #toolbar-tools>
+        <a-button class="mr-2" type="primary" @click="handleCreate">
           {{ $t('page.approvalFlow.button.create') }}
         </a-button>
-      </div>
-
-      <a-table
-        :columns="columns"
-        :data-source="flows"
-        :loading="loading"
-        :pagination="false"
-        row-key="id"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.dataIndex === 'bizType'">
-            {{ flowBizTypeToName(record.bizType) }}
-          </template>
-          <template v-else-if="column.key === 'stepsCount'">
-            {{ (record.steps ?? []).length }}
-          </template>
-          <template v-else-if="column.key === 'steps'">
-            {{ stepsText(record) }}
-          </template>
-          <template v-else-if="column.key === 'op'">
-            <div class="flex gap-1">
-              <a-button size="small" @click="handleEdit(record)">
-                {{ $t('ui.button.edit') }}
-              </a-button>
-              <a-popconfirm
-                :title="$t('ui.text.do_you_want_delete', { moduleName: $t('page.approvalFlow.moduleName') })"
-                @confirm="handleDelete(record)"
-              >
-                <a-button danger size="small">
-                  {{ $t('ui.button.delete') }}
-                </a-button>
-              </a-popconfirm>
-            </div>
-          </template>
-        </template>
-      </a-table>
-    </div>
+      </template>
+      <template #op="{ row }">
+        <div class="flex gap-1">
+          <a-button size="small" @click="handleEdit(row)">
+            {{ $t('ui.button.edit') }}
+          </a-button>
+          <a-popconfirm
+            :title="$t('ui.text.do_you_want_delete', { moduleName: $t('page.approvalFlow.moduleName') })"
+            @confirm="handleDelete(row)"
+          >
+            <a-button danger size="small">
+              {{ $t('ui.button.delete') }}
+            </a-button>
+          </a-popconfirm>
+        </div>
+      </template>
+    </Grid>
 
     <a-modal
       v-model:open="modalOpen"

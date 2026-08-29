@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+import { reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
-import { exportRowsToExcel } from '#/utils/export-excel';
-
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   apiClient,
   centsToYuan,
@@ -17,10 +18,10 @@ import {
 } from '#/api';
 import { $t as $tx } from '#/locales';
 import { escapeHtml, printHtml } from '#/utils/print';
+import { exportRowsToExcel } from '#/utils/export-excel';
 
 defineOptions({ name: 'PartnerStatementManagement' });
 
-const loading = ref(false);
 const form = reactive({
   partnerType: 'CUSTOMER',
   partnerCode: '' as string,
@@ -55,29 +56,78 @@ function onTypeChange() {
   loadPartners();
 }
 
-async function load() {
+const gridOptions: VxeGridProps<any> = {
+  toolbarConfig: { custom: true, refresh: false, zoom: true },
+  height: 'auto',
+  pagerConfig: { enabled: false },
+  proxyConfig: {
+    autoLoad: false,
+    ajax: {
+      query: async () => {
+        if (!form.partnerCode) {
+          return { items: [], total: 0 };
+        }
+        const resp = await apiClient.financeReportService.GetPartnerStatement(
+          {
+            partnerType: form.partnerType,
+            partnerCode: form.partnerCode,
+            fromDate: form.fromDate
+              ? new Date(`${form.fromDate}T00:00:00Z`)
+              : undefined,
+            toDate: form.toDate
+              ? new Date(`${form.toDate}T23:59:59Z`)
+              : undefined,
+          } as any,
+        );
+        statement.value = resp;
+        const items = (resp?.rows ?? []) as any[];
+        return { items, total: items.length };
+      },
+    },
+  },
+  columns: [
+    {
+      title: $t('page.statement.date'),
+      field: 'date',
+      formatter: ({ cellValue }) =>
+        cellValue ? String(cellValue).slice(0, 10) : '—',
+      width: 110,
+    },
+    { title: $t('page.statement.docType'), field: 'docType', width: 90 },
+    { title: $t('page.statement.docRef'), field: 'docRef' },
+    { title: $t('page.statement.summary'), field: 'summary' },
+    {
+      title: $t('page.statement.debit'),
+      field: 'debit',
+      align: 'right',
+      formatter: ({ cellValue }) => centsToYuan(Number(cellValue ?? 0)),
+      width: 110,
+    },
+    {
+      title: $t('page.statement.credit'),
+      field: 'credit',
+      align: 'right',
+      formatter: ({ cellValue }) => centsToYuan(Number(cellValue ?? 0)),
+      width: 110,
+    },
+  ],
+};
+
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions });
+
+function load() {
   if (!form.partnerCode) {
     notification.warning({ message: $t('page.statement.partnerRequired') });
     return;
   }
-  loading.value = true;
-  try {
-    statement.value = await apiClient.financeReportService.GetPartnerStatement({
-      partnerType: form.partnerType,
-      partnerCode: form.partnerCode,
-      fromDate: form.fromDate
-        ? new Date(`${form.fromDate}T00:00:00Z`)
-        : undefined,
-      toDate: form.toDate ? new Date(`${form.toDate}T23:59:59Z`) : undefined,
-    } as any);
-  } catch {
-    notification.error({ message: $t('ui.notification.load_failed') });
-  } finally {
-    loading.value = false;
-  }
+  gridApi.query();
 }
 
-onMounted(loadPartners);
+loadPartners();
+
+function fmt(v: any) {
+  return centsToYuan(Number(v ?? 0));
+}
 
 function handleExport() {
   const st = statement.value;
@@ -95,34 +145,6 @@ function handleExport() {
       fmt(r.credit),
     ]),
   );
-}
-
-const columns = [
-  {
-    title: $t('page.statement.date'),
-    dataIndex: 'date',
-    width: 120,
-    customRender: ({ text }: any) => (text ? String(text).slice(0, 10) : '—'),
-  },
-  { title: $t('page.statement.docType'), dataIndex: 'docType', width: 100 },
-  { title: $t('page.statement.docRef'), dataIndex: 'docRef' },
-  { title: $t('page.statement.summary'), dataIndex: 'summary' },
-  {
-    title: $t('page.statement.debit'),
-    dataIndex: 'debit',
-    align: 'right' as const,
-    width: 120,
-  },
-  {
-    title: $t('page.statement.credit'),
-    dataIndex: 'credit',
-    align: 'right' as const,
-    width: 120,
-  },
-];
-
-function fmt(v: any) {
-  return centsToYuan(Number(v ?? 0));
 }
 
 /** 打印对账单（复用 iframe 打印底座）。 */
@@ -180,55 +202,46 @@ function handlePrint() {
 </script>
 
 <template>
-  <Page :title="$t('menu.finance.statement')">
-    <div class="p-2">
-      <div class="mb-3 flex flex-wrap items-center gap-2">
-        <a-select
-          v-model:value="form.partnerType"
-          :options="partnerTypeOptions"
-          style="width: 120px"
-          @change="onTypeChange"
-        />
-        <a-select
-          v-model:value="form.partnerCode"
-          :options="partnerOptions"
-          :placeholder="$t('page.statement.partnerPlaceholder')"
-          show-search
-          option-filter-prop="label"
-          style="width: 260px"
-        />
-        <a-date-picker
-          v-model:value="form.fromDate"
-          :placeholder="$t('page.trialBalance.fromDate')"
-          value-format="YYYY-MM-DD"
-          style="width: 150px"
-        />
-        <span>—</span>
-        <a-date-picker
-          v-model:value="form.toDate"
-          :placeholder="$t('page.trialBalance.toDate')"
-          value-format="YYYY-MM-DD"
-          style="width: 150px"
-        />
-        <a-button type="primary" @click="load">
-          {{ $t('ui.button.search') }}
-        </a-button>
-        <a-button
-          v-if="statement"
-          :disabled="(statement.rows ?? []).length === 0"
-          @click="handleExport"
-        >
-          {{ $t('page.salesRanking.export') }}
-        </a-button>
-        <a-button v-if="statement" @click="handlePrint">
-          {{ $t('page.purchaseOrder.button.print') }}
-        </a-button>
-      </div>
-
-      <template v-if="statement">
-        <div class="mb-2 flex gap-2">
+  <Page auto-content-height>
+    <Grid :title="$t('menu.finance.statement')">
+      <template #form>
+        <div class="mb-3 flex flex-wrap items-center gap-2">
+          <a-select
+            v-model:value="form.partnerType"
+            :options="partnerTypeOptions"
+            style="width: 120px"
+            @change="onTypeChange"
+          />
+          <a-select
+            v-model:value="form.partnerCode"
+            :options="partnerOptions"
+            :placeholder="$t('page.statement.partnerPlaceholder')"
+            show-search
+            option-filter-prop="label"
+            style="width: 260px"
+          />
+          <a-date-picker
+            v-model:value="form.fromDate"
+            :placeholder="$t('page.trialBalance.fromDate')"
+            value-format="YYYY-MM-DD"
+            style="width: 150px"
+          />
+          <span>—</span>
+          <a-date-picker
+            v-model:value="form.toDate"
+            :placeholder="$t('page.trialBalance.toDate')"
+            value-format="YYYY-MM-DD"
+            style="width: 150px"
+          />
+          <a-button type="primary" @click="load">
+            {{ $t('ui.button.search') }}
+          </a-button>
+        </div>
+        <div v-if="statement" class="mb-2 flex flex-wrap gap-2">
           <a-tag color="blue">
-            {{ $t('page.statement.totalDebit') }}：{{ fmt(statement.totalDebit) }}
+            {{ $t('page.statement.totalDebit') }}：{{
+              fmt(statement.totalDebit)
+            }}
           </a-tag>
           <a-tag color="green">
             {{ $t('page.statement.totalCredit') }}：{{
@@ -239,29 +252,23 @@ function handlePrint() {
             {{ $t('page.statement.balance') }}：{{ fmt(statement.balance) }}
           </a-tag>
         </div>
-
-        <a-table
-          :columns="columns"
-          :data-source="statement.rows ?? []"
-          :loading="loading"
-          :pagination="false"
-          row-key="docRef"
-          size="small"
-        >
-          <template #bodyCell="{ column, text }">
-            <template v-if="column.dataIndex === 'debit'">
-              {{ fmt(text) }}
-            </template>
-            <template v-else-if="column.dataIndex === 'credit'">
-              {{ fmt(text) }}
-            </template>
-          </template>
-          <template #emptyText>
-            {{ $t('page.statement.empty') }}
-          </template>
-        </a-table>
       </template>
-      <a-empty v-else :description="$t('page.statement.empty')" />
-    </div>
+      <template #toolbar-tools>
+        <a-button
+          class="mr-2"
+          :disabled="(statement?.rows ?? []).length === 0"
+          @click="handleExport"
+        >
+          {{ $t('page.salesRanking.export') }}
+        </a-button>
+        <a-button
+          class="mr-2"
+          :disabled="(statement?.rows ?? []).length === 0"
+          @click="handlePrint"
+        >
+          {{ $t('page.purchaseOrder.button.print') }}
+        </a-button>
+      </template>
+    </Grid>
   </Page>
 </template>

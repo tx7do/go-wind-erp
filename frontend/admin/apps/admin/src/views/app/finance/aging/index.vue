@@ -1,19 +1,13 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { Page } from '@vben/common-ui';
 
-import { notification } from 'ant-design-vue';
-
-import {
-  centsToYuan,
-  fetchAgingReport,
-  type financeservicev1_AgingBucket,
-} from '#/api';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { centsToYuan, fetchAgingReport } from '#/api';
 import { $t } from '#/locales';
 
-const loading = ref(true);
-const buckets = ref<financeservicev1_AgingBucket[]>([]);
+defineOptions({ name: 'PayableAgingReport' });
 
 // 桶顺序固定（与后端 label 对应），缺失桶补零以保持表格完整。
 const orderedBuckets = [
@@ -25,87 +19,65 @@ const orderedBuckets = [
   'no_due_date',
 ] as const;
 
-const columns = [
-  {
-    title: $t('page.aging.bucket'),
-    dataIndex: 'bucket',
-    key: 'bucket',
-    slots: { default: 'bucket' },
+const gridOptions: VxeGridProps<any> = {
+  toolbarConfig: { custom: true, refresh: true, zoom: true },
+  height: 'auto',
+  pagerConfig: { enabled: false },
+  proxyConfig: {
+    ajax: {
+      query: async () => {
+        const resp = await fetchAgingReport();
+        const present = new Map<string, any>();
+        for (const b of resp?.buckets ?? []) {
+          if (b?.bucket) {
+            present.set(b.bucket, b);
+          }
+        }
+        // 缺失桶补零——固定顺序输出。
+        const items = orderedBuckets.map(
+          (label) =>
+            present.get(label) ?? {
+              bucket: label,
+              count: 0,
+              totalAmount: 0,
+            },
+        );
+        return { items, total: items.length };
+      },
+    },
   },
-  {
-    title: $t('page.aging.count'),
-    dataIndex: 'count',
-    key: 'count',
-  },
-  {
-    title: $t('page.aging.totalAmount'),
-    dataIndex: 'totalAmount',
-    key: 'totalAmount',
-    slots: { default: 'amount' },
-  },
-];
+  columns: [
+    {
+      title: $t('page.aging.bucket'),
+      field: 'bucket',
+      slots: { default: 'bucket' },
+      width: 160,
+    },
+    { title: $t('page.aging.count'), field: 'count', width: 120 },
+    {
+      title: $t('page.aging.totalAmount'),
+      field: 'totalAmount',
+      formatter: ({ cellValue }) => centsToYuan(cellValue as number),
+    },
+  ],
+};
 
-async function load() {
-  loading.value = true;
-  try {
-    const resp = await fetchAgingReport();
-    const present = new Map<string, financeservicev1_AgingBucket>();
-    for (const b of resp.buckets ?? []) {
-      if (b?.bucket) {
-        present.set(b.bucket, b);
-      }
-    }
-    // 缺失桶补零——固定顺序输出。
-    buckets.value = orderedBuckets.map(
-      (label) =>
-        present.get(label) ?? {
-          bucket: label,
-          count: 0,
-          totalAmount: 0,
-        },
-    );
-  } catch {
-    notification.error({
-      message: $t('ui.notification.operation_failed'),
-    });
-  } finally {
-    loading.value = false;
-  }
-}
-
-onMounted(() => {
-  load();
-});
+const [Grid] = useVbenVxeGrid({ gridOptions });
 </script>
 
 <template>
   <Page auto-content-height>
-    <a-card :title="$t('page.aging.title')">
-      <a-alert
-        class="mb-3"
-        type="warning"
-        :message="$t('page.aging.disclaimer')"
-        show-icon
-      />
-      <a-table
-        :columns="columns"
-        :data-source="buckets"
-        :loading="loading"
-        :pagination="false"
-        row-key="bucket"
-        size="small"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'bucket'">
-            <a-tag :color="record.bucket === 'overdue' ? 'red' : 'default'">
-              {{ $t('page.aging.bucketLabel.' + record.bucket) }}
-            </a-tag>
-          </template>
-          <template v-else-if="column.key === 'amount'">
-            {{ centsToYuan(record.totalAmount) }}
-          </template>
-        </template>
-      </a-table>
-    </a-card>
+    <Grid :table-title="$t('page.aging.title')">
+      <template #bucket="{ row }">
+        <a-tag :color="row.bucket === 'overdue' ? 'red' : 'default'">
+          { $t('page.aging.bucketLabel.' + row.bucket) }
+        </a-tag>
+      </template>
+      <template #toolbar-tools>
+        <span class="px-2 text-xs text-gray-400">
+          { $t('page.aging.disclaimer') }
+        </span>
+      </template>
+    </Grid>
   </Page>
 </template>
