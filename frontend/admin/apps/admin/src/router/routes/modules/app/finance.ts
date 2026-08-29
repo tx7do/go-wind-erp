@@ -28,6 +28,30 @@ const finance: RouteRecordRaw[] = [
         },
         component: () => import('#/views/app/finance/aging/index.vue'),
       },
+
+      {
+        path: 'trial-balance',
+        name: 'TrialBalanceReport',
+        meta: {
+          order: 1,
+          icon: 'lucide:scale',
+          title: $t('menu.finance.trialBalance'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/trial_balance/index.vue'),
+      },
+
+      {
+        path: 'journal-entries',
+        name: 'JournalEntryManagement',
+        meta: {
+          order: 2,
+          icon: 'lucide:book-open',
+          title: $t('menu.finance.journal'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/journal_entry/index.vue'),
+      },
       {
         path: 'aging-ar',
         name: 'ReceivableAgingReport',

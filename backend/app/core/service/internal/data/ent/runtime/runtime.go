@@ -5,6 +5,7 @@ package runtime
 import (
 	"context"
 	permissionpb "go-wind-erp/api/gen/go/permission/service/v1"
+	"go-wind-erp/app/core/service/internal/data/ent/account"
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
@@ -19,6 +20,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-erp/app/core/service/internal/data/ent/journalentry"
+	"go-wind-erp/app/core/service/internal/data/ent/journalline"
 	"go-wind-erp/app/core/service/internal/data/ent/language"
 	"go-wind-erp/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/loginpolicy"
@@ -76,6 +79,40 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accountMixin := schema.Account{}.Mixin()
+	account.Policy = privacy.NewPolicies(accountMixin[5], schema.Account{})
+	account.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := account.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	accountMixinInters2 := accountMixin[2].Interceptors()
+	account.Interceptors[0] = accountMixinInters2[0]
+	accountMixinFields0 := accountMixin[0].Fields()
+	_ = accountMixinFields0
+	accountMixinFields5 := accountMixin[5].Fields()
+	_ = accountMixinFields5
+	accountFields := schema.Account{}.Fields()
+	_ = accountFields
+	// accountDescTenantID is the schema descriptor for tenant_id field.
+	accountDescTenantID := accountMixinFields5[0].Descriptor()
+	// account.DefaultTenantID holds the default value on creation for the tenant_id field.
+	account.DefaultTenantID = accountDescTenantID.Default.(uint32)
+	// accountDescCode is the schema descriptor for code field.
+	accountDescCode := accountFields[0].Descriptor()
+	// account.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	account.CodeValidator = accountDescCode.Validators[0].(func(string) error)
+	// accountDescName is the schema descriptor for name field.
+	accountDescName := accountFields[1].Descriptor()
+	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	account.NameValidator = accountDescName.Validators[0].(func(string) error)
+	// accountDescID is the schema descriptor for id field.
+	accountDescID := accountMixinFields0[0].Descriptor()
+	// account.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	account.IDValidator = accountDescID.Validators[0].(func(uint32) error)
 	apiMixin := schema.Api{}.Mixin()
 	api.Policy = privacy.NewPolicies(apiMixin[5], schema.Api{})
 	api.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -550,6 +587,74 @@ func init() {
 	internalmessagerecipientDescID := internalmessagerecipientMixinFields0[0].Descriptor()
 	// internalmessagerecipient.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(uint32) error)
+	journalentryMixin := schema.JournalEntry{}.Mixin()
+	journalentry.Policy = privacy.NewPolicies(journalentryMixin[3], schema.JournalEntry{})
+	journalentry.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := journalentry.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	journalentryMixinFields0 := journalentryMixin[0].Fields()
+	_ = journalentryMixinFields0
+	journalentryMixinFields3 := journalentryMixin[3].Fields()
+	_ = journalentryMixinFields3
+	journalentryFields := schema.JournalEntry{}.Fields()
+	_ = journalentryFields
+	// journalentryDescTenantID is the schema descriptor for tenant_id field.
+	journalentryDescTenantID := journalentryMixinFields3[0].Descriptor()
+	// journalentry.DefaultTenantID holds the default value on creation for the tenant_id field.
+	journalentry.DefaultTenantID = journalentryDescTenantID.Default.(uint32)
+	// journalentryDescEntryNumber is the schema descriptor for entry_number field.
+	journalentryDescEntryNumber := journalentryFields[0].Descriptor()
+	// journalentry.EntryNumberValidator is a validator for the "entry_number" field. It is called by the builders before save.
+	journalentry.EntryNumberValidator = journalentryDescEntryNumber.Validators[0].(func(string) error)
+	// journalentryDescID is the schema descriptor for id field.
+	journalentryDescID := journalentryMixinFields0[0].Descriptor()
+	// journalentry.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	journalentry.IDValidator = journalentryDescID.Validators[0].(func(uint32) error)
+	journallineMixin := schema.JournalLine{}.Mixin()
+	journalline.Policy = privacy.NewPolicies(journallineMixin[2], schema.JournalLine{})
+	journalline.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := journalline.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	journallineMixinFields0 := journallineMixin[0].Fields()
+	_ = journallineMixinFields0
+	journallineMixinFields2 := journallineMixin[2].Fields()
+	_ = journallineMixinFields2
+	journallineFields := schema.JournalLine{}.Fields()
+	_ = journallineFields
+	// journallineDescTenantID is the schema descriptor for tenant_id field.
+	journallineDescTenantID := journallineMixinFields2[0].Descriptor()
+	// journalline.DefaultTenantID holds the default value on creation for the tenant_id field.
+	journalline.DefaultTenantID = journallineDescTenantID.Default.(uint32)
+	// journallineDescEntryID is the schema descriptor for entry_id field.
+	journallineDescEntryID := journallineFields[0].Descriptor()
+	// journalline.DefaultEntryID holds the default value on creation for the entry_id field.
+	journalline.DefaultEntryID = journallineDescEntryID.Default.(uint32)
+	// journallineDescAccountCode is the schema descriptor for account_code field.
+	journallineDescAccountCode := journallineFields[1].Descriptor()
+	// journalline.AccountCodeValidator is a validator for the "account_code" field. It is called by the builders before save.
+	journalline.AccountCodeValidator = journallineDescAccountCode.Validators[0].(func(string) error)
+	// journallineDescDebit is the schema descriptor for debit field.
+	journallineDescDebit := journallineFields[3].Descriptor()
+	// journalline.DefaultDebit holds the default value on creation for the debit field.
+	journalline.DefaultDebit = journallineDescDebit.Default.(int64)
+	// journallineDescCredit is the schema descriptor for credit field.
+	journallineDescCredit := journallineFields[4].Descriptor()
+	// journalline.DefaultCredit holds the default value on creation for the credit field.
+	journalline.DefaultCredit = journallineDescCredit.Default.(int64)
+	// journallineDescID is the schema descriptor for id field.
+	journallineDescID := journallineMixinFields0[0].Descriptor()
+	// journalline.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	journalline.IDValidator = journallineDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinInters2 := languageMixin[2].Interceptors()
 	language.Interceptors[0] = languageMixinInters2[0]

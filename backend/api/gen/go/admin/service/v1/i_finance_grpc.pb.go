@@ -1100,3 +1100,191 @@ var FinanceReportService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "admin/service/v1/i_finance.proto",
 }
+
+const (
+	AccountingService_ListAccounts_FullMethodName       = "/admin.service.v1.AccountingService/ListAccounts"
+	AccountingService_ListJournalEntries_FullMethodName = "/admin.service.v1.AccountingService/ListJournalEntries"
+	AccountingService_GetTrialBalance_FullMethodName    = "/admin.service.v1.AccountingService/GetTrialBalance"
+)
+
+// AccountingServiceClient is the client API for AccountingService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 会计服务（简易总账：科目/凭证/余额表，只读查询）
+type AccountingServiceClient interface {
+	// 科目目录
+	ListAccounts(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListAccountResponse, error)
+	// 凭证流水（含分录行）
+	ListJournalEntries(ctx context.Context, in *v11.ListJournalEntryRequest, opts ...grpc.CallOption) (*v11.ListJournalEntryResponse, error)
+	// 科目余额表（试算平衡）
+	GetTrialBalance(ctx context.Context, in *v11.GetTrialBalanceRequest, opts ...grpc.CallOption) (*v11.TrialBalanceResponse, error)
+}
+
+type accountingServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAccountingServiceClient(cc grpc.ClientConnInterface) AccountingServiceClient {
+	return &accountingServiceClient{cc}
+}
+
+func (c *accountingServiceClient) ListAccounts(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListAccountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListAccountResponse)
+	err := c.cc.Invoke(ctx, AccountingService_ListAccounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountingServiceClient) ListJournalEntries(ctx context.Context, in *v11.ListJournalEntryRequest, opts ...grpc.CallOption) (*v11.ListJournalEntryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListJournalEntryResponse)
+	err := c.cc.Invoke(ctx, AccountingService_ListJournalEntries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountingServiceClient) GetTrialBalance(ctx context.Context, in *v11.GetTrialBalanceRequest, opts ...grpc.CallOption) (*v11.TrialBalanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.TrialBalanceResponse)
+	err := c.cc.Invoke(ctx, AccountingService_GetTrialBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AccountingServiceServer is the server API for AccountingService service.
+// All implementations must embed UnimplementedAccountingServiceServer
+// for forward compatibility.
+//
+// 会计服务（简易总账：科目/凭证/余额表，只读查询）
+type AccountingServiceServer interface {
+	// 科目目录
+	ListAccounts(context.Context, *v1.PagingRequest) (*v11.ListAccountResponse, error)
+	// 凭证流水（含分录行）
+	ListJournalEntries(context.Context, *v11.ListJournalEntryRequest) (*v11.ListJournalEntryResponse, error)
+	// 科目余额表（试算平衡）
+	GetTrialBalance(context.Context, *v11.GetTrialBalanceRequest) (*v11.TrialBalanceResponse, error)
+	mustEmbedUnimplementedAccountingServiceServer()
+}
+
+// UnimplementedAccountingServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAccountingServiceServer struct{}
+
+func (UnimplementedAccountingServiceServer) ListAccounts(context.Context, *v1.PagingRequest) (*v11.ListAccountResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAccounts not implemented")
+}
+func (UnimplementedAccountingServiceServer) ListJournalEntries(context.Context, *v11.ListJournalEntryRequest) (*v11.ListJournalEntryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListJournalEntries not implemented")
+}
+func (UnimplementedAccountingServiceServer) GetTrialBalance(context.Context, *v11.GetTrialBalanceRequest) (*v11.TrialBalanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTrialBalance not implemented")
+}
+func (UnimplementedAccountingServiceServer) mustEmbedUnimplementedAccountingServiceServer() {}
+func (UnimplementedAccountingServiceServer) testEmbeddedByValue()                           {}
+
+// UnsafeAccountingServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AccountingServiceServer will
+// result in compilation errors.
+type UnsafeAccountingServiceServer interface {
+	mustEmbedUnimplementedAccountingServiceServer()
+}
+
+func RegisterAccountingServiceServer(s grpc.ServiceRegistrar, srv AccountingServiceServer) {
+	// If the following call panics, it indicates UnimplementedAccountingServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AccountingService_ServiceDesc, srv)
+}
+
+func _AccountingService_ListAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountingServiceServer).ListAccounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountingService_ListAccounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountingServiceServer).ListAccounts(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountingService_ListJournalEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListJournalEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountingServiceServer).ListJournalEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountingService_ListJournalEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountingServiceServer).ListJournalEntries(ctx, req.(*v11.ListJournalEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountingService_GetTrialBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetTrialBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountingServiceServer).GetTrialBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccountingService_GetTrialBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountingServiceServer).GetTrialBalance(ctx, req.(*v11.GetTrialBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AccountingService_ServiceDesc is the grpc.ServiceDesc for AccountingService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AccountingService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "admin.service.v1.AccountingService",
+	HandlerType: (*AccountingServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListAccounts",
+			Handler:    _AccountingService_ListAccounts_Handler,
+		},
+		{
+			MethodName: "ListJournalEntries",
+			Handler:    _AccountingService_ListJournalEntries_Handler,
+		},
+		{
+			MethodName: "GetTrialBalance",
+			Handler:    _AccountingService_GetTrialBalance_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "admin/service/v1/i_finance.proto",
+}

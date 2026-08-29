@@ -559,3 +559,219 @@ message MonthlyProfit {
   optional int64 cogs = 3 [json_name = "cogs", (gnostic.openapi.v3.property) = {description: "当月销售成本（分）"}];
   optional int64 profit = 4 [json_name = "profit", (gnostic.openapi.v3.property) = {description: "当月利润（分，收入−成本）"}];
 }
+
+// =========== Accounting（简易总账）==========
+
+// 会计服务：科目目录（平台种子）、业务凭证查询、科目余额表。
+// 凭证由业务事件（收发货/审批/收付款）在事务内自动生成，无手工录入口。
+service AccountingService {
+  // 科目目录（平台标准科目，只读）
+  rpc ListAccounts (pagination.PagingRequest) returns (ListAccountResponse) {}
+
+  // 凭证流水（含分录行；支持日期/科目过滤）
+  rpc ListJournalEntries (ListJournalEntryRequest) returns (ListJournalEntryResponse) {}
+
+  // 科目余额表（试算平衡：借贷合计必须相等）
+  rpc GetTrialBalance (GetTrialBalanceRequest) returns (TrialBalanceResponse) {}
+}
+
+// 会计科目
+message Account {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "科目ID"}
+  ]; // 科目ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "科目编码"}
+  ]; // 科目编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "科目名称"}
+  ]; // 科目名称
+
+  optional string category = 4 [
+    json_name = "category",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "类别：ASSET/LIABILITY/EQUITY/REVENUE/EXPENSE"}
+  ]; // 类别
+
+  optional string balance_direction = 5 [
+    json_name = "balanceDirection",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "余额方向：DEBIT/CREDIT"}
+  ]; // 余额方向
+}
+
+message ListAccountResponse {
+  repeated Account items = 1;
+  uint64 total = 2;
+}
+
+// 记账凭证行
+message JournalLine {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "行ID"}
+  ]; // 行ID
+
+  optional string account_code = 2 [
+    json_name = "accountCode",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "科目编码"}
+  ]; // 科目编码
+
+  optional string summary = 3 [
+    json_name = "summary",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "行摘要"}
+  ]; // 行摘要
+
+  optional int64 debit = 4 [
+    json_name = "debit",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "借方金额（分）"}
+  ]; // 借方金额
+
+  optional int64 credit = 5 [
+    json_name = "credit",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "贷方金额（分）"}
+  ]; // 贷方金额
+}
+
+// 记账凭证（头 + 行）
+message JournalEntry {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "凭证ID"}
+  ]; // 凭证ID
+
+  optional string entry_number = 2 [
+    json_name = "entryNumber",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "凭证号"}
+  ]; // 凭证号
+
+  optional string summary = 3 [
+    json_name = "summary",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "摘要"}
+  ]; // 摘要
+
+  optional string biz_ref = 4 [
+    json_name = "bizRef",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "业务来源引用"}
+  ]; // 业务来源引用
+
+  optional google.protobuf.Timestamp entry_date = 5 [
+    json_name = "entryDate",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {description: "记账日期"}
+  ]; // 记账日期
+
+  repeated JournalLine lines = 6 [
+    (gnostic.openapi.v3.property) = {description: "分录行"}
+  ]; // 分录行
+
+  optional uint32 tenant_id = 20 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+}
+
+message ListJournalEntryRequest {
+  optional google.protobuf.Timestamp from_date = 1 [
+    json_name = "fromDate",
+    (gnostic.openapi.v3.property) = {description: "起始日期"}
+  ]; // 起始日期
+
+  optional google.protobuf.Timestamp to_date = 2 [
+    json_name = "toDate",
+    (gnostic.openapi.v3.property) = {description: "截止日期"}
+  ]; // 截止日期
+
+  optional string account_code = 3 [
+    json_name = "accountCode",
+    (gnostic.openapi.v3.property) = {description: "科目过滤（含该科目的凭证）"}
+  ]; // 科目过滤
+
+  optional uint32 page = 10 [json_name = "page", (gnostic.openapi.v3.property) = {description: "页码"}];
+  optional uint32 page_size = 11 [json_name = "pageSize", (gnostic.openapi.v3.property) = {description: "每页条数"}];
+}
+
+message ListJournalEntryResponse {
+  repeated JournalEntry items = 1;
+  uint64 total = 2;
+}
+
+message GetTrialBalanceRequest {
+  optional google.protobuf.Timestamp from_date = 1 [
+    json_name = "fromDate",
+    (gnostic.openapi.v3.property) = {description: "起始日期（空=全部）"}
+  ]; // 起始日期
+
+  optional google.protobuf.Timestamp to_date = 2 [
+    json_name = "toDate",
+    (gnostic.openapi.v3.property) = {description: "截止日期（空=至今）"}
+  ]; // 截止日期
+}
+
+// 科目余额行：余额 = direction 下（借方累计 − 贷方累计）
+message TrialBalanceItem {
+  optional string account_code = 1 [
+    json_name = "accountCode",
+    (gnostic.openapi.v3.property) = {description: "科目编码"}
+  ]; // 科目编码
+
+  optional string account_name = 2 [
+    json_name = "accountName",
+    (gnostic.openapi.v3.property) = {description: "科目名称"}
+  ]; // 科目名称
+
+  optional string category = 3 [
+    json_name = "category",
+    (gnostic.openapi.v3.property) = {description: "科目类别"}
+  ]; // 科目类别
+
+  optional string balance_direction = 4 [
+    json_name = "balanceDirection",
+    (gnostic.openapi.v3.property) = {description: "余额方向"}
+  ]; // 余额方向
+
+  optional int64 debit_total = 5 [
+    json_name = "debitTotal",
+    (gnostic.openapi.v3.property) = {description: "借方累计（分）"}
+  ]; // 借方累计
+
+  optional int64 credit_total = 6 [
+    json_name = "creditTotal",
+    (gnostic.openapi.v3.property) = {description: "贷方累计（分）"}
+  ]; // 贷方累计
+
+  optional int64 balance = 7 [
+    json_name = "balance",
+    (gnostic.openapi.v3.property) = {description: "期末余额（分，方向后净额）"}
+  ]; // 期末余额
+}
+
+message TrialBalanceResponse {
+  repeated TrialBalanceItem items = 1;
+  optional int64 total_debit = 2 [
+    json_name = "totalDebit",
+    (gnostic.openapi.v3.property) = {description: "借方合计（=贷方合计，试算平衡）"}
+  ]; // 借方合计
+
+  optional int64 total_credit = 3 [
+    json_name = "totalCredit",
+    (gnostic.openapi.v3.property) = {description: "贷方合计"}
+  ]; // 贷方合计
+}

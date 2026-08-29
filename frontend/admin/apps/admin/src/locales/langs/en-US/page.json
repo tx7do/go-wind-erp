@@ -806,5 +806,28 @@
       "create": "New Flow"
     },
     "bizTypeLabel": "Biz Type"
+  },
+  "trialBalance": {
+    "accountCode": "Account Code",
+    "accountName": "Account Name",
+    "category": "Category",
+    "debitTotal": "Debit Total",
+    "creditTotal": "Credit Total",
+    "balance": "Balance",
+    "fromDate": "From",
+    "toDate": "To"
+  },
+  "journal": {
+    "entryNumber": "Entry No.",
+    "entryDate": "Date",
+    "summary": "Summary",
+    "bizRef": "Biz Ref",
+    "amount": "Amount",
+    "showLines": "Lines",
+    "hideLines": "Hide",
+    "account": "Account",
+    "lineSummary": "Summary",
+    "debit": "Debit",
+    "credit": "Credit"
   }
 }

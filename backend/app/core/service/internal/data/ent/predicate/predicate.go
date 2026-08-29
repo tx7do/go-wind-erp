@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Account is the predicate function for account builders.
+type Account func(*sql.Selector)
+
 // Api is the predicate function for api builders.
 type Api func(*sql.Selector)
 
@@ -47,6 +50,12 @@ type InternalMessageCategory func(*sql.Selector)
 
 // InternalMessageRecipient is the predicate function for internalmessagerecipient builders.
 type InternalMessageRecipient func(*sql.Selector)
+
+// JournalEntry is the predicate function for journalentry builders.
+type JournalEntry func(*sql.Selector)
+
+// JournalLine is the predicate function for journalline builders.
+type JournalLine func(*sql.Selector)
 
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)

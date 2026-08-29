@@ -31,6 +31,7 @@ type PaymentService struct {
 	paymentRepo         *data.PaymentRepo
 	payableRepo         *data.PayableRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
+	journal             *journalPoster
 }
 
 func NewPaymentService(
@@ -38,12 +39,14 @@ func NewPaymentService(
 	paymentRepo *data.PaymentRepo,
 	payableRepo *data.PayableRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
+	journal *journalPoster,
 ) *PaymentService {
 	svc := &PaymentService{
 		log:                 ctx.NewLoggerHelper("payment/service/core-service"),
 		paymentRepo:         paymentRepo,
 		payableRepo:         payableRepo,
 		approvalRequestRepo: approvalRequestRepo,
+		journal:             journal,
 	}
 
 	return svc
@@ -144,6 +147,10 @@ func (s *PaymentService) ApplyApproved(ctx context.Context, paymentID uint32) er
 	if _, err := s.payableRepo.ApplyPayment(ctx, payment.GetPayableId(), payment.GetAmount()); err != nil {
 		s.log.Errorf("apply payable for payment %d failed after approval: %s", paymentID, err.Error())
 	}
+
+	// 总账过账：借 应付账款 / 贷 资金（现金/银行）。软失败。
+	s.journal.PostPaymentApplied(ctx, paymentID, payment.GetAmount(),
+		payment.GetMethod() == financeV1.Payment_CASH)
 
 	return nil
 }

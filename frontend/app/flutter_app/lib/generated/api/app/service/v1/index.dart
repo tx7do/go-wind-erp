@@ -731,8 +731,11 @@ class ApprovalServiceV1ApprovalRequest {
   String? comment;
   String? createdAt;
   int? createdBy;
+  /// 多级审批：创建时从生效流程快照（<=1 为传统单级审批）
+  int? currentStep;
   String? deletedAt;
   int? deletedBy;
+  int? flowId;
   ///
   /// Behaviors: OPTIONAL
   int? id;
@@ -747,6 +750,7 @@ class ApprovalServiceV1ApprovalRequest {
   ///
   /// Behaviors: OPTIONAL
   String? title;
+  int? totalSteps;
   String? updatedAt;
   int? updatedBy;
 
@@ -758,14 +762,17 @@ class ApprovalServiceV1ApprovalRequest {
     this.comment,
     this.createdAt,
     this.createdBy,
+    this.currentStep,
     this.deletedAt,
     this.deletedBy,
+    this.flowId,
     this.id,
     this.remark,
     this.status,
     this.summary,
     this.tenantId,
     this.title,
+    this.totalSteps,
     this.updatedAt,
     this.updatedBy,
   });
@@ -779,14 +786,17 @@ class ApprovalServiceV1ApprovalRequest {
       comment: json['comment'] as String?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
+      currentStep: json['currentStep'] as int?,
       deletedAt: json['deletedAt'] as String?,
       deletedBy: json['deletedBy'] as int?,
+      flowId: json['flowId'] as int?,
       id: json['id'] as int?,
       remark: json['remark'] as String?,
       status: json['status'] != null ? ApprovalServiceV1ApprovalRequest$Status.fromString(json['status'] as String) : null,
       summary: json['summary'] as String?,
       tenantId: json['tenantId'] as int?,
       title: json['title'] as String?,
+      totalSteps: json['totalSteps'] as int?,
       updatedAt: json['updatedAt'] as String?,
       updatedBy: json['updatedBy'] as int?,
     );
@@ -801,14 +811,17 @@ class ApprovalServiceV1ApprovalRequest {
     if (comment != null) json['comment'] = comment;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
+    if (currentStep != null) json['currentStep'] = currentStep;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
     if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (flowId != null) json['flowId'] = flowId;
     if (id != null) json['id'] = id;
     if (remark != null) json['remark'] = remark;
     if (status != null) json['status'] = status!.value;
     if (summary != null) json['summary'] = summary;
     if (tenantId != null) json['tenantId'] = tenantId;
     if (title != null) json['title'] = title;
+    if (totalSteps != null) json['totalSteps'] = totalSteps;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     if (updatedBy != null) json['updatedBy'] = updatedBy;
     return json;
@@ -816,7 +829,7 @@ class ApprovalServiceV1ApprovalRequest {
 
   @override
   String toString() {
-    return 'ApprovalServiceV1ApprovalRequest(applicantId: $applicantId, approverId: $approverId, bizRef: $bizRef, bizType: $bizType, comment: $comment, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, id: $id, remark: $remark, status: $status, summary: $summary, tenantId: $tenantId, title: $title, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ApprovalServiceV1ApprovalRequest(applicantId: $applicantId, approverId: $approverId, bizRef: $bizRef, bizType: $bizType, comment: $comment, createdAt: $createdAt, createdBy: $createdBy, currentStep: $currentStep, deletedAt: $deletedAt, deletedBy: $deletedBy, flowId: $flowId, id: $id, remark: $remark, status: $status, summary: $summary, tenantId: $tenantId, title: $title, totalSteps: $totalSteps, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -831,14 +844,17 @@ class ApprovalServiceV1ApprovalRequest {
       && comment == other.comment
       && createdAt == other.createdAt
       && createdBy == other.createdBy
+      && currentStep == other.currentStep
       && deletedAt == other.deletedAt
       && deletedBy == other.deletedBy
+      && flowId == other.flowId
       && id == other.id
       && remark == other.remark
       && status == other.status
       && summary == other.summary
       && tenantId == other.tenantId
       && title == other.title
+      && totalSteps == other.totalSteps
       && updatedAt == other.updatedAt
       && updatedBy == other.updatedBy
     ;
@@ -852,14 +868,17 @@ class ApprovalServiceV1ApprovalRequest {
     comment,
     createdAt,
     createdBy,
+    currentStep,
     deletedAt,
     deletedBy,
+    flowId,
     id,
     remark,
     status,
     summary,
     tenantId,
     title,
+    totalSteps,
     updatedAt,
     updatedBy,
   ]);
@@ -872,14 +891,17 @@ class ApprovalServiceV1ApprovalRequest {
     String? comment,
     String? createdAt,
     int? createdBy,
+    int? currentStep,
     String? deletedAt,
     int? deletedBy,
+    int? flowId,
     int? id,
     String? remark,
     ApprovalServiceV1ApprovalRequest$Status? status,
     String? summary,
     int? tenantId,
     String? title,
+    int? totalSteps,
     String? updatedAt,
     int? updatedBy,
   }) {
@@ -891,14 +913,17 @@ class ApprovalServiceV1ApprovalRequest {
       comment: comment ?? this.comment,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
+      currentStep: currentStep ?? this.currentStep,
       deletedAt: deletedAt ?? this.deletedAt,
       deletedBy: deletedBy ?? this.deletedBy,
+      flowId: flowId ?? this.flowId,
       id: id ?? this.id,
       remark: remark ?? this.remark,
       status: status ?? this.status,
       summary: summary ?? this.summary,
       tenantId: tenantId ?? this.tenantId,
       title: title ?? this.title,
+      totalSteps: totalSteps ?? this.totalSteps,
       updatedAt: updatedAt ?? this.updatedAt,
       updatedBy: updatedBy ?? this.updatedBy,
     );

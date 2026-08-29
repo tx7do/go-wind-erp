@@ -9,6 +9,36 @@ import (
 )
 
 var (
+	// FinAccountsColumns holds the columns for the "fin_accounts" table.
+	FinAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "科目编码（如 1405 库存商品）"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "科目名称"},
+		{Name: "category", Type: field.TypeEnum, Nullable: true, Comment: "科目类别", Enums: []string{"ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"}, Default: "ASSET"},
+		{Name: "balance_direction", Type: field.TypeEnum, Nullable: true, Comment: "余额方向", Enums: []string{"DEBIT", "CREDIT"}, Default: "DEBIT"},
+	}
+	// FinAccountsTable holds the schema information for the "fin_accounts" table.
+	FinAccountsTable = &schema.Table{
+		Name:       "fin_accounts",
+		Comment:    "会计科目表（平台标准目录）",
+		Columns:    FinAccountsColumns,
+		PrimaryKey: []*schema.Column{FinAccountsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_fin_account_code",
+				Unique:  true,
+				Columns: []*schema.Column{FinAccountsColumns[9]},
+			},
+		},
+	}
 	// SysApisColumns holds the columns for the "sys_apis" table.
 	SysApisColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -775,6 +805,68 @@ var (
 				Name:    "idx_internal_msg_recipient_message_recipient",
 				Unique:  false,
 				Columns: []*schema.Column{InternalMessageRecipientsColumns[5], InternalMessageRecipientsColumns[6]},
+			},
+		},
+	}
+	// FinJournalEntriesColumns holds the columns for the "fin_journal_entries" table.
+	FinJournalEntriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "entry_number", Type: field.TypeString, Nullable: true, Comment: "凭证号（JE-<毫秒时间戳>）"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "摘要（如：采购入库 PO123）"},
+		{Name: "biz_ref", Type: field.TypeString, Nullable: true, Comment: "业务来源引用（如 STOCK_PICKING:17 / RECEIPT:5）"},
+		{Name: "entry_date", Type: field.TypeTime, Nullable: true, Comment: "记账日期（业务发生时间）"},
+	}
+	// FinJournalEntriesTable holds the schema information for the "fin_journal_entries" table.
+	FinJournalEntriesTable = &schema.Table{
+		Name:       "fin_journal_entries",
+		Comment:    "记账凭证头表",
+		Columns:    FinJournalEntriesColumns,
+		PrimaryKey: []*schema.Column{FinJournalEntriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_journal_entry_tenant_date",
+				Unique:  false,
+				Columns: []*schema.Column{FinJournalEntriesColumns[5], FinJournalEntriesColumns[9]},
+			},
+			{
+				Name:    "idx_fin_journal_entry_tenant_biz_ref",
+				Unique:  false,
+				Columns: []*schema.Column{FinJournalEntriesColumns[5], FinJournalEntriesColumns[8]},
+			},
+		},
+	}
+	// FinJournalLinesColumns holds the columns for the "fin_journal_lines" table.
+	FinJournalLinesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "entry_id", Type: field.TypeUint32, Nullable: true, Comment: "所属凭证ID", Default: 0},
+		{Name: "account_code", Type: field.TypeString, Nullable: true, Comment: "科目编码"},
+		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "行摘要"},
+		{Name: "debit", Type: field.TypeInt64, Nullable: true, Comment: "借方金额（分）", Default: 0},
+		{Name: "credit", Type: field.TypeInt64, Nullable: true, Comment: "贷方金额（分）", Default: 0},
+	}
+	// FinJournalLinesTable holds the schema information for the "fin_journal_lines" table.
+	FinJournalLinesTable = &schema.Table{
+		Name:       "fin_journal_lines",
+		Comment:    "记账凭证行表",
+		Columns:    FinJournalLinesColumns,
+		PrimaryKey: []*schema.Column{FinJournalLinesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_fin_journal_line_tenant_entry",
+				Unique:  false,
+				Columns: []*schema.Column{FinJournalLinesColumns[2], FinJournalLinesColumns[3]},
+			},
+			{
+				Name:    "idx_fin_journal_line_tenant_account",
+				Unique:  false,
+				Columns: []*schema.Column{FinJournalLinesColumns[2], FinJournalLinesColumns[4]},
 			},
 		},
 	}
@@ -3617,6 +3709,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		FinAccountsTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
 		AprApprovalFlowsTable,
@@ -3631,6 +3724,8 @@ var (
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
+		FinJournalEntriesTable,
+		FinJournalLinesTable,
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
@@ -3682,6 +3777,11 @@ var (
 )
 
 func init() {
+	FinAccountsTable.Annotation = &entsql.Annotation{
+		Table:     "fin_accounts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysApisTable.Annotation = &entsql.Annotation{
 		Table:     "sys_apis",
 		Charset:   "utf8mb4",
@@ -3751,6 +3851,16 @@ func init() {
 	}
 	InternalMessageRecipientsTable.Annotation = &entsql.Annotation{
 		Table:     "internal_message_recipients",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FinJournalEntriesTable.Annotation = &entsql.Annotation{
+		Table:     "fin_journal_entries",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FinJournalLinesTable.Annotation = &entsql.Annotation{
+		Table:     "fin_journal_lines",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -151,3 +151,27 @@ service FinanceReportService {
     };
   }
 }
+
+// 会计服务（简易总账：科目/凭证/余额表，只读查询）
+service AccountingService {
+  // 科目目录
+  rpc ListAccounts (pagination.PagingRequest) returns (finance.service.v1.ListAccountResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/accounts"
+    };
+  }
+
+  // 凭证流水（含分录行）
+  rpc ListJournalEntries (finance.service.v1.ListJournalEntryRequest) returns (finance.service.v1.ListJournalEntryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/journal-entries"
+    };
+  }
+
+  // 科目余额表（试算平衡）
+  rpc GetTrialBalance (finance.service.v1.GetTrialBalanceRequest) returns (finance.service.v1.TrialBalanceResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/trial-balance"
+    };
+  }
+}

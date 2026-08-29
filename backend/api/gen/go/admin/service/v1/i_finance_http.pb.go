@@ -863,3 +863,139 @@ func (c *FinanceReportServiceHTTPClientImpl) ProfitReport(ctx context.Context, i
 	}
 	return &out, nil
 }
+
+const OperationAccountingServiceGetTrialBalance = "/admin.service.v1.AccountingService/GetTrialBalance"
+const OperationAccountingServiceListAccounts = "/admin.service.v1.AccountingService/ListAccounts"
+const OperationAccountingServiceListJournalEntries = "/admin.service.v1.AccountingService/ListJournalEntries"
+
+type AccountingServiceHTTPServer interface {
+	// GetTrialBalance 科目余额表（试算平衡）
+	GetTrialBalance(context.Context, *v11.GetTrialBalanceRequest) (*v11.TrialBalanceResponse, error)
+	// ListAccounts 科目目录
+	ListAccounts(context.Context, *v1.PagingRequest) (*v11.ListAccountResponse, error)
+	// ListJournalEntries 凭证流水（含分录行）
+	ListJournalEntries(context.Context, *v11.ListJournalEntryRequest) (*v11.ListJournalEntryResponse, error)
+}
+
+func RegisterAccountingServiceHTTPServer(s *http.Server, srv AccountingServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/admin/v1/accounts", _AccountingService_ListAccounts0_HTTP_Handler(srv))
+	r.GET("/admin/v1/journal-entries", _AccountingService_ListJournalEntries0_HTTP_Handler(srv))
+	r.GET("/admin/v1/trial-balance", _AccountingService_GetTrialBalance0_HTTP_Handler(srv))
+}
+
+func _AccountingService_ListAccounts0_HTTP_Handler(srv AccountingServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAccountingServiceListAccounts)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListAccounts(ctx, req.(*v1.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListAccountResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AccountingService_ListJournalEntries0_HTTP_Handler(srv AccountingServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListJournalEntryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAccountingServiceListJournalEntries)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListJournalEntries(ctx, req.(*v11.ListJournalEntryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListJournalEntryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AccountingService_GetTrialBalance0_HTTP_Handler(srv AccountingServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetTrialBalanceRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAccountingServiceGetTrialBalance)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTrialBalance(ctx, req.(*v11.GetTrialBalanceRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.TrialBalanceResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type AccountingServiceHTTPClient interface {
+	// GetTrialBalance 科目余额表（试算平衡）
+	GetTrialBalance(ctx context.Context, req *v11.GetTrialBalanceRequest, opts ...http.CallOption) (rsp *v11.TrialBalanceResponse, err error)
+	// ListAccounts 科目目录
+	ListAccounts(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListAccountResponse, err error)
+	// ListJournalEntries 凭证流水（含分录行）
+	ListJournalEntries(ctx context.Context, req *v11.ListJournalEntryRequest, opts ...http.CallOption) (rsp *v11.ListJournalEntryResponse, err error)
+}
+
+type AccountingServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewAccountingServiceHTTPClient(client *http.Client) AccountingServiceHTTPClient {
+	return &AccountingServiceHTTPClientImpl{client}
+}
+
+// GetTrialBalance 科目余额表（试算平衡）
+func (c *AccountingServiceHTTPClientImpl) GetTrialBalance(ctx context.Context, in *v11.GetTrialBalanceRequest, opts ...http.CallOption) (*v11.TrialBalanceResponse, error) {
+	var out v11.TrialBalanceResponse
+	pattern := "/admin/v1/trial-balance"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAccountingServiceGetTrialBalance))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAccounts 科目目录
+func (c *AccountingServiceHTTPClientImpl) ListAccounts(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListAccountResponse, error) {
+	var out v11.ListAccountResponse
+	pattern := "/admin/v1/accounts"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAccountingServiceListAccounts))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListJournalEntries 凭证流水（含分录行）
+func (c *AccountingServiceHTTPClientImpl) ListJournalEntries(ctx context.Context, in *v11.ListJournalEntryRequest, opts ...http.CallOption) (*v11.ListJournalEntryResponse, error) {
+	var out v11.ListJournalEntryResponse
+	pattern := "/admin/v1/journal-entries"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAccountingServiceListJournalEntries))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}

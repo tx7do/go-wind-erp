@@ -34,6 +34,7 @@ type StockPickingService struct {
 	stockQuantRepo    *data.StockQuantRepo
 	stockMoveLineRepo *data.StockMoveLineRepo
 	stockLotRepo      *data.StockLotRepo
+	journal           *journalPoster
 	purchaseOrderRepo *data.PurchaseOrderRepo
 	salesOrderRepo    *data.SalesOrderRepo
 	receivableRepo    *data.ReceivableRepo
@@ -48,6 +49,7 @@ func NewStockPickingService(
 	stockQuantRepo *data.StockQuantRepo,
 	stockMoveLineRepo *data.StockMoveLineRepo,
 	stockLotRepo *data.StockLotRepo,
+	journal *journalPoster,
 	purchaseOrderRepo *data.PurchaseOrderRepo,
 	salesOrderRepo *data.SalesOrderRepo,
 	receivableRepo *data.ReceivableRepo,
@@ -63,6 +65,7 @@ func NewStockPickingService(
 		stockQuantRepo:    stockQuantRepo,
 		stockMoveLineRepo: stockMoveLineRepo,
 		stockLotRepo:      stockLotRepo,
+		journal:           journal,
 		purchaseOrderRepo: purchaseOrderRepo,
 		salesOrderRepo:    salesOrderRepo,
 		receivableRepo:    receivableRepo,
@@ -627,6 +630,14 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 			return nil, err
 		}
 
+		// 总账过账（库存/应付/成本腿；与业务回写同事务，账实一致优先）。
+		// 销退收入腿在下方 so_item 分支过账（彼处能取到明细单价）。
+		if perr := s.postInventoryLeg(ctx, tx, picking.GetPickingType(), move,
+			srcUsage, dstUsage, poItemID, soItemID, executedQty, unitCost); perr != nil {
+			err = perr
+			return nil, err
+		}
+
 		// 入库联动：回写采购明细 received_quantity（借鉴 Odoo 收货回写，
 		// 原子条件更新防超收）。若全部明细收齐 → PO 自动完结。
 		// 采购退货 = OUTGOING + poItem 关联 → 负向回写（减已收数，减空则 PO 重开）
@@ -669,6 +680,12 @@ func (s *StockPickingService) Validate(ctx context.Context, req *inventoryV1.Val
 					if oerr := s.receivableRepo.ApplyReturnOffsetTx(ctx, tx,
 						fmt.Sprintf("SALES_ORDER:%d", soID), offset); oerr != nil {
 						err = oerr
+						return nil, err
+					}
+					// 销退收入腿过账：借 收入 / 贷 应收（数量×明细单价）。
+					if perr := s.journal.PostSalesReturnRevenueTx(ctx, tx,
+						req.GetId(), move.GetProductCode(), executedQty, unitPrice); perr != nil {
+						err = perr
 						return nil, err
 					}
 				}
@@ -794,6 +811,41 @@ func (s *StockPickingService) recordMoveLinesWithLot(
 		}
 	}
 	return createLine(executedQty, lotID)
+}
+
+// postInventoryLeg 按移动方向过账库存/应付/成本腿（同事务）：
+// 入库收货→借库存贷应付；销售出库→借成本贷库存；采退→借应付贷库存；
+// 销退库存腿→借库存贷成本；盘点盈亏→1901 对冲。调拨不过账（位置级移动）。
+func (s *StockPickingService) postInventoryLeg(
+	ctx context.Context,
+	tx *ent.Tx,
+	pickingType inventoryV1.StockPicking_PickingType,
+	move *inventoryV1.StockMove,
+	srcUsage inventoryV1.StockLocation_Usage,
+	dstUsage inventoryV1.StockLocation_Usage,
+	poItemID uint32,
+	soItemID uint32,
+	executedQty int64,
+	unitCost int64,
+) error {
+	srcInternal := srcUsage == inventoryV1.StockLocation_INTERNAL
+	dstInternal := dstUsage == inventoryV1.StockLocation_INTERNAL
+
+	switch {
+	case pickingType == inventoryV1.StockPicking_INCOMING && poItemID != 0 && dstInternal && !srcInternal:
+		return s.journal.PostReceivingTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), executedQty, unitCost)
+	case pickingType == inventoryV1.StockPicking_OUTGOING && soItemID != 0 && srcInternal && !dstInternal:
+		return s.journal.PostDeliveryTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), executedQty, unitCost)
+	case pickingType == inventoryV1.StockPicking_OUTGOING && poItemID != 0 && srcInternal && !dstInternal:
+		return s.journal.PostPurchaseReturnTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), executedQty, unitCost)
+	case pickingType == inventoryV1.StockPicking_INCOMING && soItemID != 0 && dstInternal && !srcInternal:
+		return s.journal.PostSalesReturnStockTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), executedQty, unitCost)
+	case pickingType == inventoryV1.StockPicking_INVENTORY_ADJUSTMENT && dstInternal && !srcInternal:
+		return s.journal.PostStockGainLossTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), true, executedQty, unitCost)
+	case pickingType == inventoryV1.StockPicking_INVENTORY_ADJUSTMENT && srcInternal && !dstInternal:
+		return s.journal.PostStockGainLossTx(ctx, tx, move.GetPickingId(), move.GetProductCode(), false, executedQty, unitCost)
+	}
+	return nil
 }
 
 // Cancel 取消拣货单：将所有非终态 moves 迁至 CANCELLED（借鉴 Odoo

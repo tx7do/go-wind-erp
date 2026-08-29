@@ -835,5 +835,28 @@
       "create": "创建审批流"
     },
     "bizTypeLabel": "业务类型"
+  },
+  "trialBalance": {
+    "accountCode": "科目编码",
+    "accountName": "科目名称",
+    "category": "类别",
+    "debitTotal": "借方累计",
+    "creditTotal": "贷方累计",
+    "balance": "期末余额",
+    "fromDate": "起始日期",
+    "toDate": "截止日期"
+  },
+  "journal": {
+    "entryNumber": "凭证号",
+    "entryDate": "记账日期",
+    "summary": "摘要",
+    "bizRef": "业务来源",
+    "amount": "金额",
+    "showLines": "分录",
+    "hideLines": "收起",
+    "account": "科目",
+    "lineSummary": "摘要",
+    "debit": "借方",
+    "credit": "贷方"
   }
 }

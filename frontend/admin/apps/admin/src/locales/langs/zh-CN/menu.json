@@ -80,7 +80,9 @@
     "receivable": "应收管理",
     "receipt": "收款流水",
     "agingAr": "应收账龄",
-    "profit": "利润报表"
+    "profit": "利润报表",
+    "trialBalance": "科目余额表",
+    "journal": "凭证查询"
   },
   "sales": {
     "moduleName": "销售管理",

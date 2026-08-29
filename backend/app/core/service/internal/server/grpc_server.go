@@ -65,6 +65,7 @@ func NewGrpcServer(
 	salesOrderService *service.SalesOrderService,
 
 	payableService *service.PayableService,
+	accountingService *service.AccountingService,
 	paymentService *service.PaymentService,
 	receivableService *service.ReceivableService,
 	receiptService *service.ReceiptService,
@@ -133,6 +134,7 @@ func NewGrpcServer(
 	salesV1.RegisterSalesOrderServiceServer(srv, salesOrderService)
 
 	financeV1.RegisterPayableServiceServer(srv, payableService)
+	financeV1.RegisterAccountingServiceServer(srv, accountingService)
 	financeV1.RegisterPaymentServiceServer(srv, paymentService)
 	financeV1.RegisterReceivableServiceServer(srv, receivableService)
 	financeV1.RegisterReceiptServiceServer(srv, receiptService)

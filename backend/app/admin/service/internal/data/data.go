@@ -430,6 +430,15 @@ func NewPaymentServiceClient(ctx *bootstrap.Context, r registry.Discovery) finan
 	return financeV1.NewPaymentServiceClient(cli)
 }
 
+func NewAccountingServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.AccountingServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return financeV1.NewAccountingServiceClient(cli)
+}
+
 func NewReceivableServiceClient(ctx *bootstrap.Context, r registry.Discovery) financeV1.ReceivableServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

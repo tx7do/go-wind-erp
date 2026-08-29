@@ -53,3 +53,15 @@ const (
 	StandardPlanCode = "STANDARD"
 	ProPlanCode      = "PRO"
 )
+
+// 会计科目编码（简易总账，fin_accounts.code 的固定取值）
+const (
+	AccountCodeCash        = "1001" // 库存现金
+	AccountCodeBank        = "1002" // 银行存款
+	AccountCodeAR          = "1122" // 应收账款
+	AccountCodeInventory   = "1405" // 库存商品
+	AccountCodePendingLoss = "1901" // 待处理财产损溢（盘点损益）
+	AccountCodeAP          = "2202" // 应付账款
+	AccountCodeRevenue     = "6001" // 主营业务收入
+	AccountCodeCOGS        = "6401" // 主营业务成本
+)

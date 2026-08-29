@@ -37,6 +37,7 @@ type SalesOrderService struct {
 	billingGuard        *BillingGuard
 	locationRepo        *data.LocationRepo
 	stockPickingRepo    *data.StockPickingRepo
+	journal             *journalPoster
 }
 
 func NewSalesOrderService(
@@ -47,6 +48,7 @@ func NewSalesOrderService(
 	billingGuard *BillingGuard,
 	locationRepo *data.LocationRepo,
 	stockPickingRepo *data.StockPickingRepo,
+	journal *journalPoster,
 ) *SalesOrderService {
 	svc := &SalesOrderService{
 		log:                 ctx.NewLoggerHelper("sales_order/service/core-service"),
@@ -56,6 +58,7 @@ func NewSalesOrderService(
 		billingGuard:        billingGuard,
 		locationRepo:        locationRepo,
 		stockPickingRepo:    stockPickingRepo,
+		journal:             journal,
 	}
 
 	return svc
@@ -268,6 +271,10 @@ func (s *SalesOrderService) transition(
 		}); err != nil {
 			s.log.Errorf("create receivable for sales order %d failed: %s", id, err.Error())
 		}
+
+		// 总账过账（收入确认）：借 应收账款 / 贷 主营业务收入。软失败
+		// （与应收单同模式）——业务事实优先，凭证可对账修复。
+		s.journal.PostRevenueRecognition(ctx, id, old.GetSoNumber(), old.GetTotalAmount())
 
 		// 库存联动：销售单获批即生成出库拣货单 + 子 moves（借鉴 Odoo
 		// _create_picking / _create_stock_moves）。source = SO.warehouse_code

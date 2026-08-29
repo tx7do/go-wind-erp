@@ -321,5 +321,14 @@
     "Normal": "正常",
     "Expiring": "临期",
     "Expired": "已过期"
+  },
+  "account": {
+    "category": {
+      "ASSET": "资产",
+      "LIABILITY": "负债",
+      "EQUITY": "权益",
+      "REVENUE": "收入",
+      "EXPENSE": "费用"
+    }
   }
 }

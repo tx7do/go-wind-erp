@@ -11,6 +11,7 @@ import (
 
 	"go-wind-erp/app/core/service/internal/data/ent/migrate"
 
+	"go-wind-erp/app/core/service/internal/data/ent/account"
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
@@ -25,6 +26,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-erp/app/core/service/internal/data/ent/journalentry"
+	"go-wind-erp/app/core/service/internal/data/ent/journalline"
 	"go-wind-erp/app/core/service/internal/data/ent/language"
 	"go-wind-erp/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/loginpolicy"
@@ -84,6 +87,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Account is the client for interacting with the Account builders.
+	Account *AccountClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -112,6 +117,10 @@ type Client struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
+	// JournalEntry is the client for interacting with the JournalEntry builders.
+	JournalEntry *JournalEntryClient
+	// JournalLine is the client for interacting with the JournalLine builders.
+	JournalLine *JournalLineClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -217,6 +226,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Account = NewAccountClient(c.config)
 	c.Api = NewAPIClient(c.config)
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.ApprovalFlow = NewApprovalFlowClient(c.config)
@@ -231,6 +241,8 @@ func (c *Client) init() {
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
 	c.InternalMessageRecipient = NewInternalMessageRecipientClient(c.config)
+	c.JournalEntry = NewJournalEntryClient(c.config)
+	c.JournalLine = NewJournalLineClient(c.config)
 	c.Language = NewLanguageClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
@@ -370,6 +382,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                      ctx,
 		config:                   cfg,
+		Account:                  NewAccountClient(cfg),
 		Api:                      NewAPIClient(cfg),
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
 		ApprovalFlow:             NewApprovalFlowClient(cfg),
@@ -384,6 +397,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
+		JournalEntry:             NewJournalEntryClient(cfg),
+		JournalLine:              NewJournalLineClient(cfg),
 		Language:                 NewLanguageClient(cfg),
 		LoginAuditLog:            NewLoginAuditLogClient(cfg),
 		LoginPolicy:              NewLoginPolicyClient(cfg),
@@ -450,6 +465,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                      ctx,
 		config:                   cfg,
+		Account:                  NewAccountClient(cfg),
 		Api:                      NewAPIClient(cfg),
 		ApiAuditLog:              NewApiAuditLogClient(cfg),
 		ApprovalFlow:             NewApprovalFlowClient(cfg),
@@ -464,6 +480,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InternalMessage:          NewInternalMessageClient(cfg),
 		InternalMessageCategory:  NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient: NewInternalMessageRecipientClient(cfg),
+		JournalEntry:             NewJournalEntryClient(cfg),
+		JournalLine:              NewJournalLineClient(cfg),
 		Language:                 NewLanguageClient(cfg),
 		LoginAuditLog:            NewLoginAuditLogClient(cfg),
 		LoginPolicy:              NewLoginPolicyClient(cfg),
@@ -517,7 +535,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Api.
+//		Account.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -540,12 +558,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep, c.ApprovalRequest,
-		c.Customer, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
+		c.Account, c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep,
+		c.ApprovalRequest, c.Customer, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.File, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.JournalEntry,
+		c.JournalLine, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.Plan, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.PurchaseOrder, c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role,
@@ -562,12 +581,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep, c.ApprovalRequest,
-		c.Customer, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.File, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
+		c.Account, c.Api, c.ApiAuditLog, c.ApprovalFlow, c.ApprovalFlowStep,
+		c.ApprovalRequest, c.Customer, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.File, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.JournalEntry,
+		c.JournalLine, c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.OperationAuditLog, c.OrgUnit, c.Payable, c.Payment, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
 		c.PermissionPolicy, c.Plan, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.PurchaseOrder, c.PurchaseOrderItem, c.Receipt, c.Receivable, c.Role,
@@ -583,6 +603,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AccountMutation:
+		return c.Account.mutate(ctx, m)
 	case *APIMutation:
 		return c.Api.mutate(ctx, m)
 	case *ApiAuditLogMutation:
@@ -611,6 +633,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.InternalMessageCategory.mutate(ctx, m)
 	case *InternalMessageRecipientMutation:
 		return c.InternalMessageRecipient.mutate(ctx, m)
+	case *JournalEntryMutation:
+		return c.JournalEntry.mutate(ctx, m)
+	case *JournalLineMutation:
+		return c.JournalLine.mutate(ctx, m)
 	case *LanguageMutation:
 		return c.Language.mutate(ctx, m)
 	case *LoginAuditLogMutation:
@@ -707,6 +733,141 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Warehouse.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// AccountClient is a client for the Account schema.
+type AccountClient struct {
+	config
+}
+
+// NewAccountClient returns a client for the Account from the given config.
+func NewAccountClient(c config) *AccountClient {
+	return &AccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `account.Hooks(f(g(h())))`.
+func (c *AccountClient) Use(hooks ...Hook) {
+	c.hooks.Account = append(c.hooks.Account, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `account.Intercept(f(g(h())))`.
+func (c *AccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Account = append(c.inters.Account, interceptors...)
+}
+
+// Create returns a builder for creating a Account entity.
+func (c *AccountClient) Create() *AccountCreate {
+	mutation := newAccountMutation(c.config, OpCreate)
+	return &AccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Account entities.
+func (c *AccountClient) CreateBulk(builders ...*AccountCreate) *AccountCreateBulk {
+	return &AccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AccountClient) MapCreateBulk(slice any, setFunc func(*AccountCreate, int)) *AccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AccountCreateBulk{err: fmt.Errorf("calling to AccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Account.
+func (c *AccountClient) Update() *AccountUpdate {
+	mutation := newAccountMutation(c.config, OpUpdate)
+	return &AccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AccountClient) UpdateOne(_m *Account) *AccountUpdateOne {
+	mutation := newAccountMutation(c.config, OpUpdateOne, withAccount(_m))
+	return &AccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AccountClient) UpdateOneID(id uint32) *AccountUpdateOne {
+	mutation := newAccountMutation(c.config, OpUpdateOne, withAccountID(id))
+	return &AccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Account.
+func (c *AccountClient) Delete() *AccountDelete {
+	mutation := newAccountMutation(c.config, OpDelete)
+	return &AccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AccountClient) DeleteOne(_m *Account) *AccountDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AccountClient) DeleteOneID(id uint32) *AccountDeleteOne {
+	builder := c.Delete().Where(account.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AccountDeleteOne{builder}
+}
+
+// Query returns a query builder for Account.
+func (c *AccountClient) Query() *AccountQuery {
+	return &AccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Account entity by its id.
+func (c *AccountClient) Get(ctx context.Context, id uint32) (*Account, error) {
+	return c.Query().Where(account.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AccountClient) GetX(ctx context.Context, id uint32) *Account {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AccountClient) Hooks() []Hook {
+	hooks := c.hooks.Account
+	return append(hooks[:len(hooks):len(hooks)], account.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AccountClient) Interceptors() []Interceptor {
+	inters := c.inters.Account
+	return append(inters[:len(inters):len(inters)], account.Interceptors[:]...)
+}
+
+func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Account mutation op: %q", m.Op())
 	}
 }
 
@@ -2658,6 +2819,274 @@ func (c *InternalMessageRecipientClient) mutate(ctx context.Context, m *Internal
 		return (&InternalMessageRecipientDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InternalMessageRecipient mutation op: %q", m.Op())
+	}
+}
+
+// JournalEntryClient is a client for the JournalEntry schema.
+type JournalEntryClient struct {
+	config
+}
+
+// NewJournalEntryClient returns a client for the JournalEntry from the given config.
+func NewJournalEntryClient(c config) *JournalEntryClient {
+	return &JournalEntryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `journalentry.Hooks(f(g(h())))`.
+func (c *JournalEntryClient) Use(hooks ...Hook) {
+	c.hooks.JournalEntry = append(c.hooks.JournalEntry, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `journalentry.Intercept(f(g(h())))`.
+func (c *JournalEntryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.JournalEntry = append(c.inters.JournalEntry, interceptors...)
+}
+
+// Create returns a builder for creating a JournalEntry entity.
+func (c *JournalEntryClient) Create() *JournalEntryCreate {
+	mutation := newJournalEntryMutation(c.config, OpCreate)
+	return &JournalEntryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of JournalEntry entities.
+func (c *JournalEntryClient) CreateBulk(builders ...*JournalEntryCreate) *JournalEntryCreateBulk {
+	return &JournalEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *JournalEntryClient) MapCreateBulk(slice any, setFunc func(*JournalEntryCreate, int)) *JournalEntryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &JournalEntryCreateBulk{err: fmt.Errorf("calling to JournalEntryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*JournalEntryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &JournalEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for JournalEntry.
+func (c *JournalEntryClient) Update() *JournalEntryUpdate {
+	mutation := newJournalEntryMutation(c.config, OpUpdate)
+	return &JournalEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *JournalEntryClient) UpdateOne(_m *JournalEntry) *JournalEntryUpdateOne {
+	mutation := newJournalEntryMutation(c.config, OpUpdateOne, withJournalEntry(_m))
+	return &JournalEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *JournalEntryClient) UpdateOneID(id uint32) *JournalEntryUpdateOne {
+	mutation := newJournalEntryMutation(c.config, OpUpdateOne, withJournalEntryID(id))
+	return &JournalEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for JournalEntry.
+func (c *JournalEntryClient) Delete() *JournalEntryDelete {
+	mutation := newJournalEntryMutation(c.config, OpDelete)
+	return &JournalEntryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *JournalEntryClient) DeleteOne(_m *JournalEntry) *JournalEntryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *JournalEntryClient) DeleteOneID(id uint32) *JournalEntryDeleteOne {
+	builder := c.Delete().Where(journalentry.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &JournalEntryDeleteOne{builder}
+}
+
+// Query returns a query builder for JournalEntry.
+func (c *JournalEntryClient) Query() *JournalEntryQuery {
+	return &JournalEntryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeJournalEntry},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a JournalEntry entity by its id.
+func (c *JournalEntryClient) Get(ctx context.Context, id uint32) (*JournalEntry, error) {
+	return c.Query().Where(journalentry.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *JournalEntryClient) GetX(ctx context.Context, id uint32) *JournalEntry {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *JournalEntryClient) Hooks() []Hook {
+	hooks := c.hooks.JournalEntry
+	return append(hooks[:len(hooks):len(hooks)], journalentry.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *JournalEntryClient) Interceptors() []Interceptor {
+	return c.inters.JournalEntry
+}
+
+func (c *JournalEntryClient) mutate(ctx context.Context, m *JournalEntryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&JournalEntryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&JournalEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&JournalEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&JournalEntryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown JournalEntry mutation op: %q", m.Op())
+	}
+}
+
+// JournalLineClient is a client for the JournalLine schema.
+type JournalLineClient struct {
+	config
+}
+
+// NewJournalLineClient returns a client for the JournalLine from the given config.
+func NewJournalLineClient(c config) *JournalLineClient {
+	return &JournalLineClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `journalline.Hooks(f(g(h())))`.
+func (c *JournalLineClient) Use(hooks ...Hook) {
+	c.hooks.JournalLine = append(c.hooks.JournalLine, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `journalline.Intercept(f(g(h())))`.
+func (c *JournalLineClient) Intercept(interceptors ...Interceptor) {
+	c.inters.JournalLine = append(c.inters.JournalLine, interceptors...)
+}
+
+// Create returns a builder for creating a JournalLine entity.
+func (c *JournalLineClient) Create() *JournalLineCreate {
+	mutation := newJournalLineMutation(c.config, OpCreate)
+	return &JournalLineCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of JournalLine entities.
+func (c *JournalLineClient) CreateBulk(builders ...*JournalLineCreate) *JournalLineCreateBulk {
+	return &JournalLineCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *JournalLineClient) MapCreateBulk(slice any, setFunc func(*JournalLineCreate, int)) *JournalLineCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &JournalLineCreateBulk{err: fmt.Errorf("calling to JournalLineClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*JournalLineCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &JournalLineCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for JournalLine.
+func (c *JournalLineClient) Update() *JournalLineUpdate {
+	mutation := newJournalLineMutation(c.config, OpUpdate)
+	return &JournalLineUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *JournalLineClient) UpdateOne(_m *JournalLine) *JournalLineUpdateOne {
+	mutation := newJournalLineMutation(c.config, OpUpdateOne, withJournalLine(_m))
+	return &JournalLineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *JournalLineClient) UpdateOneID(id uint32) *JournalLineUpdateOne {
+	mutation := newJournalLineMutation(c.config, OpUpdateOne, withJournalLineID(id))
+	return &JournalLineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for JournalLine.
+func (c *JournalLineClient) Delete() *JournalLineDelete {
+	mutation := newJournalLineMutation(c.config, OpDelete)
+	return &JournalLineDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *JournalLineClient) DeleteOne(_m *JournalLine) *JournalLineDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *JournalLineClient) DeleteOneID(id uint32) *JournalLineDeleteOne {
+	builder := c.Delete().Where(journalline.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &JournalLineDeleteOne{builder}
+}
+
+// Query returns a query builder for JournalLine.
+func (c *JournalLineClient) Query() *JournalLineQuery {
+	return &JournalLineQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeJournalLine},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a JournalLine entity by its id.
+func (c *JournalLineClient) Get(ctx context.Context, id uint32) (*JournalLine, error) {
+	return c.Query().Where(journalline.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *JournalLineClient) GetX(ctx context.Context, id uint32) *JournalLine {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *JournalLineClient) Hooks() []Hook {
+	hooks := c.hooks.JournalLine
+	return append(hooks[:len(hooks):len(hooks)], journalline.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *JournalLineClient) Interceptors() []Interceptor {
+	return c.inters.JournalLine
+}
+
+func (c *JournalLineClient) mutate(ctx context.Context, m *JournalLineMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&JournalLineCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&JournalLineUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&JournalLineUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&JournalLineDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown JournalLine mutation op: %q", m.Op())
 	}
 }
 
@@ -9096,30 +9525,31 @@ func (c *WarehouseClient) mutate(ctx context.Context, m *WarehouseMutation) (Val
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest, Customer,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
-		Menu, OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem,
-		Receipt, Receivable, Role, RoleMetadata, RolePermission, SalesOrder,
-		SalesOrderItem, StockLocation, StockLot, StockMove, StockMoveLine,
-		StockPicking, StockQuant, Subscription, Supplier, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole, Warehouse []ent.Hook
+		Account, Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest,
+		Customer, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient,
+		JournalEntry, JournalLine, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		OrgUnit, Payable, Payment, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
+		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
+		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
+		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
+		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Warehouse []ent.Hook
 	}
 	inters struct {
-		Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest, Customer,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
-		Menu, OperationAuditLog, OrgUnit, Payable, Payment, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PolicyEvaluationLog, Position, Product, PurchaseOrder, PurchaseOrderItem,
-		Receipt, Receivable, Role, RoleMetadata, RolePermission, SalesOrder,
-		SalesOrderItem, StockLocation, StockLot, StockMove, StockMoveLine,
-		StockPicking, StockQuant, Subscription, Supplier, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Warehouse []ent.Interceptor
+		Account, Api, ApiAuditLog, ApprovalFlow, ApprovalFlowStep, ApprovalRequest,
+		Customer, DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, File,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient,
+		JournalEntry, JournalLine, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		OrgUnit, Payable, Payment, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PolicyEvaluationLog,
+		Position, Product, PurchaseOrder, PurchaseOrderItem, Receipt, Receivable, Role,
+		RoleMetadata, RolePermission, SalesOrder, SalesOrderItem, StockLocation,
+		StockLot, StockMove, StockMoveLine, StockPicking, StockQuant, Subscription,
+		Supplier, Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Warehouse []ent.Interceptor
 	}
 )

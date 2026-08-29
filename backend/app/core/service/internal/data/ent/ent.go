@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go-wind-erp/app/core/service/internal/data/ent/account"
 	"go-wind-erp/app/core/service/internal/data/ent/api"
 	"go-wind-erp/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/approvalflow"
@@ -20,6 +21,8 @@ import (
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-erp/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-erp/app/core/service/internal/data/ent/journalentry"
+	"go-wind-erp/app/core/service/internal/data/ent/journalline"
 	"go-wind-erp/app/core/service/internal/data/ent/language"
 	"go-wind-erp/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-erp/app/core/service/internal/data/ent/loginpolicy"
@@ -133,6 +136,7 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			account.Table:                  account.ValidColumn,
 			api.Table:                      api.ValidColumn,
 			apiauditlog.Table:              apiauditlog.ValidColumn,
 			approvalflow.Table:             approvalflow.ValidColumn,
@@ -147,6 +151,8 @@ func checkColumn(t, c string) error {
 			internalmessage.Table:          internalmessage.ValidColumn,
 			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
+			journalentry.Table:             journalentry.ValidColumn,
+			journalline.Table:              journalline.ValidColumn,
 			language.Table:                 language.ValidColumn,
 			loginauditlog.Table:            loginauditlog.ValidColumn,
 			loginpolicy.Table:              loginpolicy.ValidColumn,

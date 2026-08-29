@@ -79,7 +79,9 @@
     "receivable": "Receivable Management",
     "receipt": "Receipt Ledger",
     "agingAr": "Receivable Aging",
-    "profit": "Profit Report"
+    "profit": "Profit Report",
+    "trialBalance": "Trial Balance",
+    "journal": "Journal Entries"
   },
   "sales": {
     "moduleName": "Sales Management",

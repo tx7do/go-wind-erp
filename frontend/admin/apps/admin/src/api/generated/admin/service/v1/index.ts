@@ -4416,6 +4416,303 @@ export type financeservicev1_MonthlyProfit = {
   revenue?: number;
 };
 
+// 会计服务（简易总账：科目/凭证/余额表，只读查询）
+export interface AccountingService {
+  // 科目目录
+  ListAccounts(
+    request: pagination_PagingRequest,
+  ): Promise<financeservicev1_ListAccountResponse>;
+  // 凭证流水（含分录行）
+  ListJournalEntries(
+    request: financeservicev1_ListJournalEntryRequest,
+  ): Promise<financeservicev1_ListJournalEntryResponse>;
+  // 科目余额表（试算平衡）
+  GetTrialBalance(
+    request: financeservicev1_GetTrialBalanceRequest,
+  ): Promise<financeservicev1_TrialBalanceResponse>;
+}
+
+export function createAccountingServiceClient(
+  transport: ClientTransport,
+): AccountingService {
+  return {
+    ListAccounts(request) {
+      const path = `admin/v1/accounts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccountingService',
+        method: 'ListAccounts',
+      }) as Promise<financeservicev1_ListAccountResponse>;
+    },
+    ListJournalEntries(request) {
+      const path = `admin/v1/journal-entries`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.fromDate) {
+        queryParams.push(
+          `fromDate=${encodeURIComponent(request.fromDate.toString())}`,
+        );
+      }
+      if (request.toDate) {
+        queryParams.push(
+          `toDate=${encodeURIComponent(request.toDate.toString())}`,
+        );
+      }
+      if (request.accountCode) {
+        queryParams.push(
+          `accountCode=${encodeURIComponent(request.accountCode.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccountingService',
+        method: 'ListJournalEntries',
+      }) as Promise<financeservicev1_ListJournalEntryResponse>;
+    },
+    GetTrialBalance(request) {
+      const path = `admin/v1/trial-balance`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.fromDate) {
+        queryParams.push(
+          `fromDate=${encodeURIComponent(request.fromDate.toString())}`,
+        );
+      }
+      if (request.toDate) {
+        queryParams.push(
+          `toDate=${encodeURIComponent(request.toDate.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccountingService',
+        method: 'GetTrialBalance',
+      }) as Promise<financeservicev1_TrialBalanceResponse>;
+    },
+  };
+}
+export type financeservicev1_ListAccountResponse = {
+  items: financeservicev1_Account[] | undefined;
+  total: number | undefined;
+};
+
+// 会计科目
+export type financeservicev1_Account = {
+  //
+  // Behaviors: OPTIONAL
+  balanceDirection?: string;
+  //
+  // Behaviors: OPTIONAL
+  category?: string;
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  name?: string;
+};
+
+export type financeservicev1_ListJournalEntryRequest = {
+  accountCode?: string;
+  fromDate?: wellKnownTimestamp;
+  page?: number;
+  pageSize?: number;
+  toDate?: wellKnownTimestamp;
+};
+
+export type financeservicev1_ListJournalEntryResponse = {
+  items: financeservicev1_JournalEntry[] | undefined;
+  total: number | undefined;
+};
+
+// 记账凭证（头 + 行）
+export type financeservicev1_JournalEntry = {
+  //
+  // Behaviors: OPTIONAL
+  bizRef?: string;
+  //
+  // Behaviors: OPTIONAL
+  entryDate?: wellKnownTimestamp;
+  //
+  // Behaviors: OPTIONAL
+  entryNumber?: string;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  lines: financeservicev1_JournalLine[] | undefined;
+  //
+  // Behaviors: OPTIONAL
+  summary?: string;
+  tenantId?: number;
+};
+
+// 记账凭证行
+export type financeservicev1_JournalLine = {
+  //
+  // Behaviors: OPTIONAL
+  accountCode?: string;
+  //
+  // Behaviors: OPTIONAL
+  credit?: number;
+  //
+  // Behaviors: OPTIONAL
+  debit?: number;
+  //
+  // Behaviors: OPTIONAL
+  id?: number;
+  //
+  // Behaviors: OPTIONAL
+  summary?: string;
+};
+
+export type financeservicev1_GetTrialBalanceRequest = {
+  fromDate?: wellKnownTimestamp;
+  toDate?: wellKnownTimestamp;
+};
+
+export type financeservicev1_TrialBalanceResponse = {
+  items: financeservicev1_TrialBalanceItem[] | undefined;
+  totalCredit?: number;
+  totalDebit?: number;
+};
+
+// 科目余额行：余额 = direction 下（借方累计 − 贷方累计）
+export type financeservicev1_TrialBalanceItem = {
+  accountCode?: string;
+  accountName?: string;
+  balance?: number;
+  balanceDirection?: string;
+  category?: string;
+  creditTotal?: number;
+  debitTotal?: number;
+};
+
 // 站内信消息管理服务
 export interface InternalMessageService {
   // 查询站内信消息列表
@@ -12218,6 +12515,7 @@ export type identityservicev1_EmailVerification = {
 };
 
 export class ApiClient {
+  private _accountingService?: AccountingService;
   private _adminPortalService?: AdminPortalService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
@@ -12269,6 +12567,10 @@ export class ApiClient {
 
   constructor(transport: ClientTransport) {
     this._transport = transport;
+  }
+
+  get accountingService(): AccountingService {
+    return this._accountingService ??= createAccountingServiceClient(this._transport);
   }
 
   get adminPortalService(): AdminPortalService {

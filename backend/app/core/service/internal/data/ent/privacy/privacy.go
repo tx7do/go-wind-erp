@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The AccountQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AccountQueryRuleFunc func(context.Context, *ent.AccountQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AccountQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AccountQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AccountQuery", q)
+}
+
+// The AccountMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AccountMutationRuleFunc func(context.Context, *ent.AccountMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AccountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AccountMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AccountMutation", m)
+}
+
 // The ApiQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ApiQueryRuleFunc func(context.Context, *ent.APIQuery) error
@@ -445,6 +469,54 @@ func (f InternalMessageRecipientMutationRuleFunc) EvalMutation(ctx context.Conte
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InternalMessageRecipientMutation", m)
+}
+
+// The JournalEntryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type JournalEntryQueryRuleFunc func(context.Context, *ent.JournalEntryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f JournalEntryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.JournalEntryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.JournalEntryQuery", q)
+}
+
+// The JournalEntryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type JournalEntryMutationRuleFunc func(context.Context, *ent.JournalEntryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f JournalEntryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.JournalEntryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.JournalEntryMutation", m)
+}
+
+// The JournalLineQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type JournalLineQueryRuleFunc func(context.Context, *ent.JournalLineQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f JournalLineQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.JournalLineQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.JournalLineQuery", q)
+}
+
+// The JournalLineMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type JournalLineMutationRuleFunc func(context.Context, *ent.JournalLineMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f JournalLineMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.JournalLineMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.JournalLineMutation", m)
 }
 
 // The LanguageQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1610,6 +1682,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *ent.AccountQuery:
+		return q.Filter(), nil
 	case *ent.APIQuery:
 		return q.Filter(), nil
 	case *ent.ApiAuditLogQuery:
@@ -1637,6 +1711,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.InternalMessageCategoryQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageRecipientQuery:
+		return q.Filter(), nil
+	case *ent.JournalEntryQuery:
+		return q.Filter(), nil
+	case *ent.JournalLineQuery:
 		return q.Filter(), nil
 	case *ent.LanguageQuery:
 		return q.Filter(), nil
@@ -1739,6 +1817,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *ent.AccountMutation:
+		return m.Filter(), nil
 	case *ent.APIMutation:
 		return m.Filter(), nil
 	case *ent.ApiAuditLogMutation:
@@ -1766,6 +1846,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.InternalMessageCategoryMutation:
 		return m.Filter(), nil
 	case *ent.InternalMessageRecipientMutation:
+		return m.Filter(), nil
+	case *ent.JournalEntryMutation:
+		return m.Filter(), nil
+	case *ent.JournalLineMutation:
 		return m.Filter(), nil
 	case *ent.LanguageMutation:
 		return m.Filter(), nil

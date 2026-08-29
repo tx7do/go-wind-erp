@@ -832,33 +832,53 @@ var DefaultMenus = []*permissionV1.Menu{
 // 限额语义：0 = 无限。免费版限制用户数与月单量；付费档按月订阅。
 var DefaultPlans = []*billingV1.Plan{
 	{
-		Code:            trans.Ptr(FreePlanCode),
-		Name:            trans.Ptr("免费版"),
-		Description:     trans.Ptr("适合刚起步的小团队：3 个用户、每月 100 张单据，永久免费"),
-		PriceCents:      trans.Ptr(int64(0)),
-		MaxUsers:        trans.Ptr(int64(3)),
+		Code:             trans.Ptr(FreePlanCode),
+		Name:             trans.Ptr("免费版"),
+		Description:      trans.Ptr("适合刚起步的小团队：3 个用户、每月 100 张单据，永久免费"),
+		PriceCents:       trans.Ptr(int64(0)),
+		MaxUsers:         trans.Ptr(int64(3)),
 		MaxOrdersMonthly: trans.Ptr(int64(100)),
-		Status:          billingV1.Plan_ON.Enum(),
-		SortOrder:       trans.Ptr(uint32(1)),
+		Status:           billingV1.Plan_ON.Enum(),
+		SortOrder:        trans.Ptr(uint32(1)),
 	},
 	{
-		Code:            trans.Ptr(StandardPlanCode),
-		Name:            trans.Ptr("标准版"),
-		Description:     trans.Ptr("成长型团队：10 个用户、每月 5000 张单据，¥99/月"),
-		PriceCents:      trans.Ptr(int64(9900)),
-		MaxUsers:        trans.Ptr(int64(10)),
+		Code:             trans.Ptr(StandardPlanCode),
+		Name:             trans.Ptr("标准版"),
+		Description:      trans.Ptr("成长型团队：10 个用户、每月 5000 张单据，¥99/月"),
+		PriceCents:       trans.Ptr(int64(9900)),
+		MaxUsers:         trans.Ptr(int64(10)),
 		MaxOrdersMonthly: trans.Ptr(int64(5000)),
-		Status:          billingV1.Plan_ON.Enum(),
-		SortOrder:       trans.Ptr(uint32(2)),
+		Status:           billingV1.Plan_ON.Enum(),
+		SortOrder:        trans.Ptr(uint32(2)),
 	},
 	{
-		Code:            trans.Ptr(ProPlanCode),
-		Name:            trans.Ptr("专业版"),
-		Description:     trans.Ptr("不限用户、不限单量，¥299/月"),
-		PriceCents:      trans.Ptr(int64(29900)),
-		MaxUsers:        trans.Ptr(int64(0)),
+		Code:             trans.Ptr(ProPlanCode),
+		Name:             trans.Ptr("专业版"),
+		Description:      trans.Ptr("不限用户、不限单量，¥299/月"),
+		PriceCents:       trans.Ptr(int64(29900)),
+		MaxUsers:         trans.Ptr(int64(0)),
 		MaxOrdersMonthly: trans.Ptr(int64(0)),
-		Status:          billingV1.Plan_ON.Enum(),
-		SortOrder:       trans.Ptr(uint32(3)),
+		Status:           billingV1.Plan_ON.Enum(),
+		SortOrder:        trans.Ptr(uint32(3)),
 	},
+}
+
+// DefaultAccount 默认会计科目（平台标准目录，AccountingService 启动种子）。
+type DefaultAccount struct {
+	Code             string
+	Name             string
+	Category         string // ASSET/LIABILITY/EQUITY/REVENUE/EXPENSE
+	BalanceDirection string // DEBIT/CREDIT
+}
+
+var DefaultAccounts = []DefaultAccount{
+	{Code: "1001", Name: "库存现金", Category: "ASSET", BalanceDirection: "DEBIT"},
+	{Code: "1002", Name: "银行存款", Category: "ASSET", BalanceDirection: "DEBIT"},
+	{Code: "1122", Name: "应收账款", Category: "ASSET", BalanceDirection: "DEBIT"},
+	{Code: "1405", Name: "库存商品", Category: "ASSET", BalanceDirection: "DEBIT"},
+	{Code: "1901", Name: "待处理财产损溢", Category: "ASSET", BalanceDirection: "DEBIT"},
+	{Code: "2202", Name: "应付账款", Category: "LIABILITY", BalanceDirection: "CREDIT"},
+	{Code: "4001", Name: "实收资本", Category: "EQUITY", BalanceDirection: "CREDIT"},
+	{Code: "6001", Name: "主营业务收入", Category: "REVENUE", BalanceDirection: "CREDIT"},
+	{Code: "6401", Name: "主营业务成本", Category: "EXPENSE", BalanceDirection: "DEBIT"},
 }

@@ -3970,3 +3970,1322 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MonthlyProfitValidationError{}
+
+// Validate checks the field values on Account with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Account) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Account with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in AccountMultiError, or nil if none found.
+func (m *Account) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Account) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Code != nil {
+		// no validation rules for Code
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.Category != nil {
+		// no validation rules for Category
+	}
+
+	if m.BalanceDirection != nil {
+		// no validation rules for BalanceDirection
+	}
+
+	if len(errors) > 0 {
+		return AccountMultiError(errors)
+	}
+
+	return nil
+}
+
+// AccountMultiError is an error wrapping multiple validation errors returned
+// by Account.ValidateAll() if the designated constraints aren't met.
+type AccountMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AccountMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AccountMultiError) AllErrors() []error { return m }
+
+// AccountValidationError is the validation error returned by Account.Validate
+// if the designated constraints aren't met.
+type AccountValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AccountValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AccountValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AccountValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AccountValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AccountValidationError) ErrorName() string { return "AccountValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AccountValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAccount.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AccountValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AccountValidationError{}
+
+// Validate checks the field values on ListAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListAccountResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListAccountResponseMultiError, or nil if none found.
+func (m *ListAccountResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListAccountResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListAccountResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListAccountResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListAccountResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListAccountResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListAccountResponseMultiError is an error wrapping multiple validation
+// errors returned by ListAccountResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListAccountResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListAccountResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListAccountResponseMultiError) AllErrors() []error { return m }
+
+// ListAccountResponseValidationError is the validation error returned by
+// ListAccountResponse.Validate if the designated constraints aren't met.
+type ListAccountResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListAccountResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListAccountResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListAccountResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListAccountResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListAccountResponseValidationError) ErrorName() string {
+	return "ListAccountResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListAccountResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListAccountResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListAccountResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListAccountResponseValidationError{}
+
+// Validate checks the field values on JournalLine with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JournalLine) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JournalLine with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JournalLineMultiError, or
+// nil if none found.
+func (m *JournalLine) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JournalLine) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.AccountCode != nil {
+		// no validation rules for AccountCode
+	}
+
+	if m.Summary != nil {
+		// no validation rules for Summary
+	}
+
+	if m.Debit != nil {
+		// no validation rules for Debit
+	}
+
+	if m.Credit != nil {
+		// no validation rules for Credit
+	}
+
+	if len(errors) > 0 {
+		return JournalLineMultiError(errors)
+	}
+
+	return nil
+}
+
+// JournalLineMultiError is an error wrapping multiple validation errors
+// returned by JournalLine.ValidateAll() if the designated constraints aren't met.
+type JournalLineMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JournalLineMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JournalLineMultiError) AllErrors() []error { return m }
+
+// JournalLineValidationError is the validation error returned by
+// JournalLine.Validate if the designated constraints aren't met.
+type JournalLineValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JournalLineValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JournalLineValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JournalLineValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JournalLineValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JournalLineValidationError) ErrorName() string { return "JournalLineValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JournalLineValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJournalLine.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JournalLineValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JournalLineValidationError{}
+
+// Validate checks the field values on JournalEntry with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JournalEntry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JournalEntry with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JournalEntryMultiError, or
+// nil if none found.
+func (m *JournalEntry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JournalEntry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetLines() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JournalEntryValidationError{
+						field:  fmt.Sprintf("Lines[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JournalEntryValidationError{
+						field:  fmt.Sprintf("Lines[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JournalEntryValidationError{
+					field:  fmt.Sprintf("Lines[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.EntryNumber != nil {
+		// no validation rules for EntryNumber
+	}
+
+	if m.Summary != nil {
+		// no validation rules for Summary
+	}
+
+	if m.BizRef != nil {
+		// no validation rules for BizRef
+	}
+
+	if m.EntryDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetEntryDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JournalEntryValidationError{
+						field:  "EntryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JournalEntryValidationError{
+						field:  "EntryDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEntryDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JournalEntryValidationError{
+					field:  "EntryDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.TenantId != nil {
+		// no validation rules for TenantId
+	}
+
+	if len(errors) > 0 {
+		return JournalEntryMultiError(errors)
+	}
+
+	return nil
+}
+
+// JournalEntryMultiError is an error wrapping multiple validation errors
+// returned by JournalEntry.ValidateAll() if the designated constraints aren't met.
+type JournalEntryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JournalEntryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JournalEntryMultiError) AllErrors() []error { return m }
+
+// JournalEntryValidationError is the validation error returned by
+// JournalEntry.Validate if the designated constraints aren't met.
+type JournalEntryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JournalEntryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JournalEntryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JournalEntryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JournalEntryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JournalEntryValidationError) ErrorName() string { return "JournalEntryValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JournalEntryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJournalEntry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JournalEntryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JournalEntryValidationError{}
+
+// Validate checks the field values on ListJournalEntryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListJournalEntryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListJournalEntryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListJournalEntryRequestMultiError, or nil if none found.
+func (m *ListJournalEntryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListJournalEntryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.FromDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetFromDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListJournalEntryRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListJournalEntryRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFromDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListJournalEntryRequestValidationError{
+					field:  "FromDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ToDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetToDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListJournalEntryRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListJournalEntryRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetToDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListJournalEntryRequestValidationError{
+					field:  "ToDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.AccountCode != nil {
+		// no validation rules for AccountCode
+	}
+
+	if m.Page != nil {
+		// no validation rules for Page
+	}
+
+	if m.PageSize != nil {
+		// no validation rules for PageSize
+	}
+
+	if len(errors) > 0 {
+		return ListJournalEntryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListJournalEntryRequestMultiError is an error wrapping multiple validation
+// errors returned by ListJournalEntryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListJournalEntryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListJournalEntryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListJournalEntryRequestMultiError) AllErrors() []error { return m }
+
+// ListJournalEntryRequestValidationError is the validation error returned by
+// ListJournalEntryRequest.Validate if the designated constraints aren't met.
+type ListJournalEntryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListJournalEntryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListJournalEntryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListJournalEntryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListJournalEntryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListJournalEntryRequestValidationError) ErrorName() string {
+	return "ListJournalEntryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListJournalEntryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListJournalEntryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListJournalEntryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListJournalEntryRequestValidationError{}
+
+// Validate checks the field values on ListJournalEntryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListJournalEntryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListJournalEntryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListJournalEntryResponseMultiError, or nil if none found.
+func (m *ListJournalEntryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListJournalEntryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListJournalEntryResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListJournalEntryResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListJournalEntryResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListJournalEntryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListJournalEntryResponseMultiError is an error wrapping multiple validation
+// errors returned by ListJournalEntryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListJournalEntryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListJournalEntryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListJournalEntryResponseMultiError) AllErrors() []error { return m }
+
+// ListJournalEntryResponseValidationError is the validation error returned by
+// ListJournalEntryResponse.Validate if the designated constraints aren't met.
+type ListJournalEntryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListJournalEntryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListJournalEntryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListJournalEntryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListJournalEntryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListJournalEntryResponseValidationError) ErrorName() string {
+	return "ListJournalEntryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListJournalEntryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListJournalEntryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListJournalEntryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListJournalEntryResponseValidationError{}
+
+// Validate checks the field values on GetTrialBalanceRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTrialBalanceRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTrialBalanceRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTrialBalanceRequestMultiError, or nil if none found.
+func (m *GetTrialBalanceRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTrialBalanceRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.FromDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetFromDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetTrialBalanceRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetTrialBalanceRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFromDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetTrialBalanceRequestValidationError{
+					field:  "FromDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ToDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetToDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetTrialBalanceRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetTrialBalanceRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetToDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetTrialBalanceRequestValidationError{
+					field:  "ToDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetTrialBalanceRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTrialBalanceRequestMultiError is an error wrapping multiple validation
+// errors returned by GetTrialBalanceRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetTrialBalanceRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTrialBalanceRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTrialBalanceRequestMultiError) AllErrors() []error { return m }
+
+// GetTrialBalanceRequestValidationError is the validation error returned by
+// GetTrialBalanceRequest.Validate if the designated constraints aren't met.
+type GetTrialBalanceRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTrialBalanceRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTrialBalanceRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTrialBalanceRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTrialBalanceRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTrialBalanceRequestValidationError) ErrorName() string {
+	return "GetTrialBalanceRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTrialBalanceRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTrialBalanceRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTrialBalanceRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTrialBalanceRequestValidationError{}
+
+// Validate checks the field values on TrialBalanceItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TrialBalanceItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TrialBalanceItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TrialBalanceItemMultiError, or nil if none found.
+func (m *TrialBalanceItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TrialBalanceItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AccountCode != nil {
+		// no validation rules for AccountCode
+	}
+
+	if m.AccountName != nil {
+		// no validation rules for AccountName
+	}
+
+	if m.Category != nil {
+		// no validation rules for Category
+	}
+
+	if m.BalanceDirection != nil {
+		// no validation rules for BalanceDirection
+	}
+
+	if m.DebitTotal != nil {
+		// no validation rules for DebitTotal
+	}
+
+	if m.CreditTotal != nil {
+		// no validation rules for CreditTotal
+	}
+
+	if m.Balance != nil {
+		// no validation rules for Balance
+	}
+
+	if len(errors) > 0 {
+		return TrialBalanceItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// TrialBalanceItemMultiError is an error wrapping multiple validation errors
+// returned by TrialBalanceItem.ValidateAll() if the designated constraints
+// aren't met.
+type TrialBalanceItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TrialBalanceItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TrialBalanceItemMultiError) AllErrors() []error { return m }
+
+// TrialBalanceItemValidationError is the validation error returned by
+// TrialBalanceItem.Validate if the designated constraints aren't met.
+type TrialBalanceItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TrialBalanceItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TrialBalanceItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TrialBalanceItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TrialBalanceItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TrialBalanceItemValidationError) ErrorName() string { return "TrialBalanceItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TrialBalanceItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTrialBalanceItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TrialBalanceItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TrialBalanceItemValidationError{}
+
+// Validate checks the field values on TrialBalanceResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TrialBalanceResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TrialBalanceResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TrialBalanceResponseMultiError, or nil if none found.
+func (m *TrialBalanceResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TrialBalanceResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TrialBalanceResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TrialBalanceResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TrialBalanceResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.TotalDebit != nil {
+		// no validation rules for TotalDebit
+	}
+
+	if m.TotalCredit != nil {
+		// no validation rules for TotalCredit
+	}
+
+	if len(errors) > 0 {
+		return TrialBalanceResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// TrialBalanceResponseMultiError is an error wrapping multiple validation
+// errors returned by TrialBalanceResponse.ValidateAll() if the designated
+// constraints aren't met.
+type TrialBalanceResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TrialBalanceResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TrialBalanceResponseMultiError) AllErrors() []error { return m }
+
+// TrialBalanceResponseValidationError is the validation error returned by
+// TrialBalanceResponse.Validate if the designated constraints aren't met.
+type TrialBalanceResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TrialBalanceResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TrialBalanceResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TrialBalanceResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TrialBalanceResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TrialBalanceResponseValidationError) ErrorName() string {
+	return "TrialBalanceResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TrialBalanceResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTrialBalanceResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TrialBalanceResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TrialBalanceResponseValidationError{}

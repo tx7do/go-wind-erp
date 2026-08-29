@@ -31,6 +31,7 @@ type ReceiptService struct {
 	receiptRepo         *data.ReceiptRepo
 	receivableRepo      *data.ReceivableRepo
 	approvalRequestRepo *data.ApprovalRequestRepo
+	journal             *journalPoster
 }
 
 func NewReceiptService(
@@ -38,12 +39,14 @@ func NewReceiptService(
 	receiptRepo *data.ReceiptRepo,
 	receivableRepo *data.ReceivableRepo,
 	approvalRequestRepo *data.ApprovalRequestRepo,
+	journal *journalPoster,
 ) *ReceiptService {
 	svc := &ReceiptService{
 		log:                 ctx.NewLoggerHelper("receipt/service/core-service"),
 		receiptRepo:         receiptRepo,
 		receivableRepo:      receivableRepo,
 		approvalRequestRepo: approvalRequestRepo,
+		journal:             journal,
 	}
 
 	return svc
@@ -144,6 +147,10 @@ func (s *ReceiptService) ApplyApproved(ctx context.Context, receiptID uint32) er
 	if _, err := s.receivableRepo.ApplyReceipt(ctx, receipt.GetReceivableId(), receipt.GetAmount()); err != nil {
 		s.log.Errorf("apply receivable for receipt %d failed after approval: %s", receiptID, err.Error())
 	}
+
+	// 总账过账：借 资金（现金/银行） / 贷 应收账款。软失败。
+	s.journal.PostReceiptApplied(ctx, receiptID, receipt.GetAmount(),
+		receipt.GetMethod() == financeV1.Receipt_CASH)
 
 	return nil
 }

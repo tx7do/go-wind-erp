@@ -321,5 +321,14 @@
     "Normal": "Normal",
     "Expiring": "Expiring Soon",
     "Expired": "Expired"
+  },
+  "account": {
+    "category": {
+      "ASSET": "Asset",
+      "LIABILITY": "Liability",
+      "EQUITY": "Equity",
+      "REVENUE": "Revenue",
+      "EXPENSE": "Expense"
+    }
   }
 }
