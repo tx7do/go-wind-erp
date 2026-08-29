@@ -1,0 +1,14 @@
+# 容器网络专用的对象存储配置。
+# docker compose 会把本文件挂载覆盖到 /app/configs/oss.yaml：
+# - endpoint 用 compose 服务名 minio；
+# - upload_host / download_host 是给浏览器和手机 App 直连用的，
+#   公网部署时必须改成实际可达地址（如 https://minio.你的域名），见 docs/deployment.md 第 5.2 节。
+oss:
+  minio:
+    endpoint: "minio:9000"
+    upload_host: "127.0.0.1:9000"
+    download_host: "http://127.0.0.1:9000"
+    access_key: "root"
+    secret_key: "*Abcd123456"
+    token: ""
+    use_ssl: false

@@ -2,18 +2,32 @@ networks:
   app-tier:
     driver: bridge
 
+# 约定：
+# - 依赖容器端口默认只绑定 127.0.0.1（生产更安全；路径 A 宿主机服务/路径 B 反代都走本机回环）
+# - 数据持久化到 ${APP_ROOT}（默认 /root/app，可用环境变量覆盖），容器重建不丢数据
+# - 依赖镜像均已固定版本
+# - 三个应用服务在 "app" profile 中：默认 up 只起依赖（供 PM2 宿主机部署使用）；
+#   全容器化部署用 `docker compose --profile app up -d`
 services:
   postgres:
-    image: docker.io/bitnami/postgresql:latest
+    image: docker.io/library/postgres:17-alpine
     restart: always
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - app-tier
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dev_only_change_me}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-*Abcd123456}
       - POSTGRES_DB=go_wind_erp
+      - TZ=Asia/Shanghai
+    volumes:
+      - ${APP_ROOT:-/root/app}/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d go_wind_erp"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
     ulimits:
       nofile:
         soft: 65535
@@ -50,38 +64,44 @@ services:
 #        hard: 65535
 
   redis:
-    image: docker.io/bitnami/redis:latest
+    image: docker.io/library/redis:8.2-alpine
     restart: always
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     networks:
       - app-tier
     environment:
-      - ALLOW_EMPTY_PASSWORD=no
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-dev_only_change_me}
-      - REDIS_AOF_ENABLED=no
-      - REDIS_IO_THREADS_DO_READS=yes
-      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
-#    volumes:
-#      - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-*Abcd123456}
+      - TZ=Asia/Shanghai
+    volumes:
+      - ${APP_ROOT:-/root/app}/redis/data:/data
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-*Abcd123456}"]
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 12
 
   minio:
-    image: docker.io/minio/minio:latest
+    image: docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     restart: always
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     networks:
       - app-tier
     environment:
       - MINIO_ROOT_USER=root
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-dev_only_change_me}
-      - MINIO_DEFAULT_BUCKETS=images
-      - MINIO_FORCE_NEW_KEYS=yes
-      - BITNAMI_DEBUG=true
-#    volumes:
-#      - ${APP_ROOT:-/root/app}/minio/data:/data
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-*Abcd123456}
+      - TZ=Asia/Shanghai
+    volumes:
+      - ${APP_ROOT:-/root/app}/minio/data:/data
     command: server /data --console-address ':9001'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
 
 #  consul:
 #    image: docker.io/bitnami/consul:latest
@@ -109,54 +129,72 @@ services:
     image: quay.io/coreos/etcd:v3.6.8
     restart: always
     ports:
-      - "2379:2379"
-      - "2380:2380"
+      - "127.0.0.1:2379:2379"
+      - "127.0.0.1:2380:2380"
     networks:
       - app-tier
     environment:
       - ETCDCTL_API=3
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://127.0.0.1:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
-      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://127.0.0.1:2380
-      - ETCD_INITIAL_CLUSTER=default=http://127.0.0.1:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd:2380
+      - ETCD_INITIAL_CLUSTER=default=http://etcd:2380
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-token
       - ETCD_INITIAL_CLUSTER_STATE=new
       - ETCD_NAME=default
+      - TZ=Asia/Shanghai
+    volumes:
+      - ${APP_ROOT:-/root/app}/etcd/data:/default.etcd
+    healthcheck:
+      test: ["CMD-SHELL", "etcdctl --endpoints=http://127.0.0.1:2379 endpoint health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
 
   jaeger:
-    image: docker.io/jaegertracing/all-in-one:latest
+    image: docker.io/jaegertracing/all-in-one:1.76.0
     restart: always
     ports:
-      - "6831:6831/udp"
-      - "5778:5778"
-      - "4317:4317"
-      - "4318:4318"
-      - "16686:16686"
-      - "14250:14250"
-      - "14268:14268"
-      - "14269:14269"
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:4318:4318"
+      - "127.0.0.1:16686:16686"
     networks:
       - app-tier
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
       - COLLECTOR_OTLP_ENABLED=true
 
+  # 容器内的配置要点（与宿主机运行的默认 configs 不同）：
+  # - registry/oss/trace 用容器网络服务名，通过挂载 backend/deploy/compose/*.yaml 覆盖
+  # - data.yaml / asynq 默认已是 postgres/redis 服务名，无需覆盖
+  # - oss 的 upload_host/download_host 是给浏览器/App 用的，上公网前必须改为公网地址
+  #   （见 docs/deployment.md 第 5.2 节）
   admin-service:
     image: go-wind-erp/admin-service:1.0.0
     restart: always
     pull_policy: never
+    profiles: ["app"]
     networks:
       - app-tier
     ports:
-      - "9700:9700"
-      - "9701:9701"
+      - "6600:6600"
+      - "6601:6601"
+    volumes:
+      - ./deploy/compose/registry.yaml:/app/configs/registry.yaml:ro
+      - ./deploy/compose/oss.yaml:/app/configs/oss.yaml:ro
+      - ./deploy/compose/trace.yaml:/app/configs/trace.yaml:ro
     depends_on:
-      - postgres
-      - redis
-      - minio
-      - etcd
-      - jaeger
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       - TZ=Asia/Shanghai
     build:
@@ -166,18 +204,62 @@ services:
         SERVICE_NAME: admin
         APP_VERSION: 1.0.0
 
+  app-service:
+    image: go-wind-erp/app-service:1.0.0
+    restart: always
+    pull_policy: never
+    profiles: ["app"]
+    networks:
+      - app-tier
+    ports:
+      - "6700:6700"
+      - "6701:6701"
+    volumes:
+      - ./deploy/compose/registry.yaml:/app/configs/registry.yaml:ro
+      - ./deploy/compose/oss.yaml:/app/configs/oss.yaml:ro
+      - ./deploy/compose/trace.yaml:/app/configs/trace.yaml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    environment:
+      - TZ=Asia/Shanghai
+    build:
+      context: ./  # 指定 Dockerfile 所在的上下文路径
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: app
+        APP_VERSION: 1.0.0
+
   core-service:
     image: go-wind-erp/core-service:1.0.0
     pull_policy: never
     restart: always
+    profiles: ["app"]
     networks:
       - app-tier
+    volumes:
+      - ./deploy/compose/registry.yaml:/app/configs/registry.yaml:ro
+      - ./deploy/compose/oss.yaml:/app/configs/oss.yaml:ro
+      - ./deploy/compose/trace.yaml:/app/configs/trace.yaml:ro
     depends_on:
-      - postgres
-      - redis
-      - minio
-      - etcd
-      - jaeger
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       - TZ=Asia/Shanghai
     build:
@@ -186,4 +268,3 @@ services:
       args:
         SERVICE_NAME: core
         APP_VERSION: 1.0.0
-

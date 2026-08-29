@@ -1,0 +1,8 @@
+# 容器网络专用的服务注册配置。
+# docker compose 会把本文件挂载覆盖到 /app/configs/registry.yaml，
+# 使各服务在 compose 网络内通过服务名访问 etcd；宿主机运行时用仓库默认配置即可。
+registry:
+  type: "etcd"
+  etcd:
+    endpoints:
+      - "etcd:2379"

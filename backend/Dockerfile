@@ -2,8 +2,8 @@
 # 第一阶段：构建GO可执行文件
 ##################################
 
-# 使用官方的 Go 基础镜像作为构建环境
-ARG GO_VERSION=1.25.3
+# 使用官方的 Go 基础镜像作为构建环境（与 go.mod 的 go 版本对齐，避免 GOTOOLCHAIN 联网下载）
+ARG GO_VERSION=1.26.4
 FROM golang:${GO_VERSION}-alpine AS builder
 
 ARG SERVICE_NAME=app
@@ -37,7 +37,7 @@ RUN mkdir -p /src/bin/configs && \
 ##################################
 
 # 使用 Alpine 作为基础镜像，因为它非常轻量级
-FROM docker.io/alpine:latest
+FROM docker.io/library/alpine:3.22
 
 ARG SERVICE_NAME=app
 

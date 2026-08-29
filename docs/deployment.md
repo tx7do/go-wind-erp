@@ -48,10 +48,10 @@
 
 | 形态 | 说明 | 适用 |
 |:---|:---|:---|
-| **A. 依赖进 Docker + 服务跑宿主机（PM2）** | Postgres/Redis/MinIO/etcd/Jaeger 用 docker compose 起；三个 Go 服务编译成二进制，用 PM2 守护 | **推荐**。与仓库现有脚本（`full_deploy.sh` + `pm2_service.sh`）匹配，配置只需按[第 5 章](#5-生产配置改造清单必读)微调 |
-| B. 全容器化（应用 + 依赖都进 Docker） | 仓库有 `backend/docker-compose.yaml` 和统一 Dockerfile，但**当前存在若干缺口**（应用端口错配、缺 app-service、数据卷未挂载、部分配置地址写的 localhost），直接 `up` 不能用 | 暂不推荐；要用需先按[第 14 章](#14-已知问题与坑)清单改造 |
+| **A. 依赖进 Docker + 服务跑宿主机（PM2）** | Postgres/Redis/MinIO/etcd/Jaeger 用 docker compose 起（默认只起依赖）；三个 Go 服务编译成二进制，用 PM2 守护 | **推荐**。与仓库现有脚本（`full_deploy.sh` + `pm2_service.sh`）匹配，配置只需按[第 5 章](#5-生产配置改造清单必读)微调 |
+| B. 全容器化（应用 + 依赖都进 Docker） | 一条命令起全套：`docker compose --profile app up -d`（应用服务放在 `app` profile，自动本地构建镜像；依赖带健康检查与数据持久化；容器内 registry/oss/trace 配置已换成服务名并自动挂载覆盖） | 单机一体化部署、快速试用 |
 
-下文主推形态 A；形态 B 的改造要点在[第 14 章](#14-已知问题与坑)。
+下文主推形态 A；形态 B 的使用方式见[第 2 章](#2-两种部署形态怎么选)。
 
 ## 3. 环境准备
 
@@ -88,17 +88,17 @@ cd backend
 .\scripts\docker\full_deploy.ps1
 ```
 
-脚本默认使用 `backend/docker-compose.yaml`（含被注释掉的应用段，实际只起 5 个依赖），并创建数据目录。可用环境变量定制：
+脚本使用 `backend/docker-compose.yaml`。三个应用服务放在 `app` profile 中，**默认只启动 5 个依赖**——正好与 PM2 跑服务不冲突；要连应用一起容器化启动见形态 B（`docker compose --profile app up -d`）。依赖数据卷默认挂载到 `${APP_ROOT}` 目录。可用环境变量定制：
 
 | 变量 | 默认 | 说明 |
 |:---|:---|:---|
-| `APP_ROOT`（sh）/ `-AppRoot`（ps1） | `/root/app` / `C:\app` | 依赖数据根目录 |
+| `APP_ROOT`（sh）/ `-AppRoot`（ps1） | `/root/app` / `C:\app` | 依赖数据根目录（postgres/redis/minio/etcd 各一个子目录） |
 | `COMPOSE_FILE` / `-ComposeFile` | 自动探测 | 指定 compose 文件 |
-| `POSTGRES_PASSWORD` | `dev_only_change_me` | **生产必须设置** |
-| `REDIS_PASSWORD` | `dev_only_change_me` | **生产必须设置** |
-| `MINIO_ROOT_PASSWORD` | `dev_only_change_me` | **生产必须设置** |
+| `POSTGRES_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步 core `data.yaml`，见 5.6） |
+| `REDIS_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步各 `data.yaml` 与 `asynq.uri`） |
+| `MINIO_ROOT_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步各 `oss.yaml`） |
 
-> ⚠️ 不要用 `make compose-up-libs`——Makefile 里该目标有反引号 bug（见[第 14 章](#14-已知问题与坑)），起依赖请用上面的脚本。
+> 开发机也可以用 `make compose-up-libs`（`docker-compose.libs.yaml`，数据不持久化，重建即清空，适合开发）。
 
 验证依赖就绪：
 
@@ -227,9 +227,9 @@ server:
 
 app-service 的 CORS 默认是 `*`，公网部署建议同样收敛为移动端实际使用的地址。
 
-### 5.6 密码类默认值对齐
+### 5.6 密码默认值与对齐
 
-仓库里 compose 默认密码（`dev_only_change_me`）与各配置文件写死的默认（`*Abcd123456`）**不一致**。要么改 compose 环境变量，要么改配置文件，最终保证四处一致：PostgreSQL（compose ↔ core `data.yaml`）、Redis（compose ↔ 各 `data.yaml` ↔ core `asynq.uri`）、MinIO（compose `MINIO_ROOT_PASSWORD` ↔ 各 `oss.yaml`）。
+compose 默认密码与各服务 configs 的默认值**已统一**为演示值 `*Abcd123456`（依赖侧可通过 `POSTGRES_PASSWORD` / `REDIS_PASSWORD` / `MINIO_ROOT_PASSWORD` 环境变量覆盖）。**生产必须两边同步替换**：改 compose 环境变量的同时，按 5.1/5.2 修改 configs，保持一致——PostgreSQL（compose ↔ core `data.yaml`）、Redis（compose ↔ 各 `data.yaml` ↔ core `asynq.uri`）、MinIO（compose ↔ 各 `oss.yaml`）。
 
 ### 5.7 日志（可选）
 
@@ -287,7 +287,7 @@ flutter pub get
 flutter build apk --release    # 或 appbundle / ipa
 ```
 
-`AES_KEY` 等密钥字段保持默认即可（见[第 14 章](#14-已知问题与坑)第 3 条——该密钥后端侧硬编码于上游库，**不要单方面修改**，否则登录解密失败）。
+`AES_KEY` 等密钥字段保持默认即可（见[第 14 章](#14-已知问题与坑)「仍然需要注意」第 1 条——该密钥后端侧硬编码于上游库，**不要单方面修改**，否则登录解密失败）。
 
 ## 9. 反向代理与 HTTPS
 
@@ -379,9 +379,9 @@ docker exec <postgres容器> pg_dump -U postgres go_wind_erp | gzip > /backup/go
 gunzip -c /backup/gowind_2026-08-29.sql.gz | docker exec -i <postgres容器> psql -U postgres go_wind_erp
 ```
 
-**MinIO 备份**：直接备份数据目录（compose 未挂载卷时在容器内 `/data`，生产应按[第 14 章](#14-已知问题与坑)第 2 条补挂载后备份宿主机目录），或用 `mc mirror` 同步到远端。
+**MinIO 备份**：直接备份宿主机挂载目录（默认 `${APP_ROOT:-/root/app}/minio/data`），或用 `mc mirror` 同步到远端。
 
-> ⚠️ 形态 A 下若未给依赖容器补挂载卷，**容器重建即丢数据**——部署完成后第一件事就是把[第 14 章](#14-已知问题与坑)第 2 条的卷挂载加上。
+> 依赖数据卷默认挂载在 `${APP_ROOT:-/root/app}`（postgres/redis/minio/etcd 各一个子目录，见 `docker-compose.yaml`），容器重建不丢数据；`docker-compose.libs.yaml`（开发用）不挂载卷，重建即清空，属预期。
 
 ## 11. 升级
 
@@ -413,13 +413,13 @@ curl -s http://127.0.0.1:6700/ >/dev/null && echo app-ok
 | 事项 | 现状与做法 |
 |:---|:---|
 | 进程守护 | PM2 自动重启；`pm2 status` / `pm2 logs go_wind_erp-admin` |
-| 健康检查 | **目前没有专用健康端点**（无 /healthz），用端口探测（6600/6700）或 `pm2 status` 判断存活；接入监控建议用 TCP 探测 |
+| 健康检查 | 依赖容器在 `docker-compose.yaml` 中已带 healthcheck（pg_isready / redis-cli ping / etcdctl endpoint health / minio health）；应用服务**没有专用健康端点**（无 /healthz），用端口探测（6600/6700）或 `pm2 status` 判断存活；接入监控建议用 TCP 探测 |
 | 指标 | 未暴露 Prometheus 端点 |
 | 链路追踪 | Jaeger UI `http://<服务器>:16686`（生产建议不对公网开放）；采样率见 5.3 |
 | 业务日志 | 各服务 `./logs/info.log`（滚动 1MB×5，30 天）+ PM2 stdout/stderr.log |
 | Swagger | 默认关闭；需要时把对应服务 `server.yaml` 的 `enable_swagger` 改 `true`，访问 `http://<host>:6600/docs/`，**用完关闭**，勿对公网开放 |
 | 定时任务 | core 内嵌 Asynq worker（Redis DB 1），任务定义见 `sys_tasks` 表 |
-| Redis 运维 | 依赖容器设置了 `REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG`，运维脚本中的 FLUSH 操作会被拒绝（防误删，属预期） |
+| Redis 运维 | 生产 compose 使用官方 `redis:8.2-alpine`（未禁用 FLUSHDB/FLUSHALL/CONFIG，防误删依赖密码与 127.0.0.1 回环绑定），运维脚本请勿随意 FLUSH |
 
 ## 13. 安全清单
 
@@ -430,37 +430,31 @@ curl -s http://127.0.0.1:6700/ >/dev/null && echo app-ok
 - [ ] **三个依赖密码**：`POSTGRES_PASSWORD` / `REDIS_PASSWORD` / `MINIO_ROOT_PASSWORD` 全部改强密码，并与配置文件对齐（5.6）；
 - [ ] **CORS 收敛**：admin 的 origins 改为实际前端域名（5.5）；app 的 `*` 同样收敛；
 - [ ] **Jaeger / MinIO 控制台（9001）/ Swagger 不对公网开放**：用防火墙或反代 ACL 限制；
-- [ ] **数据库不对公网开放**：compose 的 5432 等端口如无远程管理需求，建议改为 `127.0.0.1:5432:5432`；
+- [ ] **依赖端口不对公网开放**：主 compose 已默认把 PG/Redis/MinIO/etcd/Jaeger 的端口绑定到 127.0.0.1，请勿自行放开；远程管理走 SSH 隧道；
 - [ ] **租户自助注册开关**：注册接口是公开端点，面向企业内/受邀场景部署时应通过反代封禁注册路由；
 - [ ] HTTPS 全站启用（第 9 章）。
 
-> 关于登录密码传输 AES 密钥（前端/Flutter/后端三处 `f51d66a73d8a0927`）：该密钥在后端侧硬编码于上游工具库，**当前无法通过纯配置轮换**（详见第 14 章第 3 条）。它只覆盖传输层混淆，安全性依赖全站 HTTPS，请务必完成上一条。
+> 关于登录密码传输 AES 密钥（前端/Flutter/后端三处 `f51d66a73d8a0927`）：该密钥在后端侧硬编码于上游工具库，**当前无法通过纯配置轮换**（详见[第 14 章](#14-已知问题与坑)「仍然需要注意」第 1 条）。它只覆盖传输层混淆，安全性依赖全站 HTTPS，请务必完成上一条。
 
 ## 14. 已知问题与坑
 
-以下为当前代码里实际存在、部署时会踩到的问题（形态 B 全容器化前必须逐条处理）：
+### 14.1 已修复（2026-08-29，随本指南同批提交）
 
-1. **`make compose-up-libs` 不可用**：`backend/Makefile` 中该目标把 compose 文件名写成了反引号命令替换（`` -f `docker-compose.libs.yaml` ``）会执行失败。起依赖用 `scripts/docker/libs_only.sh`（开发）或 `full_deploy.sh`（生产）。
-2. **compose 数据卷未挂载**：`docker-compose.yaml` 里所有依赖的 `volumes:` 段都被注释，脚本创建的 `$APP_ROOT/*` 数据目录没有被使用——容器重建即丢数据。生产必须恢复挂载，例如：
-   ```yaml
-   postgres:
-     volumes:
-       - ${APP_ROOT:-/root/app}/postgres/data:/bitnami/postgresql
-   redis:
-     volumes:
-       - ${APP_ROOT:-/root/app}/redis/data:/bitnami/redis/data
-   minio:
-     volumes:
-       - ${APP_ROOT:-/root/app}/minio/data:/data
-   etcd:
-     volumes:
-       - ${APP_ROOT:-/root/app}/etcd/data:/bitnami/etcd/data
-   ```
-   并顺手把不需要对外的端口改为 `127.0.0.1:` 前缀、把 `latest` 镜像固定到具体版本。
-3. **登录 AES 密钥不可配置轮换**：前端 `.env`、Flutter `.env`、core `authenticator.yaml` 三处的 `f51d66a73d8a0927` 必须一致，且后端解密默认值硬编码在上游库 `go-utils/crypto` 中——只改前端或配置会导致全部登录失败。轮换需同步修改上游库或提交补丁。
-4. **compose 应用段不可直接用**（仅形态 B 相关）：`docker-compose.yaml` 的 `admin-service` 端口映射是 `9700:9700/9701:9701`，与镜像内配置监听的 `6600/6601` 不匹配；`app-service` 整段缺失；`core-service` 无端口（正常，走注册发现）。且 admin/app 的 `registry.yaml`（`localhost:2379`）、`oss.yaml`（`127.0.0.1:9000`）、`trace.yaml`（`localhost:4317`）在容器网络内不可达，需改为 compose 服务名；etcd 的 `ETCD_ADVERTISE_CLIENT_URLS=http://127.0.0.1:2379` 也会导致跨容器服务发现失效，需改为容器网卡地址。
-5. **`${jwt_signing_key:...}` 占位符不读系统环境变量**：Kratos 配置解析只查配置文件树（5.4 的改法），yaml 内注释如暗示可用环境变量覆盖，勿信。
-6. **依赖镜像未锁版本**：除 etcd（v3.6.8）外均为 `latest`，升级 compose 依赖时可能引入不兼容变更，生产建议固定 tag。
-7. **Dockerfile 的 Go 构建版本**：`backend/Dockerfile` 声明 `GO_VERSION=1.25.3` 而 `go.mod` 要求更高版本，镜像构建依赖 GOTOOLCHAIN 自动下载工具链（已配置 GOPROXY），离线环境构建会失败，需把 `GO_VERSION` 与 `go.mod` 对齐。
+以下问题在部署指南初版中被发现，现已在本仓库修复：
+
+1. **`make compose-up-libs` 反引号 bug**：已改为 `-f docker-compose.libs.yaml`，恢复正常。
+2. **compose 数据卷未挂载（重建丢数据）**：`docker-compose.yaml` 中 postgres/redis/minio/etcd 的数据卷已恢复挂载到 `${APP_ROOT:-/root/app}` 各子目录（libs 开发版仍不挂载，保持开发环境可随时重置的语义）。
+3. **compose 应用段不可用**：admin-service 端口映射 9700→已改为 6600/6601（与镜像内配置一致）；补齐了缺失的 app-service（6700/6701）；三个应用服务放入 `app` profile（默认 `up` 只起依赖，供 PM2 路径使用）；registry/oss/trace 的 localhost 地址通过挂载 `backend/deploy/compose/*.yaml` 覆盖为 compose 服务名；etcd 的 `ETCD_ADVERTISE_CLIENT_URLS` 已改为 `http://etcd:2379`。全容器化：`docker compose --profile app up -d`。
+4. **PostgreSQL 镜像变量错配（全新启动失败）**：原 `docker-compose*.yaml` 用 bitnami 的 postgresql 镜像却传了官方镜像的 `POSTGRES_*` 变量，bitnami 不认这些变量、无密码时全新初始化会直接失败。已将两个 compose 文件的 postgres 统一替换为官方 `postgres:17-alpine`（`POSTGRES_*` 语义原生匹配）。redis/minio 原本变量语义正确，未动（libs 文件）。
+5. **依赖镜像未固定版本 + compose/configs 密码默认值不一致**：依赖镜像已全部固定（`postgres:17-alpine`、`redis:8.2-alpine`、`minio:RELEASE.2025-09-07T16-13-09Z`、`jaeger:1.76.0`、`etcd:v3.6.8`、运行时 `alpine:3.22`）；compose 默认密码已与 configs 默认值统一为 `*Abcd123456`（生产必须替换，见 5.6）。依赖容器还补了 healthcheck，应用服务 `depends_on` 按 `service_healthy` 等待依赖就绪。
+6. **Dockerfile Go 构建版本与 go.mod 不一致**：`GO_VERSION` 已从 1.25.3 对齐到 go.mod 的 1.26.4，镜像构建不再依赖 GOTOOLCHAIN 联网下载工具链（离线构建不再因此失败）。
+
+### 14.2 仍然需要注意
+
+1. **登录 AES 密钥不可配置轮换**：前端 `.env`、Flutter `.env`、core `authenticator.yaml` 三处的 `f51d66a73d8a0927` 必须一致，且后端解密默认值硬编码在上游库 `go-utils/crypto` 中——只改前端或配置会导致全部登录失败。轮换需同步修改上游库或提交补丁。
+2. **`${jwt_signing_key:...}` 占位符不读系统环境变量**：Kratos 配置解析只查配置文件树（改法见 5.4），yaml 内注释如暗示可用环境变量覆盖，勿信。
+3. **官方 redis 镜像未禁用 FLUSHDB/FLUSHALL/CONFIG**：原 bitnami 的 `REDIS_DISABLE_COMMANDS` 保护随镜像切换不再存在，防误删依赖密码与 127.0.0.1 回环绑定。
+4. **bitnami 镜像不再提供版本 tag**：docker.io/bitnami 自 2025 年起仅维护 `latest`（旧版本 tag 移入 `bitnamilegacy`），这也是 compose 换用官方镜像的原因之一；后续升级官方镜像时留意大版本 CHANGELOG（尤其 PostgreSQL 大版本跨级需走 pg_upgrade）。
+5. **应用服务无健康检查端点**：健康探测依赖端口探活（见第 12 章）。
 
 发现新问题请先查 [backend/scripts/WORKFLOWS_AND_BEST_PRACTICES.md](../backend/scripts/WORKFLOWS_AND_BEST_PRACTICES.md) 与 [backend/AGENTS.md](../backend/AGENTS.md)，仍未解决可提 Issue。

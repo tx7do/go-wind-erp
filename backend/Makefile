@@ -147,7 +147,7 @@ compose-down:
 
 # use docker compose to run only dependency services like redis, mysql, etc. without backend services.
 compose-up-libs:
-	@docker compose -f `docker-compose.libs.yaml` up -d
+	@docker compose -f docker-compose.libs.yaml up -d
 
 # build docker image
 docker:

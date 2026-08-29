@@ -1,0 +1,11 @@
+# 容器网络专用的链路追踪配置。
+# docker compose 会把本文件挂载覆盖到 /app/configs/trace.yaml，
+# 使各服务通过 compose 服务名访问 jaeger 的 OTLP 收集端口。
+trace:
+  endpoint: "jaeger:4317"
+  exporter: "otlp-grpc"
+  sampler: 1.0
+  env: "dev"
+  insecure: true
+  enable_trace_context: true
+  enable_baggage: true

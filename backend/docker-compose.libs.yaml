@@ -3,8 +3,9 @@ networks:
     driver: bridge
 
 services:
+  # 官方 postgres 镜像：POSTGRES_* 变量为其原生语义（bitnami 镜像不认这些变量，全新启动会失败）
   postgres:
-    image: docker.io/bitnami/postgresql:latest
+    image: docker.io/library/postgres:17-alpine
     restart: always
     ports:
       - "5432:5432"
