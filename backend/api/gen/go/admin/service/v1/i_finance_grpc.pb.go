@@ -998,6 +998,7 @@ var ReceiptService_ServiceDesc = grpc.ServiceDesc{
 const (
 	FinanceReportService_ProfitReport_FullMethodName        = "/admin.service.v1.FinanceReportService/ProfitReport"
 	FinanceReportService_GetFinanceSummary_FullMethodName   = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
+	FinanceReportService_GetSalesRanking_FullMethodName     = "/admin.service.v1.FinanceReportService/GetSalesRanking"
 	FinanceReportService_GetPartnerStatement_FullMethodName = "/admin.service.v1.FinanceReportService/GetPartnerStatement"
 )
 
@@ -1010,6 +1011,8 @@ type FinanceReportServiceClient interface {
 	ProfitReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.ProfitReportResponse, error)
 	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.FinanceSummaryResponse, error)
+	// 销售排行（按商品/按客户，金额降序）
+	GetSalesRanking(ctx context.Context, in *v11.GetSalesRankingRequest, opts ...grpc.CallOption) (*v11.SalesRankingResponse, error)
 	// 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
 	GetPartnerStatement(ctx context.Context, in *v11.GetPartnerStatementRequest, opts ...grpc.CallOption) (*v11.PartnerStatementResponse, error)
 }
@@ -1042,6 +1045,16 @@ func (c *financeReportServiceClient) GetFinanceSummary(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *financeReportServiceClient) GetSalesRanking(ctx context.Context, in *v11.GetSalesRankingRequest, opts ...grpc.CallOption) (*v11.SalesRankingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SalesRankingResponse)
+	err := c.cc.Invoke(ctx, FinanceReportService_GetSalesRanking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *financeReportServiceClient) GetPartnerStatement(ctx context.Context, in *v11.GetPartnerStatementRequest, opts ...grpc.CallOption) (*v11.PartnerStatementResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.PartnerStatementResponse)
@@ -1061,6 +1074,8 @@ type FinanceReportServiceServer interface {
 	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
 	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
 	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
+	// 销售排行（按商品/按客户，金额降序）
+	GetSalesRanking(context.Context, *v11.GetSalesRankingRequest) (*v11.SalesRankingResponse, error)
 	// 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
 	GetPartnerStatement(context.Context, *v11.GetPartnerStatementRequest) (*v11.PartnerStatementResponse, error)
 	mustEmbedUnimplementedFinanceReportServiceServer()
@@ -1078,6 +1093,9 @@ func (UnimplementedFinanceReportServiceServer) ProfitReport(context.Context, *em
 }
 func (UnimplementedFinanceReportServiceServer) GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFinanceSummary not implemented")
+}
+func (UnimplementedFinanceReportServiceServer) GetSalesRanking(context.Context, *v11.GetSalesRankingRequest) (*v11.SalesRankingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSalesRanking not implemented")
 }
 func (UnimplementedFinanceReportServiceServer) GetPartnerStatement(context.Context, *v11.GetPartnerStatementRequest) (*v11.PartnerStatementResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPartnerStatement not implemented")
@@ -1139,6 +1157,24 @@ func _FinanceReportService_GetFinanceSummary_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FinanceReportService_GetSalesRanking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetSalesRankingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceReportServiceServer).GetSalesRanking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FinanceReportService_GetSalesRanking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceReportServiceServer).GetSalesRanking(ctx, req.(*v11.GetSalesRankingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _FinanceReportService_GetPartnerStatement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.GetPartnerStatementRequest)
 	if err := dec(in); err != nil {
@@ -1171,6 +1207,10 @@ var FinanceReportService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFinanceSummary",
 			Handler:    _FinanceReportService_GetFinanceSummary_Handler,
+		},
+		{
+			MethodName: "GetSalesRanking",
+			Handler:    _FinanceReportService_GetSalesRanking_Handler,
 		},
 		{
 			MethodName: "GetPartnerStatement",

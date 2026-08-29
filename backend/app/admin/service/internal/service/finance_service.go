@@ -252,6 +252,11 @@ func (s *FinanceReportService) GetFinanceSummary(ctx context.Context, req *empty
 	return s.financeReportServiceClient.GetFinanceSummary(ctx, req)
 }
 
+// GetSalesRanking 销售排行（按商品/按客户）。
+func (s *FinanceReportService) GetSalesRanking(ctx context.Context, req *financeV1.GetSalesRankingRequest) (*financeV1.SalesRankingResponse, error) {
+	return s.financeReportServiceClient.GetSalesRanking(ctx, req)
+}
+
 // GetPartnerStatement 往来对账单（客户/供应商）。
 func (s *FinanceReportService) GetPartnerStatement(ctx context.Context, req *financeV1.GetPartnerStatementRequest) (*financeV1.PartnerStatementResponse, error) {
 	return s.financeReportServiceClient.GetPartnerStatement(ctx, req)

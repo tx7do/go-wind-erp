@@ -82,7 +82,8 @@
     "profit": "Profit Report",
     "trialBalance": "Trial Balance",
     "journal": "Journal Entries",
-    "statement": "Partner Statement"
+    "statement": "Partner Statement",
+    "salesRanking": "Sales Ranking"
   },
   "sales": {
     "moduleName": "Sales Management",

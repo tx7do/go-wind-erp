@@ -3141,6 +3141,194 @@ func (x *PartnerStatementResponse) GetBalance() int64 {
 	return 0
 }
 
+type GetSalesRankingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Dimension     *string                `protobuf:"bytes,1,opt,name=dimension,proto3,oneof" json:"dimension,omitempty"`               // 维度
+	FromDate      *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from_date,json=fromDate,proto3,oneof" json:"from_date,omitempty"` // 起始日期
+	ToDate        *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to_date,json=toDate,proto3,oneof" json:"to_date,omitempty"`       // 截止日期
+	Limit         *uint32                `protobuf:"varint,4,opt,name=limit,proto3,oneof" json:"limit,omitempty"`                      // 返回条数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSalesRankingRequest) Reset() {
+	*x = GetSalesRankingRequest{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSalesRankingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSalesRankingRequest) ProtoMessage() {}
+
+func (x *GetSalesRankingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSalesRankingRequest.ProtoReflect.Descriptor instead.
+func (*GetSalesRankingRequest) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *GetSalesRankingRequest) GetDimension() string {
+	if x != nil && x.Dimension != nil {
+		return *x.Dimension
+	}
+	return ""
+}
+
+func (x *GetSalesRankingRequest) GetFromDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FromDate
+	}
+	return nil
+}
+
+func (x *GetSalesRankingRequest) GetToDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ToDate
+	}
+	return nil
+}
+
+func (x *GetSalesRankingRequest) GetLimit() uint32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+type SalesRankingItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           *string                `protobuf:"bytes,1,opt,name=key,proto3,oneof" json:"key,omitempty"`            // 聚合键
+	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`        // 展示名
+	Quantity      *int64                 `protobuf:"varint,3,opt,name=quantity,proto3,oneof" json:"quantity,omitempty"` // 销量合计
+	Amount        *int64                 `protobuf:"varint,4,opt,name=amount,proto3,oneof" json:"amount,omitempty"`     // 金额合计
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SalesRankingItem) Reset() {
+	*x = SalesRankingItem{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SalesRankingItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SalesRankingItem) ProtoMessage() {}
+
+func (x *SalesRankingItem) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SalesRankingItem.ProtoReflect.Descriptor instead.
+func (*SalesRankingItem) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *SalesRankingItem) GetKey() string {
+	if x != nil && x.Key != nil {
+		return *x.Key
+	}
+	return ""
+}
+
+func (x *SalesRankingItem) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
+func (x *SalesRankingItem) GetQuantity() int64 {
+	if x != nil && x.Quantity != nil {
+		return *x.Quantity
+	}
+	return 0
+}
+
+func (x *SalesRankingItem) GetAmount() int64 {
+	if x != nil && x.Amount != nil {
+		return *x.Amount
+	}
+	return 0
+}
+
+type SalesRankingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*SalesRankingItem    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Dimension     *string                `protobuf:"bytes,2,opt,name=dimension,proto3,oneof" json:"dimension,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SalesRankingResponse) Reset() {
+	*x = SalesRankingResponse{}
+	mi := &file_finance_service_v1_finance_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SalesRankingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SalesRankingResponse) ProtoMessage() {}
+
+func (x *SalesRankingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_finance_service_v1_finance_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SalesRankingResponse.ProtoReflect.Descriptor instead.
+func (*SalesRankingResponse) Descriptor() ([]byte, []int) {
+	return file_finance_service_v1_finance_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *SalesRankingResponse) GetItems() []*SalesRankingItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *SalesRankingResponse) GetDimension() string {
+	if x != nil && x.Dimension != nil {
+		return *x.Dimension
+	}
+	return ""
+}
+
 var File_finance_service_v1_finance_proto protoreflect.FileDescriptor
 
 const file_finance_service_v1_finance_proto_rawDesc = "" +
@@ -3549,7 +3737,33 @@ const file_finance_service_v1_finance_proto_rawDesc = "" +
 	"\f_total_debitB\x0f\n" +
 	"\r_total_creditB\n" +
 	"\n" +
-	"\b_balance2\xb7\x04\n" +
+	"\b_balance\"\x99\x03\n" +
+	"\x16GetSalesRankingRequest\x12_\n" +
+	"\tdimension\x18\x01 \x01(\tB<\xbaG9\x92\x026维度：SKU（按商品）或 CUSTOMER（按客户）H\x00R\tdimension\x88\x01\x01\x12`\n" +
+	"\tfrom_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\"\xbaG\x1f\x92\x02\x1c起始日期（空=全部）H\x01R\bfromDate\x88\x01\x01\x12L\n" +
+	"\ato_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f截止日期H\x02R\x06toDate\x88\x01\x01\x12<\n" +
+	"\x05limit\x18\x04 \x01(\rB!\xbaG\x1e\x92\x02\x1b返回条数（默认 10）H\x03R\x05limit\x88\x01\x01B\f\n" +
+	"\n" +
+	"_dimensionB\f\n" +
+	"\n" +
+	"_from_dateB\n" +
+	"\n" +
+	"\b_to_dateB\b\n" +
+	"\x06_limit\"\xbb\x02\n" +
+	"\x10SalesRankingItem\x12E\n" +
+	"\x03key\x18\x01 \x01(\tB.\xbaG+\x92\x02(聚合键（SKU 编码或客户编码）H\x00R\x03key\x88\x01\x01\x12A\n" +
+	"\x05label\x18\x02 \x01(\tB&\xbaG#\x92\x02 展示名（编码 — 名称）H\x01R\x05label\x88\x01\x01\x123\n" +
+	"\bquantity\x18\x03 \x01(\x03B\x12\xbaG\x0f\x92\x02\f销量合计H\x02R\bquantity\x88\x01\x01\x12>\n" +
+	"\x06amount\x18\x04 \x01(\x03B!\xbaG\x1e\x92\x02\x1b销售金额合计（分）H\x03R\x06amount\x88\x01\x01B\x06\n" +
+	"\x04_keyB\b\n" +
+	"\x06_labelB\v\n" +
+	"\t_quantityB\t\n" +
+	"\a_amount\"\x97\x01\n" +
+	"\x14SalesRankingResponse\x12:\n" +
+	"\x05items\x18\x01 \x03(\v2$.finance.service.v1.SalesRankingItemR\x05items\x125\n" +
+	"\tdimension\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f实际维度H\x00R\tdimension\x88\x01\x01B\f\n" +
+	"\n" +
+	"_dimension2\xb7\x04\n" +
 	"\x0ePayableService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.finance.service.v1.ListPayableResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.finance.service.v1.CountPayableResponse\"\x00\x12K\n" +
@@ -3595,7 +3809,7 @@ func file_finance_service_v1_finance_proto_rawDescGZIP() []byte {
 }
 
 var file_finance_service_v1_finance_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 41)
+var file_finance_service_v1_finance_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
 var file_finance_service_v1_finance_proto_goTypes = []any{
 	(Payable_Status)(0),                // 0: finance.service.v1.Payable.Status
 	(Payment_Method)(0),                // 1: finance.service.v1.Payment.Method
@@ -3644,110 +3858,116 @@ var file_finance_service_v1_finance_proto_goTypes = []any{
 	(*PartnerStatementRow)(nil),        // 44: finance.service.v1.PartnerStatementRow
 	(*GetPartnerStatementRequest)(nil), // 45: finance.service.v1.GetPartnerStatementRequest
 	(*PartnerStatementResponse)(nil),   // 46: finance.service.v1.PartnerStatementResponse
-	(*timestamppb.Timestamp)(nil),      // 47: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),      // 48: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),           // 49: pagination.PagingRequest
-	(*emptypb.Empty)(nil),              // 50: google.protobuf.Empty
+	(*GetSalesRankingRequest)(nil),     // 47: finance.service.v1.GetSalesRankingRequest
+	(*SalesRankingItem)(nil),           // 48: finance.service.v1.SalesRankingItem
+	(*SalesRankingResponse)(nil),       // 49: finance.service.v1.SalesRankingResponse
+	(*timestamppb.Timestamp)(nil),      // 50: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),      // 51: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),           // 52: pagination.PagingRequest
+	(*emptypb.Empty)(nil),              // 53: google.protobuf.Empty
 }
 var file_finance_service_v1_finance_proto_depIdxs = []int32{
 	0,  // 0: finance.service.v1.Payable.status:type_name -> finance.service.v1.Payable.Status
-	47, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
-	47, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
-	47, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
-	47, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
+	50, // 1: finance.service.v1.Payable.due_date:type_name -> google.protobuf.Timestamp
+	50, // 2: finance.service.v1.Payable.created_at:type_name -> google.protobuf.Timestamp
+	50, // 3: finance.service.v1.Payable.updated_at:type_name -> google.protobuf.Timestamp
+	50, // 4: finance.service.v1.Payable.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 5: finance.service.v1.Payment.method:type_name -> finance.service.v1.Payment.Method
 	2,  // 6: finance.service.v1.Payment.status:type_name -> finance.service.v1.Payment.Status
-	47, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
+	50, // 7: finance.service.v1.Payment.created_at:type_name -> google.protobuf.Timestamp
 	6,  // 8: finance.service.v1.ListPayableResponse.items:type_name -> finance.service.v1.Payable
-	48, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	51, // 9: finance.service.v1.GetPayableRequest.view_mask:type_name -> google.protobuf.FieldMask
 	6,  // 10: finance.service.v1.CreatePayableRequest.data:type_name -> finance.service.v1.Payable
 	7,  // 11: finance.service.v1.ListPaymentResponse.items:type_name -> finance.service.v1.Payment
-	48, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	51, // 12: finance.service.v1.GetPaymentRequest.view_mask:type_name -> google.protobuf.FieldMask
 	7,  // 13: finance.service.v1.CreatePaymentRequest.data:type_name -> finance.service.v1.Payment
 	18, // 14: finance.service.v1.AgingReportResponse.buckets:type_name -> finance.service.v1.AgingBucket
 	3,  // 15: finance.service.v1.Receivable.status:type_name -> finance.service.v1.Receivable.Status
-	47, // 16: finance.service.v1.Receivable.due_date:type_name -> google.protobuf.Timestamp
-	47, // 17: finance.service.v1.Receivable.created_at:type_name -> google.protobuf.Timestamp
-	47, // 18: finance.service.v1.Receivable.updated_at:type_name -> google.protobuf.Timestamp
-	47, // 19: finance.service.v1.Receivable.deleted_at:type_name -> google.protobuf.Timestamp
+	50, // 16: finance.service.v1.Receivable.due_date:type_name -> google.protobuf.Timestamp
+	50, // 17: finance.service.v1.Receivable.created_at:type_name -> google.protobuf.Timestamp
+	50, // 18: finance.service.v1.Receivable.updated_at:type_name -> google.protobuf.Timestamp
+	50, // 19: finance.service.v1.Receivable.deleted_at:type_name -> google.protobuf.Timestamp
 	4,  // 20: finance.service.v1.Receipt.method:type_name -> finance.service.v1.Receipt.Method
 	5,  // 21: finance.service.v1.Receipt.status:type_name -> finance.service.v1.Receipt.Status
-	47, // 22: finance.service.v1.Receipt.created_at:type_name -> google.protobuf.Timestamp
+	50, // 22: finance.service.v1.Receipt.created_at:type_name -> google.protobuf.Timestamp
 	20, // 23: finance.service.v1.ListReceivableResponse.items:type_name -> finance.service.v1.Receivable
-	48, // 24: finance.service.v1.GetReceivableRequest.view_mask:type_name -> google.protobuf.FieldMask
+	51, // 24: finance.service.v1.GetReceivableRequest.view_mask:type_name -> google.protobuf.FieldMask
 	20, // 25: finance.service.v1.CreateReceivableRequest.data:type_name -> finance.service.v1.Receivable
 	21, // 26: finance.service.v1.ListReceiptResponse.items:type_name -> finance.service.v1.Receipt
-	48, // 27: finance.service.v1.GetReceiptRequest.view_mask:type_name -> google.protobuf.FieldMask
+	51, // 27: finance.service.v1.GetReceiptRequest.view_mask:type_name -> google.protobuf.FieldMask
 	21, // 28: finance.service.v1.CreateReceiptRequest.data:type_name -> finance.service.v1.Receipt
 	33, // 29: finance.service.v1.ProfitReportResponse.items:type_name -> finance.service.v1.MonthlyProfit
 	34, // 30: finance.service.v1.ListAccountResponse.items:type_name -> finance.service.v1.Account
-	47, // 31: finance.service.v1.JournalEntry.entry_date:type_name -> google.protobuf.Timestamp
+	50, // 31: finance.service.v1.JournalEntry.entry_date:type_name -> google.protobuf.Timestamp
 	36, // 32: finance.service.v1.JournalEntry.lines:type_name -> finance.service.v1.JournalLine
-	47, // 33: finance.service.v1.ListJournalEntryRequest.from_date:type_name -> google.protobuf.Timestamp
-	47, // 34: finance.service.v1.ListJournalEntryRequest.to_date:type_name -> google.protobuf.Timestamp
+	50, // 33: finance.service.v1.ListJournalEntryRequest.from_date:type_name -> google.protobuf.Timestamp
+	50, // 34: finance.service.v1.ListJournalEntryRequest.to_date:type_name -> google.protobuf.Timestamp
 	37, // 35: finance.service.v1.ListJournalEntryResponse.items:type_name -> finance.service.v1.JournalEntry
-	47, // 36: finance.service.v1.GetTrialBalanceRequest.from_date:type_name -> google.protobuf.Timestamp
-	47, // 37: finance.service.v1.GetTrialBalanceRequest.to_date:type_name -> google.protobuf.Timestamp
+	50, // 36: finance.service.v1.GetTrialBalanceRequest.from_date:type_name -> google.protobuf.Timestamp
+	50, // 37: finance.service.v1.GetTrialBalanceRequest.to_date:type_name -> google.protobuf.Timestamp
 	41, // 38: finance.service.v1.TrialBalanceResponse.items:type_name -> finance.service.v1.TrialBalanceItem
-	47, // 39: finance.service.v1.PartnerStatementRow.date:type_name -> google.protobuf.Timestamp
-	47, // 40: finance.service.v1.GetPartnerStatementRequest.from_date:type_name -> google.protobuf.Timestamp
-	47, // 41: finance.service.v1.GetPartnerStatementRequest.to_date:type_name -> google.protobuf.Timestamp
+	50, // 39: finance.service.v1.PartnerStatementRow.date:type_name -> google.protobuf.Timestamp
+	50, // 40: finance.service.v1.GetPartnerStatementRequest.from_date:type_name -> google.protobuf.Timestamp
+	50, // 41: finance.service.v1.GetPartnerStatementRequest.to_date:type_name -> google.protobuf.Timestamp
 	44, // 42: finance.service.v1.PartnerStatementResponse.rows:type_name -> finance.service.v1.PartnerStatementRow
-	49, // 43: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
-	49, // 44: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
-	9,  // 45: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
-	10, // 46: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
-	11, // 47: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
-	12, // 48: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
-	50, // 49: finance.service.v1.PayableService.AgingReport:input_type -> google.protobuf.Empty
-	49, // 50: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
-	49, // 51: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
-	15, // 52: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
-	16, // 53: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
-	49, // 54: finance.service.v1.ReceivableService.List:input_type -> pagination.PagingRequest
-	49, // 55: finance.service.v1.ReceivableService.Count:input_type -> pagination.PagingRequest
-	23, // 56: finance.service.v1.ReceivableService.Get:input_type -> finance.service.v1.GetReceivableRequest
-	24, // 57: finance.service.v1.ReceivableService.Create:input_type -> finance.service.v1.CreateReceivableRequest
-	25, // 58: finance.service.v1.ReceivableService.Delete:input_type -> finance.service.v1.DeleteReceivableRequest
-	26, // 59: finance.service.v1.ReceivableService.Cancel:input_type -> finance.service.v1.CancelReceivableRequest
-	50, // 60: finance.service.v1.ReceivableService.AgingReport:input_type -> google.protobuf.Empty
-	49, // 61: finance.service.v1.ReceiptService.List:input_type -> pagination.PagingRequest
-	49, // 62: finance.service.v1.ReceiptService.Count:input_type -> pagination.PagingRequest
-	29, // 63: finance.service.v1.ReceiptService.Get:input_type -> finance.service.v1.GetReceiptRequest
-	30, // 64: finance.service.v1.ReceiptService.Create:input_type -> finance.service.v1.CreateReceiptRequest
-	49, // 65: finance.service.v1.AccountingService.ListAccounts:input_type -> pagination.PagingRequest
-	38, // 66: finance.service.v1.AccountingService.ListJournalEntries:input_type -> finance.service.v1.ListJournalEntryRequest
-	40, // 67: finance.service.v1.AccountingService.GetTrialBalance:input_type -> finance.service.v1.GetTrialBalanceRequest
-	8,  // 68: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
-	13, // 69: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
-	6,  // 70: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
-	50, // 71: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
-	50, // 72: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
-	50, // 73: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
-	19, // 74: finance.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	14, // 75: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
-	17, // 76: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
-	7,  // 77: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
-	50, // 78: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
-	22, // 79: finance.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
-	27, // 80: finance.service.v1.ReceivableService.Count:output_type -> finance.service.v1.CountReceivableResponse
-	20, // 81: finance.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
-	50, // 82: finance.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
-	50, // 83: finance.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
-	50, // 84: finance.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
-	19, // 85: finance.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
-	28, // 86: finance.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
-	31, // 87: finance.service.v1.ReceiptService.Count:output_type -> finance.service.v1.CountReceiptResponse
-	21, // 88: finance.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
-	50, // 89: finance.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
-	35, // 90: finance.service.v1.AccountingService.ListAccounts:output_type -> finance.service.v1.ListAccountResponse
-	39, // 91: finance.service.v1.AccountingService.ListJournalEntries:output_type -> finance.service.v1.ListJournalEntryResponse
-	42, // 92: finance.service.v1.AccountingService.GetTrialBalance:output_type -> finance.service.v1.TrialBalanceResponse
-	68, // [68:93] is the sub-list for method output_type
-	43, // [43:68] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	50, // 43: finance.service.v1.GetSalesRankingRequest.from_date:type_name -> google.protobuf.Timestamp
+	50, // 44: finance.service.v1.GetSalesRankingRequest.to_date:type_name -> google.protobuf.Timestamp
+	48, // 45: finance.service.v1.SalesRankingResponse.items:type_name -> finance.service.v1.SalesRankingItem
+	52, // 46: finance.service.v1.PayableService.List:input_type -> pagination.PagingRequest
+	52, // 47: finance.service.v1.PayableService.Count:input_type -> pagination.PagingRequest
+	9,  // 48: finance.service.v1.PayableService.Get:input_type -> finance.service.v1.GetPayableRequest
+	10, // 49: finance.service.v1.PayableService.Create:input_type -> finance.service.v1.CreatePayableRequest
+	11, // 50: finance.service.v1.PayableService.Delete:input_type -> finance.service.v1.DeletePayableRequest
+	12, // 51: finance.service.v1.PayableService.Cancel:input_type -> finance.service.v1.CancelPayableRequest
+	53, // 52: finance.service.v1.PayableService.AgingReport:input_type -> google.protobuf.Empty
+	52, // 53: finance.service.v1.PaymentService.List:input_type -> pagination.PagingRequest
+	52, // 54: finance.service.v1.PaymentService.Count:input_type -> pagination.PagingRequest
+	15, // 55: finance.service.v1.PaymentService.Get:input_type -> finance.service.v1.GetPaymentRequest
+	16, // 56: finance.service.v1.PaymentService.Create:input_type -> finance.service.v1.CreatePaymentRequest
+	52, // 57: finance.service.v1.ReceivableService.List:input_type -> pagination.PagingRequest
+	52, // 58: finance.service.v1.ReceivableService.Count:input_type -> pagination.PagingRequest
+	23, // 59: finance.service.v1.ReceivableService.Get:input_type -> finance.service.v1.GetReceivableRequest
+	24, // 60: finance.service.v1.ReceivableService.Create:input_type -> finance.service.v1.CreateReceivableRequest
+	25, // 61: finance.service.v1.ReceivableService.Delete:input_type -> finance.service.v1.DeleteReceivableRequest
+	26, // 62: finance.service.v1.ReceivableService.Cancel:input_type -> finance.service.v1.CancelReceivableRequest
+	53, // 63: finance.service.v1.ReceivableService.AgingReport:input_type -> google.protobuf.Empty
+	52, // 64: finance.service.v1.ReceiptService.List:input_type -> pagination.PagingRequest
+	52, // 65: finance.service.v1.ReceiptService.Count:input_type -> pagination.PagingRequest
+	29, // 66: finance.service.v1.ReceiptService.Get:input_type -> finance.service.v1.GetReceiptRequest
+	30, // 67: finance.service.v1.ReceiptService.Create:input_type -> finance.service.v1.CreateReceiptRequest
+	52, // 68: finance.service.v1.AccountingService.ListAccounts:input_type -> pagination.PagingRequest
+	38, // 69: finance.service.v1.AccountingService.ListJournalEntries:input_type -> finance.service.v1.ListJournalEntryRequest
+	40, // 70: finance.service.v1.AccountingService.GetTrialBalance:input_type -> finance.service.v1.GetTrialBalanceRequest
+	8,  // 71: finance.service.v1.PayableService.List:output_type -> finance.service.v1.ListPayableResponse
+	13, // 72: finance.service.v1.PayableService.Count:output_type -> finance.service.v1.CountPayableResponse
+	6,  // 73: finance.service.v1.PayableService.Get:output_type -> finance.service.v1.Payable
+	53, // 74: finance.service.v1.PayableService.Create:output_type -> google.protobuf.Empty
+	53, // 75: finance.service.v1.PayableService.Delete:output_type -> google.protobuf.Empty
+	53, // 76: finance.service.v1.PayableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 77: finance.service.v1.PayableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	14, // 78: finance.service.v1.PaymentService.List:output_type -> finance.service.v1.ListPaymentResponse
+	17, // 79: finance.service.v1.PaymentService.Count:output_type -> finance.service.v1.CountPaymentResponse
+	7,  // 80: finance.service.v1.PaymentService.Get:output_type -> finance.service.v1.Payment
+	53, // 81: finance.service.v1.PaymentService.Create:output_type -> google.protobuf.Empty
+	22, // 82: finance.service.v1.ReceivableService.List:output_type -> finance.service.v1.ListReceivableResponse
+	27, // 83: finance.service.v1.ReceivableService.Count:output_type -> finance.service.v1.CountReceivableResponse
+	20, // 84: finance.service.v1.ReceivableService.Get:output_type -> finance.service.v1.Receivable
+	53, // 85: finance.service.v1.ReceivableService.Create:output_type -> google.protobuf.Empty
+	53, // 86: finance.service.v1.ReceivableService.Delete:output_type -> google.protobuf.Empty
+	53, // 87: finance.service.v1.ReceivableService.Cancel:output_type -> google.protobuf.Empty
+	19, // 88: finance.service.v1.ReceivableService.AgingReport:output_type -> finance.service.v1.AgingReportResponse
+	28, // 89: finance.service.v1.ReceiptService.List:output_type -> finance.service.v1.ListReceiptResponse
+	31, // 90: finance.service.v1.ReceiptService.Count:output_type -> finance.service.v1.CountReceiptResponse
+	21, // 91: finance.service.v1.ReceiptService.Get:output_type -> finance.service.v1.Receipt
+	53, // 92: finance.service.v1.ReceiptService.Create:output_type -> google.protobuf.Empty
+	35, // 93: finance.service.v1.AccountingService.ListAccounts:output_type -> finance.service.v1.ListAccountResponse
+	39, // 94: finance.service.v1.AccountingService.ListJournalEntries:output_type -> finance.service.v1.ListJournalEntryResponse
+	42, // 95: finance.service.v1.AccountingService.GetTrialBalance:output_type -> finance.service.v1.TrialBalanceResponse
+	71, // [71:96] is the sub-list for method output_type
+	46, // [46:71] is the sub-list for method input_type
+	46, // [46:46] is the sub-list for extension type_name
+	46, // [46:46] is the sub-list for extension extendee
+	0,  // [0:46] is the sub-list for field type_name
 }
 
 func init() { file_finance_service_v1_finance_proto_init() }
@@ -3790,13 +4010,16 @@ func file_finance_service_v1_finance_proto_init() {
 	file_finance_service_v1_finance_proto_msgTypes[38].OneofWrappers = []any{}
 	file_finance_service_v1_finance_proto_msgTypes[39].OneofWrappers = []any{}
 	file_finance_service_v1_finance_proto_msgTypes[40].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[41].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[42].OneofWrappers = []any{}
+	file_finance_service_v1_finance_proto_msgTypes[43].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_finance_service_v1_finance_proto_rawDesc), len(file_finance_service_v1_finance_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   41,
+			NumMessages:   44,
 			NumExtensions: 0,
 			NumServices:   5,
 		},

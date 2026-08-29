@@ -888,5 +888,15 @@
     "balance": "期末余额",
     "partnerConfirm": "对方确认",
     "empty": "暂无对账数据"
+  },
+  "salesRanking": {
+    "bySku": "按商品",
+    "byCustomer": "按客户",
+    "rank": "排名",
+    "name": "名称",
+    "quantity": "销量",
+    "amount": "金额（元）",
+    "export": "导出 Excel",
+    "chartTitle": "金额排行（元）"
   }
 }

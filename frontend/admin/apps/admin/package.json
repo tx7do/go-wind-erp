@@ -75,7 +75,8 @@
     "pinia": "2.2.2",
     "prismjs": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tanstack/vue-query-devtools": "^6.1.34",

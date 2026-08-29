@@ -6,6 +6,8 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+import { exportRowsToExcel } from '#/utils/export-excel';
+
 import {
   apiClient,
   centsToYuan,
@@ -76,6 +78,24 @@ async function load() {
 }
 
 onMounted(loadPartners);
+
+function handleExport() {
+  const st = statement.value;
+  if (!st) return;
+  exportRowsToExcel(
+    `对账单_${form.partnerCode}_${new Date().toISOString().slice(0, 10)}`,
+    '对账单',
+    ['日期', '类型', '单据', '摘要', '发生额', '核销额'],
+    (st.rows ?? []).map((r: any) => [
+      String(r.date ?? '').slice(0, 10),
+      r.docType ?? '',
+      r.docRef ?? '',
+      r.summary ?? '',
+      fmt(r.debit),
+      fmt(r.credit),
+    ]),
+  );
+}
 
 const columns = [
   {
@@ -192,6 +212,13 @@ function handlePrint() {
         />
         <a-button type="primary" @click="load">
           {{ $t('ui.button.search') }}
+        </a-button>
+        <a-button
+          v-if="statement"
+          :disabled="(statement.rows ?? []).length === 0"
+          @click="handleExport"
+        >
+          {{ $t('page.salesRanking.export') }}
         </a-button>
         <a-button v-if="statement" @click="handlePrint">
           {{ $t('page.purchaseOrder.button.print') }}

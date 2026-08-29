@@ -6,6 +6,8 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+import { exportRowsToExcel } from '#/utils/export-excel';
+
 import {
   accountCategoryToName,
   centsToYuanLedger,
@@ -40,6 +42,22 @@ async function load() {
 
 onMounted(load);
 
+function handleExport() {
+  exportRowsToExcel(
+    '科目余额表_' + new Date().toISOString().slice(0, 10),
+    '科目余额表',
+    ['科目编码', '科目名称', '类别', '借方累计', '贷方累计', '期末余额'],
+    items.value.map((i: any) => [
+      i.accountCode ?? '',
+      i.accountName ?? '',
+      accountCategoryToName(i.category),
+      centsToYuanLedger(i.debitTotal),
+      centsToYuanLedger(i.creditTotal),
+      centsToYuanLedger(i.balance),
+    ]),
+  );
+}
+
 const columns = [
   { title: $t('page.trialBalance.accountCode'), dataIndex: 'accountCode' },
   { title: $t('page.trialBalance.accountName'), dataIndex: 'accountName' },
@@ -73,6 +91,9 @@ const columns = [
         />
         <a-button type="primary" @click="load">
           {{ $t('ui.button.search') }}
+        </a-button>
+        <a-button :disabled="items.length === 0" @click="handleExport">
+          {{ $t('page.salesRanking.export') }}
         </a-button>
         <div class="ml-auto flex items-center gap-2">
           <a-tag :color="totalDebit === totalCredit ? 'green' : 'red'">

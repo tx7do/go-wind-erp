@@ -4393,6 +4393,10 @@ export interface FinanceReportService {
   GetFinanceSummary(
     request: wellKnownEmpty,
   ): Promise<financeservicev1_FinanceSummaryResponse>;
+  // 销售排行（按商品/按客户，金额降序）
+  GetSalesRanking(
+    request: financeservicev1_GetSalesRankingRequest,
+  ): Promise<financeservicev1_SalesRankingResponse>;
   // 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
   GetPartnerStatement(
     request: financeservicev1_GetPartnerStatementRequest,
@@ -4418,6 +4422,39 @@ export function createFinanceReportServiceClient(
         service: 'FinanceReportService',
         method: 'GetFinanceSummary',
       }) as Promise<financeservicev1_FinanceSummaryResponse>;
+    },
+    GetSalesRanking(request) {
+      const path = `admin/v1/finance/sales-ranking`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.dimension) {
+        queryParams.push(
+          `dimension=${encodeURIComponent(request.dimension.toString())}`,
+        );
+      }
+      if (request.fromDate) {
+        queryParams.push(
+          `fromDate=${encodeURIComponent(request.fromDate.toString())}`,
+        );
+      }
+      if (request.toDate) {
+        queryParams.push(
+          `toDate=${encodeURIComponent(request.toDate.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FinanceReportService',
+        method: 'GetSalesRanking',
+      }) as Promise<financeservicev1_SalesRankingResponse>;
     },
     GetPartnerStatement(request) {
       const path = `admin/v1/finance/partner-statement`;
@@ -4473,6 +4510,25 @@ export type financeservicev1_FinanceSummaryResponse = {
   cogsMonth?: number;
   profitMonth?: number;
   revenueMonth?: number;
+};
+
+export type financeservicev1_GetSalesRankingRequest = {
+  dimension?: string;
+  fromDate?: wellKnownTimestamp;
+  limit?: number;
+  toDate?: wellKnownTimestamp;
+};
+
+export type financeservicev1_SalesRankingResponse = {
+  dimension?: string;
+  items: financeservicev1_SalesRankingItem[] | undefined;
+};
+
+export type financeservicev1_SalesRankingItem = {
+  amount?: number;
+  key?: string;
+  label?: string;
+  quantity?: number;
 };
 
 export type financeservicev1_GetPartnerStatementRequest = {

@@ -859,5 +859,15 @@
     "balance": "Balance",
     "partnerConfirm": "Partner Confirmation",
     "empty": "No data"
+  },
+  "salesRanking": {
+    "bySku": "By Product",
+    "byCustomer": "By Customer",
+    "rank": "Rank",
+    "name": "Name",
+    "quantity": "Qty",
+    "amount": "Amount",
+    "export": "Export Excel",
+    "chartTitle": "Amount Ranking"
   }
 }

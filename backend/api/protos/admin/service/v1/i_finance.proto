@@ -158,6 +158,13 @@ service FinanceReportService {
     };
   }
 
+  // 销售排行（按商品/按客户，金额降序）
+  rpc GetSalesRanking (finance.service.v1.GetSalesRankingRequest) returns (finance.service.v1.SalesRankingResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/finance/sales-ranking"
+    };
+  }
+
   // 往来对账单（客户/供应商：应收应付发生 + 收付款核销 + 期末余额）
   rpc GetPartnerStatement (finance.service.v1.GetPartnerStatementRequest) returns (finance.service.v1.PartnerStatementResponse) {
     option (google.api.http) = {

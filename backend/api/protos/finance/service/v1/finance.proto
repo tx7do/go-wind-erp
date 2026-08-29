@@ -887,3 +887,55 @@ message PartnerStatementResponse {
     (gnostic.openapi.v3.property) = {description: "期末余额（分，发生−核销）"}
   ]; // 期末余额
 }
+
+
+// =========== 销售排行 ==========
+
+message GetSalesRankingRequest {
+  optional string dimension = 1 [
+    json_name = "dimension",
+    (gnostic.openapi.v3.property) = {description: "维度：SKU（按商品）或 CUSTOMER（按客户）"}
+  ]; // 维度
+
+  optional google.protobuf.Timestamp from_date = 2 [
+    json_name = "fromDate",
+    (gnostic.openapi.v3.property) = {description: "起始日期（空=全部）"}
+  ]; // 起始日期
+
+  optional google.protobuf.Timestamp to_date = 3 [
+    json_name = "toDate",
+    (gnostic.openapi.v3.property) = {description: "截止日期"}
+  ]; // 截止日期
+
+  optional uint32 limit = 4 [
+    json_name = "limit",
+    (gnostic.openapi.v3.property) = {description: "返回条数（默认 10）"}
+  ]; // 返回条数
+}
+
+message SalesRankingItem {
+  optional string key = 1 [
+    json_name = "key",
+    (gnostic.openapi.v3.property) = {description: "聚合键（SKU 编码或客户编码）"}
+  ]; // 聚合键
+
+  optional string label = 2 [
+    json_name = "label",
+    (gnostic.openapi.v3.property) = {description: "展示名（编码 — 名称）"}
+  ]; // 展示名
+
+  optional int64 quantity = 3 [
+    json_name = "quantity",
+    (gnostic.openapi.v3.property) = {description: "销量合计"}
+  ]; // 销量合计
+
+  optional int64 amount = 4 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "销售金额合计（分）"}
+  ]; // 金额合计
+}
+
+message SalesRankingResponse {
+  repeated SalesRankingItem items = 1;
+  optional string dimension = 2 [json_name = "dimension", (gnostic.openapi.v3.property) = {description: "实际维度"}];
+}

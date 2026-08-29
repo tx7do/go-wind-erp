@@ -660,3 +660,80 @@ func (r *SalesOrderRepo) Delete(ctx context.Context, req *salesV1.DeleteSalesOrd
 
 
 
+
+
+// SalesRankingRow 销售排行聚合行（Go 侧按维度分组前的扁平行）。
+type SalesRankingRow struct {
+	CustomerCode string
+	SkuCode      string
+	Quantity     int64
+	Amount       int64
+	CreatedAt    *time.Time
+}
+
+// SalesRowsForRanking 取生效销售单（APPROVED/COMPLETED）的全部明细扁平行，
+// 供服务层按 SKU/客户维度聚合（小而美数据量，Go 侧聚合）。
+func (r *SalesOrderRepo) SalesRowsForRanking(ctx context.Context) ([]SalesRankingRow, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+
+	sos, err := r.entClient.Client().SalesOrder.Query().
+		Where(salesorder.StatusIn(salesorder.StatusApproved, salesorder.StatusCompleted)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query sales orders for ranking failed: %s", err.Error())
+		return nil, salesV1.ErrorInternalServerError("query sales orders failed")
+	}
+	_ = hasTenant
+	_ = tid
+
+	soIDs := make([]uint32, 0, len(sos))
+	for _, so := range sos {
+		soIDs = append(soIDs, so.ID)
+	}
+	if len(soIDs) == 0 {
+		return nil, nil
+	}
+
+	items, err := r.entClient.Client().SalesOrderItem.Query().
+		Where(salesorderitem.SoIDIn(soIDs...)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query sales items for ranking failed: %s", err.Error())
+		return nil, salesV1.ErrorInternalServerError("query sales items failed")
+	}
+
+	customerByID := make(map[uint32]string, len(sos))
+	createdAtByID := make(map[uint32]*time.Time, len(sos))
+	for _, so := range sos {
+		if so.CustomerCode != nil {
+			customerByID[so.ID] = *so.CustomerCode
+		}
+		createdAtByID[so.ID] = so.CreatedAt
+	}
+
+	rows := make([]SalesRankingRow, 0, len(items))
+	for _, it := range items {
+		if it.SoID == nil {
+			continue
+		}
+		qty, amount := int64(0), int64(0)
+		if it.Quantity != nil {
+			qty = *it.Quantity
+		}
+		if it.Amount != nil {
+			amount = *it.Amount
+		}
+		sku := ""
+		if it.SkuCode != nil {
+			sku = *it.SkuCode
+		}
+		rows = append(rows, SalesRankingRow{
+			CustomerCode: customerByID[*it.SoID],
+			SkuCode:      sku,
+			Quantity:     qty,
+			Amount:       amount,
+			CreatedAt:    createdAtByID[*it.SoID],
+		})
+	}
+	return rows, nil
+}

@@ -18,6 +18,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	adminpb "go-wind-erp/api/gen/go/admin/service/v1"
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 )
 
@@ -35,6 +36,8 @@ type FinanceReportService struct {
 	payableRepo       *data.PayableRepo
 	receiptRepo       *data.ReceiptRepo
 	paymentRepo       *data.PaymentRepo
+	productRepo       *data.ProductRepo
+	customerRepo      *data.CustomerRepo
 }
 
 func NewFinanceReportService(
@@ -47,6 +50,8 @@ func NewFinanceReportService(
 	payableRepo *data.PayableRepo,
 	receiptRepo *data.ReceiptRepo,
 	paymentRepo *data.PaymentRepo,
+	productRepo *data.ProductRepo,
+	customerRepo *data.CustomerRepo,
 ) *FinanceReportService {
 	svc := &FinanceReportService{
 		log:               ctx.NewLoggerHelper("finance_report/service/core-service"),
@@ -58,6 +63,8 @@ func NewFinanceReportService(
 		payableRepo:       payableRepo,
 		receiptRepo:       receiptRepo,
 		paymentRepo:       paymentRepo,
+		productRepo:       productRepo,
+		customerRepo:      customerRepo,
 	}
 	return svc
 }
@@ -329,4 +336,100 @@ func receiptMethodLabel(m int32) string {
 	default:
 		return "其他"
 	}
+}
+
+
+// GetSalesRanking 销售排行：按 SKU 或客户聚合生效销售单明细（金额降序）。
+// 名称解析（商品/客户名）在服务层完成（编码 — 名称）。
+func (s *FinanceReportService) GetSalesRanking(
+	ctx context.Context,
+	req *financeV1.GetSalesRankingRequest,
+) (*financeV1.SalesRankingResponse, error) {
+	dimension := req.GetDimension()
+	if dimension == "" {
+		dimension = "SKU"
+	}
+	if dimension != "SKU" && dimension != "CUSTOMER" {
+		return nil, financeV1.ErrorBadRequest("dimension must be SKU or CUSTOMER")
+	}
+	limit := int(req.GetLimit())
+	if limit <= 0 {
+		limit = 10
+	}
+
+	rows, err := s.salesOrderRepo.SalesRowsForRanking(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	type agg struct {
+		quantity, amount int64
+	}
+	aggMap := map[string]*agg{}
+	for _, row := range rows {
+		if !inRange(timestamppb.New(derefTime(row.CreatedAt)), req.FromDate, req.ToDate) {
+			continue
+		}
+		key := row.SkuCode
+		if dimension == "CUSTOMER" {
+			key = row.CustomerCode
+		}
+		if key == "" {
+			continue
+		}
+		a := aggMap[key]
+		if a == nil {
+			a = &agg{}
+			aggMap[key] = a
+		}
+		a.quantity += row.Quantity
+		a.amount += row.Amount
+	}
+
+	// 名称解析（尽力而为）。
+	labels := map[string]string{}
+	if dimension == "SKU" {
+		if products, perr := s.productRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)}); perr == nil {
+			for _, prod := range products.GetItems() {
+				labels[prod.GetCode()] = prod.GetName()
+			}
+		}
+	} else if customers, cerr := s.customerRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)}); cerr == nil {
+		for _, cust := range customers.GetItems() {
+			labels[cust.GetCode()] = cust.GetName()
+		}
+	}
+
+	keys := make([]string, 0, len(aggMap))
+	for k := range aggMap {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		return aggMap[keys[i]].amount > aggMap[keys[j]].amount
+	})
+	if len(keys) > limit {
+		keys = keys[:limit]
+	}
+
+	resp := &financeV1.SalesRankingResponse{Dimension: &dimension}
+	for _, k := range keys {
+		key, label := k, k
+		if name := labels[k]; name != "" {
+			label = k + " — " + name
+		}
+		resp.Items = append(resp.Items, &financeV1.SalesRankingItem{
+			Key:      &key,
+			Label:    &label,
+			Quantity: trans.Ptr(aggMap[k].quantity),
+			Amount:   trans.Ptr(aggMap[k].amount),
+		})
+	}
+	return resp, nil
+}
+
+func derefTime(t *time.Time) time.Time {
+	if t == nil {
+		return time.Time{}
+	}
+	return *t
 }

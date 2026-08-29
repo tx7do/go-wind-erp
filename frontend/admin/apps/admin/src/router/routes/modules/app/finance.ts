@@ -42,6 +42,18 @@ const finance: RouteRecordRaw[] = [
       },
 
       {
+        path: 'sales-ranking',
+        name: 'SalesRankingReport',
+        meta: {
+          order: 4,
+          icon: 'lucide:bar-chart-3',
+          title: $t('menu.finance.salesRanking'),
+          authority: ['sys:platform_admin', 'sys:tenant_manager', 'sys:finance'],
+        },
+        component: () => import('#/views/app/finance/sales_ranking/index.vue'),
+      },
+
+      {
         path: 'partner-statement',
         name: 'PartnerStatement',
         meta: {

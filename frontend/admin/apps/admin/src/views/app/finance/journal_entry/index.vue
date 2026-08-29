@@ -6,6 +6,8 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+import { exportRowsToExcel } from '#/utils/export-excel';
+
 import { centsToYuanLedger, fetchJournalEntries } from '#/api';
 
 defineOptions({ name: 'JournalEntryManagement' });
@@ -39,6 +41,21 @@ async function load() {
 }
 
 onMounted(load);
+
+function handleExport() {
+  exportRowsToExcel(
+    '凭证流水_' + new Date().toISOString().slice(0, 10),
+    '凭证流水',
+    ['凭证号', '日期', '摘要', '业务来源', '金额'],
+    items.value.map((e: any) => [
+      e.entryNumber ?? '',
+      String(e.entryDate ?? '').slice(0, 10),
+      e.summary ?? '',
+      e.bizRef ?? '',
+      entryAmount(e),
+    ]),
+  );
+}
 
 const columns = [
   { title: $t('page.journal.entryNumber'), dataIndex: 'entryNumber', width: 170 },
@@ -84,6 +101,9 @@ function entryAmount(record: any) {
         />
         <a-button type="primary" @click="load">
           {{ $t('ui.button.search') }}
+        </a-button>
+        <a-button :disabled="items.length === 0" @click="handleExport">
+          {{ $t('page.salesRanking.export') }}
         </a-button>
       </div>
 

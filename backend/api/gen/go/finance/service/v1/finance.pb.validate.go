@@ -5898,3 +5898,435 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PartnerStatementResponseValidationError{}
+
+// Validate checks the field values on GetSalesRankingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetSalesRankingRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetSalesRankingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetSalesRankingRequestMultiError, or nil if none found.
+func (m *GetSalesRankingRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetSalesRankingRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Dimension != nil {
+		// no validation rules for Dimension
+	}
+
+	if m.FromDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetFromDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetSalesRankingRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetSalesRankingRequestValidationError{
+						field:  "FromDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFromDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetSalesRankingRequestValidationError{
+					field:  "FromDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ToDate != nil {
+
+		if all {
+			switch v := interface{}(m.GetToDate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetSalesRankingRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetSalesRankingRequestValidationError{
+						field:  "ToDate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetToDate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetSalesRankingRequestValidationError{
+					field:  "ToDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
+	if len(errors) > 0 {
+		return GetSalesRankingRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetSalesRankingRequestMultiError is an error wrapping multiple validation
+// errors returned by GetSalesRankingRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetSalesRankingRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetSalesRankingRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetSalesRankingRequestMultiError) AllErrors() []error { return m }
+
+// GetSalesRankingRequestValidationError is the validation error returned by
+// GetSalesRankingRequest.Validate if the designated constraints aren't met.
+type GetSalesRankingRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetSalesRankingRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetSalesRankingRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetSalesRankingRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetSalesRankingRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetSalesRankingRequestValidationError) ErrorName() string {
+	return "GetSalesRankingRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetSalesRankingRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetSalesRankingRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetSalesRankingRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetSalesRankingRequestValidationError{}
+
+// Validate checks the field values on SalesRankingItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SalesRankingItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SalesRankingItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SalesRankingItemMultiError, or nil if none found.
+func (m *SalesRankingItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SalesRankingItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Key != nil {
+		// no validation rules for Key
+	}
+
+	if m.Label != nil {
+		// no validation rules for Label
+	}
+
+	if m.Quantity != nil {
+		// no validation rules for Quantity
+	}
+
+	if m.Amount != nil {
+		// no validation rules for Amount
+	}
+
+	if len(errors) > 0 {
+		return SalesRankingItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// SalesRankingItemMultiError is an error wrapping multiple validation errors
+// returned by SalesRankingItem.ValidateAll() if the designated constraints
+// aren't met.
+type SalesRankingItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SalesRankingItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SalesRankingItemMultiError) AllErrors() []error { return m }
+
+// SalesRankingItemValidationError is the validation error returned by
+// SalesRankingItem.Validate if the designated constraints aren't met.
+type SalesRankingItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SalesRankingItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SalesRankingItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SalesRankingItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SalesRankingItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SalesRankingItemValidationError) ErrorName() string { return "SalesRankingItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SalesRankingItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSalesRankingItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SalesRankingItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SalesRankingItemValidationError{}
+
+// Validate checks the field values on SalesRankingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SalesRankingResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SalesRankingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SalesRankingResponseMultiError, or nil if none found.
+func (m *SalesRankingResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SalesRankingResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SalesRankingResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SalesRankingResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SalesRankingResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Dimension != nil {
+		// no validation rules for Dimension
+	}
+
+	if len(errors) > 0 {
+		return SalesRankingResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SalesRankingResponseMultiError is an error wrapping multiple validation
+// errors returned by SalesRankingResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SalesRankingResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SalesRankingResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SalesRankingResponseMultiError) AllErrors() []error { return m }
+
+// SalesRankingResponseValidationError is the validation error returned by
+// SalesRankingResponse.Validate if the designated constraints aren't met.
+type SalesRankingResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SalesRankingResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SalesRankingResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SalesRankingResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SalesRankingResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SalesRankingResponseValidationError) ErrorName() string {
+	return "SalesRankingResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SalesRankingResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSalesRankingResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SalesRankingResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SalesRankingResponseValidationError{}
