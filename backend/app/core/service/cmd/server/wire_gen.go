@@ -116,7 +116,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	dictEntryService := service.NewDictEntryService(context, dictEntryRepo)
 	languageRepo := data.NewLanguageRepo(context, entClient)
 	languageService := service.NewLanguageService(context, languageRepo)
-	tenantService := service.NewTenantService(context, tenantRepo, userRepo, userCredentialRepo, roleRepo, locationRepo, warehouseService)
+	tenantService := service.NewTenantService(context, tenantRepo, userRepo, userCredentialRepo, roleRepo, locationRepo, warehouseService, productService, supplierService, customerService)
 	positionRepo := data.NewPositionRepo(context, entClient)
 	orgUnitRepo := data.NewOrgUnitRepo(context, entClient)
 	contactCodeCache := data.NewContactCodeCache(context, redisClient)

@@ -882,3 +882,38 @@ var DefaultAccounts = []DefaultAccount{
 	{Code: "6001", Name: "主营业务收入", Category: "REVENUE", BalanceDirection: "CREDIT"},
 	{Code: "6401", Name: "主营业务成本", Category: "EXPENSE", BalanceDirection: "DEBIT"},
 }
+
+// ==============================
+// 演示数据（自助注册租户引导，可直接改用）
+// ==============================
+
+// DemoProduct 演示商品。
+type DemoProduct struct {
+	Code, Name, Spec, Unit string
+}
+
+// DemoProducts 演示商品目录（五金/文具小商贸场景）。
+var DemoProducts = []DemoProduct{
+	{Code: "SKU-1001", Name: "M8不锈钢内六角螺栓", Spec: "M8×30mm", Unit: "个"},
+	{Code: "SKU-1002", Name: "十字槽沉头自攻螺钉", Spec: "ST3.5×25mm", Unit: "盒"},
+	{Code: "SKU-1003", Name: "丁腈手套", Spec: "L码/100只", Unit: "盒"},
+	{Code: "SKU-1004", Name: "A4复印纸", Spec: "70g/500张", Unit: "包"},
+	{Code: "SKU-1005", Name: "透明胶带", Spec: "48mm×100m", Unit: "卷"},
+}
+
+// DemoPartner 演示往来单位。
+type DemoPartner struct {
+	Code, Name, Contact, Phone string
+}
+
+// DemoSuppliers 演示供应商。
+var DemoSuppliers = []DemoPartner{
+	{Code: "SUP-1001", Name: "华东五金供货商", Contact: "王经理", Phone: "13800001001"},
+	{Code: "SUP-1002", Name: "南方电子元件厂", Contact: "李经理", Phone: "13800001002"},
+}
+
+// DemoCustomers 演示客户。
+var DemoCustomers = []DemoPartner{
+	{Code: "CUS-1001", Name: "华北零售连锁", Contact: "赵经理", Phone: "13900001001"},
+	{Code: "CUS-1002", Name: "城中装修队", Contact: "钱队长", Phone: "13900001002"},
+}

@@ -40,8 +40,10 @@ func TestUserFieldMask(t *testing.T) {
 			//Avatar:   trans.String("Avatar1"),
 			Address: trans.String("Address1"),
 		},
+		// FieldMask 路径必须是 proto 原生字段名（snake_case）——
+		// JSON 名（userName）会被 IsValid 判非法。
 		UpdateMask: &field_mask.FieldMask{
-			Paths: []string{"userName", "realName", "avatar", "roleId"},
+			Paths: []string{"username", "realname", "avatar"},
 		},
 	}
 	updateUserReq.UpdateMask.Normalize()
@@ -97,11 +99,10 @@ func TestMessageNil(t *testing.T) {
 
 	pr := u.ProtoReflect()
 	md := pr.Descriptor()
-	fd := md.Fields().ByName("userName")
+	// 反射按 proto 字段名取（JSON 名查不到会得到 nil，Get(nil) 会 panic）。
+	fd := md.Fields().ByName("username")
 	if fd == nil {
-
-	} else {
-		fmt.Println(fd, fd.Name())
+		t.Fatal("field username not found in descriptor")
 	}
 
 	v := pr.Get(fd)
@@ -163,7 +164,7 @@ func TestCopier(t *testing.T) {
 		assert.Equal(t, protoMsg.GetNickname(), *entMsg.Nickname)
 		assert.Equal(t, protoMsg.GetRealname(), *entMsg.Realname)
 		assert.Equal(t, protoMsg.GetEmail(), *entMsg.Email)
-		assert.Equal(t, protoMsg.GetTenantId(), entMsg.TenantID)
+		assert.Equal(t, protoMsg.GetTenantId(), *entMsg.TenantID)
 		assert.Equal(t, protoMsg.GetId(), entMsg.ID)
 	}
 

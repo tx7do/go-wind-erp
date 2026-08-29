@@ -18,6 +18,11 @@ import (
 	authenticationV1 "go-wind-erp/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-erp/api/gen/go/identity/service/v1"
 	inventoryV1 "go-wind-erp/api/gen/go/inventory/service/v1"
+	procurementV1 "go-wind-erp/api/gen/go/procurement/service/v1"
+	productV1 "go-wind-erp/api/gen/go/product/service/v1"
+	salesV1 "go-wind-erp/api/gen/go/sales/service/v1"
+
+	"go-wind-erp/pkg/constants"
 	permissionV1 "go-wind-erp/api/gen/go/permission/service/v1"
 )
 
@@ -32,6 +37,9 @@ type TenantService struct {
 	roleRepo            *data.RoleRepo
 	locationRepo        *data.LocationRepo
 	warehouseService    *WarehouseService
+	productService      *ProductService
+	supplierService     *SupplierService
+	customerService     *CustomerService
 }
 
 func NewTenantService(
@@ -42,6 +50,9 @@ func NewTenantService(
 	roleRepo *data.RoleRepo,
 	locationRepo *data.LocationRepo,
 	warehouseService *WarehouseService,
+	productService *ProductService,
+	supplierService *SupplierService,
+	customerService *CustomerService,
 ) *TenantService {
 	return &TenantService{
 		log:                 ctx.NewLoggerHelper("tenant/service/core-service"),
@@ -51,6 +62,9 @@ func NewTenantService(
 		roleRepo:            roleRepo,
 		locationRepo:        locationRepo,
 		warehouseService:    warehouseService,
+		productService:      productService,
+		supplierService:     supplierService,
+		customerService:     customerService,
 	}
 }
 
@@ -362,6 +376,10 @@ func (s *TenantService) SelfRegisterTenant(ctx context.Context, req *identityV1.
 		}); berr != nil {
 			s.log.Errorf("self register: create default warehouse failed: %v", berr)
 		}
+
+		// 演示数据（半天上线的"开箱即用"）：商品/供应商/客户各一小套，
+		// 注册后立即可开单体验；均为普通数据，可直接改名改码或删除。
+		s.seedDemoData(tenantCtx)
 	}
 
 	s.log.Infof("self register: tenant %q registered with admin %q", tenantCode, adminUsername)
@@ -384,4 +402,48 @@ func (s *TenantService) resolveTenantIDByCode(ctx context.Context, code string) 
 		return 0, fmt.Errorf("tenant %q not found after registration", code)
 	}
 	return resp.GetItems()[0].GetId(), nil
+}
+
+
+// seedDemoData 演示数据引导（全部软失败：缺失仅记录，不阻断注册）。
+func (s *TenantService) seedDemoData(tenantCtx context.Context) {
+	for _, p := range constants.DemoProducts {
+		if _, err := s.productService.Create(tenantCtx, &productV1.CreateProductRequest{
+			Data: &productV1.Product{
+				Code:   trans.Ptr(p.Code),
+				Name:   trans.Ptr(p.Name),
+				Spec:   trans.Ptr(p.Spec),
+				Unit:   trans.Ptr(p.Unit),
+				Enable: trans.Ptr(true),
+			},
+		}); err != nil {
+			s.log.Errorf("self register: seed demo product %s failed: %v", p.Code, err)
+		}
+	}
+	for _, sp := range constants.DemoSuppliers {
+		if _, err := s.supplierService.Create(tenantCtx, &procurementV1.CreateSupplierRequest{
+			Data: &procurementV1.Supplier{
+				Code:    trans.Ptr(sp.Code),
+				Name:    trans.Ptr(sp.Name),
+				Contact: trans.Ptr(sp.Contact),
+				Phone:   trans.Ptr(sp.Phone),
+				Enable:  trans.Ptr(true),
+			},
+		}); err != nil {
+			s.log.Errorf("self register: seed demo supplier %s failed: %v", sp.Code, err)
+		}
+	}
+	for _, c := range constants.DemoCustomers {
+		if _, err := s.customerService.Create(tenantCtx, &salesV1.CreateCustomerRequest{
+			Data: &salesV1.Customer{
+				Code:    trans.Ptr(c.Code),
+				Name:    trans.Ptr(c.Name),
+				Contact: trans.Ptr(c.Contact),
+				Phone:   trans.Ptr(c.Phone),
+				Enable:  trans.Ptr(true),
+			},
+		}); err != nil {
+			s.log.Errorf("self register: seed demo customer %s failed: %v", c.Code, err)
+		}
+	}
 }
