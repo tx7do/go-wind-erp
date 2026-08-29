@@ -21,6 +21,8 @@ import {
 import PurchaseReturnModalComponent from './purchase-return-modal.vue';
 import ReceiveModalComponent from './receive-modal.vue';
 
+import { printPurchaseOrder } from '#/utils/order-print';
+
 const data = ref();
 
 interface ItemRow {
@@ -288,6 +290,22 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 });
 
+// 打印当前单据（onOpenChange 已拉取含明细的完整单据）。
+const printing = ref(false);
+async function handlePrint() {
+  if (!data.value?.row?.id) return;
+  printing.value = true;
+  try {
+    await printPurchaseOrder(data.value.row);
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  } finally {
+    printing.value = false;
+  }
+}
+
 // 动作（仅非新建抽屉显示；按当前状态决定可用性，服务端仍是权威守卫）。
 async function handleAction(
   action: 'approve' | 'cancel' | 'complete' | 'reject' | 'submit',
@@ -487,6 +505,12 @@ function setLoading(loading: boolean) {
 
       <!-- 动作区（非新建） -->
       <div v-if="!isCreate" class="flex justify-end gap-2">
+        <a-button
+          :loading="printing"
+          @click="handlePrint"
+        >
+          {{ $t('page.purchaseOrder.button.print') }}
+        </a-button>
         <template v-if="data?.row?.status === 'DRAFT'">
           <a-button @click="handleAction('cancel')">
             {{ $t('page.purchaseOrder.button.cancel') }}

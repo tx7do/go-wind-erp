@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { h } from 'vue';
 
 import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { LucideFilePenLine, LucideTrash2 } from '@vben/icons';
+import { LucideFilePenLine, LucidePrinter, LucideTrash2 } from '@vben/icons';
 
 import { notification } from 'ant-design-vue';
 
@@ -20,6 +20,7 @@ import {
   type procurementservicev1_PurchaseOrder as PurchaseOrder,
 } from '#/api';
 import { $t } from '#/locales';
+import { printPurchaseOrderById } from '#/utils/order-print';
 
 import PurchaseOrderDrawer from './purchase_order-drawer.vue';
 
@@ -143,6 +144,17 @@ function handleEdit(row: any) {
   openModal(false, row);
 }
 
+// 行级打印：先拉完整单据（列表行不含明细）再打印。
+async function handlePrint(row: any) {
+  try {
+    await printPurchaseOrderById(row.id);
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  }
+}
+
 async function handleDelete(row: any) {
   try {
     await apiClient.purchaseOrderService.Delete({ id: row.id });
@@ -175,6 +187,12 @@ async function handleDelete(row: any) {
         </a-tag>
       </template>
       <template #action="{ row }">
+        <a-button
+          type="link"
+          :icon="h(LucidePrinter)"
+          :title="$t('page.purchaseOrder.button.print')"
+          @click.stop="handlePrint(row)"
+        />
         <a-button
           type="link"
           :icon="h(LucideFilePenLine)"

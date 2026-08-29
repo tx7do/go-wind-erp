@@ -19,6 +19,8 @@ import {
 
 import SalesReturnModalComponent from './sales-return-modal.vue';
 
+import { printSalesOrder } from '#/utils/order-print';
+
 const data = ref();
 
 interface ItemRow {
@@ -252,6 +254,22 @@ const [Drawer, drawerApi] = useVbenDrawer({
   },
 });
 
+// 打印当前单据（onOpenChange 已拉取含明细的完整单据）。
+const printing = ref(false);
+async function handlePrint() {
+  if (!data.value?.row?.id) return;
+  printing.value = true;
+  try {
+    await printSalesOrder(data.value.row);
+  } catch {
+    notification.error({
+      message: $t('ui.notification.operation_failed'),
+    });
+  } finally {
+    printing.value = false;
+  }
+}
+
 async function handleAction(
   action: 'approve' | 'cancel' | 'complete' | 'reject' | 'submit',
 ) {
@@ -425,6 +443,9 @@ function setLoading(loading: boolean) {
       </div>
 
       <div v-if="!isCreate" class="flex justify-end gap-2">
+        <a-button :loading="printing" @click="handlePrint">
+          {{ $t('page.salesOrder.button.print') }}
+        </a-button>
         <template v-if="data?.row?.status === 'DRAFT'">
           <a-button @click="handleAction('cancel')">
             {{ $t('page.salesOrder.button.cancel') }}

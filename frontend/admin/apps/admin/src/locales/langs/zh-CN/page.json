@@ -546,6 +546,35 @@
       "create": "创建供应商"
     }
   },
+  "doc": {
+    "purchaseTitle": "采 购 单",
+    "salesTitle": "销 售 单",
+    "docNumber": "单据编号",
+    "printTime": "打印时间",
+    "supplier": "供应商",
+    "customer": "客户",
+    "warehouse": "仓库",
+    "status": "状态",
+    "sku": "SKU编码",
+    "productName": "品名",
+    "spec": "规格",
+    "unit": "单位",
+    "quantity": "数量",
+    "unitPrice": "单价（元）",
+    "amount": "金额（元）",
+    "receivedQuantity": "已收数量",
+    "fulfilledQuantity": "已发数量",
+    "totalUpper": "合计（大写）",
+    "remark": "备注",
+    "sign": {
+      "creator": "制单人",
+      "approver": "审批人",
+      "supplierConfirm": "供应商确认",
+      "receiver": "收货人",
+      "customerConfirm": "客户确认",
+      "dispatcher": "发货人"
+    }
+  },
   "purchaseOrder": {
     "moduleName": "采购单",
     "poNumber": "采购单号",
@@ -577,7 +606,8 @@
       "reject": "驳回",
       "cancel": "取消",
       "complete": "完结",
-      "receive": "收货"
+      "receive": "收货",
+      "print": "打印"
     }
   },
   "payable": {
@@ -685,23 +715,24 @@
     "addItem": "添加明细",
     "amount": "金额（元）",
     "button": {
-      "create": "创建采购单",
+      "create": "创建销售单",
       "submit": "提交审批",
       "approve": "通过",
       "reject": "驳回",
       "cancel": "取消",
-      "complete": "完结"
+      "complete": "完结",
+      "print": "打印"
     },
     "itemInvalid": "请完整填写 SKU 与正整数数量",
-    "items": "采购明细",
+    "items": "销售明细",
     "itemsRequired": "至少需要一条明细",
     "moduleName": "销售单",
-    "soNumber": "采购单号",
+    "soNumber": "销售单号",
     "quantity": "数量",
-    "fulfillQuantity": "已收数量",
+    "fulfillQuantity": "已发数量",
     "skuCode": "SKU",
     "status": "状态",
-    "customerCode": "供应商",
+    "customerCode": "客户",
     "totalAmount": "总额（元）",
     "unitPrice": "单价（元）",
     "unitPriceCents": "单价（分）",

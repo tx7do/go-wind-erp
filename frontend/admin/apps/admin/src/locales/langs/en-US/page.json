@@ -517,6 +517,35 @@
       "create": "Create Supplier"
     }
   },
+  "doc": {
+    "purchaseTitle": "PURCHASE ORDER",
+    "salesTitle": "SALES ORDER",
+    "docNumber": "No.",
+    "printTime": "Printed At",
+    "supplier": "Supplier",
+    "customer": "Customer",
+    "warehouse": "Warehouse",
+    "status": "Status",
+    "sku": "SKU",
+    "productName": "Product",
+    "spec": "Spec",
+    "unit": "Unit",
+    "quantity": "Qty",
+    "unitPrice": "Unit Price",
+    "amount": "Amount",
+    "receivedQuantity": "Received",
+    "fulfilledQuantity": "Delivered",
+    "totalUpper": "Total (in words)",
+    "remark": "Remark",
+    "sign": {
+      "creator": "Prepared By",
+      "approver": "Approved By",
+      "supplierConfirm": "Supplier Confirmation",
+      "receiver": "Received By",
+      "customerConfirm": "Customer Confirmation",
+      "dispatcher": "Dispatched By"
+    }
+  },
   "purchaseOrder": {
     "moduleName": "Purchase Order",
     "poNumber": "PO Number",
@@ -548,7 +577,8 @@
       "reject": "Reject",
       "cancel": "Cancel",
       "complete": "Complete",
-      "receive": "Receive"
+      "receive": "Receive",
+      "print": "Print"
     }
   },
   "payable": {
@@ -656,23 +686,24 @@
     "addItem": "Add Item",
     "amount": "Amount",
     "button": {
-      "create": "New Purchase Order",
+      "create": "New Sales Order",
       "submit": "Submit",
       "approve": "Approve",
       "reject": "Reject",
       "cancel": "Cancel",
-      "complete": "Complete"
+      "complete": "Complete",
+      "print": "Print"
     },
     "itemInvalid": "Fill SKU and a positive quantity",
     "items": "Items",
     "itemsRequired": "At least one item is required",
     "moduleName": "Sales Order",
-    "soNumber": "PO Number",
+    "soNumber": "SO Number",
     "quantity": "Quantity",
-    "fulfillQuantity": "Received",
+    "fulfillQuantity": "Delivered",
     "skuCode": "SKU",
     "status": "Status",
-    "customerCode": "Supplier",
+    "customerCode": "Customer",
     "totalAmount": "Total",
     "unitPrice": "Unit Price",
     "unitPriceCents": "Unit Price (cents)",
