@@ -15,7 +15,13 @@
     "movementCount": "流水数",
     "lowStockTitle": "低库存清单",
     "lowStockEmpty": "暂无低库存项",
-    "movementTrendTitle": "近 30 日库存流水趋势"
+    "movementTrendTitle": "近 30 日库存流水趋势",
+    "revenueMonth": "本月收入（元）",
+    "cogsMonth": "本月成本（元）",
+    "profitMonth": "本月利润（元）",
+    "arApBalance": "应收 / 应付余额（元）",
+    "expiringLotsTitle": "临期批次预警（30 天内到期）",
+    "expiringLotsCount": "{count} 个批次待处理"
   },
   "user": {
     "moduleName": "用户",

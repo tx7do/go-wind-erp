@@ -10,6 +10,9 @@ import (
 
 	"go-wind-erp/app/core/service/internal/data"
 
+	"github.com/tx7do/go-utils/trans"
+	"go-wind-erp/pkg/constants"
+
 	adminpb "go-wind-erp/api/gen/go/admin/service/v1"
 	financeV1 "go-wind-erp/api/gen/go/finance/service/v1"
 )
@@ -23,6 +26,9 @@ type FinanceReportService struct {
 	salesOrderRepo    *data.SalesOrderRepo
 	stockPickingRepo  *data.StockPickingRepo
 	stockMoveLineRepo *data.StockMoveLineRepo
+	journalRepo       *data.JournalRepo
+	receivableRepo    *data.ReceivableRepo
+	payableRepo       *data.PayableRepo
 }
 
 func NewFinanceReportService(
@@ -30,12 +36,18 @@ func NewFinanceReportService(
 	salesOrderRepo *data.SalesOrderRepo,
 	stockPickingRepo *data.StockPickingRepo,
 	stockMoveLineRepo *data.StockMoveLineRepo,
+	journalRepo *data.JournalRepo,
+	receivableRepo *data.ReceivableRepo,
+	payableRepo *data.PayableRepo,
 ) *FinanceReportService {
 	svc := &FinanceReportService{
 		log:               ctx.NewLoggerHelper("finance_report/service/core-service"),
 		salesOrderRepo:    salesOrderRepo,
 		stockPickingRepo:  stockPickingRepo,
 		stockMoveLineRepo: stockMoveLineRepo,
+		journalRepo:       journalRepo,
+		receivableRepo:    receivableRepo,
+		payableRepo:       payableRepo,
 	}
 	return svc
 }
@@ -101,3 +113,38 @@ func (s *FinanceReportService) ProfitReport(ctx context.Context, _ *emptypb.Empt
 	return &financeV1.ProfitReportResponse{Items: items}, nil
 }
 
+
+
+// GetFinanceSummary 经营汇总（驾驶舱）：本月收入/成本取总账 6001/6401
+// 当月净额（冲回自动抵减），利润=收入−成本；应收/应付未清余额来自业务台账。
+func (s *FinanceReportService) GetFinanceSummary(ctx context.Context, _ *emptypb.Empty) (*financeV1.FinanceSummaryResponse, error) {
+	now := time.Now()
+	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+
+	revDebit, revCredit, err := s.journalRepo.AccountNetInRange(ctx, constants.AccountCodeRevenue, monthStart, now)
+	if err != nil {
+		return nil, err
+	}
+	cogsDebit, cogsCredit, err := s.journalRepo.AccountNetInRange(ctx, constants.AccountCodeCOGS, monthStart, now)
+	if err != nil {
+		return nil, err
+	}
+	arBalance, err := s.receivableRepo.OutstandingBalance(ctx)
+	if err != nil {
+		return nil, err
+	}
+	apBalance, err := s.payableRepo.OutstandingBalance(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	revenue := revCredit - revDebit
+	cogs := cogsDebit - cogsCredit
+	return &financeV1.FinanceSummaryResponse{
+		RevenueMonth: &revenue,
+		CogsMonth:    &cogs,
+		ProfitMonth:  trans.Ptr(revenue - cogs),
+		ArBalance:    &arBalance,
+		ApBalance:    &apBalance,
+	}, nil
+}

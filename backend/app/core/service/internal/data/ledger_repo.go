@@ -458,3 +458,59 @@ func (r *JournalRepo) emptyTrialBalance(ctx context.Context) (*financeV1.TrialBa
 	resp.TotalDebit, resp.TotalCredit = &td, &tc
 	return resp, nil
 }
+
+
+// AccountNetInRange 区间内单科目借/贷累计（驾驶舱汇总用；日期过滤与
+// 余额表同口径）。
+func (r *JournalRepo) AccountNetInRange(
+	ctx context.Context,
+	accountCode string,
+	from, to time.Time,
+) (debit, credit int64, err error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+
+	entryRows, err := r.entClient.Client().JournalEntry.Query().
+		Where(journalentry.TenantIDEQ(tid)).
+		All(ctx)
+	if err != nil {
+		return 0, 0, financeV1.ErrorInternalServerError("query journal entries failed")
+	}
+	ids := make([]uint32, 0, len(entryRows))
+	for _, e := range entryRows {
+		if e.EntryDate == nil {
+			continue
+		}
+		if e.EntryDate.Before(from) || e.EntryDate.After(to) {
+			continue
+		}
+		ids = append(ids, e.ID)
+	}
+	if len(ids) == 0 {
+		return 0, 0, nil
+	}
+
+	var agg []struct {
+		Debit  int64 `sql:"debit"`
+		Credit int64 `sql:"credit"`
+	}
+	if err := r.entClient.Client().JournalLine.Query().
+		Where(
+			journalline.TenantIDEQ(tid),
+			journalline.AccountCodeEQ(accountCode),
+			journalline.EntryIDIn(ids...),
+		).
+		Modify(func(se *sql.Selector) {
+			se.Select(
+				sql.As(sql.Sum(se.C(journalline.FieldDebit)), "debit"),
+				sql.As(sql.Sum(se.C(journalline.FieldCredit)), "credit"),
+			)
+		}).
+		Scan(ctx, &agg); err != nil {
+		r.log.Errorf("aggregate account net failed: %s", err.Error())
+		return 0, 0, financeV1.ErrorInternalServerError("aggregate account net failed")
+	}
+	if len(agg) == 0 {
+		return 0, 0, nil
+	}
+	return agg[0].Debit, agg[0].Credit, nil
+}

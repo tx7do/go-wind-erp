@@ -150,6 +150,13 @@ service FinanceReportService {
       get: "/admin/v1/finance/profit-report"
     };
   }
+
+  // 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+  rpc GetFinanceSummary (google.protobuf.Empty) returns (finance.service.v1.FinanceSummaryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/finance/summary"
+    };
+  }
 }
 
 // 会计服务（简易总账：科目/凭证/余额表，只读查询）

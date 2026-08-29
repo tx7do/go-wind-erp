@@ -996,7 +996,8 @@ var ReceiptService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	FinanceReportService_ProfitReport_FullMethodName = "/admin.service.v1.FinanceReportService/ProfitReport"
+	FinanceReportService_ProfitReport_FullMethodName      = "/admin.service.v1.FinanceReportService/ProfitReport"
+	FinanceReportService_GetFinanceSummary_FullMethodName = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
 )
 
 // FinanceReportServiceClient is the client API for FinanceReportService service.
@@ -1006,6 +1007,8 @@ const (
 // 财务报表服务
 type FinanceReportServiceClient interface {
 	ProfitReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.ProfitReportResponse, error)
+	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+	GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.FinanceSummaryResponse, error)
 }
 
 type financeReportServiceClient struct {
@@ -1026,6 +1029,16 @@ func (c *financeReportServiceClient) ProfitReport(ctx context.Context, in *empty
 	return out, nil
 }
 
+func (c *financeReportServiceClient) GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v11.FinanceSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.FinanceSummaryResponse)
+	err := c.cc.Invoke(ctx, FinanceReportService_GetFinanceSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FinanceReportServiceServer is the server API for FinanceReportService service.
 // All implementations must embed UnimplementedFinanceReportServiceServer
 // for forward compatibility.
@@ -1033,6 +1046,8 @@ func (c *financeReportServiceClient) ProfitReport(ctx context.Context, in *empty
 // 财务报表服务
 type FinanceReportServiceServer interface {
 	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
+	// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
 	mustEmbedUnimplementedFinanceReportServiceServer()
 }
 
@@ -1045,6 +1060,9 @@ type UnimplementedFinanceReportServiceServer struct{}
 
 func (UnimplementedFinanceReportServiceServer) ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProfitReport not implemented")
+}
+func (UnimplementedFinanceReportServiceServer) GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFinanceSummary not implemented")
 }
 func (UnimplementedFinanceReportServiceServer) mustEmbedUnimplementedFinanceReportServiceServer() {}
 func (UnimplementedFinanceReportServiceServer) testEmbeddedByValue()                              {}
@@ -1085,6 +1103,24 @@ func _FinanceReportService_ProfitReport_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FinanceReportService_GetFinanceSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceReportServiceServer).GetFinanceSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FinanceReportService_GetFinanceSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceReportServiceServer).GetFinanceSummary(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FinanceReportService_ServiceDesc is the grpc.ServiceDesc for FinanceReportService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1095,6 +1131,10 @@ var FinanceReportService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProfitReport",
 			Handler:    _FinanceReportService_ProfitReport_Handler,
+		},
+		{
+			MethodName: "GetFinanceSummary",
+			Handler:    _FinanceReportService_GetFinanceSummary_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

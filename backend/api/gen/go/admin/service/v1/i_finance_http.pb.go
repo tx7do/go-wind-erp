@@ -809,15 +809,19 @@ func (c *ReceiptServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 	return &out, nil
 }
 
+const OperationFinanceReportServiceGetFinanceSummary = "/admin.service.v1.FinanceReportService/GetFinanceSummary"
 const OperationFinanceReportServiceProfitReport = "/admin.service.v1.FinanceReportService/ProfitReport"
 
 type FinanceReportServiceHTTPServer interface {
+	// GetFinanceSummary 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+	GetFinanceSummary(context.Context, *emptypb.Empty) (*v11.FinanceSummaryResponse, error)
 	ProfitReport(context.Context, *emptypb.Empty) (*v11.ProfitReportResponse, error)
 }
 
 func RegisterFinanceReportServiceHTTPServer(s *http.Server, srv FinanceReportServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/finance/profit-report", _FinanceReportService_ProfitReport0_HTTP_Handler(srv))
+	r.GET("/admin/v1/finance/summary", _FinanceReportService_GetFinanceSummary0_HTTP_Handler(srv))
 }
 
 func _FinanceReportService_ProfitReport0_HTTP_Handler(srv FinanceReportServiceHTTPServer) func(ctx http.Context) error {
@@ -839,7 +843,28 @@ func _FinanceReportService_ProfitReport0_HTTP_Handler(srv FinanceReportServiceHT
 	}
 }
 
+func _FinanceReportService_GetFinanceSummary0_HTTP_Handler(srv FinanceReportServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFinanceReportServiceGetFinanceSummary)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetFinanceSummary(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.FinanceSummaryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type FinanceReportServiceHTTPClient interface {
+	// GetFinanceSummary 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+	GetFinanceSummary(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.FinanceSummaryResponse, err error)
 	ProfitReport(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v11.ProfitReportResponse, err error)
 }
 
@@ -849,6 +874,20 @@ type FinanceReportServiceHTTPClientImpl struct {
 
 func NewFinanceReportServiceHTTPClient(client *http.Client) FinanceReportServiceHTTPClient {
 	return &FinanceReportServiceHTTPClientImpl{client}
+}
+
+// GetFinanceSummary 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+func (c *FinanceReportServiceHTTPClientImpl) GetFinanceSummary(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.FinanceSummaryResponse, error) {
+	var out v11.FinanceSummaryResponse
+	pattern := "/admin/v1/finance/summary"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationFinanceReportServiceGetFinanceSummary))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *FinanceReportServiceHTTPClientImpl) ProfitReport(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v11.ProfitReportResponse, error) {

@@ -246,3 +246,8 @@ func NewFinanceReportService(
 func (s *FinanceReportService) ProfitReport(ctx context.Context, req *emptypb.Empty) (*financeV1.ProfitReportResponse, error) {
 	return s.financeReportServiceClient.ProfitReport(ctx, req)
 }
+
+// GetFinanceSummary 经营汇总（驾驶舱）。
+func (s *FinanceReportService) GetFinanceSummary(ctx context.Context, req *emptypb.Empty) (*financeV1.FinanceSummaryResponse, error) {
+	return s.financeReportServiceClient.GetFinanceSummary(ctx, req)
+}

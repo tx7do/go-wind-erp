@@ -260,8 +260,14 @@ func (r *StockLotRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 		return nil, inventoryV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 前端 PaginationQuery 把 formValues 序列化进 query 字段（filter 恒空），
+	// 与其余列表的通用过滤通道一致——两个都兼容。
 	var filter lotFilter
-	if raw := req.GetFilter(); raw != "" {
+	raw := req.GetQuery()
+	if raw == "" {
+		raw = req.GetFilter()
+	}
+	if raw != "" {
 		if err := json.Unmarshal([]byte(raw), &filter); err != nil {
 			return nil, inventoryV1.ErrorBadRequest("invalid filter")
 		}

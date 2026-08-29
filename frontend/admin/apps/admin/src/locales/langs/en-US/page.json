@@ -15,7 +15,13 @@
     "movementCount": "Movements",
     "lowStockTitle": "Low Stock",
     "lowStockEmpty": "No low-stock items",
-    "movementTrendTitle": "Movement Trend (Last 30 Days)"
+    "movementTrendTitle": "Movement Trend (Last 30 Days)",
+    "revenueMonth": "Revenue (Month)",
+    "cogsMonth": "COGS (Month)",
+    "profitMonth": "Profit (Month)",
+    "arApBalance": "AR / AP Balance",
+    "expiringLotsTitle": "Expiring Lots (within 30 days)",
+    "expiringLotsCount": "{count} lots to handle"
   },
   "user": {
     "moduleName": "User",

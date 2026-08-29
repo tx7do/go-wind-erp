@@ -5289,3 +5289,125 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TrialBalanceResponseValidationError{}
+
+// Validate checks the field values on FinanceSummaryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FinanceSummaryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FinanceSummaryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FinanceSummaryResponseMultiError, or nil if none found.
+func (m *FinanceSummaryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FinanceSummaryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.RevenueMonth != nil {
+		// no validation rules for RevenueMonth
+	}
+
+	if m.CogsMonth != nil {
+		// no validation rules for CogsMonth
+	}
+
+	if m.ProfitMonth != nil {
+		// no validation rules for ProfitMonth
+	}
+
+	if m.ArBalance != nil {
+		// no validation rules for ArBalance
+	}
+
+	if m.ApBalance != nil {
+		// no validation rules for ApBalance
+	}
+
+	if len(errors) > 0 {
+		return FinanceSummaryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// FinanceSummaryResponseMultiError is an error wrapping multiple validation
+// errors returned by FinanceSummaryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type FinanceSummaryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FinanceSummaryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FinanceSummaryResponseMultiError) AllErrors() []error { return m }
+
+// FinanceSummaryResponseValidationError is the validation error returned by
+// FinanceSummaryResponse.Validate if the designated constraints aren't met.
+type FinanceSummaryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FinanceSummaryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FinanceSummaryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FinanceSummaryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FinanceSummaryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FinanceSummaryResponseValidationError) ErrorName() string {
+	return "FinanceSummaryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FinanceSummaryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFinanceSummaryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FinanceSummaryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FinanceSummaryResponseValidationError{}

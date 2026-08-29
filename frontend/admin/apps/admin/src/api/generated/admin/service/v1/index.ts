@@ -4389,6 +4389,10 @@ export interface FinanceReportService {
   ProfitReport(
     request: wellKnownEmpty,
   ): Promise<financeservicev1_ProfitReportResponse>;
+  // 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+  GetFinanceSummary(
+    request: wellKnownEmpty,
+  ): Promise<financeservicev1_FinanceSummaryResponse>;
 }
 
 export function createFinanceReportServiceClient(
@@ -4403,6 +4407,14 @@ export function createFinanceReportServiceClient(
         method: 'ProfitReport',
       }) as Promise<financeservicev1_ProfitReportResponse>;
     },
+    GetFinanceSummary(_request) {
+      const path = `admin/v1/finance/summary`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'FinanceReportService',
+        method: 'GetFinanceSummary',
+      }) as Promise<financeservicev1_FinanceSummaryResponse>;
+    },
   };
 }
 export type financeservicev1_ProfitReportResponse = {
@@ -4414,6 +4426,16 @@ export type financeservicev1_MonthlyProfit = {
   month?: string;
   profit?: number;
   revenue?: number;
+};
+
+// 经营汇总（驾驶舱）：本月收入/成本/利润（总账 6001/6401 当月净额）+
+// 应收/应付未清余额。金额单位分。
+export type financeservicev1_FinanceSummaryResponse = {
+  apBalance?: number;
+  arBalance?: number;
+  cogsMonth?: number;
+  profitMonth?: number;
+  revenueMonth?: number;
 };
 
 // 会计服务（简易总账：科目/凭证/余额表，只读查询）

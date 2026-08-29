@@ -35,6 +35,10 @@ export const LucidePencilOff = createIconifyIcon('lucide:pencil-off');
 export const LucideNotebookPen = createIconifyIcon('lucide:notebook-pen');
 export const LucideFilePenLine = createIconifyIcon('lucide:file-pen-line');
 export const LucidePrinter = createIconifyIcon('lucide:printer');
+export const LucideCoins = createIconifyIcon('lucide:coins');
+export const LucideTrendingUp = createIconifyIcon('lucide:trending-up');
+export const LucideTrendingDown = createIconifyIcon('lucide:trending-down');
+export const LucideWallet = createIconifyIcon('lucide:wallet');
 
 export const LucideInfo = createIconifyIcon('lucide:info');
 

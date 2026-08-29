@@ -450,3 +450,27 @@ func protoTime(t *timestamppb.Timestamp) *time.Time {
 	tt := t.AsTime()
 	return &tt
 }
+
+
+// OutstandingBalance 未清余额合计（amount − paid_amount，非取消单）。
+// Go 侧求和（镜像 aging 模式——租户单据量有限，避免脆弱的 SQL 表达式）。
+func (r *PayableRepo) OutstandingBalance(ctx context.Context) (int64, error) {
+	tid, _ := maybeTenantFromViewer(ctx)
+	rows, err := r.entClient.Client().Payable.Query().
+		Where(payable.TenantIDEQ(tid), payable.StatusNEQ(payable.StatusCancelled)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query outstanding balance failed: %s", err.Error())
+		return 0, financeV1.ErrorInternalServerError("query outstanding balance failed")
+	}
+	var balance int64
+	for _, row := range rows {
+		if row.Amount != nil {
+			balance += *row.Amount
+		}
+		if row.PaidAmount != nil {
+			balance -= *row.PaidAmount
+		}
+	}
+	return balance, nil
+}

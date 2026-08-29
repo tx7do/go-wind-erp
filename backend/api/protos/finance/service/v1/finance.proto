@@ -546,7 +546,7 @@ message CountReceiptResponse {
 }
 
 // ==============================
-// 利润报表
+// 利润报表 / 经营汇总
 // ==============================
 
 message ProfitReportResponse {
@@ -774,4 +774,34 @@ message TrialBalanceResponse {
     json_name = "totalCredit",
     (gnostic.openapi.v3.property) = {description: "贷方合计"}
   ]; // 贷方合计
+}
+
+
+// 经营汇总（驾驶舱）：本月收入/成本/利润（总账 6001/6401 当月净额）+
+// 应收/应付未清余额。金额单位分。
+message FinanceSummaryResponse {
+  optional int64 revenue_month = 1 [
+    json_name = "revenueMonth",
+    (gnostic.openapi.v3.property) = {description: "本月收入（分，6001 净额）"}
+  ]; // 本月收入
+
+  optional int64 cogs_month = 2 [
+    json_name = "cogsMonth",
+    (gnostic.openapi.v3.property) = {description: "本月销售成本（分，6401 净额）"}
+  ]; // 本月成本
+
+  optional int64 profit_month = 3 [
+    json_name = "profitMonth",
+    (gnostic.openapi.v3.property) = {description: "本月利润（分，收入−成本）"}
+  ]; // 本月利润
+
+  optional int64 ar_balance = 4 [
+    json_name = "arBalance",
+    (gnostic.openapi.v3.property) = {description: "应收未清余额（分）"}
+  ]; // 应收余额
+
+  optional int64 ap_balance = 5 [
+    json_name = "apBalance",
+    (gnostic.openapi.v3.property) = {description: "应付未清余额（分）"}
+  ]; // 应付余额
 }

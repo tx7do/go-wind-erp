@@ -243,3 +243,17 @@ export function paymentMethodToName(method: financeservicev1_Payment_Method) {
 }
 
 export { centsToYuan } from './procurement';
+
+
+// ==============================
+// 经营汇总（驾驶舱：本月收入/成本/利润 + 应收应付余额）
+// ==============================
+
+export async function fetchFinanceSummary() {
+  return queryClient.fetchQuery({
+    queryKey: ['financeSummary'],
+    queryFn: () => apiClient.financeReportService.GetFinanceSummary({}),
+    staleTime: 0,
+    retry: 0,
+  });
+}
