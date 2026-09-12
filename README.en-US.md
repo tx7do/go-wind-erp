@@ -1,14 +1,12 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind ERP" />
+
 # GoWind ERP
-
-### FengXing · A Lightweight, All-in-One ERP Foundation for Small & Medium Teams
-
-**No implementation consultants · Up and running in half a day · Core business data fully connected**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-**English** · **[中文](./README.md)** · **[日本語](./README.ja-JP.md)**
+**English** | [中文](./README.md) | [日本語](./README.ja-JP.md)
 
 </div>
 

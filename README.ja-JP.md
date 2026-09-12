@@ -1,14 +1,12 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind ERP" />
+
 # GoWind ERP
-
-### 風行 · 中小チームのための軽量・オールインワン ERP 基盤
-
-**導入コンサルタント不要 · 半日で使い始められる · コア業務データを完全に連携**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-**[English](./README.en-US.md)** · **[中文](./README.md)** · **日本語**
+[English](./README.en-US.md) | [中文](./README.md) | **日本語**
 
 </div>
 
