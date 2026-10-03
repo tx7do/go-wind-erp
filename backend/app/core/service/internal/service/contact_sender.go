@@ -9,7 +9,7 @@ import (
 
 // ContactCodeSender 向手机号/邮箱投递验证码。
 // 默认实现 LoggingContactSender 仅记录日志，不接入真实短信/邮件网关；
-// 接入真实网关时提供新实现并替换 wire provider 即可。
+// 接入真实网关时提供新实现并替换 wiring.go 对应装配行即可。
 type ContactCodeSender interface {
 	Send(ctx context.Context, dest, code string) error
 }

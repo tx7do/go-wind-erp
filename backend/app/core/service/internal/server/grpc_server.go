@@ -103,6 +103,8 @@ func NewGrpcServer(
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
 	_ *service.DemoDataService,
+
+	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -175,6 +177,8 @@ func NewGrpcServer(
 	internalMessageV1.RegisterInternalMessageServiceServer(srv, internalMessageService)
 	internalMessageV1.RegisterInternalMessageCategoryServiceServer(srv, internalMessageCategoryService)
 	internalMessageV1.RegisterInternalMessageRecipientServiceServer(srv, internalMessageRecipientService)
+
+	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
 	return srv, nil
 }

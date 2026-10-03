@@ -97,6 +97,8 @@ func NewRestServer(
 	payableService *service.PayableService,
 	financeSummaryService *service.FinanceSummaryService,
 	paymentService *service.PaymentService,
+
+	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -128,6 +130,8 @@ func NewRestServer(
 	appV1.RegisterPayableServiceHTTPServer(srv, payableService)
 	appV1.RegisterFinanceSummaryServiceHTTPServer(srv, financeSummaryService)
 	appV1.RegisterPaymentServiceHTTPServer(srv, paymentService)
+
+	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

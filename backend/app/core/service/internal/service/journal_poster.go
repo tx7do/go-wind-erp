@@ -199,7 +199,7 @@ func (p *journalPoster) PostPaymentApplied(ctx context.Context, paymentID uint32
 	}
 }
 
-// NewJournalPoster wire 提供者。
+// NewJournalPoster 装配提供者（由 wiring.go 调用）。
 func NewJournalPoster(ctx *bootstrap.Context, journalRepo *data.JournalRepo) *journalPoster {
 	return newJournalPoster(journalRepo, ctx.NewLoggerHelper("journal/poster/core-service"))
 }

@@ -74,7 +74,7 @@ GoWind ERP は、組織と権限、認証、監査、ファイルストレージ
 |:---|:---|:---|
 | 言語 | [Go 1.25+](https://go.dev/) | 高性能コンパイル言語 |
 | フレームワーク | [go-kratos](https://go-kratos.dev/) | マイクロサービスフレームワーク |
-| DI | [Wire](https://github.com/google/wire) | コンパイル時依存性注入 |
+| DI | 手書きアセンブリ (`wiring.go`) | DI フレームワークなし。`make register` が登録を補助 |
 | ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
 | データベース | [PostgreSQL](https://www.postgresql.org/) | リレーショナルデータベース |
 | キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
@@ -174,7 +174,7 @@ make api
 # OpenAPI ドキュメントの生成
 make openapi
 
-# 全コードの生成 (ent + wire + api + openapi)
+# 全コードの生成 (ent + api + openapi)
 make gen
 
 # 全サービスのビルド

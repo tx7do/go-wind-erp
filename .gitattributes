@@ -9,8 +9,5 @@
 # Generated ent code.
 /backend/app/core/service/internal/data/ent/**/*.go text eol=lf
 
-# Wire-generated wiring.
-/backend/app/**/wire_gen.go text eol=lf
-
 # Bundled OpenAPI specs are generated.
 /backend/app/**/assets/openapi.yaml text eol=lf

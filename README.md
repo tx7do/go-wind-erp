@@ -74,7 +74,7 @@ GoWind ERP 的通用基座能力（组织权限、认证、审计、文件存储
 |:-------|:-------------------------------------------------------------------------|:--------------|
 | 语言     | [Go 1.25+](https://go.dev/)                                             | 高性能编译型语言    |
 | 框架     | [go-kratos](https://go-kratos.dev/)                                     | 微服务框架       |
-| 依赖注入   | [Wire](https://github.com/google/wire)                                  | 编译时依赖注入      |
+| 依赖注入   | 手写装配（wiring.go）                                                                  | 无 DI 框架，`make register` 辅助登记 |
 | ORM    | [Ent](https://entgo.io/)                                                | Go 实体框架      |
 | 数据库    | [PostgreSQL](https://www.postgresql.org/)                               | 关系型数据库       |
 | 缓存     | [Redis](https://redis.io/)                                              | 内存数据库       |
@@ -174,7 +174,7 @@ make api
 # 生成 OpenAPI 文档
 make openapi
 
-# 一键生成全部代码 (ent + wire + api + openapi)
+# 一键生成全部代码 (ent + api + openapi)
 make gen
 
 # 构建所有服务
