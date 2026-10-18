@@ -305,14 +305,16 @@
     }
   },
   "internalMessage": {
-    "moduleName": "Messages",
-    "title": "Subject",
+    "moduleName": "Message",
+    "title": "Title",
     "content": "Content",
     "type": "Type",
     "status": "Status",
     "categoryName": "Category",
     "senderName": "Sender",
+    "senderSystem": "System",
     "categoryId": "Category",
+    "createdAt": "Received At",
     "readAt": "Read At",
     "button": {
       "create": "Publish Message"
