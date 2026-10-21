@@ -132,3 +132,25 @@ export function isSafeHref(url: string | null | undefined): boolean {
   if (/^\s*(javascript|data|vbscript|file):/i.test(url)) return false;
   return SAFE_HREF_REGEXP.test(url);
 }
+
+/**
+ * 从权限树勾选集合中只保留真正的叶子 ID（antd 树勾选会带半选父节点，
+ * 直接提交会给父节点也建权限项）。这里用叶子集合对 checkedKeys 求交集。
+ */
+export function extractLeafIds(checkedKeys: unknown[], treeData: any[]): number[] {
+  if (!Array.isArray(checkedKeys) || !Array.isArray(treeData)) return [];
+  const leafIds = new Set<number>();
+  const collect = (nodes: any[]) => {
+    for (const node of nodes) {
+      if (node.children && node.children.length > 0) {
+        collect(node.children);
+      } else if (typeof node.key === 'number' && !isNaN(node.key)) {
+        leafIds.add(node.key);
+      }
+    }
+  };
+  collect(treeData);
+  return checkedKeys
+    .filter((v): v is number => typeof v === 'number' && !isNaN(v) && leafIds.has(v))
+    .map((v) => Number(v));
+}

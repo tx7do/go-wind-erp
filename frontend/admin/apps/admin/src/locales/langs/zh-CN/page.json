@@ -68,7 +68,10 @@
       "editPassword": "修改密码",
       "banAccount": "禁用账号",
       "updateUserInfo": "更新基本信息",
-      "updatePassword": "更新密码"
+      "updatePassword": "更新密码",
+      "uploadAvatar": "上传头像",
+      "deleteAvatar": "删除头像",
+      "resetMfa": "重置 MFA"
     },
     "profile": {
       "tab": {
@@ -116,6 +119,24 @@
     "tenantName": "所属租户",
     "button": {
       "create": "创建角色"
+    },
+    "dataScope": "数据权限范围",
+    "orgUnits": "授权组织单元",
+    "fieldPerm": {
+      "title": "字段权限",
+      "userTitle": "字段权限（User）",
+      "roleTitle": "字段权限（Role）",
+      "hint": "勾选的字段对该角色用户不可见：列表/详情不再显示，且不能通过创建/编辑写入（重新登录后生效）。",
+      "field": {
+        "email": "邮箱",
+        "mobile": "手机号",
+        "telephone": "固定电话",
+        "address": "地址",
+        "region": "区域",
+        "lastLoginAt": "最后登录时间",
+        "lastLoginIp": "最后登录 IP",
+        "permissions": "权限集（角色绑定的权限列表）"
+      }
     }
   },
   "permission": {
@@ -125,8 +146,14 @@
     "path": "树路径",
     "groupId": "分组",
     "groupName": "分组名称",
-    "menuIds": "分配菜单",
-    "apiIds": "分配API",
+    "menuIds": "关联菜单",
+    "apiIds": "关联API",
+    "menuIdsPlaceholder": "请选择关联菜单",
+    "apiIdsPlaceholder": "请选择关联API",
+    "treeExpandAll": "展开",
+    "treeCollapseAll": "折叠",
+    "selectAll": "全选",
+    "deselectAll": "取选",
     "description": "权限描述",
     "button": {
       "create": "创建权限",
@@ -140,7 +167,8 @@
     "parentId": "上级分组",
     "button": {
       "create": "创建分组"
-    }
+    },
+    "moduleOther": "其他"
   },
   "dict": {
     "moduleName": "字典",
@@ -289,12 +317,12 @@
     "enable": "启用状态",
     "button": {
       "create": "创建任务",
-      "start": "启动任务",
-      "restart": "重启任务",
-      "stop": "停止任务",
-      "startAll": "启动全部任务",
-      "restartAll": "重启全部任务",
-      "stopAll": "停止全部任务"
+      "start": "启动",
+      "restart": "重启",
+      "stop": "停止",
+      "startAll": "全部启动",
+      "restartAll": "全部重启",
+      "stopAll": "全部停止"
     },
     "text": {
       "do_you_want_start_all_task": "您确定要启动全部任务吗？",
@@ -318,12 +346,18 @@
     "createdAt": "接收时间",
     "readAt": "已读时间",
     "button": {
-      "create": "发布消息"
+      "create": "创建消息",
+      "markAsRead": "标记为已读",
+      "markAllRead": "全部已读"
     },
     "drawer": {
-      "create": "发布消息",
-      "update": "修改消息"
-    }
+      "create": "创建消息",
+      "update": "更新消息"
+    },
+    "sendScope": "发送范围",
+    "sendScopeAll": "全员",
+    "sendScopeUsers": "指定用户",
+    "targetUsers": "接收用户"
   },
   "internalMessageCategory": {
     "moduleName": "消息分类",
@@ -365,7 +399,31 @@
     "createdAt": "日志时间",
     "path": "请求路径",
     "httpMethod": "请求方法",
-    "latencyMs": "耗时（毫秒）"
+    "latencyMs": "耗时（毫秒）",
+    "sectionBasic": "基本信息",
+    "sectionDevice": "设备信息",
+    "sectionApi": "接口信息",
+    "sectionOther": "其他信息",
+    "userId": "用户ID",
+    "statusCode": "状态码",
+    "tenantName": "所属租户",
+    "requestUri": "请求URI",
+    "apiModule": "API模块",
+    "apiOperation": "API操作",
+    "apiDescription": "API描述",
+    "requestBody": "请求体",
+    "requestHeader": "请求头",
+    "response": "响应内容",
+    "reason": "原因",
+    "referer": "来源页",
+    "spanId": "Span ID",
+    "requestId": "请求ID",
+    "traceId": "链路ID",
+    "logHash": "日志哈希",
+    "signature": "签名",
+    "osName": "操作系统",
+    "browserName": "浏览器",
+    "userAgent": "User-Agent"
   },
   "dataAccessAuditLog": {
     "moduleName": "数据访问日志",
@@ -444,7 +502,7 @@
     }
   },
   "language": {
-    "moduleName": "语言管理",
+    "moduleName": "语言",
     "languageName": "语言名称",
     "languageCode": "语言代码",
     "nativeName": "本地名称",

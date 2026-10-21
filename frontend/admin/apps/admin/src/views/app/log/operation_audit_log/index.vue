@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, type VbenFormProps } from '@vben/common-ui';
+import { h } from 'vue';
+
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideEye } from '@vben/icons';
 
 import dayjs from 'dayjs';
 
@@ -17,7 +20,12 @@ import {
   successToColor,
   successToNameWithStatusCode,
 } from '#/api';
+import { type auditservicev1_OperationAuditLog as OperationAuditLog } from '#/api';
 import { $t } from '#/locales';
+import TableActions from '#/components/TableActions.vue';
+import type { TableAction } from '#/components/TableActions.vue';
+
+import OperationAuditLogDetailDrawer from './operation-audit-log-detail-drawer.vue';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -198,7 +206,7 @@ const gridOptions: VxeGridProps<ApiAuditLog> = {
     {
       title: $t('page.operationAuditLog.action'),
       field: 'action',
-      slots: { default: 'action' },
+      slots: { default: 'actionTag' },
       width: 80,
     },
     { title: $t('page.operationAuditLog.resourceType'), field: 'resourceType' },
@@ -235,11 +243,15 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
       <template #geoLocation="{ row }">
         {{ row.geoLocation.province }} {{ row.geoLocation.city }}
       </template>
-      <template #action="{ row }">
+      <template #actionTag="{ row }">
         <a-tag :color="operationAuditLogActionToColor(row.action)">
           {{ operationAuditLogActionToName(row.action) }}
         </a-tag>
       </template>
+      <template #action="{ row }">
+        <TableActions :row="row" :actions="buildRowActions()" />
+      </template>
     </Grid>
+    <Drawer />
   </Page>
 </template>

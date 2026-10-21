@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, type VbenFormProps } from '@vben/common-ui';
+import { h } from 'vue';
+
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideEye } from '@vben/icons';
 
 import dayjs from 'dayjs';
 
@@ -17,7 +20,12 @@ import {
   successToColor,
   successToNameWithStatusCode,
 } from '#/api';
+import { type auditservicev1_DataAccessAuditLog as DataAccessAuditLog } from '#/api';
 import { $t } from '#/locales';
+import TableActions from '#/components/TableActions.vue';
+import type { TableAction } from '#/components/TableActions.vue';
+
+import DataAccessAuditLogDetailDrawer from './data-access-audit-log-detail-drawer.vue';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -237,6 +245,10 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
           {{ dataAccessAuditLogAccessTypeToName(row.accessType) }}
         </a-tag>
       </template>
+      <template #action="{ row }">
+        <TableActions :row="row" :actions="buildRowActions()" />
+      </template>
     </Grid>
+    <Drawer />
   </Page>
 </template>

@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, type VbenFormProps } from '@vben/common-ui';
+import { h } from 'vue';
+
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideEye } from '@vben/icons';
 
 import dayjs from 'dayjs';
 
@@ -16,6 +19,10 @@ import {
   successToNameWithStatusCode,
 } from '#/api';
 import { $t } from '#/locales';
+import TableActions from '#/components/TableActions.vue';
+import type { TableAction } from '#/components/TableActions.vue';
+
+import ApiAuditLogDetailDrawer from './api-audit-log-detail-drawer.vue';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -213,10 +220,38 @@ const gridOptions: VxeGridProps<ApiAuditLog> = {
       field: 'ipAddress',
       width: 140,
     },
+    {
+      title: $t('ui.table.action'),
+      field: 'action',
+      fixed: 'right',
+      slots: { default: 'action' },
+      width: 100,
+    },
   ],
 };
 
 const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
+
+const [Drawer, drawerApi] = useVbenDrawer({
+  connectedComponent: ApiAuditLogDetailDrawer,
+});
+
+function handleView(row: any) {
+  drawerApi.setData({ row });
+  drawerApi.open();
+}
+
+/* 操作列描述符：单详情钮（定式由 TableActions 统一执行） */
+function buildRowActions(): TableAction[] {
+  return [
+    {
+      key: 'detail',
+      label: $t('ui.button.detail'),
+      icon: h(LucideEye),
+      onClick: handleView,
+    },
+  ];
+}
 </script>
 
 <template>
@@ -233,6 +268,10 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
       <template #platform="{ row }">
         {{ row.deviceInfo.osName }} {{ row.deviceInfo.browserName }}
       </template>
+      <template #action="{ row }">
+        <TableActions :row="row" :actions="buildRowActions()" />
+      </template>
     </Grid>
+    <Drawer />
   </Page>
 </template>

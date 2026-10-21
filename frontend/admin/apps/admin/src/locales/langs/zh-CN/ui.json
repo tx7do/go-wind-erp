@@ -30,10 +30,14 @@
     "disable": "禁用"
   },
   "button": {
+    "add": "新增",
+    "exportFormatCsv": "CSV (逗号分隔)",
+    "exportFormatXlsx": "Excel 工作簿",
     "ok": "确定",
     "confirm": "确认",
     "cancel": "取消",
     "close": "关闭",
+    "view": "查看{moduleName}",
     "submit": "提交",
     "reset": "重置",
     "save": "保存",
@@ -63,12 +67,20 @@
     "decline": "拒绝",
     "login": "登录",
     "logout": "退出",
-    "register": "注册"
+    "register": "注册",
+    "exportAll": "导出全部",
+    "detail": "详情",
+    "more": "更多"
   },
   "modal": {
     "create": "创建{moduleName}",
-    "update": "编辑{moduleName}",
-    "delete": "删除{moduleName}"
+    "update": "更新{moduleName}",
+    "delete": "删除{moduleName}",
+    "view": "查看{moduleName}"
+  },
+  "drawer": {
+    "unsavedMessage": "表单内容已修改，是否放弃本次编辑？",
+    "discardButton": "确定放弃"
   },
   "notification": {
     "create_success": "创建成功",
@@ -114,7 +126,7 @@
   },
   "title": {
     "create": "创建{moduleName}",
-    "update": "编辑{moduleName}",
+    "update": "更新{moduleName}",
     "delete": "删除{moduleName}",
     "insert_url": "插入链接",
     "confirm": "确认{action}"

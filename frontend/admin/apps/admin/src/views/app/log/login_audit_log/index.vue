@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, type VbenFormProps } from '@vben/common-ui';
+import { h } from 'vue';
+
+import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
+import { LucideEye } from '@vben/icons';
 
 import dayjs from 'dayjs';
 
@@ -21,6 +24,10 @@ import {
   PaginationQuery,
 } from '#/api';
 import { $t } from '#/locales';
+import TableActions from '#/components/TableActions.vue';
+import type { TableAction } from '#/components/TableActions.vue';
+
+import LoginAuditLogDetailDrawer from './login-audit-log-detail-drawer.vue';
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -256,8 +263,12 @@ const [Grid] = useVbenVxeGrid({ gridOptions, formOptions });
         {{ row.geoLocation.province }} {{ row.geoLocation.city }}
       </template>
       <template #platform="{ row }">
-        {{ row.deviceInfo.osName }} {{ row.deviceInfo.browserName }}
+        {{ row.deviceInfo?.osName }} {{ row.deviceInfo?.browserName }}
+      </template>
+      <template #action="{ row }">
+        <TableActions :row="row" :actions="buildRowActions()" />
       </template>
     </Grid>
+    <Drawer />
   </Page>
 </template>

@@ -22,9 +22,45 @@ import {
   statusToName,
 } from '#/api';
 import { $t } from '#/locales';
+import TableActions from '#/components/TableActions.vue';
+import type { TableAction } from '#/components/TableActions.vue';
+import TableAddButton from '#/components/TableAddButton.vue';
+import TableExportButton from '#/components/TableExportButton.vue';
 import { getRandomColor } from '#/utils/color';
 
 import MenuDrawer from './menu-drawer.vue';
+
+
+/**
+ * 菜单标题关键词的前端过滤。
+ * 标题没法在服务端搜：库里 meta.title 存的是 i18n key 或源语言文本，用户看到的
+ * 译文只有前端知道；且后端 go-crud 对 meta.* JSONB 路径的过滤条件值绑定有缺陷
+ * （值被丢成空串，CONTAINS 恒真/EQ 恒假）。因此按「所见即所搜」在前端匹配：
+ * 译文 + 库里原文 + 路由名三路 contains；命中行连同祖先链一起保留，
+ * vxe 的 treeConfig.transform 才能还原树形。
+ */
+function filterMenusByTitle(items: Menu[], keyword?: string): Menu[] {
+  const kw = (keyword ?? '').trim().toLowerCase();
+  if (!kw) return items;
+  const byId = new Map<number, Menu>(
+    items.map((item) => [item.id as number, item]),
+  );
+  const keep = new Set<number>();
+  for (const item of items) {
+    const title = item.meta?.title ?? '';
+    const haystack = [$t(title), title, item.name ?? '']
+      .join('\n')
+      .toLowerCase();
+    if (!haystack.includes(kw)) continue;
+    keep.add(item.id as number);
+    let parentId = item.parentId;
+    while (parentId != null && !keep.has(parentId)) {
+      keep.add(parentId);
+      parentId = byId.get(parentId)?.parentId;
+    }
+  }
+  return items.filter((item) => keep.has(item.id as number));
+}
 
 const formOptions: VbenFormProps = {
   // 默认展开
@@ -87,18 +123,19 @@ const gridOptions: VxeGridProps<Menu> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        console.log('query:', formValues);
-
-        return await fetchListMenus(
+        // 标题走前端过滤（见 filterMenusByTitle），服务端只收 status；
+        // pageSize 拉满确保全量行都在前端过滤范围内
+        const resp = await fetchListMenus(
           new PaginationQuery({
-            paging: { page: page.currentPage, pageSize: page.pageSize },
+            paging: { page: page.currentPage, pageSize: 1000 },
             formValues: {
-              'meta.title': formValues.name,
               status: formValues.status,
             },
             orderBy: ['id'],
           }),
         );
+        const items = filterMenusByTitle(resp.items ?? [], formValues.name);
+        return { ...resp, items, total: items.length };
       },
     },
   },
@@ -139,10 +176,13 @@ const gridOptions: VxeGridProps<Menu> = {
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
-      width: 90,
+      width: 140,
     },
   ],
 };
+
+const exportFetcher = (page: number, pageSize: number) =>
+  fetchListMenus(new PaginationQuery({ paging: { page, pageSize } }));
 
 const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
@@ -216,21 +256,44 @@ function normalizeAuthority(authority: unknown): string[] {
   }
   return [];
 }
+
+/* 操作列描述符：编辑行内、删除 Popconfirm 确认（≤3 个全行内，定式由 TableActions 统一执行） */
+function buildRowActions(): TableAction[] {
+  return [
+    {
+      key: 'edit',
+      label: $t('common.edit'),
+      icon: h(LucideFilePenLine),
+      onClick: handleEdit,
+    },
+    {
+      key: 'delete',
+      label: $t('common.delete'),
+      icon: h(LucideTrash2),
+      danger: true,
+      confirm: {
+        title: $t('ui.text.do_you_want_delete', {
+          moduleName: $t('page.menu.moduleName'),
+        }),
+      },
+      onClick: handleDelete,
+    },
+  ];
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('menu.permission.menu')">
       <template #toolbar-tools>
-        <a-button class="mr-2" type="primary" @click="handleCreate">
-          {{ $t('page.menu.button.create') }}
-        </a-button>
         <a-button class="mr-2" @click="expandAll">
           {{ $t('ui.tree.expand_all') }}
         </a-button>
         <a-button class="mr-2" @click="collapseAll">
           {{ $t('ui.tree.collapse_all') }}
         </a-button>
+        <TableExportButton :fetcher="exportFetcher" :columns="gridOptions.columns" filename="menus" />
+        <TableAddButton @click="handleCreate" />
       </template>
       <template #title="{ row }">
         <div class="flex w-full items-center gap-1">
@@ -282,23 +345,7 @@ function normalizeAuthority(authority: unknown): string[] {
         </a-tag>
       </template>
       <template #action="{ row }">
-        <a-button
-          type="link"
-          :icon="h(LucideFilePenLine)"
-          @click.stop="handleEdit(row)"
-        />
-        <a-popconfirm
-          :cancel-text="$t('ui.button.cancel')"
-          :ok-text="$t('ui.button.ok')"
-          :title="
-            $t('ui.text.do_you_want_delete', {
-              moduleName: $t('page.menu.moduleName'),
-            })
-          "
-          @confirm="handleDelete(row)"
-        >
-          <a-button danger type="link" :icon="h(LucideTrash2)" />
-        </a-popconfirm>
+        <TableActions :row="row" :actions="buildRowActions()" />
       </template>
     </Grid>
     <Drawer />

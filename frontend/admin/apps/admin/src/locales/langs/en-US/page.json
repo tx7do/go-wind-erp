@@ -68,7 +68,10 @@
       "editPassword": "Change Password",
       "banAccount": "Disable Account",
       "updateUserInfo": "Update Profile",
-      "updatePassword": "Update Password"
+      "updatePassword": "Change Password",
+      "uploadAvatar": "Upload Avatar",
+      "deleteAvatar": "Delete Avatar",
+      "resetMfa": "Reset MFA"
     },
     "profile": {
       "tab": {
@@ -116,6 +119,24 @@
     "tenantName": "Tenant",
     "button": {
       "create": "Create Role"
+    },
+    "dataScope": "Data Scope",
+    "orgUnits": "Authorized Org Units",
+    "fieldPerm": {
+      "title": "Field Permissions",
+      "userTitle": "Field Permissions (User)",
+      "roleTitle": "Field Permissions (Role)",
+      "hint": "Checked fields are hidden for users with this role: removed from list/detail views and stripped from create/update payloads (takes effect after re-login).",
+      "field": {
+        "email": "Email",
+        "mobile": "Mobile",
+        "telephone": "Telephone",
+        "address": "Address",
+        "region": "Region",
+        "lastLoginAt": "Last Login At",
+        "lastLoginIp": "Last Login IP",
+        "permissions": "Permission set"
+      }
     }
   },
   "permission": {
@@ -125,8 +146,14 @@
     "path": "Tree Path",
     "groupId": "Group",
     "groupName": "Group Name",
-    "menuIds": "Assign Menus",
-    "apiIds": "Assign APIs",
+    "menuIds": "Associated Menus",
+    "apiIds": "Associated APIs",
+    "menuIdsPlaceholder": "Select associated menus",
+    "apiIdsPlaceholder": "Select associated APIs",
+    "treeExpandAll": "Expand",
+    "treeCollapseAll": "Collapse",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect",
     "description": "Permission Description",
     "button": {
       "create": "Create Permission",
@@ -140,7 +167,8 @@
     "parentId": "Parent Group",
     "button": {
       "create": "Create Group"
-    }
+    },
+    "moduleOther": "Other"
   },
   "dict": {
     "moduleName": "Dictionary",
@@ -289,9 +317,9 @@
     "enable": "Enabled",
     "button": {
       "create": "Create Task",
-      "start": "Start Task",
-      "restart": "Restart Task",
-      "stop": "Stop Task",
+      "start": "Start",
+      "restart": "Restart",
+      "stop": "Stop",
       "startAll": "Start All",
       "restartAll": "Restart All",
       "stopAll": "Stop All"
@@ -318,12 +346,18 @@
     "createdAt": "Received At",
     "readAt": "Read At",
     "button": {
-      "create": "Publish Message"
+      "create": "Create Message",
+      "markAsRead": "Mark as Read",
+      "markAllRead": "Mark All Read"
     },
     "drawer": {
-      "create": "Publish Message",
-      "update": "Edit Message"
-    }
+      "create": "Create Message",
+      "update": "Update Message"
+    },
+    "sendScope": "Send To",
+    "sendScopeAll": "All Users",
+    "sendScopeUsers": "Selected Users",
+    "targetUsers": "Recipients"
   },
   "internalMessageCategory": {
     "moduleName": "Message Categories",
@@ -365,7 +399,51 @@
     "createdAt": "Log Time",
     "path": "Request Path",
     "httpMethod": "HTTP Method",
-    "latencyMs": "Latency (ms)"
+    "latencyMs": "API Latency (ms)",
+    "sectionBasic": "Basic Information",
+    "sectionDevice": "Device Information",
+    "sectionApi": "API Information",
+    "sectionOther": "Other Information",
+    "userId": "User ID",
+    "statusCode": "Status Code",
+    "tenantName": "Tenant",
+    "requestUri": "Request URI",
+    "apiModule": "API Module",
+    "apiOperation": "API Operation",
+    "apiDescription": "API Description",
+    "requestBody": "Request Body",
+    "requestHeader": "Request Header",
+    "response": "Response",
+    "reason": "Reason",
+    "referer": "Referer",
+    "spanId": "Span ID",
+    "requestId": "Request ID",
+    "traceId": "Trace ID",
+    "logHash": "Log Hash",
+    "signature": "Signature",
+    "osName": "OS",
+    "browserName": "Browser",
+    "userAgent": "User-Agent"
+  },
+  "redisCacheMonitor": {
+    "moduleName": "Redis Cache Monitor",
+    "dbSizeCardTitle": "Total Keys",
+    "dbSize": "Total Keys (DBSIZE)",
+    "infoCardTitle": "INFO Section",
+    "noInfo": "No INFO data available",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "noEntries": "No entries in this section",
+    "collapsed": "Collapsed, click title to expand",
+    "slowlogCardTitle": "Slow Log",
+    "noSlowlog": "No slow log entries",
+    "slowlogId": "Log ID",
+    "createdAt": "Occurred At",
+    "durationUsec": "Duration (μs)",
+    "clientAddr": "Client Address",
+    "clientName": "Client Name",
+    "args": "Command Arguments",
+    "disclaimer": "This is a read-only monitoring view. All data comes from Redis INFO/DBSIZE/SLOWLOG. No write operations are performed."
   },
   "dataAccessAuditLog": {
     "moduleName": "Data Access Logs",
@@ -824,6 +902,18 @@
       "create": "New Flow"
     },
     "bizTypeLabel": "Biz Type"
+  },
+  "language": {
+    "moduleName": "Language",
+    "languageName": "Language Name",
+    "languageCode": "Language Code",
+    "nativeName": "Native Name",
+    "isEnabled": "Enabled",
+    "isDefault": "Default",
+    "button": {
+      "create": "Create Language",
+      "update": "Update Language"
+    }
   },
   "trialBalance": {
     "accountCode": "Account Code",
