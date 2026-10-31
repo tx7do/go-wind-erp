@@ -24,6 +24,16 @@ Developers are well served too: API-first (RESTful / gRPC dual protocol with aut
 
 ## Project Status
 
+## Screenshots
+
+| | |
+|:---:|:---:|
+| ![Purchase orders (approved)](docs/screenshots/purchase-orders.png) | ![Approval center](docs/screenshots/approval.png) |
+| *Purchase orders (draft → submit → approve → receive → auto-complete)* | *Approval center (multi-level, self-approval blocked)* |
+| ![AP aging report](docs/screenshots/aging.png) | ![Stock overview](docs/screenshots/dashboard.png) |
+| *AP aging report* | *Stock overview dashboard* |
+
+
 Both the common foundation capabilities of GoWind ERP — organization and permissions, authentication, audit, file storage, dictionaries, internal messaging, task scheduling, internationalization — and the three ERP business modules (Inventory/WMS, Procurement/SRM, Finance/AP) are implemented across the core backend service, the admin console, and the mobile app. The core business loops — PO approval through goods receipt into stock, payable-to-payment settlement, stock transfer and reversal, and low-stock auto-replenishment — are closed end to end, with regression tests covering the key consistency logic (receiving approval gate, single-transaction stock transfer, aging outstanding-balance reporting).
 
 ## Core Features
