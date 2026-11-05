@@ -4,7 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { h } from 'vue';
 
 import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { LucideCirclePlay, LucideCircleStop, LucideFilePenLine, LucidePause, LucidePlay, LucideRotateCcw, LucideRotateCw, LucideServerCog, LucideTrash2 } from '@vben/icons';
+import { LucideCirclePlay, LucideCircleStop, LucideFilePenLine, LucidePause, LucidePlay, LucideRotateCcw, LucideRotateCw, LucideTrash2 } from '@vben/icons';
 
 import { Modal, notification } from 'ant-design-vue';
 
@@ -152,7 +152,7 @@ const gridOptions: VxeGridProps<Task> = {
 const exportFetcher = (page: number, pageSize: number) =>
   fetchListTasks(new PaginationQuery({ paging: { page, pageSize } }));
 
-const [Grid, gridApi] = useVbenVxeGrid({
+const [Grid, gridApi] = useVbenVxeGrid({ gridOptions, formOptions });
 
 const [Drawer, drawerApi] = useVbenDrawer({
   // 连接抽离的组件
