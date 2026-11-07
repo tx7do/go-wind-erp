@@ -98,6 +98,7 @@ services:
       - TZ=Asia/Shanghai
     volumes:
       - ${APP_ROOT:-/root/app}/seaweedfs/data:/data
+      - ./scripts/docker/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
     command: server -dir=/data -filer -s3 -s3.port=9000 -s3.config=/etc/seaweedfs/s3.json
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://127.0.0.1:9333/cluster/status || exit 1"]
