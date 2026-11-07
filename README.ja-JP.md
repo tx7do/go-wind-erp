@@ -88,7 +88,7 @@ GoWind ERP は、組織と権限、認証、監査、ファイルストレージ
 | ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
 | データベース | [PostgreSQL](https://www.postgresql.org/) | リレーショナルデータベース |
 | キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
-| オブジェクトストレージ | [MinIO](https://min.io/) | S3 互換オブジェクトストレージ |
+| オブジェクトストレージ | [SeaweedFS](https://github.com/seaweedfs/seaweedfs) | S3 互換オブジェクトストレージ。MinIO コミュニティ版の保守終了後の代替で、コンテナサービス名は minio を継続使用 |
 | サービスレジストリ | [Etcd](https://etcd.io/) | サービスディスカバリ & 設定管理 |
 | トレーシング | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分散オブザーバビリティ |
 | API 定義 | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | コントラクトファースト API 設計 |

@@ -36,7 +36,7 @@
 | core-service | 核心业务服务，**唯一连数据库的服务**，内嵌 Asynq 异步任务 | 仅 gRPC（随机端口，经 etcd 注册被发现） |
 | PostgreSQL | 主数据库（库名 `go_wind_erp`） | `5432` |
 | Redis | 缓存 + Asynq 任务队列（core 使用 DB 1） | `6379` |
-| MinIO | S3 兼容对象存储（文件上传），默认桶 `images` | API `9000`，控制台 `9001` |
+| SeaweedFS（容器服务名 `minio`） | S3 兼容对象存储（文件上传），桶由应用侧自动创建 | S3 API `9000`，Master Web UI `9333` |
 | etcd | 服务注册与发现 | `2379`（客户端）/ `2380`（peer） |
 | Jaeger | 链路追踪（OTLP 收集 + UI） | UI `16686`，OTLP `4317`(gRPC) / `4318`(HTTP) |
 
@@ -48,7 +48,7 @@
 
 | 形态 | 说明 | 适用 |
 |:---|:---|:---|
-| **A. 依赖进 Docker + 服务跑宿主机（PM2）** | Postgres/Redis/MinIO/etcd/Jaeger 用 docker compose 起（默认只起依赖）；三个 Go 服务编译成二进制，用 PM2 守护 | **推荐**。与仓库现有脚本（`full_deploy.sh` + `pm2_service.sh`）匹配，配置只需按[第 5 章](#5-生产配置改造清单必读)微调 |
+| **A. 依赖进 Docker + 服务跑宿主机（PM2）** | Postgres/Redis/SeaweedFS/etcd/Jaeger 用 docker compose 起（默认只起依赖）；三个 Go 服务编译成二进制，用 PM2 守护 | **推荐**。与仓库现有脚本（`full_deploy.sh` + `pm2_service.sh`）匹配，配置只需按[第 5 章](#5-生产配置改造清单必读)微调 |
 | B. 全容器化（应用 + 依赖都进 Docker） | 一条命令起全套：`docker compose --profile app up -d`（应用服务放在 `app` profile，自动本地构建镜像；依赖带健康检查与数据持久化；容器内 registry/oss/trace 配置已换成服务名并自动挂载覆盖） | 单机一体化部署、快速试用 |
 
 下文主推形态 A；形态 B 的使用方式见[第 2 章](#2-两种部署形态怎么选)。
@@ -92,11 +92,12 @@ cd backend
 
 | 变量 | 默认 | 说明 |
 |:---|:---|:---|
-| `APP_ROOT`（sh）/ `-AppRoot`（ps1） | `/root/app` / `C:\app` | 依赖数据根目录（postgres/redis/minio/etcd 各一个子目录） |
+| `APP_ROOT`（sh）/ `-AppRoot`（ps1） | `/root/app` / `C:\app` | 依赖数据根目录（postgres/redis/seaweedfs/etcd 各一个子目录） |
 | `COMPOSE_FILE` / `-ComposeFile` | 自动探测 | 指定 compose 文件 |
 | `POSTGRES_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步 core `data.yaml`，见 5.6） |
 | `REDIS_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步各 `data.yaml` 与 `asynq.uri`） |
-| `MINIO_ROOT_PASSWORD` | `*Abcd123456` | **生产必须设置**（同时同步各 `oss.yaml`） |
+
+> 对象存储（SeaweedFS）的 S3 凭证在 `scripts/docker/seaweedfs/s3.json`（identities），不再走环境变量；改密须同步该文件与各 `oss.yaml`（见 5.2）。
 
 > 开发机也可以用 `make compose-up-libs`（`docker-compose.libs.yaml`，数据不持久化，重建即清空，适合开发）。
 
@@ -170,17 +171,19 @@ admin/app 两个服务的 `data.yaml` 里各有一段 redis 配置，同样改�
 
 ### 5.2 对象存储（三个服务都有 oss.yaml）
 
+对象存储为 SeaweedFS（S3 兼容网关，容器服务名沿用 `minio`；MinIO 社区版已停维护）。**S3 凭证在服务端的 `scripts/docker/seaweedfs/s3.json`**，`oss.yaml` 的 `access_key`/`secret_key` 必须与其 identities 中的凭证一致：
+
 ```yaml
 oss:
-  endpoint: "<MinIO地址>:9000"        # 服务端上传用
-  upload_host: "<公网可达的MinIO地址>:9000"   # 前端/App 直传地址
-  download_host: "https://<公网可达的MinIO地址>"  # 浏览器下载文件用，必须公网可达
+  endpoint: "<SeaweedFS地址>:9000"        # 服务端上传用
+  upload_host: "<公网可达的SeaweedFS地址>:9000"   # 前端/App 直传地址
+  download_host: "https://<公网可达的SeaweedFS地址>"  # 浏览器下载文件用，必须公网可达
   access_key: "root"
-  secret_key: "<与 MINIO_ROOT_PASSWORD 一致>"
+  secret_key: "<与 scripts/docker/seaweedfs/s3.json 中的 secretKey 一致>"
   use_ssl: false        # 走 HTTPS 反代时改 true
 ```
 
-> `upload_host` / `download_host` 是给**浏览器和手机 App**用的，写 127.0.0.1 会导致文件上传下载在前端不可用；建议用反向代理把 MinIO 暴露为 `https://minio.你的域名`（见[第 9 章](#9-反向代理与-https)）。
+> `upload_host` / `download_host` 是给**浏览器和手机 App**用的，写 127.0.0.1 会导致文件上传下载在前端不可用；建议用反向代理把对象存储暴露为 `https://minio.你的域名`（见[第 9 章](#9-反向代理与-https)）。
 
 ### 5.3 服务注册与追踪
 
@@ -229,7 +232,7 @@ app-service 的 CORS 默认是 `*`，公网部署建议同样收敛为移动端�
 
 ### 5.6 密码默认值与对齐
 
-compose 默认密码与各服务 configs 的默认值**已统一**为演示值 `*Abcd123456`（依赖侧可通过 `POSTGRES_PASSWORD` / `REDIS_PASSWORD` / `MINIO_ROOT_PASSWORD` 环境变量覆盖）。**生产必须两边同步替换**：改 compose 环境变量的同时，按 5.1/5.2 修改 configs，保持一致——PostgreSQL（compose ↔ core `data.yaml`）、Redis（compose ↔ 各 `data.yaml` ↔ core `asynq.uri`）、MinIO（compose ↔ 各 `oss.yaml`）。
+compose 默认密码与各服务 configs 的默认值**已统一**为演示值 `*Abcd123456`（依赖侧可通过 `POSTGRES_PASSWORD` / `REDIS_PASSWORD` 环境变量覆盖）。**生产必须两边同步替换**：改 compose 环境变量的同时，按 5.1/5.2 修改 configs，保持一致——PostgreSQL（compose ↔ core `data.yaml`）、Redis（compose ↔ 各 `data.yaml` ↔ core `asynq.uri`）、对象存储（`scripts/docker/seaweedfs/s3.json` ↔ 各 `oss.yaml`）。
 
 ### 5.7 日志（可选）
 
@@ -344,7 +347,7 @@ server {
     }
 }
 
-# MinIO（对应 oss.yaml 的 upload_host / download_host）
+# 对象存储 SeaweedFS（对应 oss.yaml 的 upload_host / download_host）
 server {
     listen 443 ssl;
     server_name minio.你的域名;
@@ -352,7 +355,7 @@ server {
     client_max_body_size 100m;         # 按最大上传文件调整
     location / {
         proxy_pass http://127.0.0.1:9000;
-        proxy_set_header Host $host;   # MinIO S3 签名依赖原始 Host
+        proxy_set_header Host $host;   # S3 签名依赖原始 Host
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
@@ -363,11 +366,11 @@ server {
 1. 前端 `.env.production` 的两个 URL 改为 `https://` 并**重新构建**；
 2. Flutter `.env` 改为 `https://` 并重新打包；
 3. admin `server.yaml` 的 CORS origins 改为 `https://erp.你的域名`；
-4. oss.yaml 的 `use_ssl: true`（若 MinIO 走 TLS 反代）。
+4. oss.yaml 的 `use_ssl: true`（若对象存储走 TLS 反代）。
 
 ## 10. 备份与恢复
 
-需要备份的数据：PostgreSQL（全部业务数据）+ MinIO 数据目录（上传的文件）。Redis 是缓存/队列可不备，etcd 是服务注册状态可重建。
+需要备份的数据：PostgreSQL（全部业务数据）+ 对象存储数据目录（上传的文件）。Redis 是缓存/队列可不备，etcd 是服务注册状态可重建。
 
 **PostgreSQL 备份**（每日 cron 建议）：
 
@@ -379,9 +382,9 @@ docker exec <postgres容器> pg_dump -U postgres go_wind_erp | gzip > /backup/go
 gunzip -c /backup/gowind_2026-08-29.sql.gz | docker exec -i <postgres容器> psql -U postgres go_wind_erp
 ```
 
-**MinIO 备份**：直接备份宿主机挂载目录（默认 `${APP_ROOT:-/root/app}/minio/data`），或用 `mc mirror` 同步到远端。
+**对象存储备份**：直接备份宿主机挂载目录（默认 `${APP_ROOT:-/root/app}/seaweedfs/data`），或用任意 S3 客户端按桶镜像同步到远端（如 `mc mirror`）。
 
-> 依赖数据卷默认挂载在 `${APP_ROOT:-/root/app}`（postgres/redis/minio/etcd 各一个子目录，见 `docker-compose.yaml`），容器重建不丢数据；`docker-compose.libs.yaml`（开发用）不挂载卷，重建即清空，属预期。
+> 依赖数据卷默认挂载在 `${APP_ROOT:-/root/app}`（postgres/redis/seaweedfs/etcd 各一个子目录，见 `docker-compose.yaml`），容器重建不丢数据；`docker-compose.libs.yaml`（开发用）不挂载卷，重建即清空，属预期。旧 MinIO 数据目录（`minio/data`）的数据格式与 SeaweedFS 不兼容，须用 S3 客户端按桶镜像迁移后放到 `seaweedfs/data`，不可直接复用旧目录。
 
 ## 11. 升级
 
@@ -413,7 +416,7 @@ curl -s http://127.0.0.1:6700/ >/dev/null && echo app-ok
 | 事项 | 现状与做法 |
 |:---|:---|
 | 进程守护 | PM2 自动重启；`pm2 status` / `pm2 logs go_wind_erp-admin` |
-| 健康检查 | 依赖容器在 `docker-compose.yaml` 中已带 healthcheck（pg_isready / redis-cli ping / etcdctl endpoint health / minio health）；应用服务**没有专用健康端点**（无 /healthz），用端口探测（6600/6700）或 `pm2 status` 判断存活；接入监控建议用 TCP 探测 |
+| 健康检查 | 依赖容器在 `docker-compose.yaml` 中已带 healthcheck（pg_isready / redis-cli ping / etcdctl endpoint health / minio 容器探测 9333 cluster/status）；应用服务**没有专用健康端点**（无 /healthz），用端口探测（6600/6700）或 `pm2 status` 判断存活；接入监控建议用 TCP 探测 |
 | 指标 | 未暴露 Prometheus 端点 |
 | 链路追踪 | Jaeger UI `http://<服务器>:16686`（生产建议不对公网开放）；采样率见 5.3 |
 | 业务日志 | 各服务 `./logs/info.log`（滚动 1MB×5，30 天）+ PM2 stdout/stderr.log |
@@ -427,9 +430,9 @@ curl -s http://127.0.0.1:6700/ >/dev/null && echo app-ok
 
 - [ ] **默认管理员改密**：首次登录 `admin / admin` 后立即在「个人设置 → 修改密码」改掉（该账号只在 users 表为空时创建，但默认密码是公开知识）；
 - [ ] **JWT 签名密钥**：按 5.4 替换三处服务的 `jwt_signing_key`，不用默认值；
-- [ ] **三个依赖密码**：`POSTGRES_PASSWORD` / `REDIS_PASSWORD` / `MINIO_ROOT_PASSWORD` 全部改强密码，并与配置文件对齐（5.6）；
+- [ ] **依赖密码与对象存储凭证**：`POSTGRES_PASSWORD` / `REDIS_PASSWORD` 全部改强密码，并与配置文件对齐（5.6）；对象存储 S3 凭证改强密钥，`scripts/docker/seaweedfs/s3.json` 与各 `oss.yaml` 同步（5.2）；
 - [ ] **CORS 收敛**：admin 的 origins 改为实际前端域名（5.5）；app 的 `*` 同样收敛；
-- [ ] **Jaeger / MinIO 控制台（9001）/ Swagger 不对公网开放**：用防火墙或反代 ACL 限制；
+- [ ] **Jaeger / SeaweedFS Master Web UI（9333）/ Swagger 不对公网开放**：用防火墙或反代 ACL 限制；
 - [ ] **依赖端口不对公网开放**：主 compose 已默认把 PG/Redis/MinIO/etcd/Jaeger 的端口绑定到 127.0.0.1，请勿自行放开；远程管理走 SSH 隧道；
 - [ ] **租户自助注册开关**：注册接口是公开端点，面向企业内/受邀场景部署时应通过反代封禁注册路由；
 - [ ] HTTPS 全站启用（第 9 章）。
@@ -446,7 +449,7 @@ curl -s http://127.0.0.1:6700/ >/dev/null && echo app-ok
 2. **compose 数据卷未挂载（重建丢数据）**：`docker-compose.yaml` 中 postgres/redis/minio/etcd 的数据卷已恢复挂载到 `${APP_ROOT:-/root/app}` 各子目录（libs 开发版仍不挂载，保持开发环境可随时重置的语义）。
 3. **compose 应用段不可用**：admin-service 端口映射 9700→已改为 6600/6601（与镜像内配置一致）；补齐了缺失的 app-service（6700/6701）；三个应用服务放入 `app` profile（默认 `up` 只起依赖，供 PM2 路径使用）；registry/oss/trace 的 localhost 地址通过挂载 `backend/deploy/compose/*.yaml` 覆盖为 compose 服务名；etcd 的 `ETCD_ADVERTISE_CLIENT_URLS` 已改为 `http://etcd:2379`。全容器化：`docker compose --profile app up -d`。
 4. **PostgreSQL 镜像变量错配（全新启动失败）**：原 `docker-compose*.yaml` 用 bitnami 的 postgresql 镜像却传了官方镜像的 `POSTGRES_*` 变量，bitnami 不认这些变量、无密码时全新初始化会直接失败。已将两个 compose 文件的 postgres 统一替换为官方 `postgres:17-alpine`（`POSTGRES_*` 语义原生匹配）。redis/minio 原本变量语义正确，未动（libs 文件）。
-5. **依赖镜像未固定版本 + compose/configs 密码默认值不一致**：依赖镜像已全部固定（`postgres:17-alpine`、`redis:8.2-alpine`、`minio:RELEASE.2025-09-07T16-13-09Z`、`jaeger:1.76.0`、`etcd:v3.6.8`、运行时 `alpine:3.22`）；compose 默认密码已与 configs 默认值统一为 `*Abcd123456`（生产必须替换，见 5.6）。依赖容器还补了 healthcheck，应用服务 `depends_on` 按 `service_healthy` 等待依赖就绪。
+5. **依赖镜像未固定版本 + compose/configs 密码默认值不一致**：依赖镜像已全部固定（`postgres:17-alpine`、`redis:8.2-alpine`、`seaweedfs:4.51`、`jaeger:1.76.0`、`etcd:v3.6.8`、运行时 `alpine:3.22`）；compose 默认密码已与 configs 默认值统一为 `*Abcd123456`（生产必须替换，见 5.6）。依赖容器还补了 healthcheck，应用服务 `depends_on` 按 `service_healthy` 等待依赖就绪。
 6. **Dockerfile Go 构建版本与 go.mod 不一致**：`GO_VERSION` 已从 1.25.3 对齐到 go.mod 的 1.26.4，镜像构建不再依赖 GOTOOLCHAIN 联网下载工具链（离线构建不再因此失败）。
 
 ### 14.2 仍然需要注意

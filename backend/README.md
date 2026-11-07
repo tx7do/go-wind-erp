@@ -13,7 +13,7 @@ GoWind（风行 ERP）— 企业级 ERP 后端（Identity / WMS / Approval 等�
 - [OpenTelemetry](https://opentelemetry.io/) -- 分布式可观察系统
 - 手写依赖装配（wiring.go，无 DI 框架）
 - [OpenAPI](https://www.openapis.org/) -- RESTful API 文档
-- [MinIO](https://min.io/) -- 对象存储服务器
+- [SeaweedFS](https://github.com/seaweedfs/seaweedfs) -- S3 兼容对象存储（MinIO 社区版停维护后的替代，容器服务名沿用 minio）
 - [Redis](https://redis.io/) -- 非关系型数据库
 - [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) -- 关系型数据库
 - [Ent](https://entgo.io/) / [GORM](https://gorm.io/index.html) -- Golang ORM框架

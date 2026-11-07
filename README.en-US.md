@@ -88,7 +88,7 @@ Both the common foundation capabilities of GoWind ERP — organization and permi
 | ORM | [Ent](https://entgo.io/) | Go entity framework |
 | Database | [PostgreSQL](https://www.postgresql.org/) | Relational database |
 | Cache | [Redis](https://redis.io/) | In-memory data store |
-| Object Storage | [MinIO](https://min.io/) | S3-compatible object storage |
+| Object Storage | [SeaweedFS](https://github.com/seaweedfs/seaweedfs) | S3-compatible object storage — the replacement after MinIO Community went unmaintained; the container service name stays minio |
 | Service Registry | [Etcd](https://etcd.io/) | Service discovery & configuration |
 | Tracing | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | Distributed observability |
 | API Definition | [Protobuf](https://protobuf.dev/) + [buf.build](https://buf.build/) | Contract-first API design |
