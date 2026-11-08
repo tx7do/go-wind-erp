@@ -70,12 +70,12 @@ const [Grid] = useVbenVxeGrid({ gridOptions });
     <Grid :table-title="$t('page.aging.title')">
       <template #bucket="{ row }">
         <a-tag :color="row.bucket === 'overdue' ? 'red' : 'default'">
-          { $t('page.aging.bucketLabel.' + row.bucket) }
+          {{ $t('page.aging.bucketLabel.' + row.bucket) }}
         </a-tag>
       </template>
       <template #toolbar-tools>
         <span class="px-2 text-xs text-gray-400">
-          { $t('page.aging.disclaimer') }
+          {{ $t('page.aging.disclaimer') }}
         </span>
       </template>
     </Grid>
