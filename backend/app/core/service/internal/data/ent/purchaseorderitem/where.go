@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PurchaseOrderItem {
+func ID(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PurchaseOrderItem {
+func IDEQ(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PurchaseOrderItem {
+func IDNEQ(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PurchaseOrderItem {
+func IDIn(ids ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PurchaseOrderItem {
+func IDNotIn(ids ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PurchaseOrderItem {
+func IDGT(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PurchaseOrderItem {
+func IDGTE(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PurchaseOrderItem {
+func IDLT(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PurchaseOrderItem {
+func IDLTE(id int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLTE(FieldID, id))
 }
 
@@ -65,12 +65,12 @@ func Remark(v string) predicate.PurchaseOrderItem {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PurchaseOrderItem {
+func TenantID(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PoID applies equality check predicate on the "po_id" field. It's identical to PoIDEQ.
-func PoID(v uint32) predicate.PurchaseOrderItem {
+func PoID(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldPoID, v))
 }
 
@@ -225,42 +225,42 @@ func RemarkContainsFold(v string) predicate.PurchaseOrderItem {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PurchaseOrderItem {
+func TenantIDEQ(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PurchaseOrderItem {
+func TenantIDNEQ(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PurchaseOrderItem {
+func TenantIDIn(vs ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PurchaseOrderItem {
+func TenantIDNotIn(vs ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PurchaseOrderItem {
+func TenantIDGT(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PurchaseOrderItem {
+func TenantIDGTE(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PurchaseOrderItem {
+func TenantIDLT(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PurchaseOrderItem {
+func TenantIDLTE(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -275,42 +275,42 @@ func TenantIDNotNil() predicate.PurchaseOrderItem {
 }
 
 // PoIDEQ applies the EQ predicate on the "po_id" field.
-func PoIDEQ(v uint32) predicate.PurchaseOrderItem {
+func PoIDEQ(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldEQ(FieldPoID, v))
 }
 
 // PoIDNEQ applies the NEQ predicate on the "po_id" field.
-func PoIDNEQ(v uint32) predicate.PurchaseOrderItem {
+func PoIDNEQ(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNEQ(FieldPoID, v))
 }
 
 // PoIDIn applies the In predicate on the "po_id" field.
-func PoIDIn(vs ...uint32) predicate.PurchaseOrderItem {
+func PoIDIn(vs ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldIn(FieldPoID, vs...))
 }
 
 // PoIDNotIn applies the NotIn predicate on the "po_id" field.
-func PoIDNotIn(vs ...uint32) predicate.PurchaseOrderItem {
+func PoIDNotIn(vs ...int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldNotIn(FieldPoID, vs...))
 }
 
 // PoIDGT applies the GT predicate on the "po_id" field.
-func PoIDGT(v uint32) predicate.PurchaseOrderItem {
+func PoIDGT(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGT(FieldPoID, v))
 }
 
 // PoIDGTE applies the GTE predicate on the "po_id" field.
-func PoIDGTE(v uint32) predicate.PurchaseOrderItem {
+func PoIDGTE(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldGTE(FieldPoID, v))
 }
 
 // PoIDLT applies the LT predicate on the "po_id" field.
-func PoIDLT(v uint32) predicate.PurchaseOrderItem {
+func PoIDLT(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLT(FieldPoID, v))
 }
 
 // PoIDLTE applies the LTE predicate on the "po_id" field.
-func PoIDLTE(v uint32) predicate.PurchaseOrderItem {
+func PoIDLTE(v int64) predicate.PurchaseOrderItem {
 	return predicate.PurchaseOrderItem(sql.FieldLTE(FieldPoID, v))
 }
 

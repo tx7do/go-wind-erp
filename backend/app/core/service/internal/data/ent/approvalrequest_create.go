@@ -65,13 +65,13 @@ func (_c *ApprovalRequestCreate) SetNillableDeletedAt(v *time.Time) *ApprovalReq
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ApprovalRequestCreate) SetCreatedBy(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetCreatedBy(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableCreatedBy(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableCreatedBy(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ApprovalRequestCreate) SetNillableCreatedBy(v *uint32) *ApprovalReques
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ApprovalRequestCreate) SetUpdatedBy(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetUpdatedBy(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableUpdatedBy(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableUpdatedBy(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ApprovalRequestCreate) SetNillableUpdatedBy(v *uint32) *ApprovalReques
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ApprovalRequestCreate) SetDeletedBy(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetDeletedBy(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableDeletedBy(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableDeletedBy(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ApprovalRequestCreate) SetNillableRemark(v *string) *ApprovalRequestCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ApprovalRequestCreate) SetTenantID(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetTenantID(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableTenantID(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableTenantID(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -205,13 +205,13 @@ func (_c *ApprovalRequestCreate) SetNillableStatus(v *approvalrequest.Status) *A
 }
 
 // SetApplicantID sets the "applicant_id" field.
-func (_c *ApprovalRequestCreate) SetApplicantID(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetApplicantID(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetApplicantID(v)
 	return _c
 }
 
 // SetNillableApplicantID sets the "applicant_id" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableApplicantID(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableApplicantID(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetApplicantID(*v)
 	}
@@ -219,13 +219,13 @@ func (_c *ApprovalRequestCreate) SetNillableApplicantID(v *uint32) *ApprovalRequ
 }
 
 // SetApproverID sets the "approver_id" field.
-func (_c *ApprovalRequestCreate) SetApproverID(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetApproverID(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetApproverID(v)
 	return _c
 }
 
 // SetNillableApproverID sets the "approver_id" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableApproverID(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableApproverID(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetApproverID(*v)
 	}
@@ -275,13 +275,13 @@ func (_c *ApprovalRequestCreate) SetNillableTotalSteps(v *uint32) *ApprovalReque
 }
 
 // SetFlowID sets the "flow_id" field.
-func (_c *ApprovalRequestCreate) SetFlowID(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetFlowID(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetFlowID(v)
 	return _c
 }
 
 // SetNillableFlowID sets the "flow_id" field if the given value is not nil.
-func (_c *ApprovalRequestCreate) SetNillableFlowID(v *uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetNillableFlowID(v *int64) *ApprovalRequestCreate {
 	if v != nil {
 		_c.SetFlowID(*v)
 	}
@@ -289,7 +289,7 @@ func (_c *ApprovalRequestCreate) SetNillableFlowID(v *uint32) *ApprovalRequestCr
 }
 
 // SetID sets the "id" field.
-func (_c *ApprovalRequestCreate) SetID(v uint32) *ApprovalRequestCreate {
+func (_c *ApprovalRequestCreate) SetID(v int64) *ApprovalRequestCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -386,7 +386,7 @@ func (_c *ApprovalRequestCreate) sqlSave(ctx context.Context) (*ApprovalRequest,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -396,7 +396,7 @@ func (_c *ApprovalRequestCreate) sqlSave(ctx context.Context) (*ApprovalRequest,
 func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ApprovalRequest{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(approvalrequest.Table, sqlgraph.NewFieldSpec(approvalrequest.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(approvalrequest.Table, sqlgraph.NewFieldSpec(approvalrequest.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -416,15 +416,15 @@ func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(approvalrequest.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(approvalrequest.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(approvalrequest.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -432,7 +432,7 @@ func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.Creat
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(approvalrequest.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Title(); ok {
@@ -456,11 +456,11 @@ func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.Creat
 		_node.Status = &value
 	}
 	if value, ok := _c.mutation.ApplicantID(); ok {
-		_spec.SetField(approvalrequest.FieldApplicantID, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldApplicantID, field.TypeInt64, value)
 		_node.ApplicantID = &value
 	}
 	if value, ok := _c.mutation.ApproverID(); ok {
-		_spec.SetField(approvalrequest.FieldApproverID, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldApproverID, field.TypeInt64, value)
 		_node.ApproverID = &value
 	}
 	if value, ok := _c.mutation.Comment(); ok {
@@ -476,7 +476,7 @@ func (_c *ApprovalRequestCreate) createSpec() (*ApprovalRequest, *sqlgraph.Creat
 		_node.TotalSteps = &value
 	}
 	if value, ok := _c.mutation.FlowID(); ok {
-		_spec.SetField(approvalrequest.FieldFlowID, field.TypeUint32, value)
+		_spec.SetField(approvalrequest.FieldFlowID, field.TypeInt64, value)
 		_node.FlowID = &value
 	}
 	return _node, _spec
@@ -568,7 +568,7 @@ func (u *ApprovalRequestUpsert) ClearDeletedAt() *ApprovalRequestUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ApprovalRequestUpsert) SetCreatedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetCreatedBy(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldCreatedBy, v)
 	return u
 }
@@ -580,7 +580,7 @@ func (u *ApprovalRequestUpsert) UpdateCreatedBy() *ApprovalRequestUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ApprovalRequestUpsert) AddCreatedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddCreatedBy(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldCreatedBy, v)
 	return u
 }
@@ -592,7 +592,7 @@ func (u *ApprovalRequestUpsert) ClearCreatedBy() *ApprovalRequestUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ApprovalRequestUpsert) SetUpdatedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetUpdatedBy(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldUpdatedBy, v)
 	return u
 }
@@ -604,7 +604,7 @@ func (u *ApprovalRequestUpsert) UpdateUpdatedBy() *ApprovalRequestUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ApprovalRequestUpsert) AddUpdatedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddUpdatedBy(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldUpdatedBy, v)
 	return u
 }
@@ -616,7 +616,7 @@ func (u *ApprovalRequestUpsert) ClearUpdatedBy() *ApprovalRequestUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ApprovalRequestUpsert) SetDeletedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetDeletedBy(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldDeletedBy, v)
 	return u
 }
@@ -628,7 +628,7 @@ func (u *ApprovalRequestUpsert) UpdateDeletedBy() *ApprovalRequestUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ApprovalRequestUpsert) AddDeletedBy(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddDeletedBy(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldDeletedBy, v)
 	return u
 }
@@ -748,7 +748,7 @@ func (u *ApprovalRequestUpsert) ClearStatus() *ApprovalRequestUpsert {
 }
 
 // SetApplicantID sets the "applicant_id" field.
-func (u *ApprovalRequestUpsert) SetApplicantID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetApplicantID(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldApplicantID, v)
 	return u
 }
@@ -760,7 +760,7 @@ func (u *ApprovalRequestUpsert) UpdateApplicantID() *ApprovalRequestUpsert {
 }
 
 // AddApplicantID adds v to the "applicant_id" field.
-func (u *ApprovalRequestUpsert) AddApplicantID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddApplicantID(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldApplicantID, v)
 	return u
 }
@@ -772,7 +772,7 @@ func (u *ApprovalRequestUpsert) ClearApplicantID() *ApprovalRequestUpsert {
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalRequestUpsert) SetApproverID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetApproverID(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldApproverID, v)
 	return u
 }
@@ -784,7 +784,7 @@ func (u *ApprovalRequestUpsert) UpdateApproverID() *ApprovalRequestUpsert {
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalRequestUpsert) AddApproverID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddApproverID(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldApproverID, v)
 	return u
 }
@@ -862,7 +862,7 @@ func (u *ApprovalRequestUpsert) ClearTotalSteps() *ApprovalRequestUpsert {
 }
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalRequestUpsert) SetFlowID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) SetFlowID(v int64) *ApprovalRequestUpsert {
 	u.Set(approvalrequest.FieldFlowID, v)
 	return u
 }
@@ -874,7 +874,7 @@ func (u *ApprovalRequestUpsert) UpdateFlowID() *ApprovalRequestUpsert {
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalRequestUpsert) AddFlowID(v uint32) *ApprovalRequestUpsert {
+func (u *ApprovalRequestUpsert) AddFlowID(v int64) *ApprovalRequestUpsert {
 	u.Add(approvalrequest.FieldFlowID, v)
 	return u
 }
@@ -982,14 +982,14 @@ func (u *ApprovalRequestUpsertOne) ClearDeletedAt() *ApprovalRequestUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ApprovalRequestUpsertOne) SetCreatedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetCreatedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ApprovalRequestUpsertOne) AddCreatedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddCreatedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1010,14 +1010,14 @@ func (u *ApprovalRequestUpsertOne) ClearCreatedBy() *ApprovalRequestUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ApprovalRequestUpsertOne) SetUpdatedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetUpdatedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ApprovalRequestUpsertOne) AddUpdatedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddUpdatedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1038,14 +1038,14 @@ func (u *ApprovalRequestUpsertOne) ClearUpdatedBy() *ApprovalRequestUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ApprovalRequestUpsertOne) SetDeletedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetDeletedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ApprovalRequestUpsertOne) AddDeletedBy(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddDeletedBy(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1192,14 +1192,14 @@ func (u *ApprovalRequestUpsertOne) ClearStatus() *ApprovalRequestUpsertOne {
 }
 
 // SetApplicantID sets the "applicant_id" field.
-func (u *ApprovalRequestUpsertOne) SetApplicantID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetApplicantID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetApplicantID(v)
 	})
 }
 
 // AddApplicantID adds v to the "applicant_id" field.
-func (u *ApprovalRequestUpsertOne) AddApplicantID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddApplicantID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddApplicantID(v)
 	})
@@ -1220,14 +1220,14 @@ func (u *ApprovalRequestUpsertOne) ClearApplicantID() *ApprovalRequestUpsertOne 
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalRequestUpsertOne) SetApproverID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetApproverID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetApproverID(v)
 	})
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalRequestUpsertOne) AddApproverID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddApproverID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddApproverID(v)
 	})
@@ -1325,14 +1325,14 @@ func (u *ApprovalRequestUpsertOne) ClearTotalSteps() *ApprovalRequestUpsertOne {
 }
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalRequestUpsertOne) SetFlowID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) SetFlowID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetFlowID(v)
 	})
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalRequestUpsertOne) AddFlowID(v uint32) *ApprovalRequestUpsertOne {
+func (u *ApprovalRequestUpsertOne) AddFlowID(v int64) *ApprovalRequestUpsertOne {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddFlowID(v)
 	})
@@ -1368,7 +1368,7 @@ func (u *ApprovalRequestUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ApprovalRequestUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ApprovalRequestUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1377,7 +1377,7 @@ func (u *ApprovalRequestUpsertOne) ID(ctx context.Context) (id uint32, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ApprovalRequestUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ApprovalRequestUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1434,7 +1434,7 @@ func (_c *ApprovalRequestCreateBulk) Save(ctx context.Context) ([]*ApprovalReque
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1615,14 +1615,14 @@ func (u *ApprovalRequestUpsertBulk) ClearDeletedAt() *ApprovalRequestUpsertBulk 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ApprovalRequestUpsertBulk) SetCreatedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetCreatedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ApprovalRequestUpsertBulk) AddCreatedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddCreatedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1643,14 +1643,14 @@ func (u *ApprovalRequestUpsertBulk) ClearCreatedBy() *ApprovalRequestUpsertBulk 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ApprovalRequestUpsertBulk) SetUpdatedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetUpdatedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ApprovalRequestUpsertBulk) AddUpdatedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddUpdatedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1671,14 +1671,14 @@ func (u *ApprovalRequestUpsertBulk) ClearUpdatedBy() *ApprovalRequestUpsertBulk 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ApprovalRequestUpsertBulk) SetDeletedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetDeletedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ApprovalRequestUpsertBulk) AddDeletedBy(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddDeletedBy(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1825,14 +1825,14 @@ func (u *ApprovalRequestUpsertBulk) ClearStatus() *ApprovalRequestUpsertBulk {
 }
 
 // SetApplicantID sets the "applicant_id" field.
-func (u *ApprovalRequestUpsertBulk) SetApplicantID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetApplicantID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetApplicantID(v)
 	})
 }
 
 // AddApplicantID adds v to the "applicant_id" field.
-func (u *ApprovalRequestUpsertBulk) AddApplicantID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddApplicantID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddApplicantID(v)
 	})
@@ -1853,14 +1853,14 @@ func (u *ApprovalRequestUpsertBulk) ClearApplicantID() *ApprovalRequestUpsertBul
 }
 
 // SetApproverID sets the "approver_id" field.
-func (u *ApprovalRequestUpsertBulk) SetApproverID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetApproverID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetApproverID(v)
 	})
 }
 
 // AddApproverID adds v to the "approver_id" field.
-func (u *ApprovalRequestUpsertBulk) AddApproverID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddApproverID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddApproverID(v)
 	})
@@ -1958,14 +1958,14 @@ func (u *ApprovalRequestUpsertBulk) ClearTotalSteps() *ApprovalRequestUpsertBulk
 }
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalRequestUpsertBulk) SetFlowID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) SetFlowID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.SetFlowID(v)
 	})
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalRequestUpsertBulk) AddFlowID(v uint32) *ApprovalRequestUpsertBulk {
+func (u *ApprovalRequestUpsertBulk) AddFlowID(v int64) *ApprovalRequestUpsertBulk {
 	return u.Update(func(s *ApprovalRequestUpsert) {
 		s.AddFlowID(v)
 	})

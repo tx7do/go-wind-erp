@@ -61,7 +61,7 @@ func (s *PaymentService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	if err != nil {
 		return nil, err
 	}
-	return &financeV1.CountPaymentResponse{Count: uint64(count)}, nil
+	return &financeV1.CountPaymentResponse{Count: int64(count)}, nil
 }
 
 func (s *PaymentService) Get(ctx context.Context, req *financeV1.GetPaymentRequest) (*financeV1.Payment, error) {
@@ -128,7 +128,7 @@ func (s *PaymentService) Create(ctx context.Context, req *financeV1.CreatePaymen
 // ApplyApproved 审批通过后入账：PENDING→APPLIED（条件迁移）后原子累计
 // 应付单（ApplyPayment 的 SQL 条件防超付竞态）。累计失败仅记录
 // （付款已批，经审计对账处理），不回滚审批。
-func (s *PaymentService) ApplyApproved(ctx context.Context, paymentID uint32) error {
+func (s *PaymentService) ApplyApproved(ctx context.Context, paymentID int64) error {
 	payment, err := s.paymentRepo.Get(ctx, &financeV1.GetPaymentRequest{
 		QueryBy: &financeV1.GetPaymentRequest_Id{Id: paymentID},
 	})
@@ -156,7 +156,7 @@ func (s *PaymentService) ApplyApproved(ctx context.Context, paymentID uint32) er
 }
 
 // RejectApproved 审批拒绝：PENDING→REJECTED，不影响应付单。
-func (s *PaymentService) RejectApplied(ctx context.Context, paymentID uint32) error {
+func (s *PaymentService) RejectApplied(ctx context.Context, paymentID int64) error {
 	return s.paymentRepo.TransitionStatus(ctx, paymentID,
 		financeV1.Payment_PENDING, financeV1.Payment_REJECTED)
 }

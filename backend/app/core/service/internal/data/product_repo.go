@@ -100,7 +100,7 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
-func (r *ProductRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ProductRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Product.Query().
 		Where(product.IDEQ(id)).
 		Exist(ctx)

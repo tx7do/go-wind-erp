@@ -65,13 +65,13 @@ func (_c *StockLocationCreate) SetNillableDeletedAt(v *time.Time) *StockLocation
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockLocationCreate) SetCreatedBy(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetCreatedBy(v int64) *StockLocationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockLocationCreate) SetNillableCreatedBy(v *uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetNillableCreatedBy(v *int64) *StockLocationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockLocationCreate) SetNillableCreatedBy(v *uint32) *StockLocationCre
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockLocationCreate) SetUpdatedBy(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetUpdatedBy(v int64) *StockLocationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockLocationCreate) SetNillableUpdatedBy(v *uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetNillableUpdatedBy(v *int64) *StockLocationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockLocationCreate) SetNillableUpdatedBy(v *uint32) *StockLocationCre
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockLocationCreate) SetDeletedBy(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetDeletedBy(v int64) *StockLocationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockLocationCreate) SetNillableDeletedBy(v *uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetNillableDeletedBy(v *int64) *StockLocationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *StockLocationCreate) SetNillableRemark(v *string) *StockLocationCreate
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *StockLocationCreate) SetTenantID(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetTenantID(v int64) *StockLocationCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *StockLocationCreate) SetNillableTenantID(v *uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetNillableTenantID(v *int64) *StockLocationCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *StockLocationCreate) SetNillableName(v *string) *StockLocationCreate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_c *StockLocationCreate) SetParentID(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetParentID(v int64) *StockLocationCreate {
 	_c.mutation.SetParentID(v)
 	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_c *StockLocationCreate) SetNillableParentID(v *uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetNillableParentID(v *int64) *StockLocationCreate {
 	if v != nil {
 		_c.SetParentID(*v)
 	}
@@ -205,7 +205,7 @@ func (_c *StockLocationCreate) SetNillableWarehouseCode(v *string) *StockLocatio
 }
 
 // SetID sets the "id" field.
-func (_c *StockLocationCreate) SetID(v uint32) *StockLocationCreate {
+func (_c *StockLocationCreate) SetID(v int64) *StockLocationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -290,7 +290,7 @@ func (_c *StockLocationCreate) sqlSave(ctx context.Context) (*StockLocation, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -300,7 +300,7 @@ func (_c *StockLocationCreate) sqlSave(ctx context.Context) (*StockLocation, err
 func (_c *StockLocationCreate) createSpec() (*StockLocation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockLocation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stocklocation.Table, sqlgraph.NewFieldSpec(stocklocation.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stocklocation.Table, sqlgraph.NewFieldSpec(stocklocation.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -320,15 +320,15 @@ func (_c *StockLocationCreate) createSpec() (*StockLocation, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stocklocation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklocation.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stocklocation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklocation.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stocklocation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stocklocation.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -336,7 +336,7 @@ func (_c *StockLocationCreate) createSpec() (*StockLocation, *sqlgraph.CreateSpe
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(stocklocation.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(stocklocation.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -344,7 +344,7 @@ func (_c *StockLocationCreate) createSpec() (*StockLocation, *sqlgraph.CreateSpe
 		_node.Name = &value
 	}
 	if value, ok := _c.mutation.ParentID(); ok {
-		_spec.SetField(stocklocation.FieldParentID, field.TypeUint32, value)
+		_spec.SetField(stocklocation.FieldParentID, field.TypeInt64, value)
 		_node.ParentID = &value
 	}
 	if value, ok := _c.mutation.Path(); ok {
@@ -448,7 +448,7 @@ func (u *StockLocationUpsert) ClearDeletedAt() *StockLocationUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockLocationUpsert) SetCreatedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) SetCreatedBy(v int64) *StockLocationUpsert {
 	u.Set(stocklocation.FieldCreatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *StockLocationUpsert) UpdateCreatedBy() *StockLocationUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockLocationUpsert) AddCreatedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) AddCreatedBy(v int64) *StockLocationUpsert {
 	u.Add(stocklocation.FieldCreatedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *StockLocationUpsert) ClearCreatedBy() *StockLocationUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockLocationUpsert) SetUpdatedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) SetUpdatedBy(v int64) *StockLocationUpsert {
 	u.Set(stocklocation.FieldUpdatedBy, v)
 	return u
 }
@@ -484,7 +484,7 @@ func (u *StockLocationUpsert) UpdateUpdatedBy() *StockLocationUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockLocationUpsert) AddUpdatedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) AddUpdatedBy(v int64) *StockLocationUpsert {
 	u.Add(stocklocation.FieldUpdatedBy, v)
 	return u
 }
@@ -496,7 +496,7 @@ func (u *StockLocationUpsert) ClearUpdatedBy() *StockLocationUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockLocationUpsert) SetDeletedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) SetDeletedBy(v int64) *StockLocationUpsert {
 	u.Set(stocklocation.FieldDeletedBy, v)
 	return u
 }
@@ -508,7 +508,7 @@ func (u *StockLocationUpsert) UpdateDeletedBy() *StockLocationUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockLocationUpsert) AddDeletedBy(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) AddDeletedBy(v int64) *StockLocationUpsert {
 	u.Add(stocklocation.FieldDeletedBy, v)
 	return u
 }
@@ -556,7 +556,7 @@ func (u *StockLocationUpsert) ClearName() *StockLocationUpsert {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *StockLocationUpsert) SetParentID(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) SetParentID(v int64) *StockLocationUpsert {
 	u.Set(stocklocation.FieldParentID, v)
 	return u
 }
@@ -568,7 +568,7 @@ func (u *StockLocationUpsert) UpdateParentID() *StockLocationUpsert {
 }
 
 // AddParentID adds v to the "parent_id" field.
-func (u *StockLocationUpsert) AddParentID(v uint32) *StockLocationUpsert {
+func (u *StockLocationUpsert) AddParentID(v int64) *StockLocationUpsert {
 	u.Add(stocklocation.FieldParentID, v)
 	return u
 }
@@ -730,14 +730,14 @@ func (u *StockLocationUpsertOne) ClearDeletedAt() *StockLocationUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockLocationUpsertOne) SetCreatedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) SetCreatedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockLocationUpsertOne) AddCreatedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) AddCreatedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -758,14 +758,14 @@ func (u *StockLocationUpsertOne) ClearCreatedBy() *StockLocationUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockLocationUpsertOne) SetUpdatedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) SetUpdatedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockLocationUpsertOne) AddUpdatedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) AddUpdatedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -786,14 +786,14 @@ func (u *StockLocationUpsertOne) ClearUpdatedBy() *StockLocationUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockLocationUpsertOne) SetDeletedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) SetDeletedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockLocationUpsertOne) AddDeletedBy(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) AddDeletedBy(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -856,14 +856,14 @@ func (u *StockLocationUpsertOne) ClearName() *StockLocationUpsertOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *StockLocationUpsertOne) SetParentID(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) SetParentID(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetParentID(v)
 	})
 }
 
 // AddParentID adds v to the "parent_id" field.
-func (u *StockLocationUpsertOne) AddParentID(v uint32) *StockLocationUpsertOne {
+func (u *StockLocationUpsertOne) AddParentID(v int64) *StockLocationUpsertOne {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddParentID(v)
 	})
@@ -962,7 +962,7 @@ func (u *StockLocationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockLocationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockLocationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -971,7 +971,7 @@ func (u *StockLocationUpsertOne) ID(ctx context.Context) (id uint32, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockLocationUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockLocationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1028,7 +1028,7 @@ func (_c *StockLocationCreateBulk) Save(ctx context.Context) ([]*StockLocation, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1209,14 +1209,14 @@ func (u *StockLocationUpsertBulk) ClearDeletedAt() *StockLocationUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockLocationUpsertBulk) SetCreatedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) SetCreatedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockLocationUpsertBulk) AddCreatedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) AddCreatedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1237,14 +1237,14 @@ func (u *StockLocationUpsertBulk) ClearCreatedBy() *StockLocationUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockLocationUpsertBulk) SetUpdatedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) SetUpdatedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockLocationUpsertBulk) AddUpdatedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) AddUpdatedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1265,14 +1265,14 @@ func (u *StockLocationUpsertBulk) ClearUpdatedBy() *StockLocationUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockLocationUpsertBulk) SetDeletedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) SetDeletedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockLocationUpsertBulk) AddDeletedBy(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) AddDeletedBy(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1335,14 +1335,14 @@ func (u *StockLocationUpsertBulk) ClearName() *StockLocationUpsertBulk {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *StockLocationUpsertBulk) SetParentID(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) SetParentID(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.SetParentID(v)
 	})
 }
 
 // AddParentID adds v to the "parent_id" field.
-func (u *StockLocationUpsertBulk) AddParentID(v uint32) *StockLocationUpsertBulk {
+func (u *StockLocationUpsertBulk) AddParentID(v int64) *StockLocationUpsertBulk {
 	return u.Update(func(s *StockLocationUpsert) {
 		s.AddParentID(v)
 	})

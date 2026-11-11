@@ -65,13 +65,13 @@ func (_c *SupplierCreate) SetNillableDeletedAt(v *time.Time) *SupplierCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SupplierCreate) SetCreatedBy(v uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetCreatedBy(v int64) *SupplierCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SupplierCreate) SetNillableCreatedBy(v *uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetNillableCreatedBy(v *int64) *SupplierCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SupplierCreate) SetNillableCreatedBy(v *uint32) *SupplierCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SupplierCreate) SetUpdatedBy(v uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetUpdatedBy(v int64) *SupplierCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SupplierCreate) SetNillableUpdatedBy(v *uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetNillableUpdatedBy(v *int64) *SupplierCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SupplierCreate) SetNillableUpdatedBy(v *uint32) *SupplierCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SupplierCreate) SetDeletedBy(v uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetDeletedBy(v int64) *SupplierCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SupplierCreate) SetNillableDeletedBy(v *uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetNillableDeletedBy(v *int64) *SupplierCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *SupplierCreate) SetNillableRemark(v *string) *SupplierCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SupplierCreate) SetTenantID(v uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetTenantID(v int64) *SupplierCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SupplierCreate) SetNillableTenantID(v *uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetNillableTenantID(v *int64) *SupplierCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -205,7 +205,7 @@ func (_c *SupplierCreate) SetNillableEnable(v *bool) *SupplierCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *SupplierCreate) SetID(v uint32) *SupplierCreate {
+func (_c *SupplierCreate) SetID(v int64) *SupplierCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -281,7 +281,7 @@ func (_c *SupplierCreate) sqlSave(ctx context.Context) (*Supplier, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -291,7 +291,7 @@ func (_c *SupplierCreate) sqlSave(ctx context.Context) (*Supplier, error) {
 func (_c *SupplierCreate) createSpec() (*Supplier, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Supplier{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(supplier.Table, sqlgraph.NewFieldSpec(supplier.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(supplier.Table, sqlgraph.NewFieldSpec(supplier.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -311,15 +311,15 @@ func (_c *SupplierCreate) createSpec() (*Supplier, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(supplier.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(supplier.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(supplier.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(supplier.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(supplier.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(supplier.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -327,7 +327,7 @@ func (_c *SupplierCreate) createSpec() (*Supplier, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(supplier.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(supplier.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Code(); ok {
@@ -439,7 +439,7 @@ func (u *SupplierUpsert) ClearDeletedAt() *SupplierUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SupplierUpsert) SetCreatedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) SetCreatedBy(v int64) *SupplierUpsert {
 	u.Set(supplier.FieldCreatedBy, v)
 	return u
 }
@@ -451,7 +451,7 @@ func (u *SupplierUpsert) UpdateCreatedBy() *SupplierUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SupplierUpsert) AddCreatedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) AddCreatedBy(v int64) *SupplierUpsert {
 	u.Add(supplier.FieldCreatedBy, v)
 	return u
 }
@@ -463,7 +463,7 @@ func (u *SupplierUpsert) ClearCreatedBy() *SupplierUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SupplierUpsert) SetUpdatedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) SetUpdatedBy(v int64) *SupplierUpsert {
 	u.Set(supplier.FieldUpdatedBy, v)
 	return u
 }
@@ -475,7 +475,7 @@ func (u *SupplierUpsert) UpdateUpdatedBy() *SupplierUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SupplierUpsert) AddUpdatedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) AddUpdatedBy(v int64) *SupplierUpsert {
 	u.Add(supplier.FieldUpdatedBy, v)
 	return u
 }
@@ -487,7 +487,7 @@ func (u *SupplierUpsert) ClearUpdatedBy() *SupplierUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SupplierUpsert) SetDeletedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) SetDeletedBy(v int64) *SupplierUpsert {
 	u.Set(supplier.FieldDeletedBy, v)
 	return u
 }
@@ -499,7 +499,7 @@ func (u *SupplierUpsert) UpdateDeletedBy() *SupplierUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SupplierUpsert) AddDeletedBy(v uint32) *SupplierUpsert {
+func (u *SupplierUpsert) AddDeletedBy(v int64) *SupplierUpsert {
 	u.Add(supplier.FieldDeletedBy, v)
 	return u
 }
@@ -715,14 +715,14 @@ func (u *SupplierUpsertOne) ClearDeletedAt() *SupplierUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SupplierUpsertOne) SetCreatedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) SetCreatedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SupplierUpsertOne) AddCreatedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) AddCreatedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -743,14 +743,14 @@ func (u *SupplierUpsertOne) ClearCreatedBy() *SupplierUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SupplierUpsertOne) SetUpdatedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) SetUpdatedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SupplierUpsertOne) AddUpdatedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) AddUpdatedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -771,14 +771,14 @@ func (u *SupplierUpsertOne) ClearUpdatedBy() *SupplierUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SupplierUpsertOne) SetDeletedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) SetDeletedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SupplierUpsertOne) AddDeletedBy(v uint32) *SupplierUpsertOne {
+func (u *SupplierUpsertOne) AddDeletedBy(v int64) *SupplierUpsertOne {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -940,7 +940,7 @@ func (u *SupplierUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SupplierUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SupplierUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -949,7 +949,7 @@ func (u *SupplierUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SupplierUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SupplierUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1006,7 +1006,7 @@ func (_c *SupplierCreateBulk) Save(ctx context.Context) ([]*Supplier, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1187,14 +1187,14 @@ func (u *SupplierUpsertBulk) ClearDeletedAt() *SupplierUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SupplierUpsertBulk) SetCreatedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) SetCreatedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SupplierUpsertBulk) AddCreatedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) AddCreatedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1215,14 +1215,14 @@ func (u *SupplierUpsertBulk) ClearCreatedBy() *SupplierUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SupplierUpsertBulk) SetUpdatedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) SetUpdatedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SupplierUpsertBulk) AddUpdatedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) AddUpdatedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1243,14 +1243,14 @@ func (u *SupplierUpsertBulk) ClearUpdatedBy() *SupplierUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SupplierUpsertBulk) SetDeletedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) SetDeletedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SupplierUpsertBulk) AddDeletedBy(v uint32) *SupplierUpsertBulk {
+func (u *SupplierUpsertBulk) AddDeletedBy(v int64) *SupplierUpsertBulk {
 	return u.Update(func(s *SupplierUpsert) {
 		s.AddDeletedBy(v)
 	})

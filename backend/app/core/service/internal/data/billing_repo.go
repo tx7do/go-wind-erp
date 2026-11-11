@@ -54,7 +54,7 @@ func (r *PlanRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		dtos = append(dtos, r.mapper.ToDTO(e))
 	}
 	return &billingV1.ListPlanResponse{
-		Total: uint64(len(dtos)),
+		Total: int64(len(dtos)),
 		Items: dtos,
 	}, nil
 }
@@ -169,7 +169,7 @@ func NewSubscriptionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*e
 
 // GetByTenant 取租户当前订阅（租户上下文）。无记录返回 nil, nil
 // （守卫按 FREE 默认限额处理）。
-func (r *SubscriptionRepo) GetByTenant(ctx context.Context, tenantID uint32) (*billingV1.Subscription, error) {
+func (r *SubscriptionRepo) GetByTenant(ctx context.Context, tenantID int64) (*billingV1.Subscription, error) {
 	if tenantID == 0 {
 		return nil, nil
 	}
@@ -204,7 +204,7 @@ func (r *SubscriptionRepo) GetByTenant(ctx context.Context, tenantID uint32) (*b
 // 每租户一条，唯一索引兜底并发）。
 func (r *SubscriptionRepo) UpsertByTenant(
 	ctx context.Context,
-	tenantID uint32,
+	tenantID int64,
 	sub *billingV1.Subscription,
 ) error {
 	if tenantID == 0 || sub == nil {

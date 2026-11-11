@@ -29,7 +29,7 @@ func (SalesOrderItem) Annotations() []schema.Annotation {
 
 func (SalesOrderItem) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("so_id").
+		field.Int64("so_id").
 			Comment("所属销售单ID").
 			Default(0).
 			Optional().
@@ -68,10 +68,10 @@ func (SalesOrderItem) Fields() []ent.Field {
 
 func (SalesOrderItem) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

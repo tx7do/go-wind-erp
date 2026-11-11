@@ -43,7 +43,7 @@ func (s *CustomerService) Count(ctx context.Context, req *paginationV1.PagingReq
 	if err != nil {
 		return nil, err
 	}
-	return &salesV1.CountCustomerResponse{Count: uint64(count)}, nil
+	return &salesV1.CountCustomerResponse{Count: int64(count)}, nil
 }
 
 func (s *CustomerService) Get(ctx context.Context, req *salesV1.GetCustomerRequest) (*salesV1.Customer, error) {

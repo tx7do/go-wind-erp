@@ -70,11 +70,11 @@ func (Plan) Fields() []ent.Field {
 
 func (Plan) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 		mixin.SortOrder{},
 		mixin.SwitchStatus{},
 	}

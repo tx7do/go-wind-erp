@@ -30,7 +30,7 @@ func (JournalLine) Annotations() []schema.Annotation {
 
 func (JournalLine) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("entry_id").
+		field.Int64("entry_id").
 			Comment("所属凭证ID").
 			Default(0).
 			Optional().
@@ -63,9 +63,9 @@ func (JournalLine) Fields() []ent.Field {
 
 func (JournalLine) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

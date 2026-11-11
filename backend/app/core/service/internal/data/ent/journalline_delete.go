@@ -40,7 +40,7 @@ func (_d *JournalLineDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *JournalLineDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(journalline.Table, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(journalline.Table, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

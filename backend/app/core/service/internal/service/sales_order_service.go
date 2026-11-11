@@ -76,7 +76,7 @@ func (s *SalesOrderService) Count(ctx context.Context, req *paginationV1.PagingR
 	if err != nil {
 		return nil, err
 	}
-	return &salesV1.CountSalesOrderResponse{Count: uint64(count)}, nil
+	return &salesV1.CountSalesOrderResponse{Count: int64(count)}, nil
 }
 
 func (s *SalesOrderService) Get(ctx context.Context, req *salesV1.GetSalesOrderRequest) (*salesV1.SalesOrder, error) {
@@ -227,7 +227,7 @@ func (s *SalesOrderService) Cancel(ctx context.Context, req *salesV1.CancelSales
 // 审批生成失败不影响提交结果，仅记录（审批单可人工补建）。
 func (s *SalesOrderService) transition(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	to salesV1.SalesOrder_Status,
 	createApproval bool,
 ) (*emptypb.Empty, error) {
@@ -319,7 +319,7 @@ func (s *SalesOrderService) transition(
 func (s *SalesOrderService) createOutboundPicking(
 	ctx context.Context,
 	so *salesV1.SalesOrder,
-	soID uint32,
+	soID int64,
 ) {
 	warehouseCode := so.GetWarehouseCode()
 	if warehouseCode == "" {

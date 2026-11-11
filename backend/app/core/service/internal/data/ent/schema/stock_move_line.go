@@ -35,14 +35,14 @@ func (StockMoveLine) Annotations() []schema.Annotation {
 func (StockMoveLine) Fields() []ent.Field {
 	return []ent.Field{
 		// move_id：所属计划 move。
-		field.Uint32("move_id").
+		field.Int64("move_id").
 			Comment("所属移动计划ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
 		// picking_id：反范式到拣货单（Odoo 式，便于按拣货单查执行记录）。
-		field.Uint32("picking_id").
+		field.Int64("picking_id").
 			Comment("所属拣货单ID（反范式）").
 			Default(0).
 			Optional().
@@ -53,13 +53,13 @@ func (StockMoveLine) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("source_location_id").
+		field.Int64("source_location_id").
 			Comment("源位置ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint32("destination_location_id").
+		field.Int64("destination_location_id").
 			Comment("目的位置ID").
 			Default(0).
 			Optional().
@@ -83,7 +83,7 @@ func (StockMoveLine) Fields() []ent.Field {
 
 		// lot_id：批次（记录式批次/效期）。入库腿登记批次、出库腿按
 		// FEFO 或指派扣减批次；批次余量 = move lines 按 usage 聚合。
-		field.Uint32("lot_id").
+		field.Int64("lot_id").
 			Comment("批次ID（可空=未跟踪）").
 			Default(0).
 			Optional().
@@ -93,11 +93,11 @@ func (StockMoveLine) Fields() []ent.Field {
 
 func (StockMoveLine) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

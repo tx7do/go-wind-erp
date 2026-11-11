@@ -43,7 +43,7 @@ func (s *SupplierService) Count(ctx context.Context, req *paginationV1.PagingReq
 	if err != nil {
 		return nil, err
 	}
-	return &procurementV1.CountSupplierResponse{Count: uint64(count)}, nil
+	return &procurementV1.CountSupplierResponse{Count: int64(count)}, nil
 }
 
 func (s *SupplierService) Get(ctx context.Context, req *procurementV1.GetSupplierRequest) (*procurementV1.Supplier, error) {

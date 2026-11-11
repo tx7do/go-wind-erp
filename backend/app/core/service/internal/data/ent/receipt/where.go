@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Receipt {
+func ID(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Receipt {
+func IDEQ(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Receipt {
+func IDNEQ(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Receipt {
+func IDIn(ids ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Receipt {
+func IDNotIn(ids ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Receipt {
+func IDGT(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Receipt {
+func IDGTE(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Receipt {
+func IDLT(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Receipt {
+func IDLTE(id int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.Receipt {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Receipt {
+func CreatedBy(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Receipt {
+func UpdatedBy(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Receipt {
+func DeletedBy(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -90,7 +90,7 @@ func Remark(v string) predicate.Receipt {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Receipt {
+func TenantID(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -100,7 +100,7 @@ func ReceiptNumber(v string) predicate.Receipt {
 }
 
 // ReceivableID applies equality check predicate on the "receivable_id" field. It's identical to ReceivableIDEQ.
-func ReceivableID(v uint32) predicate.Receipt {
+func ReceivableID(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldReceivableID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.Receipt {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Receipt {
+func CreatedByEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Receipt {
+func CreatedByNEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Receipt {
+func CreatedByIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Receipt {
+func CreatedByNotIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Receipt {
+func CreatedByGT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Receipt {
+func CreatedByGTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Receipt {
+func CreatedByLT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Receipt {
+func CreatedByLTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.Receipt {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Receipt {
+func UpdatedByEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Receipt {
+func UpdatedByNEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Receipt {
+func UpdatedByIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Receipt {
+func UpdatedByNotIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Receipt {
+func UpdatedByGT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Receipt {
+func UpdatedByGTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Receipt {
+func UpdatedByLT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Receipt {
+func UpdatedByLTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.Receipt {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Receipt {
+func DeletedByEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Receipt {
+func DeletedByNEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Receipt {
+func DeletedByIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Receipt {
+func DeletedByNotIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Receipt {
+func DeletedByGT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Receipt {
+func DeletedByGTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Receipt {
+func DeletedByLT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Receipt {
+func DeletedByLTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -485,42 +485,42 @@ func RemarkContainsFold(v string) predicate.Receipt {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Receipt {
+func TenantIDEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Receipt {
+func TenantIDNEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Receipt {
+func TenantIDIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Receipt {
+func TenantIDNotIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Receipt {
+func TenantIDGT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Receipt {
+func TenantIDGTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Receipt {
+func TenantIDLT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Receipt {
+func TenantIDLTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -610,42 +610,42 @@ func ReceiptNumberContainsFold(v string) predicate.Receipt {
 }
 
 // ReceivableIDEQ applies the EQ predicate on the "receivable_id" field.
-func ReceivableIDEQ(v uint32) predicate.Receipt {
+func ReceivableIDEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldEQ(FieldReceivableID, v))
 }
 
 // ReceivableIDNEQ applies the NEQ predicate on the "receivable_id" field.
-func ReceivableIDNEQ(v uint32) predicate.Receipt {
+func ReceivableIDNEQ(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNEQ(FieldReceivableID, v))
 }
 
 // ReceivableIDIn applies the In predicate on the "receivable_id" field.
-func ReceivableIDIn(vs ...uint32) predicate.Receipt {
+func ReceivableIDIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldIn(FieldReceivableID, vs...))
 }
 
 // ReceivableIDNotIn applies the NotIn predicate on the "receivable_id" field.
-func ReceivableIDNotIn(vs ...uint32) predicate.Receipt {
+func ReceivableIDNotIn(vs ...int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldNotIn(FieldReceivableID, vs...))
 }
 
 // ReceivableIDGT applies the GT predicate on the "receivable_id" field.
-func ReceivableIDGT(v uint32) predicate.Receipt {
+func ReceivableIDGT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGT(FieldReceivableID, v))
 }
 
 // ReceivableIDGTE applies the GTE predicate on the "receivable_id" field.
-func ReceivableIDGTE(v uint32) predicate.Receipt {
+func ReceivableIDGTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldGTE(FieldReceivableID, v))
 }
 
 // ReceivableIDLT applies the LT predicate on the "receivable_id" field.
-func ReceivableIDLT(v uint32) predicate.Receipt {
+func ReceivableIDLT(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLT(FieldReceivableID, v))
 }
 
 // ReceivableIDLTE applies the LTE predicate on the "receivable_id" field.
-func ReceivableIDLTE(v uint32) predicate.Receipt {
+func ReceivableIDLTE(v int64) predicate.Receipt {
 	return predicate.Receipt(sql.FieldLTE(FieldReceivableID, v))
 }
 

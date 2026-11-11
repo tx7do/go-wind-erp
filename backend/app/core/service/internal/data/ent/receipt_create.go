@@ -65,13 +65,13 @@ func (_c *ReceiptCreate) SetNillableDeletedAt(v *time.Time) *ReceiptCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ReceiptCreate) SetCreatedBy(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetCreatedBy(v int64) *ReceiptCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ReceiptCreate) SetNillableCreatedBy(v *uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetNillableCreatedBy(v *int64) *ReceiptCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ReceiptCreate) SetNillableCreatedBy(v *uint32) *ReceiptCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ReceiptCreate) SetUpdatedBy(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetUpdatedBy(v int64) *ReceiptCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ReceiptCreate) SetNillableUpdatedBy(v *uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetNillableUpdatedBy(v *int64) *ReceiptCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ReceiptCreate) SetNillableUpdatedBy(v *uint32) *ReceiptCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ReceiptCreate) SetDeletedBy(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetDeletedBy(v int64) *ReceiptCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ReceiptCreate) SetNillableDeletedBy(v *uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetNillableDeletedBy(v *int64) *ReceiptCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ReceiptCreate) SetNillableRemark(v *string) *ReceiptCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ReceiptCreate) SetTenantID(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetTenantID(v int64) *ReceiptCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ReceiptCreate) SetNillableTenantID(v *uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetNillableTenantID(v *int64) *ReceiptCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *ReceiptCreate) SetNillableReceiptNumber(v *string) *ReceiptCreate {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (_c *ReceiptCreate) SetReceivableID(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetReceivableID(v int64) *ReceiptCreate {
 	_c.mutation.SetReceivableID(v)
 	return _c
 }
 
 // SetNillableReceivableID sets the "receivable_id" field if the given value is not nil.
-func (_c *ReceiptCreate) SetNillableReceivableID(v *uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetNillableReceivableID(v *int64) *ReceiptCreate {
 	if v != nil {
 		_c.SetReceivableID(*v)
 	}
@@ -205,7 +205,7 @@ func (_c *ReceiptCreate) SetNillableStatus(v *receipt.Status) *ReceiptCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *ReceiptCreate) SetID(v uint32) *ReceiptCreate {
+func (_c *ReceiptCreate) SetID(v int64) *ReceiptCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -303,7 +303,7 @@ func (_c *ReceiptCreate) sqlSave(ctx context.Context) (*Receipt, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -313,7 +313,7 @@ func (_c *ReceiptCreate) sqlSave(ctx context.Context) (*Receipt, error) {
 func (_c *ReceiptCreate) createSpec() (*Receipt, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Receipt{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(receipt.Table, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(receipt.Table, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -333,15 +333,15 @@ func (_c *ReceiptCreate) createSpec() (*Receipt, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(receipt.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(receipt.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(receipt.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -349,7 +349,7 @@ func (_c *ReceiptCreate) createSpec() (*Receipt, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(receipt.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ReceiptNumber(); ok {
@@ -357,7 +357,7 @@ func (_c *ReceiptCreate) createSpec() (*Receipt, *sqlgraph.CreateSpec) {
 		_node.ReceiptNumber = &value
 	}
 	if value, ok := _c.mutation.ReceivableID(); ok {
-		_spec.SetField(receipt.FieldReceivableID, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldReceivableID, field.TypeInt64, value)
 		_node.ReceivableID = &value
 	}
 	if value, ok := _c.mutation.Amount(); ok {
@@ -461,7 +461,7 @@ func (u *ReceiptUpsert) ClearDeletedAt() *ReceiptUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceiptUpsert) SetCreatedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) SetCreatedBy(v int64) *ReceiptUpsert {
 	u.Set(receipt.FieldCreatedBy, v)
 	return u
 }
@@ -473,7 +473,7 @@ func (u *ReceiptUpsert) UpdateCreatedBy() *ReceiptUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceiptUpsert) AddCreatedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) AddCreatedBy(v int64) *ReceiptUpsert {
 	u.Add(receipt.FieldCreatedBy, v)
 	return u
 }
@@ -485,7 +485,7 @@ func (u *ReceiptUpsert) ClearCreatedBy() *ReceiptUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceiptUpsert) SetUpdatedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) SetUpdatedBy(v int64) *ReceiptUpsert {
 	u.Set(receipt.FieldUpdatedBy, v)
 	return u
 }
@@ -497,7 +497,7 @@ func (u *ReceiptUpsert) UpdateUpdatedBy() *ReceiptUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceiptUpsert) AddUpdatedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) AddUpdatedBy(v int64) *ReceiptUpsert {
 	u.Add(receipt.FieldUpdatedBy, v)
 	return u
 }
@@ -509,7 +509,7 @@ func (u *ReceiptUpsert) ClearUpdatedBy() *ReceiptUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceiptUpsert) SetDeletedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) SetDeletedBy(v int64) *ReceiptUpsert {
 	u.Set(receipt.FieldDeletedBy, v)
 	return u
 }
@@ -521,7 +521,7 @@ func (u *ReceiptUpsert) UpdateDeletedBy() *ReceiptUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceiptUpsert) AddDeletedBy(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) AddDeletedBy(v int64) *ReceiptUpsert {
 	u.Add(receipt.FieldDeletedBy, v)
 	return u
 }
@@ -569,7 +569,7 @@ func (u *ReceiptUpsert) ClearReceiptNumber() *ReceiptUpsert {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (u *ReceiptUpsert) SetReceivableID(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) SetReceivableID(v int64) *ReceiptUpsert {
 	u.Set(receipt.FieldReceivableID, v)
 	return u
 }
@@ -581,7 +581,7 @@ func (u *ReceiptUpsert) UpdateReceivableID() *ReceiptUpsert {
 }
 
 // AddReceivableID adds v to the "receivable_id" field.
-func (u *ReceiptUpsert) AddReceivableID(v uint32) *ReceiptUpsert {
+func (u *ReceiptUpsert) AddReceivableID(v int64) *ReceiptUpsert {
 	u.Add(receipt.FieldReceivableID, v)
 	return u
 }
@@ -749,14 +749,14 @@ func (u *ReceiptUpsertOne) ClearDeletedAt() *ReceiptUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceiptUpsertOne) SetCreatedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) SetCreatedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceiptUpsertOne) AddCreatedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) AddCreatedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -777,14 +777,14 @@ func (u *ReceiptUpsertOne) ClearCreatedBy() *ReceiptUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceiptUpsertOne) SetUpdatedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) SetUpdatedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceiptUpsertOne) AddUpdatedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) AddUpdatedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -805,14 +805,14 @@ func (u *ReceiptUpsertOne) ClearUpdatedBy() *ReceiptUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceiptUpsertOne) SetDeletedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) SetDeletedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceiptUpsertOne) AddDeletedBy(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) AddDeletedBy(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -875,14 +875,14 @@ func (u *ReceiptUpsertOne) ClearReceiptNumber() *ReceiptUpsertOne {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (u *ReceiptUpsertOne) SetReceivableID(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) SetReceivableID(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetReceivableID(v)
 	})
 }
 
 // AddReceivableID adds v to the "receivable_id" field.
-func (u *ReceiptUpsertOne) AddReceivableID(v uint32) *ReceiptUpsertOne {
+func (u *ReceiptUpsertOne) AddReceivableID(v int64) *ReceiptUpsertOne {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddReceivableID(v)
 	})
@@ -988,7 +988,7 @@ func (u *ReceiptUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ReceiptUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ReceiptUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -997,7 +997,7 @@ func (u *ReceiptUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ReceiptUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ReceiptUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1054,7 +1054,7 @@ func (_c *ReceiptCreateBulk) Save(ctx context.Context) ([]*Receipt, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1235,14 +1235,14 @@ func (u *ReceiptUpsertBulk) ClearDeletedAt() *ReceiptUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceiptUpsertBulk) SetCreatedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) SetCreatedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceiptUpsertBulk) AddCreatedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) AddCreatedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1263,14 +1263,14 @@ func (u *ReceiptUpsertBulk) ClearCreatedBy() *ReceiptUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceiptUpsertBulk) SetUpdatedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) SetUpdatedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceiptUpsertBulk) AddUpdatedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) AddUpdatedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1291,14 +1291,14 @@ func (u *ReceiptUpsertBulk) ClearUpdatedBy() *ReceiptUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceiptUpsertBulk) SetDeletedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) SetDeletedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceiptUpsertBulk) AddDeletedBy(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) AddDeletedBy(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1361,14 +1361,14 @@ func (u *ReceiptUpsertBulk) ClearReceiptNumber() *ReceiptUpsertBulk {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (u *ReceiptUpsertBulk) SetReceivableID(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) SetReceivableID(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.SetReceivableID(v)
 	})
 }
 
 // AddReceivableID adds v to the "receivable_id" field.
-func (u *ReceiptUpsertBulk) AddReceivableID(v uint32) *ReceiptUpsertBulk {
+func (u *ReceiptUpsertBulk) AddReceivableID(v int64) *ReceiptUpsertBulk {
 	return u.Update(func(s *ReceiptUpsert) {
 		s.AddReceivableID(v)
 	})

@@ -51,13 +51,13 @@ func (_c *SalesOrderItemCreate) SetNillableRemark(v *string) *SalesOrderItemCrea
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SalesOrderItemCreate) SetTenantID(v uint32) *SalesOrderItemCreate {
+func (_c *SalesOrderItemCreate) SetTenantID(v int64) *SalesOrderItemCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SalesOrderItemCreate) SetNillableTenantID(v *uint32) *SalesOrderItemCreate {
+func (_c *SalesOrderItemCreate) SetNillableTenantID(v *int64) *SalesOrderItemCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -65,13 +65,13 @@ func (_c *SalesOrderItemCreate) SetNillableTenantID(v *uint32) *SalesOrderItemCr
 }
 
 // SetSoID sets the "so_id" field.
-func (_c *SalesOrderItemCreate) SetSoID(v uint32) *SalesOrderItemCreate {
+func (_c *SalesOrderItemCreate) SetSoID(v int64) *SalesOrderItemCreate {
 	_c.mutation.SetSoID(v)
 	return _c
 }
 
 // SetNillableSoID sets the "so_id" field if the given value is not nil.
-func (_c *SalesOrderItemCreate) SetNillableSoID(v *uint32) *SalesOrderItemCreate {
+func (_c *SalesOrderItemCreate) SetNillableSoID(v *int64) *SalesOrderItemCreate {
 	if v != nil {
 		_c.SetSoID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *SalesOrderItemCreate) SetNillableFulfilledQuantity(v *int64) *SalesOrd
 }
 
 // SetID sets the "id" field.
-func (_c *SalesOrderItemCreate) SetID(v uint32) *SalesOrderItemCreate {
+func (_c *SalesOrderItemCreate) SetID(v int64) *SalesOrderItemCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -241,7 +241,7 @@ func (_c *SalesOrderItemCreate) sqlSave(ctx context.Context) (*SalesOrderItem, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -251,7 +251,7 @@ func (_c *SalesOrderItemCreate) sqlSave(ctx context.Context) (*SalesOrderItem, e
 func (_c *SalesOrderItemCreate) createSpec() (*SalesOrderItem, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SalesOrderItem{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(salesorderitem.Table, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(salesorderitem.Table, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -267,11 +267,11 @@ func (_c *SalesOrderItemCreate) createSpec() (*SalesOrderItem, *sqlgraph.CreateS
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(salesorderitem.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(salesorderitem.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.SoID(); ok {
-		_spec.SetField(salesorderitem.FieldSoID, field.TypeUint32, value)
+		_spec.SetField(salesorderitem.FieldSoID, field.TypeInt64, value)
 		_node.SoID = &value
 	}
 	if value, ok := _c.mutation.SkuCode(); ok {
@@ -365,7 +365,7 @@ func (u *SalesOrderItemUpsert) ClearRemark() *SalesOrderItemUpsert {
 }
 
 // SetSoID sets the "so_id" field.
-func (u *SalesOrderItemUpsert) SetSoID(v uint32) *SalesOrderItemUpsert {
+func (u *SalesOrderItemUpsert) SetSoID(v int64) *SalesOrderItemUpsert {
 	u.Set(salesorderitem.FieldSoID, v)
 	return u
 }
@@ -377,7 +377,7 @@ func (u *SalesOrderItemUpsert) UpdateSoID() *SalesOrderItemUpsert {
 }
 
 // AddSoID adds v to the "so_id" field.
-func (u *SalesOrderItemUpsert) AddSoID(v uint32) *SalesOrderItemUpsert {
+func (u *SalesOrderItemUpsert) AddSoID(v int64) *SalesOrderItemUpsert {
 	u.Add(salesorderitem.FieldSoID, v)
 	return u
 }
@@ -578,14 +578,14 @@ func (u *SalesOrderItemUpsertOne) ClearRemark() *SalesOrderItemUpsertOne {
 }
 
 // SetSoID sets the "so_id" field.
-func (u *SalesOrderItemUpsertOne) SetSoID(v uint32) *SalesOrderItemUpsertOne {
+func (u *SalesOrderItemUpsertOne) SetSoID(v int64) *SalesOrderItemUpsertOne {
 	return u.Update(func(s *SalesOrderItemUpsert) {
 		s.SetSoID(v)
 	})
 }
 
 // AddSoID adds v to the "so_id" field.
-func (u *SalesOrderItemUpsertOne) AddSoID(v uint32) *SalesOrderItemUpsertOne {
+func (u *SalesOrderItemUpsertOne) AddSoID(v int64) *SalesOrderItemUpsertOne {
 	return u.Update(func(s *SalesOrderItemUpsert) {
 		s.AddSoID(v)
 	})
@@ -754,7 +754,7 @@ func (u *SalesOrderItemUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SalesOrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SalesOrderItemUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -763,7 +763,7 @@ func (u *SalesOrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SalesOrderItemUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SalesOrderItemUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -820,7 +820,7 @@ func (_c *SalesOrderItemCreateBulk) Save(ctx context.Context) ([]*SalesOrderItem
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -980,14 +980,14 @@ func (u *SalesOrderItemUpsertBulk) ClearRemark() *SalesOrderItemUpsertBulk {
 }
 
 // SetSoID sets the "so_id" field.
-func (u *SalesOrderItemUpsertBulk) SetSoID(v uint32) *SalesOrderItemUpsertBulk {
+func (u *SalesOrderItemUpsertBulk) SetSoID(v int64) *SalesOrderItemUpsertBulk {
 	return u.Update(func(s *SalesOrderItemUpsert) {
 		s.SetSoID(v)
 	})
 }
 
 // AddSoID adds v to the "so_id" field.
-func (u *SalesOrderItemUpsertBulk) AddSoID(v uint32) *SalesOrderItemUpsertBulk {
+func (u *SalesOrderItemUpsertBulk) AddSoID(v int64) *SalesOrderItemUpsertBulk {
 	return u.Update(func(s *SalesOrderItemUpsert) {
 		s.AddSoID(v)
 	})

@@ -103,8 +103,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -197,8 +196,7 @@ paths:
                 - name: fileId
                   in: query
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: storageObject.bucketName
                   in: query
                   schema:
@@ -285,6 +283,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
+    /app/v1/finance/summary:
+        get:
+            tags:
+                - FinanceSummaryService
+            operationId: FinanceSummaryService_GetFinanceSummary
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.FinanceSummaryResponse'
     /app/v1/login:
         post:
             tags:
@@ -513,8 +523,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -616,8 +625,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -719,8 +727,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -733,6 +740,206 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/procurement.service.v1.PurchaseOrder'
+    /app/v1/receipts:
+        get:
+            tags:
+                - ReceiptService
+            operationId: ReceiptService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.ListReceiptResponse'
+    /app/v1/receipts/{id}:
+        get:
+            tags:
+                - ReceiptService
+            operationId: ReceiptService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.Receipt'
+    /app/v1/receivables:
+        get:
+            tags:
+                - ReceivableService
+            operationId: ReceivableService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.ListReceivableResponse'
+    /app/v1/receivables/{id}:
+        get:
+            tags:
+                - ReceivableService
+            operationId: ReceivableService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/finance.service.v1.Receivable'
     /app/v1/refresh-token:
         post:
             tags:
@@ -752,6 +959,183 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+    /app/v1/sales-orders:
+        get:
+            tags:
+                - SalesOrderService
+            operationId: SalesOrderService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/sales.service.v1.ListSalesOrderResponse'
+    /app/v1/sales-orders/{id}:
+        get:
+            tags:
+                - SalesOrderService
+            operationId: SalesOrderService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/sales.service.v1.SalesOrder'
+    /app/v1/stock-lots:
+        get:
+            tags:
+                - StockLotService
+            operationId: StockLotService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/inventory.service.v1.ListStockLotResponse'
     /app/v1/stock-pickings:
         get:
             tags:
@@ -833,7 +1217,7 @@ paths:
         post:
             tags:
                 - StockPickingService
-            description: 创建拣货单（扫码调拨）
+            description: 创建拣货单（扫码调拨 / 盘点：type=INVENTORY_ADJUSTMENT + 带符号差异明细）
             operationId: StockPickingService_Create
             requestBody:
                 content:
@@ -856,8 +1240,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -881,8 +1264,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -904,8 +1286,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -927,13 +1308,44 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             requestBody:
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/inventory.service.v1.ValidateStockPickingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/stock-pickings:purchase-return:
+        post:
+            tags:
+                - StockPickingService
+            description: 创建采购退货拣货单（OUTGOING：仓库→供应商，负向回写收货数）
+            operationId: StockPickingService_CreatePurchaseReturn
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.CreatePurchaseReturnRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/stock-pickings:sales-return:
+        post:
+            tags:
+                - StockPickingService
+            description: 创建销售退货拣货单（INCOMING：客户→仓库，负向回写履约数）
+            operationId: StockPickingService_CreateSalesReturn
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/inventory.service.v1.CreateSalesReturnRequest'
                 required: true
             responses:
                 "200":
@@ -1028,8 +1440,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -1154,8 +1565,7 @@ paths:
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
                 - name: viewMask
                   in: query
                   schema:
@@ -1191,9 +1601,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 审批请求ID
-                    format: uint32
                 title:
                     type: string
                     description: 审批标题
@@ -1216,35 +1625,40 @@ components:
                     description: 审批状态
                     format: enum
                 applicantId:
-                    type: integer
+                    type: string
                     description: 申请人用户ID（服务端推导）
-                    format: uint32
                 approverId:
-                    type: integer
+                    type: string
                     description: 审批人用户ID（审批动作时服务端推导）
-                    format: uint32
                 comment:
                     type: string
                     description: 审批意见（通过/驳回时填写）
                 remark:
                     type: string
                     description: 备注
+                currentStep:
+                    type: integer
+                    description: 当前审批级（从 1 起）
+                    format: uint32
+                totalSteps:
+                    type: integer
+                    description: 总级数（<=1 为单级审批）
+                    format: uint32
+                flowId:
+                    type: string
+                    description: 快照来源流程ID（0=无流程）
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1262,8 +1676,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 comment:
                     type: string
                     description: 审批意见
@@ -1272,8 +1685,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
             description: 撤销审批 - 请求
         approval.service.v1.ListApprovalRequestResponse:
             type: object
@@ -1289,8 +1701,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 comment:
                     type: string
                     description: 驳回理由
@@ -1324,9 +1735,8 @@ components:
                     type: string
                     description: 跳转链接
                 user_id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 username:
                     type: string
                     description: 用户名
@@ -1396,13 +1806,11 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 字典项ID
-                    format: uint32
                 typeId:
-                    type: integer
+                    type: string
                     description: 字典类型ID
-                    format: uint32
                 entryValue:
                     example: MALE
                     type: string
@@ -1428,24 +1836,20 @@ components:
                 currentI18n:
                     $ref: '#/components/schemas/dict.service.v1.DictEntryI18n'
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局角色
-                    format: uint32
                 tenantName:
                     type: string
                     description: 租户名称
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1482,6 +1886,27 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/dict.service.v1.DictEntry'
+        finance.service.v1.FinanceSummaryResponse:
+            type: object
+            properties:
+                revenueMonth:
+                    type: string
+                    description: 本月收入（分，6001 净额）
+                cogsMonth:
+                    type: string
+                    description: 本月销售成本（分，6401 净额）
+                profitMonth:
+                    type: string
+                    description: 本月利润（分，收入−成本）
+                arBalance:
+                    type: string
+                    description: 应收未清余额（分）
+                apBalance:
+                    type: string
+                    description: 应付未清余额（分）
+            description: |-
+                经营汇总（驾驶舱）：本月收入/成本/利润（总账 6001/6401 当月净额）+
+                 应收/应付未清余额。金额单位分。
         finance.service.v1.ListPayableResponse:
             type: object
             properties:
@@ -1500,13 +1925,30 @@ components:
                         $ref: '#/components/schemas/finance.service.v1.Payment'
                 total:
                     type: string
+        finance.service.v1.ListReceiptResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/finance.service.v1.Receipt'
+                total:
+                    type: string
+        finance.service.v1.ListReceivableResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/finance.service.v1.Receivable'
+                total:
+                    type: string
         finance.service.v1.Payable:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 应付单ID
-                    format: uint32
                 payableNumber:
                     type: string
                     description: 应付单号（服务端生成）
@@ -1539,21 +1981,17 @@ components:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1571,16 +2009,14 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 付款ID
-                    format: uint32
                 paymentNumber:
                     type: string
                     description: 付款单号（服务端生成）
                 payableId:
-                    type: integer
+                    type: string
                     description: 所属应付单ID
-                    format: uint32
                 amount:
                     type: string
                     description: 付款金额（分）
@@ -1605,18 +2041,124 @@ components:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 付款操作人用户ID（服务端推导）
-                    format: uint32
                 createdAt:
                     type: string
                     description: 付款时间
                     format: date-time
             description: 付款
+        finance.service.v1.Receipt:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 收款ID
+                receiptNumber:
+                    type: string
+                    description: 收款单号（服务端生成）
+                receivableId:
+                    type: string
+                    description: 所属应收单ID
+                amount:
+                    type: string
+                    description: 收款金额（分）
+                method:
+                    enum:
+                        - BANK_TRANSFER
+                        - CASH
+                        - CHECK
+                        - OTHER
+                    type: string
+                    description: 收款方式
+                    format: enum
+                status:
+                    enum:
+                        - PENDING
+                        - APPLIED
+                        - REJECTED
+                    type: string
+                    description: 收款状态
+                    format: enum
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: string
+                    description: 租户ID，0代表系统全局
+                createdBy:
+                    type: string
+                    description: 收款操作人用户ID（服务端推导）
+                createdAt:
+                    type: string
+                    description: 收款时间
+                    format: date-time
+            description: 收款（镜像 Payment）
+        finance.service.v1.Receivable:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 应收单ID
+                receivableNumber:
+                    type: string
+                    description: 应收单号（服务端生成）
+                soRef:
+                    type: string
+                    description: 来源销售单引用
+                customerCode:
+                    type: string
+                    description: 客户编码
+                amount:
+                    type: string
+                    description: 应收总额（分）
+                paidAmount:
+                    type: string
+                    description: 已收金额（分，收款驱动）
+                status:
+                    enum:
+                        - PENDING
+                        - PARTIAL
+                        - SETTLED
+                        - CANCELLED
+                    type: string
+                    description: 应收状态
+                    format: enum
+                dueDate:
+                    type: string
+                    description: 账期到期日
+                    format: date-time
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: string
+                    description: 租户ID，0代表系统全局
+                createdBy:
+                    type: string
+                    description: 创建者用户ID
+                updatedBy:
+                    type: string
+                    description: 更新者用户ID
+                deletedBy:
+                    type: string
+                    description: 删除者用户ID
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 应收单（镜像 Payable）
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -1682,8 +2224,7 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: uint32
+                    type: string
                 data:
                     $ref: '#/components/schemas/identity.service.v1.User'
                 password:
@@ -1717,25 +2258,21 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID
-                    format: uint32
                 tenantName:
                     type: string
                     description: 租户名称
                 orgUnitId:
-                    type: integer
+                    type: string
                     description: 组织ID
-                    format: uint32
                 orgUnitIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 归属组织ID列表
                 orgUnitName:
                     type: string
@@ -1746,14 +2283,12 @@ components:
                         type: string
                     description: 组织名称列表
                 positionId:
-                    type: integer
+                    type: string
                     description: 职位ID
-                    format: uint32
                 positionIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 职位列表
                 positionName:
                     type: string
@@ -1764,14 +2299,12 @@ components:
                         type: string
                     description: 职位名称列表
                 roleId:
-                    type: integer
+                    type: string
                     description: 角色ID
-                    format: uint32
                 roleIds:
                     type: array
                     items:
-                        type: integer
-                        format: uint32
+                        type: string
                     description: 角色ID列表
                 roles:
                     type: array
@@ -1862,17 +2395,14 @@ components:
                     type: string
                     description: 获赞数
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -1901,22 +2431,59 @@ components:
             properties:
                 id:
                     readOnly: true
-                    type: integer
+                    type: string
                     description: ID
-                    format: uint32
         inventory.service.v1.ConfirmStockPickingRequest:
             type: object
             properties:
                 id:
                     readOnly: true
-                    type: integer
+                    type: string
                     description: ID
-                    format: uint32
+        inventory.service.v1.CreatePurchaseReturnRequest:
+            type: object
+            properties:
+                purchaseOrderId:
+                    type: string
+                    description: 采购单ID（仓库与供应商从中推导）
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.PurchaseReturnItem'
+                    description: 退货明细
+                remark:
+                    type: string
+                    description: 备注
+            description: 创建采购退货 - 请求
+        inventory.service.v1.CreateSalesReturnRequest:
+            type: object
+            properties:
+                salesOrderId:
+                    type: string
+                    description: 销售单ID（仓库与客户从中推导）
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.SalesReturnItem'
+                    description: 退货明细
+                remark:
+                    type: string
+                    description: 备注
+            description: 创建销售退货 - 请求
         inventory.service.v1.CreateStockPickingRequest:
             type: object
             properties:
                 data:
                     $ref: '#/components/schemas/inventory.service.v1.StockPicking'
+        inventory.service.v1.ListStockLotResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.StockLot'
+                total:
+                    type: string
         inventory.service.v1.ListStockPickingResponse:
             type: object
             properties:
@@ -1945,28 +2512,99 @@ components:
                 total:
                     type: string
             description: 查询仓库列表 - 回应
+        inventory.service.v1.LotAssignment:
+            type: object
+            properties:
+                productCode:
+                    type: string
+                    description: 产品编码
+                lotName:
+                    type: string
+                    description: 批次号
+                expiryDate:
+                    type: string
+                    description: 效期（入库新建批次时可选）
+                    format: date-time
+            description: 批次指派（Validate 入参）：product_code 匹配 picking 中的 move
+        inventory.service.v1.PurchaseReturnItem:
+            type: object
+            properties:
+                purchaseOrderItemId:
+                    type: string
+                    description: 采购单明细ID
+                quantity:
+                    type: string
+                    description: 退货数量（正数，≤已收数）
+            description: 采购退货明细项
+        inventory.service.v1.SalesReturnItem:
+            type: object
+            properties:
+                salesOrderItemId:
+                    type: string
+                    description: 销售单明细ID
+                quantity:
+                    type: string
+                    description: 退货数量（正数，≤已履约数）
+            description: 销售退货明细项
+        inventory.service.v1.StockLot:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 批次ID
+                skuCode:
+                    type: string
+                    description: 产品编码
+                name:
+                    type: string
+                    description: 批次号
+                expiryDate:
+                    type: string
+                    description: 效期（可空=不限期）
+                    format: date-time
+                remainingQuantity:
+                    type: string
+                    description: 批次剩余数量（move lines 聚合）
+                lotStatus:
+                    enum:
+                        - LOT_NORMAL
+                        - LOT_EXPIRING
+                        - LOT_EXPIRED
+                    type: string
+                    description: 效期状态
+                    format: enum
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: string
+                    description: 租户ID，0代表系统全局
+                createdBy:
+                    type: string
+                    description: 创建者用户ID
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: "批次（借鉴 Odoo stock.production.lot 的登记角色。记录式方案：批次表只\r\n 登记批号与效期，剩余数量由 move lines 聚合推导，不动 quant 引擎）"
         inventory.service.v1.StockMove:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 移动ID
-                    format: uint32
                 pickingId:
-                    type: integer
+                    type: string
                     description: 所属拣货单ID
-                    format: uint32
                 productCode:
                     type: string
                     description: 产品编码
                 sourceLocationId:
-                    type: integer
+                    type: string
                     description: 源位置ID
-                    format: uint32
                 destinationLocationId:
-                    type: integer
+                    type: string
                     description: 目的位置ID
-                    format: uint32
                 plannedQuantity:
                     type: string
                     description: 计划数量
@@ -1980,28 +2618,26 @@ components:
                     description: 移动状态
                     format: enum
                 purchaseOrderItemId:
-                    type: integer
+                    type: string
                     description: 关联采购明细ID（仅入库）
-                    format: uint32
+                salesOrderItemId:
+                    type: string
+                    description: 关联销售明细ID（仅出库）
                 remark:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -2019,9 +2655,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 拣货单ID
-                    format: uint32
                 pickingNumber:
                     type: string
                     description: 拣货单号（服务端生成）
@@ -2029,6 +2664,8 @@ components:
                     enum:
                         - INCOMING
                         - INTERNAL
+                        - OUTGOING
+                        - INVENTORY_ADJUSTMENT
                     type: string
                     description: 拣货类型
                     format: enum
@@ -2042,20 +2679,17 @@ components:
                     description: 派生态（从子 moves 聚合，不存储）
                     format: enum
                 purchaseOrderId:
-                    type: integer
+                    type: string
                     description: 关联采购单ID（仅入库）
-                    format: uint32
                 partnerCode:
                     type: string
                     description: 交易方编码
                 sourceLocationId:
-                    type: integer
+                    type: string
                     description: 源位置ID（服务端推导）
-                    format: uint32
                 destinationLocationId:
-                    type: integer
+                    type: string
                     description: 目的位置ID（服务端推导）
-                    format: uint32
                 moves:
                     type: array
                     items:
@@ -2071,21 +2705,17 @@ components:
                     type: string
                     description: 调拨目的仓库编码
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -2103,38 +2733,35 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 库存量ID
-                    format: uint32
                 locationId:
-                    type: integer
+                    type: string
                     description: 所在位置ID
-                    format: uint32
                 productCode:
                     type: string
                     description: 产品编码
                 quantity:
                     type: string
                     description: 在手数量
+                costPrice:
+                    type: string
+                    description: 加权平均成本（分）
                 remark:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -2174,16 +2801,19 @@ components:
             properties:
                 id:
                     readOnly: true
-                    type: integer
+                    type: string
                     description: ID
-                    format: uint32
+                lotAssignments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/inventory.service.v1.LotAssignment'
+                    description: 批次指派明细
         inventory.service.v1.Warehouse:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 仓库ID
-                    format: uint32
                 code:
                     type: string
                     description: 仓库编码，租户范围内唯一
@@ -2194,9 +2824,8 @@ components:
                     type: string
                     description: 仓库地址
                 receivingLocationId:
-                    type: integer
+                    type: string
                     description: 接收位置ID（系统生成）
-                    format: uint32
                 enable:
                     type: boolean
                     description: 启用/禁用仓库
@@ -2204,21 +2833,17 @@ components:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者用户ID
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -2245,9 +2870,8 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 采购单ID
-                    format: uint32
                 poNumber:
                     type: string
                     description: 采购单号（服务端生成）
@@ -2280,21 +2904,17 @@ components:
                     type: string
                     description: 备注
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局
-                    format: uint32
                 createdBy:
-                    type: integer
+                    type: string
                     description: 创建者（发起人）用户ID，服务端推导
-                    format: uint32
                 updatedBy:
-                    type: integer
+                    type: string
                     description: 更新者用户ID
-                    format: uint32
                 deletedBy:
-                    type: integer
+                    type: string
                     description: 删除者用户ID
-                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -2312,13 +2932,11 @@ components:
             type: object
             properties:
                 id:
-                    type: integer
+                    type: string
                     description: 明细ID
-                    format: uint32
                 poId:
-                    type: integer
+                    type: string
                     description: 所属采购单ID
-                    format: uint32
                 skuCode:
                     type: string
                     description: SKU编码
@@ -2335,6 +2953,102 @@ components:
                     type: string
                     description: 已收货数量
             description: 采购单明细
+        sales.service.v1.ListSalesOrderResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/sales.service.v1.SalesOrder'
+                total:
+                    type: string
+        sales.service.v1.SalesOrder:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 销售单ID
+                soNumber:
+                    type: string
+                    description: 销售单号（服务端生成）
+                customerCode:
+                    type: string
+                    description: 客户编码
+                status:
+                    enum:
+                        - DRAFT
+                        - SUBMITTED
+                        - APPROVED
+                        - REJECTED
+                        - COMPLETED
+                        - CANCELLED
+                    type: string
+                    description: 销售单状态
+                    format: enum
+                totalAmount:
+                    type: string
+                    description: 销售总额（分，服务端按明细计算）
+                warehouseCode:
+                    type: string
+                    description: 发货仓库编码
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/sales.service.v1.SalesOrderItem'
+                    description: 销售明细（Get 返回；List 不含）
+                remark:
+                    type: string
+                    description: 备注
+                tenantId:
+                    type: string
+                    description: 租户ID，0代表系统全局
+                createdBy:
+                    type: string
+                    description: 创建者用户ID
+                updatedBy:
+                    type: string
+                    description: 更新者用户ID
+                deletedBy:
+                    type: string
+                    description: 删除者用户ID
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 销售单
+        sales.service.v1.SalesOrderItem:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 明细ID
+                soId:
+                    type: string
+                    description: 所属销售单ID
+                skuCode:
+                    type: string
+                    description: SKU编码
+                quantity:
+                    type: string
+                    description: 销售数量
+                unitPrice:
+                    type: string
+                    description: 单价（分）
+                amount:
+                    type: string
+                    description: 明细金额（分，服务端计算）
+                fulfilledQuantity:
+                    type: string
+                    description: 已履约数量
+            description: 销售单明细
         storage.service.v1.DownloadFileResponse:
             type: object
             properties:
@@ -2415,13 +3129,11 @@ components:
                     type: string
                     description: 文件大小（字节）
                 tenantId:
-                    type: integer
+                    type: string
                     description: 租户ID，0代表系统全局角色
-                    format: uint32
                 userId:
-                    type: integer
+                    type: string
                     description: 用户ID
-                    format: uint32
         storage.service.v1.UploadFileResponse:
             type: object
             properties:
@@ -2459,6 +3171,8 @@ tags:
          将后端编码值（如审批单 biz_type）解析为展示文案；不暴露增删改）。
     - name: FileTransferService
       description: 文件传输服务
+    - name: FinanceSummaryService
+      description: 财务汇总（移动端驾驶舱：本月收入/成本/利润 + 应收应付余额，只读）。
     - name: PayableService
       description: 应付单服务（移动端只读：财务/管理层查询应付款进度）
     - name: PaymentService
@@ -2467,6 +3181,14 @@ tags:
       description: |-
         采购单服务（移动端只读：审批人在审批中心看到采购审批后可查单据原文；
          发起与维护在 PC 端完成）
+    - name: ReceiptService
+      description: 收款服务（移动端只读台账）
+    - name: ReceivableService
+      description: 应收单服务（移动端只读：财务/管理层查询应收款进度）
+    - name: SalesOrderService
+      description: 销售单服务（移动端只读：审批人在审批中心看到销售审批后可查单据原文）
+    - name: StockLotService
+      description: 批次库存（移动端只读：批次余量与效期跟踪，扫码后核对批次场景）。
     - name: StockPickingService
       description: 拣货单服务（移动端：扫码创建调拨拣货单，确认与校验）
     - name: StockQuantService

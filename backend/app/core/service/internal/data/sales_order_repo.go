@@ -223,7 +223,7 @@ func (r *SalesOrderRepo) Update(ctx context.Context, req *salesV1.UpdateSalesOrd
 	if len(req.Data.Items) > 0 {
 		soID := req.GetId()
 		tid, _ := maybeTenantFromViewer(ctx)
-		var tenantPtr *uint32
+		var tenantPtr *int64
 		if tid > 0 {
 			tenantPtr = trans.Ptr(tid)
 		} else if req.Data.TenantId != nil {
@@ -240,7 +240,7 @@ func (r *SalesOrderRepo) Update(ctx context.Context, req *salesV1.UpdateSalesOrd
 	return result, nil
 }
 
-func (r *SalesOrderRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SalesOrderRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().SalesOrder.Query().
 		Where(salesorder.IDEQ(id)).
 		Exist(ctx)
@@ -255,7 +255,7 @@ func (r *SalesOrderRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 // 0 行受影响说明已被并发变更，返回 Conflict。
 func (r *SalesOrderRepo) TransitionStatus(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	from, to salesV1.SalesOrder_Status,
 ) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
@@ -289,7 +289,7 @@ func (r *SalesOrderRepo) TransitionStatus(
 func (r *SalesOrderRepo) GetItemsTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	soID uint32,
+	soID int64,
 ) ([]*salesV1.SalesOrderItem, error) {
 	rows, err := tx.SalesOrderItem.Query().
 		Where(salesorderitem.SoIDEQ(soID)).
@@ -317,8 +317,8 @@ func (r *SalesOrderRepo) GetItemsTx(
 
 func (r *SalesOrderRepo) replaceItems(
 	ctx context.Context,
-	tenantID *uint32,
-	soID uint32,
+	tenantID *int64,
+	soID int64,
 	items []*salesV1.SalesOrderItem,
 ) error {
 	if soID == 0 {
@@ -363,7 +363,7 @@ func (r *SalesOrderRepo) replaceItems(
 }
 
 // listItemDTOs 查询并映射某销售单的明细。
-func (r *SalesOrderRepo) listItemDTOs(ctx context.Context, soID uint32) []*salesV1.SalesOrderItem {
+func (r *SalesOrderRepo) listItemDTOs(ctx context.Context, soID int64) []*salesV1.SalesOrderItem {
 	rows, err := r.entClient.Client().SalesOrderItem.Query().
 		Where(salesorderitem.SoIDEQ(soID)).
 		Order(ent.Asc(salesorderitem.FieldID)).
@@ -394,7 +394,7 @@ func (r *SalesOrderRepo) listItemDTOs(ctx context.Context, soID uint32) []*sales
 func (r *SalesOrderRepo) ApplyFulfillmentTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	soItemID uint32,
+	soItemID int64,
 	qty int64,
 ) (autoCompleted bool, err error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
@@ -487,9 +487,9 @@ func (r *SalesOrderRepo) ApplyFulfillmentTx(
 func (r *SalesOrderRepo) ApplyFulfillmentReturnTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	soItemID uint32,
+	soItemID int64,
 	qty int64,
-) (uint32, int64, error) {
+) (int64, int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	item, err := tx.SalesOrderItem.Query().
@@ -618,7 +618,7 @@ func (r *SalesOrderRepo) RevenueByMonth(ctx context.Context) ([]RevenueRow, erro
 }
 
 // CountTenantSince 计租户自某时刻起创建的单据数（计费守卫的月配额计量）。
-func (r *SalesOrderRepo) CountTenantSince(ctx context.Context, tenantID uint32, since time.Time) (int, error) {
+func (r *SalesOrderRepo) CountTenantSince(ctx context.Context, tenantID int64, since time.Time) (int, error) {
 	return r.entClient.Client().SalesOrder.Query().
 		Where(salesorder.TenantIDEQ(tenantID)).
 		Where(salesorder.CreatedAtGTE(since)).
@@ -686,7 +686,7 @@ func (r *SalesOrderRepo) SalesRowsForRanking(ctx context.Context) ([]SalesRankin
 	_ = hasTenant
 	_ = tid
 
-	soIDs := make([]uint32, 0, len(sos))
+	soIDs := make([]int64, 0, len(sos))
 	for _, so := range sos {
 		soIDs = append(soIDs, so.ID)
 	}
@@ -702,8 +702,8 @@ func (r *SalesOrderRepo) SalesRowsForRanking(ctx context.Context) ([]SalesRankin
 		return nil, salesV1.ErrorInternalServerError("query sales items failed")
 	}
 
-	customerByID := make(map[uint32]string, len(sos))
-	createdAtByID := make(map[uint32]*time.Time, len(sos))
+	customerByID := make(map[int64]string, len(sos))
+	createdAtByID := make(map[int64]*time.Time, len(sos))
 	for _, so := range sos {
 		if so.CustomerCode != nil {
 			customerByID[so.ID] = *so.CustomerCode

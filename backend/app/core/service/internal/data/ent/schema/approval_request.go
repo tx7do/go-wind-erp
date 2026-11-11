@@ -63,13 +63,13 @@ func (ApprovalRequest) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("applicant_id").
+		field.Int64("applicant_id").
 			Comment("申请人用户ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint32("approver_id").
+		field.Int64("approver_id").
 			Comment("审批人用户ID").
 			Optional().
 			Nillable(),
@@ -93,7 +93,7 @@ func (ApprovalRequest) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("flow_id").
+		field.Int64("flow_id").
 			Comment("快照来源流程ID（0=无流程）").
 			Default(0).
 			Optional().
@@ -104,11 +104,11 @@ func (ApprovalRequest) Fields() []ent.Field {
 // Mixin of the ApprovalRequest.
 func (ApprovalRequest) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

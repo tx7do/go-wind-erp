@@ -67,9 +67,9 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultPoID holds the default value on creation for the "po_id" field.
-	DefaultPoID uint32
+	DefaultPoID int64
 	// DefaultQuantity holds the default value on creation for the "quantity" field.
 	DefaultQuantity int64
 	// DefaultUnitPrice holds the default value on creation for the "unit_price" field.
@@ -79,7 +79,7 @@ var (
 	// DefaultReceivedQuantity holds the default value on creation for the "received_quantity" field.
 	DefaultReceivedQuantity int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the PurchaseOrderItem queries.

@@ -61,11 +61,11 @@ func (ApprovalFlow) Fields() []ent.Field {
 
 func (ApprovalFlow) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

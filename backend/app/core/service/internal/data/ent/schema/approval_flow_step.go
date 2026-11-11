@@ -31,7 +31,7 @@ func (ApprovalFlowStep) Annotations() []schema.Annotation {
 
 func (ApprovalFlowStep) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("flow_id").
+		field.Int64("flow_id").
 			Comment("所属流程ID").
 			Default(0).
 			Optional().
@@ -59,9 +59,9 @@ func (ApprovalFlowStep) Fields() []ent.Field {
 
 func (ApprovalFlowStep) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

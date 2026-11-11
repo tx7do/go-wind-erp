@@ -69,7 +69,7 @@ message ApprovalRequest {
     CANCELLED = 3;  // 已撤销
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -117,12 +117,12 @@ message ApprovalRequest {
     }
   ]; // 审批状态
 
-  optional uint32 applicant_id = 7 [
+  optional int64 applicant_id = 7 [
     json_name = "applicantId",
     (gnostic.openapi.v3.property) = {description: "申请人用户ID（服务端推导）"}
   ]; // 申请人
 
-  optional uint32 approver_id = 8 [
+  optional int64 approver_id = 8 [
     json_name = "approverId",
     (gnostic.openapi.v3.property) = {description: "审批人用户ID（审批动作时服务端推导）"}
   ]; // 审批人
@@ -151,19 +151,19 @@ message ApprovalRequest {
     (gnostic.openapi.v3.property) = {description: "总级数（<=1 为单级审批）"}
   ]; // 总级数
 
-  optional uint32 flow_id = 13 [
+  optional int64 flow_id = 13 [
     json_name = "flowId",
     (gnostic.openapi.v3.property) = {description: "快照来源流程ID（0=无流程）"}
   ]; // 快照来源流程ID
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -173,13 +173,13 @@ message ApprovalRequest {
 // 查询审批请求列表 - 回应
 message ListApprovalRequestResponse {
   repeated ApprovalRequest items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 查询审批请求详情 - 请求
 message GetApprovalRequestRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -201,7 +201,7 @@ message CreateApprovalRequestRequest {
 // 删除审批请求 - 请求
 message DeleteApprovalRequestRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -210,7 +210,7 @@ message DeleteApprovalRequestRequest {
 
 // 通过审批 - 请求
 message ApproveApprovalRequestRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   optional string comment = 2 [
     json_name = "comment",
@@ -220,7 +220,7 @@ message ApproveApprovalRequestRequest {
 
 // 驳回审批 - 请求
 message RejectApprovalRequestRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   optional string comment = 2 [
     json_name = "comment",
@@ -230,18 +230,18 @@ message RejectApprovalRequestRequest {
 
 // 撤销审批 - 请求
 message CancelApprovalRequestRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CountApprovalRequestResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // =========== ApprovalFlow ==========
 
 // 审批流模板：每租户每业务类型至多一条生效流程；steps 为级定义（seq 1..N）。
 message ApprovalFlow {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {description: "流程ID"}
@@ -274,24 +274,24 @@ message ApprovalFlow {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
 }
 
 // 审批级定义：持有 role_code 角色的用户即本级候选审批人（申请人除外）。
 message ApprovalFlowStep {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "级ID"}
   ]; // 级ID
 
-  optional uint32 flow_id = 2 [
+  optional int64 flow_id = 2 [
     json_name = "flowId",
     (gnostic.openapi.v3.property) = {description: "所属流程ID"}
   ]; // 所属流程ID
@@ -316,12 +316,12 @@ message ApprovalFlowStep {
 
 message ListApprovalFlowResponse {
   repeated ApprovalFlow items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetApprovalFlowRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -359,7 +359,7 @@ message UpdateApprovalFlowRequest {
 
 message DeleteApprovalFlowRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID

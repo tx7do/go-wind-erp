@@ -14,7 +14,7 @@ import "pagination/v1/pagination.proto";
 
 // 套餐（透明定价的全局目录，平台级）
 message Plan {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -100,7 +100,7 @@ message Plan {
     }
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -108,7 +108,7 @@ message Plan {
     }
   ]; // 租户ID
 
-  optional uint32 created_by = 101 [
+  optional int64 created_by = 101 [
     json_name = "createdBy",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -117,7 +117,7 @@ message Plan {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 创建人ID
 
-  optional uint32 updated_by = 102 [
+  optional int64 updated_by = 102 [
     json_name = "updatedBy",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -153,7 +153,7 @@ message Plan {
 
 // 租户订阅（每租户一条当前订阅）
 message Subscription {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -161,7 +161,7 @@ message Subscription {
     }
   ]; // 订阅ID
 
-  optional uint32 tenant_id = 2 [
+  optional int64 tenant_id = 2 [
     json_name = "tenantId",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -216,7 +216,7 @@ message Subscription {
     }
   ]; // 备注
 
-  optional uint32 created_by = 101 [
+  optional int64 created_by = 101 [
     json_name = "createdBy",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -225,7 +225,7 @@ message Subscription {
     (google.api.field_behavior) = OUTPUT_ONLY
   ]; // 创建人ID
 
-  optional uint32 updated_by = 102 [
+  optional int64 updated_by = 102 [
     json_name = "updatedBy",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -321,7 +321,7 @@ service PlanAdminService {
 
 message ListPlanResponse {
   repeated Plan items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message CountPlanResponse {
@@ -330,7 +330,7 @@ message CountPlanResponse {
 
 message GetPlanRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -348,7 +348,7 @@ message UpdatePlanRequest {
 
 message DeletePlanRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID

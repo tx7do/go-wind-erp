@@ -82,23 +82,23 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultMoveID holds the default value on creation for the "move_id" field.
-	DefaultMoveID uint32
+	DefaultMoveID int64
 	// DefaultPickingID holds the default value on creation for the "picking_id" field.
-	DefaultPickingID uint32
+	DefaultPickingID int64
 	// DefaultSourceLocationID holds the default value on creation for the "source_location_id" field.
-	DefaultSourceLocationID uint32
+	DefaultSourceLocationID int64
 	// DefaultDestinationLocationID holds the default value on creation for the "destination_location_id" field.
-	DefaultDestinationLocationID uint32
+	DefaultDestinationLocationID int64
 	// DefaultExecutedQuantity holds the default value on creation for the "executed_quantity" field.
 	DefaultExecutedQuantity int64
 	// DefaultUnitCost holds the default value on creation for the "unit_cost" field.
 	DefaultUnitCost int64
 	// DefaultLotID holds the default value on creation for the "lot_id" field.
-	DefaultLotID uint32
+	DefaultLotID int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the StockMoveLine queries.

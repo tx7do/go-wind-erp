@@ -72,7 +72,7 @@ service PurchaseOrderService {
 
 // 供应商
 message Supplier {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -124,14 +124,14 @@ message Supplier {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -150,7 +150,7 @@ message PurchaseOrder {
     CANCELLED = 5;  // 已取消
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -204,14 +204,14 @@ message PurchaseOrder {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者（发起人）用户ID，服务端推导"}]; // 创建者
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者（发起人）用户ID，服务端推导"}]; // 创建者
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -220,7 +220,7 @@ message PurchaseOrder {
 
 // 采购单明细
 message PurchaseOrderItem {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -228,7 +228,7 @@ message PurchaseOrderItem {
     }
   ]; // 明细ID
 
-  optional uint32 po_id = 2 [
+  optional int64 po_id = 2 [
     json_name = "poId",
     (gnostic.openapi.v3.property) = {description: "所属采购单ID"}
   ]; // 所属采购单ID
@@ -268,12 +268,12 @@ message PurchaseOrderItem {
 
 message ListSupplierResponse {
   repeated Supplier items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetSupplierRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -292,7 +292,7 @@ message CreateSupplierRequest {
 }
 
 message UpdateSupplierRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   Supplier data = 2;
 
@@ -312,7 +312,7 @@ message UpdateSupplierRequest {
 
 message DeleteSupplierRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -320,7 +320,7 @@ message DeleteSupplierRequest {
 }
 
 message CountSupplierResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // ==============================
@@ -329,12 +329,12 @@ message CountSupplierResponse {
 
 message ListPurchaseOrderResponse {
   repeated PurchaseOrder items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetPurchaseOrderRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -353,7 +353,7 @@ message CreatePurchaseOrderRequest {
 }
 
 message UpdatePurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   PurchaseOrder data = 2;
 
@@ -372,7 +372,7 @@ message UpdatePurchaseOrderRequest {
 
 message DeletePurchaseOrderRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -380,25 +380,25 @@ message DeletePurchaseOrderRequest {
 }
 
 message SubmitPurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message ApprovePurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message RejectPurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CancelPurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CompletePurchaseOrderRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CountPurchaseOrderResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }

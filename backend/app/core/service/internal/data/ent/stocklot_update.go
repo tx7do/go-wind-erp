@@ -70,14 +70,14 @@ func (_u *StockLotUpdate) ClearDeletedAt() *StockLotUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *StockLotUpdate) SetCreatedBy(v uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetCreatedBy(v int64) *StockLotUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *StockLotUpdate) SetNillableCreatedBy(v *uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetNillableCreatedBy(v *int64) *StockLotUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *StockLotUpdate) SetNillableCreatedBy(v *uint32) *StockLotUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *StockLotUpdate) AddCreatedBy(v int32) *StockLotUpdate {
+func (_u *StockLotUpdate) AddCreatedBy(v int64) *StockLotUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *StockLotUpdate) ClearCreatedBy() *StockLotUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *StockLotUpdate) SetUpdatedBy(v uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetUpdatedBy(v int64) *StockLotUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *StockLotUpdate) SetNillableUpdatedBy(v *uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetNillableUpdatedBy(v *int64) *StockLotUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *StockLotUpdate) SetNillableUpdatedBy(v *uint32) *StockLotUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *StockLotUpdate) AddUpdatedBy(v int32) *StockLotUpdate {
+func (_u *StockLotUpdate) AddUpdatedBy(v int64) *StockLotUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *StockLotUpdate) ClearUpdatedBy() *StockLotUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *StockLotUpdate) SetDeletedBy(v uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetDeletedBy(v int64) *StockLotUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *StockLotUpdate) SetNillableDeletedBy(v *uint32) *StockLotUpdate {
+func (_u *StockLotUpdate) SetNillableDeletedBy(v *int64) *StockLotUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *StockLotUpdate) SetNillableDeletedBy(v *uint32) *StockLotUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *StockLotUpdate) AddDeletedBy(v int32) *StockLotUpdate {
+func (_u *StockLotUpdate) AddDeletedBy(v int64) *StockLotUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -287,7 +287,7 @@ func (_u *StockLotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(stocklot.Table, stocklot.Columns, sqlgraph.NewFieldSpec(stocklot.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(stocklot.Table, stocklot.Columns, sqlgraph.NewFieldSpec(stocklot.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -311,31 +311,31 @@ func (_u *StockLotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(stocklot.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(stocklot.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(stocklot.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(stocklot.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(stocklot.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(stocklot.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(stocklot.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(stocklot.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(stocklot.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(stocklot.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(stocklot.FieldRemark, field.TypeString, value)
@@ -344,7 +344,7 @@ func (_u *StockLotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(stocklot.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(stocklot.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(stocklot.FieldSkuCode, field.TypeString, value)
@@ -427,14 +427,14 @@ func (_u *StockLotUpdateOne) ClearDeletedAt() *StockLotUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *StockLotUpdateOne) SetCreatedBy(v uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetCreatedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *StockLotUpdateOne) SetNillableCreatedBy(v *uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetNillableCreatedBy(v *int64) *StockLotUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -442,7 +442,7 @@ func (_u *StockLotUpdateOne) SetNillableCreatedBy(v *uint32) *StockLotUpdateOne 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *StockLotUpdateOne) AddCreatedBy(v int32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) AddCreatedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -454,14 +454,14 @@ func (_u *StockLotUpdateOne) ClearCreatedBy() *StockLotUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *StockLotUpdateOne) SetUpdatedBy(v uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetUpdatedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *StockLotUpdateOne) SetNillableUpdatedBy(v *uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetNillableUpdatedBy(v *int64) *StockLotUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -469,7 +469,7 @@ func (_u *StockLotUpdateOne) SetNillableUpdatedBy(v *uint32) *StockLotUpdateOne 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *StockLotUpdateOne) AddUpdatedBy(v int32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) AddUpdatedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -481,14 +481,14 @@ func (_u *StockLotUpdateOne) ClearUpdatedBy() *StockLotUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *StockLotUpdateOne) SetDeletedBy(v uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetDeletedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *StockLotUpdateOne) SetNillableDeletedBy(v *uint32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) SetNillableDeletedBy(v *int64) *StockLotUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -496,7 +496,7 @@ func (_u *StockLotUpdateOne) SetNillableDeletedBy(v *uint32) *StockLotUpdateOne 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *StockLotUpdateOne) AddDeletedBy(v int32) *StockLotUpdateOne {
+func (_u *StockLotUpdateOne) AddDeletedBy(v int64) *StockLotUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -657,7 +657,7 @@ func (_u *StockLotUpdateOne) sqlSave(ctx context.Context) (_node *StockLot, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(stocklot.Table, stocklot.Columns, sqlgraph.NewFieldSpec(stocklot.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(stocklot.Table, stocklot.Columns, sqlgraph.NewFieldSpec(stocklot.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "StockLot.id" for update`)}
@@ -698,31 +698,31 @@ func (_u *StockLotUpdateOne) sqlSave(ctx context.Context) (_node *StockLot, err 
 		_spec.ClearField(stocklot.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(stocklot.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(stocklot.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(stocklot.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(stocklot.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(stocklot.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(stocklot.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(stocklot.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stocklot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(stocklot.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(stocklot.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(stocklot.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(stocklot.FieldRemark, field.TypeString, value)
@@ -731,7 +731,7 @@ func (_u *StockLotUpdateOne) sqlSave(ctx context.Context) (_node *StockLot, err 
 		_spec.ClearField(stocklot.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(stocklot.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(stocklot.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(stocklot.FieldSkuCode, field.TypeString, value)

@@ -49,14 +49,14 @@ func (_u *SalesOrderItemUpdate) ClearRemark() *SalesOrderItemUpdate {
 }
 
 // SetSoID sets the "so_id" field.
-func (_u *SalesOrderItemUpdate) SetSoID(v uint32) *SalesOrderItemUpdate {
+func (_u *SalesOrderItemUpdate) SetSoID(v int64) *SalesOrderItemUpdate {
 	_u.mutation.ResetSoID()
 	_u.mutation.SetSoID(v)
 	return _u
 }
 
 // SetNillableSoID sets the "so_id" field if the given value is not nil.
-func (_u *SalesOrderItemUpdate) SetNillableSoID(v *uint32) *SalesOrderItemUpdate {
+func (_u *SalesOrderItemUpdate) SetNillableSoID(v *int64) *SalesOrderItemUpdate {
 	if v != nil {
 		_u.SetSoID(*v)
 	}
@@ -64,7 +64,7 @@ func (_u *SalesOrderItemUpdate) SetNillableSoID(v *uint32) *SalesOrderItemUpdate
 }
 
 // AddSoID adds value to the "so_id" field.
-func (_u *SalesOrderItemUpdate) AddSoID(v int32) *SalesOrderItemUpdate {
+func (_u *SalesOrderItemUpdate) AddSoID(v int64) *SalesOrderItemUpdate {
 	_u.mutation.AddSoID(v)
 	return _u
 }
@@ -242,7 +242,7 @@ func (_u *SalesOrderItemUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *SalesOrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(salesorderitem.Table, salesorderitem.Columns, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(salesorderitem.Table, salesorderitem.Columns, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -260,16 +260,16 @@ func (_u *SalesOrderItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(salesorderitem.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(salesorderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(salesorderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SoID(); ok {
-		_spec.SetField(salesorderitem.FieldSoID, field.TypeUint32, value)
+		_spec.SetField(salesorderitem.FieldSoID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSoID(); ok {
-		_spec.AddField(salesorderitem.FieldSoID, field.TypeUint32, value)
+		_spec.AddField(salesorderitem.FieldSoID, field.TypeInt64, value)
 	}
 	if _u.mutation.SoIDCleared() {
-		_spec.ClearField(salesorderitem.FieldSoID, field.TypeUint32)
+		_spec.ClearField(salesorderitem.FieldSoID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(salesorderitem.FieldSkuCode, field.TypeString, value)
@@ -356,14 +356,14 @@ func (_u *SalesOrderItemUpdateOne) ClearRemark() *SalesOrderItemUpdateOne {
 }
 
 // SetSoID sets the "so_id" field.
-func (_u *SalesOrderItemUpdateOne) SetSoID(v uint32) *SalesOrderItemUpdateOne {
+func (_u *SalesOrderItemUpdateOne) SetSoID(v int64) *SalesOrderItemUpdateOne {
 	_u.mutation.ResetSoID()
 	_u.mutation.SetSoID(v)
 	return _u
 }
 
 // SetNillableSoID sets the "so_id" field if the given value is not nil.
-func (_u *SalesOrderItemUpdateOne) SetNillableSoID(v *uint32) *SalesOrderItemUpdateOne {
+func (_u *SalesOrderItemUpdateOne) SetNillableSoID(v *int64) *SalesOrderItemUpdateOne {
 	if v != nil {
 		_u.SetSoID(*v)
 	}
@@ -371,7 +371,7 @@ func (_u *SalesOrderItemUpdateOne) SetNillableSoID(v *uint32) *SalesOrderItemUpd
 }
 
 // AddSoID adds value to the "so_id" field.
-func (_u *SalesOrderItemUpdateOne) AddSoID(v int32) *SalesOrderItemUpdateOne {
+func (_u *SalesOrderItemUpdateOne) AddSoID(v int64) *SalesOrderItemUpdateOne {
 	_u.mutation.AddSoID(v)
 	return _u
 }
@@ -562,7 +562,7 @@ func (_u *SalesOrderItemUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder
 }
 
 func (_u *SalesOrderItemUpdateOne) sqlSave(ctx context.Context) (_node *SalesOrderItem, err error) {
-	_spec := sqlgraph.NewUpdateSpec(salesorderitem.Table, salesorderitem.Columns, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(salesorderitem.Table, salesorderitem.Columns, sqlgraph.NewFieldSpec(salesorderitem.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SalesOrderItem.id" for update`)}
@@ -597,16 +597,16 @@ func (_u *SalesOrderItemUpdateOne) sqlSave(ctx context.Context) (_node *SalesOrd
 		_spec.ClearField(salesorderitem.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(salesorderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(salesorderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SoID(); ok {
-		_spec.SetField(salesorderitem.FieldSoID, field.TypeUint32, value)
+		_spec.SetField(salesorderitem.FieldSoID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSoID(); ok {
-		_spec.AddField(salesorderitem.FieldSoID, field.TypeUint32, value)
+		_spec.AddField(salesorderitem.FieldSoID, field.TypeInt64, value)
 	}
 	if _u.mutation.SoIDCleared() {
-		_spec.ClearField(salesorderitem.FieldSoID, field.TypeUint32)
+		_spec.ClearField(salesorderitem.FieldSoID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(salesorderitem.FieldSkuCode, field.TypeString, value)

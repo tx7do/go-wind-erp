@@ -80,7 +80,7 @@ func (r *AccountRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 			BalanceDirection: directionToString(a.BalanceDirection),
 		})
 	}
-	return &financeV1.ListAccountResponse{Total: uint64(len(items)), Items: items}, nil
+	return &financeV1.ListAccountResponse{Total: int64(len(items)), Items: items}, nil
 }
 
 func categoryToString(c *account.Category) *string {
@@ -225,7 +225,7 @@ func (r *JournalRepo) Post(
 	return nil
 }
 
-func mustTenantID(ctx context.Context) uint32 {
+func mustTenantID(ctx context.Context) int64 {
 	tid, _ := maybeTenantFromViewer(ctx)
 	return tid
 }
@@ -279,7 +279,7 @@ func (r *JournalRepo) ListJournal(
 		filtered = append(filtered, e)
 	}
 
-	entryIDs := make([]uint32, 0, len(filtered))
+	entryIDs := make([]int64, 0, len(filtered))
 	for _, e := range filtered {
 		entryIDs = append(entryIDs, e.ID)
 	}
@@ -291,7 +291,7 @@ func (r *JournalRepo) ListJournal(
 		r.log.Errorf("list journal lines failed: %s", err.Error())
 		return nil, financeV1.ErrorInternalServerError("list journal lines failed")
 	}
-	linesByEntry := map[uint32][]*financeV1.JournalLine{}
+	linesByEntry := map[int64][]*financeV1.JournalLine{}
 	for _, l := range lineRows {
 		if l.EntryID == nil {
 			continue
@@ -320,7 +320,7 @@ func (r *JournalRepo) ListJournal(
 		items = append(items, item)
 	}
 
-	total := uint64(len(items))
+	total := int64(len(items))
 	page := int(req.GetPage())
 	pageSize := int(req.GetPageSize())
 	if page <= 0 {
@@ -355,7 +355,7 @@ func (r *JournalRepo) TrialBalance(
 	if err != nil {
 		return nil, financeV1.ErrorInternalServerError("query journal entries failed")
 	}
-	entryIDs := make([]uint32, 0, len(entryRows))
+	entryIDs := make([]int64, 0, len(entryRows))
 	for _, e := range entryRows {
 		if e.EntryDate == nil {
 			continue
@@ -475,7 +475,7 @@ func (r *JournalRepo) AccountNetInRange(
 	if err != nil {
 		return 0, 0, financeV1.ErrorInternalServerError("query journal entries failed")
 	}
-	ids := make([]uint32, 0, len(entryRows))
+	ids := make([]int64, 0, len(entryRows))
 	for _, e := range entryRows {
 		if e.EntryDate == nil {
 			continue

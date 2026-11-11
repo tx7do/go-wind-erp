@@ -43,7 +43,7 @@ func (s *PayableService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	if err != nil {
 		return nil, err
 	}
-	return &financeV1.CountPayableResponse{Count: uint64(count)}, nil
+	return &financeV1.CountPayableResponse{Count: int64(count)}, nil
 }
 
 func (s *PayableService) Get(ctx context.Context, req *financeV1.GetPayableRequest) (*financeV1.Payable, error) {

@@ -29,14 +29,14 @@ func (_u *JournalLineUpdate) Where(ps ...predicate.JournalLine) *JournalLineUpda
 }
 
 // SetEntryID sets the "entry_id" field.
-func (_u *JournalLineUpdate) SetEntryID(v uint32) *JournalLineUpdate {
+func (_u *JournalLineUpdate) SetEntryID(v int64) *JournalLineUpdate {
 	_u.mutation.ResetEntryID()
 	_u.mutation.SetEntryID(v)
 	return _u
 }
 
 // SetNillableEntryID sets the "entry_id" field if the given value is not nil.
-func (_u *JournalLineUpdate) SetNillableEntryID(v *uint32) *JournalLineUpdate {
+func (_u *JournalLineUpdate) SetNillableEntryID(v *int64) *JournalLineUpdate {
 	if v != nil {
 		_u.SetEntryID(*v)
 	}
@@ -44,7 +44,7 @@ func (_u *JournalLineUpdate) SetNillableEntryID(v *uint32) *JournalLineUpdate {
 }
 
 // AddEntryID adds value to the "entry_id" field.
-func (_u *JournalLineUpdate) AddEntryID(v int32) *JournalLineUpdate {
+func (_u *JournalLineUpdate) AddEntryID(v int64) *JournalLineUpdate {
 	_u.mutation.AddEntryID(v)
 	return _u
 }
@@ -201,7 +201,7 @@ func (_u *JournalLineUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(journalline.Table, journalline.Columns, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(journalline.Table, journalline.Columns, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -213,16 +213,16 @@ func (_u *JournalLineUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(journalline.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(journalline.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(journalline.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.EntryID(); ok {
-		_spec.SetField(journalline.FieldEntryID, field.TypeUint32, value)
+		_spec.SetField(journalline.FieldEntryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedEntryID(); ok {
-		_spec.AddField(journalline.FieldEntryID, field.TypeUint32, value)
+		_spec.AddField(journalline.FieldEntryID, field.TypeInt64, value)
 	}
 	if _u.mutation.EntryIDCleared() {
-		_spec.ClearField(journalline.FieldEntryID, field.TypeUint32)
+		_spec.ClearField(journalline.FieldEntryID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AccountCode(); ok {
 		_spec.SetField(journalline.FieldAccountCode, field.TypeString, value)
@@ -277,14 +277,14 @@ type JournalLineUpdateOne struct {
 }
 
 // SetEntryID sets the "entry_id" field.
-func (_u *JournalLineUpdateOne) SetEntryID(v uint32) *JournalLineUpdateOne {
+func (_u *JournalLineUpdateOne) SetEntryID(v int64) *JournalLineUpdateOne {
 	_u.mutation.ResetEntryID()
 	_u.mutation.SetEntryID(v)
 	return _u
 }
 
 // SetNillableEntryID sets the "entry_id" field if the given value is not nil.
-func (_u *JournalLineUpdateOne) SetNillableEntryID(v *uint32) *JournalLineUpdateOne {
+func (_u *JournalLineUpdateOne) SetNillableEntryID(v *int64) *JournalLineUpdateOne {
 	if v != nil {
 		_u.SetEntryID(*v)
 	}
@@ -292,7 +292,7 @@ func (_u *JournalLineUpdateOne) SetNillableEntryID(v *uint32) *JournalLineUpdate
 }
 
 // AddEntryID adds value to the "entry_id" field.
-func (_u *JournalLineUpdateOne) AddEntryID(v int32) *JournalLineUpdateOne {
+func (_u *JournalLineUpdateOne) AddEntryID(v int64) *JournalLineUpdateOne {
 	_u.mutation.AddEntryID(v)
 	return _u
 }
@@ -462,7 +462,7 @@ func (_u *JournalLineUpdateOne) sqlSave(ctx context.Context) (_node *JournalLine
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(journalline.Table, journalline.Columns, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(journalline.Table, journalline.Columns, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "JournalLine.id" for update`)}
@@ -491,16 +491,16 @@ func (_u *JournalLineUpdateOne) sqlSave(ctx context.Context) (_node *JournalLine
 		_spec.ClearField(journalline.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(journalline.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(journalline.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.EntryID(); ok {
-		_spec.SetField(journalline.FieldEntryID, field.TypeUint32, value)
+		_spec.SetField(journalline.FieldEntryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedEntryID(); ok {
-		_spec.AddField(journalline.FieldEntryID, field.TypeUint32, value)
+		_spec.AddField(journalline.FieldEntryID, field.TypeInt64, value)
 	}
 	if _u.mutation.EntryIDCleared() {
-		_spec.ClearField(journalline.FieldEntryID, field.TypeUint32)
+		_spec.ClearField(journalline.FieldEntryID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AccountCode(); ok {
 		_spec.SetField(journalline.FieldAccountCode, field.TypeString, value)

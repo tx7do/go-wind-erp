@@ -70,14 +70,14 @@ func (_u *WarehouseUpdate) ClearDeletedAt() *WarehouseUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WarehouseUpdate) SetCreatedBy(v uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetCreatedBy(v int64) *WarehouseUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WarehouseUpdate) SetNillableCreatedBy(v *uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetNillableCreatedBy(v *int64) *WarehouseUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *WarehouseUpdate) SetNillableCreatedBy(v *uint32) *WarehouseUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *WarehouseUpdate) AddCreatedBy(v int32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) AddCreatedBy(v int64) *WarehouseUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *WarehouseUpdate) ClearCreatedBy() *WarehouseUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WarehouseUpdate) SetUpdatedBy(v uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetUpdatedBy(v int64) *WarehouseUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WarehouseUpdate) SetNillableUpdatedBy(v *uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetNillableUpdatedBy(v *int64) *WarehouseUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *WarehouseUpdate) SetNillableUpdatedBy(v *uint32) *WarehouseUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *WarehouseUpdate) AddUpdatedBy(v int32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) AddUpdatedBy(v int64) *WarehouseUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *WarehouseUpdate) ClearUpdatedBy() *WarehouseUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WarehouseUpdate) SetDeletedBy(v uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetDeletedBy(v int64) *WarehouseUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WarehouseUpdate) SetNillableDeletedBy(v *uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetNillableDeletedBy(v *int64) *WarehouseUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *WarehouseUpdate) SetNillableDeletedBy(v *uint32) *WarehouseUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *WarehouseUpdate) AddDeletedBy(v int32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) AddDeletedBy(v int64) *WarehouseUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -251,14 +251,14 @@ func (_u *WarehouseUpdate) ClearEnable() *WarehouseUpdate {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (_u *WarehouseUpdate) SetReceivingLocationID(v uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetReceivingLocationID(v int64) *WarehouseUpdate {
 	_u.mutation.ResetReceivingLocationID()
 	_u.mutation.SetReceivingLocationID(v)
 	return _u
 }
 
 // SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
-func (_u *WarehouseUpdate) SetNillableReceivingLocationID(v *uint32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) SetNillableReceivingLocationID(v *int64) *WarehouseUpdate {
 	if v != nil {
 		_u.SetReceivingLocationID(*v)
 	}
@@ -266,7 +266,7 @@ func (_u *WarehouseUpdate) SetNillableReceivingLocationID(v *uint32) *WarehouseU
 }
 
 // AddReceivingLocationID adds value to the "receiving_location_id" field.
-func (_u *WarehouseUpdate) AddReceivingLocationID(v int32) *WarehouseUpdate {
+func (_u *WarehouseUpdate) AddReceivingLocationID(v int64) *WarehouseUpdate {
 	_u.mutation.AddReceivingLocationID(v)
 	return _u
 }
@@ -316,7 +316,7 @@ func (_u *WarehouseUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Ware
 }
 
 func (_u *WarehouseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(warehouse.Table, warehouse.Columns, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(warehouse.Table, warehouse.Columns, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -340,31 +340,31 @@ func (_u *WarehouseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(warehouse.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(warehouse.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(warehouse.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(warehouse.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(warehouse.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(warehouse.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(warehouse.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(warehouse.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(warehouse.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(warehouse.FieldRemark, field.TypeString, value)
@@ -373,7 +373,7 @@ func (_u *WarehouseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(warehouse.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(warehouse.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(warehouse.FieldCode, field.TypeString, value)
@@ -400,13 +400,13 @@ func (_u *WarehouseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(warehouse.FieldEnable, field.TypeBool)
 	}
 	if value, ok := _u.mutation.ReceivingLocationID(); ok {
-		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedReceivingLocationID(); ok {
-		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeInt64, value)
 	}
 	if _u.mutation.ReceivingLocationIDCleared() {
-		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -471,14 +471,14 @@ func (_u *WarehouseUpdateOne) ClearDeletedAt() *WarehouseUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WarehouseUpdateOne) SetCreatedBy(v uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetCreatedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WarehouseUpdateOne) SetNillableCreatedBy(v *uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetNillableCreatedBy(v *int64) *WarehouseUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -486,7 +486,7 @@ func (_u *WarehouseUpdateOne) SetNillableCreatedBy(v *uint32) *WarehouseUpdateOn
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *WarehouseUpdateOne) AddCreatedBy(v int32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) AddCreatedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -498,14 +498,14 @@ func (_u *WarehouseUpdateOne) ClearCreatedBy() *WarehouseUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WarehouseUpdateOne) SetUpdatedBy(v uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetUpdatedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WarehouseUpdateOne) SetNillableUpdatedBy(v *uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetNillableUpdatedBy(v *int64) *WarehouseUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -513,7 +513,7 @@ func (_u *WarehouseUpdateOne) SetNillableUpdatedBy(v *uint32) *WarehouseUpdateOn
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *WarehouseUpdateOne) AddUpdatedBy(v int32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) AddUpdatedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -525,14 +525,14 @@ func (_u *WarehouseUpdateOne) ClearUpdatedBy() *WarehouseUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WarehouseUpdateOne) SetDeletedBy(v uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetDeletedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WarehouseUpdateOne) SetNillableDeletedBy(v *uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetNillableDeletedBy(v *int64) *WarehouseUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -540,7 +540,7 @@ func (_u *WarehouseUpdateOne) SetNillableDeletedBy(v *uint32) *WarehouseUpdateOn
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *WarehouseUpdateOne) AddDeletedBy(v int32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) AddDeletedBy(v int64) *WarehouseUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -652,14 +652,14 @@ func (_u *WarehouseUpdateOne) ClearEnable() *WarehouseUpdateOne {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (_u *WarehouseUpdateOne) SetReceivingLocationID(v uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetReceivingLocationID(v int64) *WarehouseUpdateOne {
 	_u.mutation.ResetReceivingLocationID()
 	_u.mutation.SetReceivingLocationID(v)
 	return _u
 }
 
 // SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
-func (_u *WarehouseUpdateOne) SetNillableReceivingLocationID(v *uint32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) SetNillableReceivingLocationID(v *int64) *WarehouseUpdateOne {
 	if v != nil {
 		_u.SetReceivingLocationID(*v)
 	}
@@ -667,7 +667,7 @@ func (_u *WarehouseUpdateOne) SetNillableReceivingLocationID(v *uint32) *Warehou
 }
 
 // AddReceivingLocationID adds value to the "receiving_location_id" field.
-func (_u *WarehouseUpdateOne) AddReceivingLocationID(v int32) *WarehouseUpdateOne {
+func (_u *WarehouseUpdateOne) AddReceivingLocationID(v int64) *WarehouseUpdateOne {
 	_u.mutation.AddReceivingLocationID(v)
 	return _u
 }
@@ -730,7 +730,7 @@ func (_u *WarehouseUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *W
 }
 
 func (_u *WarehouseUpdateOne) sqlSave(ctx context.Context) (_node *Warehouse, err error) {
-	_spec := sqlgraph.NewUpdateSpec(warehouse.Table, warehouse.Columns, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(warehouse.Table, warehouse.Columns, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Warehouse.id" for update`)}
@@ -771,31 +771,31 @@ func (_u *WarehouseUpdateOne) sqlSave(ctx context.Context) (_node *Warehouse, er
 		_spec.ClearField(warehouse.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(warehouse.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(warehouse.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(warehouse.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(warehouse.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(warehouse.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(warehouse.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(warehouse.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(warehouse.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(warehouse.FieldRemark, field.TypeString, value)
@@ -804,7 +804,7 @@ func (_u *WarehouseUpdateOne) sqlSave(ctx context.Context) (_node *Warehouse, er
 		_spec.ClearField(warehouse.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(warehouse.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(warehouse.FieldCode, field.TypeString, value)
@@ -831,13 +831,13 @@ func (_u *WarehouseUpdateOne) sqlSave(ctx context.Context) (_node *Warehouse, er
 		_spec.ClearField(warehouse.FieldEnable, field.TypeBool)
 	}
 	if value, ok := _u.mutation.ReceivingLocationID(); ok {
-		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedReceivingLocationID(); ok {
-		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_spec.AddField(warehouse.FieldReceivingLocationID, field.TypeInt64, value)
 	}
 	if _u.mutation.ReceivingLocationIDCleared() {
-		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeUint32)
+		_spec.ClearField(warehouse.FieldReceivingLocationID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Warehouse{config: _u.config}

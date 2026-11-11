@@ -35,7 +35,7 @@ func (Receipt) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("receivable_id").
+		field.Int64("receivable_id").
 			Comment("所属应收单ID").
 			Default(0).
 			Optional().
@@ -74,11 +74,11 @@ func (Receipt) Fields() []ent.Field {
 
 func (Receipt) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -56,20 +56,20 @@ func (StockPicking) Fields() []ent.Field {
 			Nillable(),
 
 		// source/dest location：由服务层按 type 推导落库。
-		field.Uint32("source_location_id").
+		field.Int64("source_location_id").
 			Comment("源位置ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint32("destination_location_id").
+		field.Int64("destination_location_id").
 			Comment("目的位置ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
 		// purchase_order_id：入库拣货单关联的采购单（Odoo PO→receipt 桥接）。
-		field.Uint32("purchase_order_id").
+		field.Int64("purchase_order_id").
 			Comment("关联采购单ID（仅入库）").
 			Default(0).
 			Optional().
@@ -84,11 +84,11 @@ func (StockPicking) Fields() []ent.Field {
 
 func (StockPicking) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

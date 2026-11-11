@@ -17,7 +17,7 @@ type Subscription struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,15 +25,15 @@ type Subscription struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 备注
 	Remark *string `json:"remark,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 当前套餐编码（FREE/STANDARD/PRO）
 	PlanCode *string `json:"plan_code,omitempty"`
 	// 订阅周期起点
@@ -76,7 +76,7 @@ func (_m *Subscription) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = int64(value.Int64)
 		case subscription.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -102,22 +102,22 @@ func (_m *Subscription) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case subscription.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case subscription.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case subscription.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -130,8 +130,8 @@ func (_m *Subscription) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case subscription.FieldPlanCode:
 			if value, ok := values[i].(*sql.NullString); !ok {

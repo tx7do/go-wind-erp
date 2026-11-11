@@ -107,7 +107,7 @@ func (r *ApprovalRequestRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *ApprovalRequestRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ApprovalRequestRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ApprovalRequest.Query().
 		Where(approvalrequest.IDEQ(id)).
 		Exist(ctx)
@@ -191,7 +191,7 @@ func (r *ApprovalRequestRepo) Create(ctx context.Context, req *approvalV1.Create
 func (r *ApprovalRequestRepo) snapshotFlowSteps(
 	ctx context.Context,
 	bizType string,
-) (current, total, flowID uint32) {
+) (current, total uint32, flowID int64) {
 	tid, _ := maybeTenantFromViewer(ctx)
 
 	flow, err := r.entClient.Client().ApprovalFlow.Query().
@@ -226,7 +226,7 @@ func (r *ApprovalRequestRepo) HasPendingByBizRef(ctx context.Context, bizRef str
 // 同时盖章审批人与审批意见。0 行受影响说明已被并发变更，返回 Conflict。
 func (r *ApprovalRequestRepo) TransitionStatus(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	from, to approvalV1.ApprovalRequest_Status,
 	comment *string,
 ) (*approvalV1.ApprovalRequest, error) {
@@ -269,7 +269,7 @@ func (r *ApprovalRequestRepo) TransitionStatus(
 // to（保持 PENDING），盖章审批人。0 行→409 并发冲突。
 func (r *ApprovalRequestRepo) AdvanceStep(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	from, to uint32,
 	comment *string,
 ) error {
@@ -333,7 +333,7 @@ func (r *ApprovalRequestRepo) PendingStepsByBizRef(
 }
 
 // CancelAsApplicant 撤销：仅当 PENDING 且申请人为 caller 时更新为 CANCELLED。
-func (r *ApprovalRequestRepo) CancelAsApplicant(ctx context.Context, id uint32, applicantID uint32) error {
+func (r *ApprovalRequestRepo) CancelAsApplicant(ctx context.Context, id int64, applicantID int64) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	builder := r.entClient.Client().ApprovalRequest.Update().

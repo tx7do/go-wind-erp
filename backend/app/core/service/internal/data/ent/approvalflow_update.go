@@ -70,14 +70,14 @@ func (_u *ApprovalFlowUpdate) ClearDeletedAt() *ApprovalFlowUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ApprovalFlowUpdate) SetCreatedBy(v uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetCreatedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdate) SetNillableCreatedBy(v *uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetNillableCreatedBy(v *int64) *ApprovalFlowUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ApprovalFlowUpdate) SetNillableCreatedBy(v *uint32) *ApprovalFlowUpdat
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ApprovalFlowUpdate) AddCreatedBy(v int32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) AddCreatedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ApprovalFlowUpdate) ClearCreatedBy() *ApprovalFlowUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ApprovalFlowUpdate) SetUpdatedBy(v uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetUpdatedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdate) SetNillableUpdatedBy(v *uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetNillableUpdatedBy(v *int64) *ApprovalFlowUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ApprovalFlowUpdate) SetNillableUpdatedBy(v *uint32) *ApprovalFlowUpdat
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ApprovalFlowUpdate) AddUpdatedBy(v int32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) AddUpdatedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ApprovalFlowUpdate) ClearUpdatedBy() *ApprovalFlowUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ApprovalFlowUpdate) SetDeletedBy(v uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetDeletedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdate) SetNillableDeletedBy(v *uint32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) SetNillableDeletedBy(v *int64) *ApprovalFlowUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ApprovalFlowUpdate) SetNillableDeletedBy(v *uint32) *ApprovalFlowUpdat
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ApprovalFlowUpdate) AddDeletedBy(v int32) *ApprovalFlowUpdate {
+func (_u *ApprovalFlowUpdate) AddDeletedBy(v int64) *ApprovalFlowUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -292,7 +292,7 @@ func (_u *ApprovalFlowUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approvalflow.Table, approvalflow.Columns, sqlgraph.NewFieldSpec(approvalflow.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approvalflow.Table, approvalflow.Columns, sqlgraph.NewFieldSpec(approvalflow.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -316,31 +316,31 @@ func (_u *ApprovalFlowUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(approvalflow.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(approvalflow.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(approvalflow.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(approvalflow.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(approvalflow.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(approvalflow.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(approvalflow.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(approvalflow.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(approvalflow.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(approvalflow.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(approvalflow.FieldRemark, field.TypeString, value)
@@ -349,7 +349,7 @@ func (_u *ApprovalFlowUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(approvalflow.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approvalflow.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BizType(); ok {
 		_spec.SetField(approvalflow.FieldBizType, field.TypeString, value)
@@ -432,14 +432,14 @@ func (_u *ApprovalFlowUpdateOne) ClearDeletedAt() *ApprovalFlowUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ApprovalFlowUpdateOne) SetCreatedBy(v uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetCreatedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdateOne) SetNillableCreatedBy(v *uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetNillableCreatedBy(v *int64) *ApprovalFlowUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -447,7 +447,7 @@ func (_u *ApprovalFlowUpdateOne) SetNillableCreatedBy(v *uint32) *ApprovalFlowUp
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ApprovalFlowUpdateOne) AddCreatedBy(v int32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) AddCreatedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -459,14 +459,14 @@ func (_u *ApprovalFlowUpdateOne) ClearCreatedBy() *ApprovalFlowUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ApprovalFlowUpdateOne) SetUpdatedBy(v uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetUpdatedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdateOne) SetNillableUpdatedBy(v *uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetNillableUpdatedBy(v *int64) *ApprovalFlowUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -474,7 +474,7 @@ func (_u *ApprovalFlowUpdateOne) SetNillableUpdatedBy(v *uint32) *ApprovalFlowUp
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ApprovalFlowUpdateOne) AddUpdatedBy(v int32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) AddUpdatedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -486,14 +486,14 @@ func (_u *ApprovalFlowUpdateOne) ClearUpdatedBy() *ApprovalFlowUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ApprovalFlowUpdateOne) SetDeletedBy(v uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetDeletedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ApprovalFlowUpdateOne) SetNillableDeletedBy(v *uint32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) SetNillableDeletedBy(v *int64) *ApprovalFlowUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -501,7 +501,7 @@ func (_u *ApprovalFlowUpdateOne) SetNillableDeletedBy(v *uint32) *ApprovalFlowUp
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ApprovalFlowUpdateOne) AddDeletedBy(v int32) *ApprovalFlowUpdateOne {
+func (_u *ApprovalFlowUpdateOne) AddDeletedBy(v int64) *ApprovalFlowUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -667,7 +667,7 @@ func (_u *ApprovalFlowUpdateOne) sqlSave(ctx context.Context) (_node *ApprovalFl
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approvalflow.Table, approvalflow.Columns, sqlgraph.NewFieldSpec(approvalflow.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approvalflow.Table, approvalflow.Columns, sqlgraph.NewFieldSpec(approvalflow.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApprovalFlow.id" for update`)}
@@ -708,31 +708,31 @@ func (_u *ApprovalFlowUpdateOne) sqlSave(ctx context.Context) (_node *ApprovalFl
 		_spec.ClearField(approvalflow.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(approvalflow.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(approvalflow.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(approvalflow.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(approvalflow.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(approvalflow.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(approvalflow.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(approvalflow.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(approvalflow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(approvalflow.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(approvalflow.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(approvalflow.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(approvalflow.FieldRemark, field.TypeString, value)
@@ -741,7 +741,7 @@ func (_u *ApprovalFlowUpdateOne) sqlSave(ctx context.Context) (_node *ApprovalFl
 		_spec.ClearField(approvalflow.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approvalflow.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approvalflow.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BizType(); ok {
 		_spec.SetField(approvalflow.FieldBizType, field.TypeString, value)

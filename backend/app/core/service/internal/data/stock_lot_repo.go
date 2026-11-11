@@ -47,7 +47,7 @@ func (r *StockLotRepo) GetOrCreateTx(
 	skuCode string,
 	name string,
 	expiry *time.Time,
-) (uint32, error) {
+) (int64, error) {
 	tid, _ := maybeTenantFromViewer(ctx)
 
 	found, err := tx.StockLot.Query().
@@ -95,7 +95,7 @@ func (r *StockLotRepo) FindIdTx(
 	tx *ent.Tx,
 	skuCode string,
 	name string,
-) (uint32, error) {
+) (int64, error) {
 	tid, _ := maybeTenantFromViewer(ctx)
 
 	row, err := tx.StockLot.Query().
@@ -120,9 +120,9 @@ func (r *StockLotRepo) FindIdTx(
 func (r *StockLotRepo) remainderOf(
 	ctx context.Context,
 	client *ent.Client,
-	lotIDs []uint32,
-) (map[uint32]int64, error) {
-	remainders := make(map[uint32]int64, len(lotIDs))
+	lotIDs []int64,
+) (map[int64]int64, error) {
+	remainders := make(map[int64]int64, len(lotIDs))
 	if len(lotIDs) == 0 {
 		return remainders, nil
 	}
@@ -136,7 +136,7 @@ func (r *StockLotRepo) remainderOf(
 	}
 
 	// 收集涉及的位置并一次性取 usage（位置表小，走 IN 单查）。
-	locSet := map[uint32]struct{}{}
+	locSet := map[int64]struct{}{}
 	for _, l := range lines {
 		if l.SourceLocationID != nil {
 			locSet[*l.SourceLocationID] = struct{}{}
@@ -145,7 +145,7 @@ func (r *StockLotRepo) remainderOf(
 			locSet[*l.DestinationLocationID] = struct{}{}
 		}
 	}
-	locIDs := make([]uint32, 0, len(locSet))
+	locIDs := make([]int64, 0, len(locSet))
 	for id := range locSet {
 		locIDs = append(locIDs, id)
 	}
@@ -156,7 +156,7 @@ func (r *StockLotRepo) remainderOf(
 		r.log.Errorf("query locations for lot aggregation failed: %s", err.Error())
 		return nil, inventoryV1.ErrorInternalServerError("query locations failed")
 	}
-	usage := make(map[uint32]string, len(locs))
+	usage := make(map[int64]string, len(locs))
 	for _, l := range locs {
 		if l.Usage != nil {
 			usage[l.ID] = string(*l.Usage)
@@ -183,13 +183,13 @@ func (r *StockLotRepo) remainderOf(
 }
 
 // LotRemaining 读取主客户端版本的批次余量（列表页/服务层校验用）。
-func (r *StockLotRepo) LotRemaining(ctx context.Context, lotIDs []uint32) (map[uint32]int64, error) {
+func (r *StockLotRepo) LotRemaining(ctx context.Context, lotIDs []int64) (map[int64]int64, error) {
 	return r.remainderOf(ctx, r.entClient.Client(), lotIDs)
 }
 
 // LotRemainingTx 事务内取单个批次余量（出库指派余量校验用）。
-func (r *StockLotRepo) LotRemainingTx(ctx context.Context, tx *ent.Tx, lotID uint32) (int64, error) {
-	remainders, err := r.remainderOf(ctx, tx.Client(), []uint32{lotID})
+func (r *StockLotRepo) LotRemainingTx(ctx context.Context, tx *ent.Tx, lotID int64) (int64, error) {
+	remainders, err := r.remainderOf(ctx, tx.Client(), []int64{lotID})
 	if err != nil {
 		return 0, err
 	}
@@ -198,7 +198,7 @@ func (r *StockLotRepo) LotRemainingTx(ctx context.Context, tx *ent.Tx, lotID uin
 
 // FefoLot FEFO 候选批次。
 type FefoLot struct {
-	LotID     uint32
+	LotID     int64
 	Name      string
 	Expiry    *time.Time
 	Remaining int64
@@ -228,7 +228,7 @@ func (r *StockLotRepo) ListFefoTx(
 		return nil, nil
 	}
 
-	ids := make([]uint32, 0, len(lots))
+	ids := make([]int64, 0, len(lots))
 	for _, l := range lots {
 		ids = append(ids, l.ID)
 	}
@@ -288,7 +288,7 @@ func (r *StockLotRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 		return nil, inventoryV1.ErrorInternalServerError("list stock lots failed")
 	}
 
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, l := range rows {
 		ids = append(ids, l.ID)
 	}
@@ -321,7 +321,7 @@ func (r *StockLotRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 		items = append(items, item)
 	}
 
-	total := uint64(len(items))
+	total := int64(len(items))
 	// Go 侧分页（状态过滤后）。
 	page := int(req.GetPage())
 	pageSize := int(req.GetPageSize())

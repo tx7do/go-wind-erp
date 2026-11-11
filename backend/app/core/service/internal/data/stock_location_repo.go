@@ -101,7 +101,7 @@ func (r *LocationRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	}, nil
 }
 
-func (r *LocationRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *LocationRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().StockLocation.Query().
 		Where(stocklocation.IDEQ(id)).
 		Exist(ctx)
@@ -230,7 +230,7 @@ func (r *LocationRepo) Delete(ctx context.Context, req *inventoryV1.DeleteLocati
 // GetLocationID 取仓库的接收位置ID（仓库创建时自动生成的 INTERNAL 位置）。
 // 不返回位置对象本身，只返回 ID——调用方只需要 ID 来设置 move/picking 的
 // destination_location_id。
-func (r *LocationRepo) GetLocationID(ctx context.Context, warehouseCode string) (uint32, error) {
+func (r *LocationRepo) GetLocationID(ctx context.Context, warehouseCode string) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().StockLocation.Query().
 		Where(stocklocation.WarehouseCodeEQ(warehouseCode), stocklocation.UsageEQ(stocklocation.UsageInternal))
@@ -249,7 +249,7 @@ func (r *LocationRepo) GetLocationID(ctx context.Context, warehouseCode string) 
 
 // GetSupplierLocationID 取租户的供应商位置ID（入库 move 的 source location）。
 // 每租户仅一条 usage=SUPPLIER 的位置。
-func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (uint32, error) {
+func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().StockLocation.Query().
 		Where(stocklocation.UsageEQ(stocklocation.UsageSupplier))
@@ -268,7 +268,7 @@ func (r *LocationRepo) GetSupplierLocationID(ctx context.Context) (uint32, error
 
 // GetCustomerLocationID 取租户的客户位置ID（出库 move 的 dest location）。
 // 每租户仅一条 usage=CUSTOMER 的位置。
-func (r *LocationRepo) GetCustomerLocationID(ctx context.Context) (uint32, error) {
+func (r *LocationRepo) GetCustomerLocationID(ctx context.Context) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().StockLocation.Query().
 		Where(stocklocation.UsageEQ(stocklocation.UsageCustomer))
@@ -290,7 +290,7 @@ func (r *LocationRepo) GetCustomerLocationID(ctx context.Context) (uint32, error
 func (r *LocationRepo) GetUsageTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	locationID uint32,
+	locationID int64,
 ) (inventoryV1.StockLocation_Usage, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := tx.StockLocation.Query().
@@ -324,7 +324,7 @@ func (r *LocationRepo) GetUsageTx(
 
 // GetInventoryLossLocationID 取租户的盘点虚拟位置ID。
 // 每租户仅一条 usage=INVENTORY_LOSS 的位置（盘盈的 source / 盘亏的 dest）。
-func (r *LocationRepo) GetInventoryLossLocationID(ctx context.Context) (uint32, error) {
+func (r *LocationRepo) GetInventoryLossLocationID(ctx context.Context) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().StockLocation.Query().
 		Where(stocklocation.UsageEQ(stocklocation.UsageInventoryLoss))
@@ -347,7 +347,7 @@ func (r *LocationRepo) GetInventoryLossLocationID(ctx context.Context) (uint32, 
 func (r *LocationRepo) GetWarehouseCodeTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	locationID uint32,
+	locationID int64,
 ) (string, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := tx.StockLocation.Query().
@@ -373,7 +373,7 @@ func (r *LocationRepo) GetWarehouseCodeTx(
 func (r *LocationRepo) CreateInternalLocation(
 	ctx context.Context,
 	warehouseCode string,
-) (uint32, error) {
+) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	usage := stocklocation.UsageInternal
 	builder := r.entClient.Client().StockLocation.Create().

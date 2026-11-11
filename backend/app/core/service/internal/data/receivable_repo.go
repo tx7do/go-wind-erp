@@ -105,7 +105,7 @@ func (r *ReceivableRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	}, nil
 }
 
-func (r *ReceivableRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ReceivableRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Receivable.Query().
 		Where(receivable.IDEQ(id)).
 		Exist(ctx)
@@ -260,7 +260,7 @@ func outstandingReceivableBalanceSum(s *sql.Selector) string {
 }
 
 // CancelAsUnpaid 取消：仅 PENDING 且 paid_amount=0（条件更新保证并发安全）。
-func (r *ReceivableRepo) CancelAsUnpaid(ctx context.Context, id uint32) error {
+func (r *ReceivableRepo) CancelAsUnpaid(ctx context.Context, id int64) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 
@@ -289,7 +289,7 @@ func (r *ReceivableRepo) CancelAsUnpaid(ctx context.Context, id uint32) error {
 }
 
 // DeleteAsUnpaid 删除：仅 PENDING 且未收款（终态审计与在途账不可抹除）。
-func (r *ReceivableRepo) DeleteAsUnpaid(ctx context.Context, id uint32) error {
+func (r *ReceivableRepo) DeleteAsUnpaid(ctx context.Context, id int64) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	builder := r.entClient.Client().Receivable.Delete().
@@ -317,7 +317,7 @@ func (r *ReceivableRepo) DeleteAsUnpaid(ctx context.Context, id uint32) error {
 // ApplyReceipt 原子收款入账：单条 UPDATE 同时累加已收并按新值推导状态，
 // WHERE 子句在当前值上校验不超收——并发收款竞态被封闭在 SQL 层。
 // 返回更新后的应收单。0 行受影响 → 超收或不可收款状态。
-func (r *ReceivableRepo) ApplyReceipt(ctx context.Context, receivableID uint32, amount int64) (*financeV1.Receivable, error) {
+func (r *ReceivableRepo) ApplyReceipt(ctx context.Context, receivableID int64, amount int64) (*financeV1.Receivable, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 

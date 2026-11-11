@@ -135,7 +135,7 @@ func (r *ReceiptRepo) Get(ctx context.Context, req *financeV1.GetReceiptRequest)
 // TransitionStatus 原子状态迁移（PENDING→APPLIED/REJECTED）。
 func (r *ReceiptRepo) TransitionStatus(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	from, to financeV1.Receipt_Status,
 ) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)

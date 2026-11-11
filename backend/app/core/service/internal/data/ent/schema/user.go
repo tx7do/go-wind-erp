@@ -137,11 +137,11 @@ func (User) Fields() []ent.Field {
 // Mixin of the User.
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
-		mixin.OperatorID{},
+		mixin.AutoIncrementId64{},
+		mixin.OperatorID64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

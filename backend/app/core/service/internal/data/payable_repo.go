@@ -106,7 +106,7 @@ func (r *PayableRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
-func (r *PayableRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PayableRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Payable.Query().
 		Where(payable.IDEQ(id)).
 		Exist(ctx)
@@ -261,7 +261,7 @@ func outstandingBalanceSum(s *sql.Selector) string {
 }
 
 // CancelAsUnpaid 取消：仅 PENDING 且 paid_amount=0（条件更新保证并发安全）。
-func (r *PayableRepo) CancelAsUnpaid(ctx context.Context, id uint32) error {
+func (r *PayableRepo) CancelAsUnpaid(ctx context.Context, id int64) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 
@@ -290,7 +290,7 @@ func (r *PayableRepo) CancelAsUnpaid(ctx context.Context, id uint32) error {
 }
 
 // DeleteAsUnpaid 删除：仅 PENDING 且未付款（终态审计与在途账不可抹除）。
-func (r *PayableRepo) DeleteAsUnpaid(ctx context.Context, id uint32) error {
+func (r *PayableRepo) DeleteAsUnpaid(ctx context.Context, id int64) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	builder := r.entClient.Client().Payable.Delete().
@@ -318,7 +318,7 @@ func (r *PayableRepo) DeleteAsUnpaid(ctx context.Context, id uint32) error {
 // ApplyPayment 原子付款入账：单条 UPDATE 同时累加已付并按新值推导状态，
 // WHERE 子句在当前值上校验不超付——并发付款竞态被封闭在 SQL 层。
 // 返回更新后的应付单。0 行受影响 → 超付或不可付款状态。
-func (r *PayableRepo) ApplyPayment(ctx context.Context, payableID uint32, amount int64) (*financeV1.Payable, error) {
+func (r *PayableRepo) ApplyPayment(ctx context.Context, payableID int64, amount int64) (*financeV1.Payable, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 

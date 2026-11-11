@@ -67,11 +67,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// EntryNumberValidator is a validator for the "entry_number" field. It is called by the builders before save.
 	EntryNumberValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the JournalEntry queries.

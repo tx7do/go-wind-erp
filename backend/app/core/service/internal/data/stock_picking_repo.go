@@ -123,7 +123,7 @@ func (r *StockPickingRepo) List(ctx context.Context, req *paginationV1.PagingReq
 	}, nil
 }
 
-func (r *StockPickingRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *StockPickingRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().StockPicking.Query().
 		Where(stockpicking.IDEQ(id)).
 		Exist(ctx)
@@ -136,7 +136,7 @@ func (r *StockPickingRepo) IsExist(ctx context.Context, id uint32) (bool, error)
 
 // GetOutgoingPickingIDs 取所有出库（OUTGOING）拣货单的 ID，供 COGS
 // 报表按月聚合 move-line 成本用。
-func (r *StockPickingRepo) GetOutgoingPickingIDs(ctx context.Context) ([]uint32, error) {
+func (r *StockPickingRepo) GetOutgoingPickingIDs(ctx context.Context) ([]int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().StockPicking.Query().
 		Where(stockpicking.PickingTypeEQ(stockpicking.PickingTypeOutgoing))
@@ -264,7 +264,7 @@ func (r *StockPickingRepo) Delete(ctx context.Context, req *inventoryV1.DeleteSt
 func (r *StockPickingRepo) GetConfirmedMovesTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	pickingID uint32,
+	pickingID int64,
 ) ([]*inventoryV1.StockMove, error) {
 	return r.moveRepo.GetConfirmedMovesByPickingTx(ctx, tx, pickingID)
 }
@@ -274,7 +274,7 @@ func (r *StockPickingRepo) GetConfirmedMovesTx(
 func (r *StockPickingRepo) CancelMovesTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	pickingID uint32,
+	pickingID int64,
 ) error {
 	if err := r.moveRepo.CancelDraftMovesTx(ctx, tx, pickingID); err != nil {
 		return err
@@ -286,7 +286,7 @@ func (r *StockPickingRepo) CancelMovesTx(
 func (r *StockPickingRepo) TransitionMoveStateTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	id uint32,
+	id int64,
 	from, to inventoryV1.StockMove_State,
 ) error {
 	return r.moveRepo.TransitionMoveStateTx(ctx, tx, id, from, to)
@@ -318,7 +318,7 @@ func (r *StockPickingRepo) FinishTx(tx *ent.Tx, err error) {
 }
 
 // computeDerivedState 从 DB 读取子 moves 并计算派生态（用于 List，每次读取时算）。
-func (r *StockPickingRepo) computeDerivedState(ctx context.Context, pickingID uint32) inventoryV1.StockPicking_DerivedState {
+func (r *StockPickingRepo) computeDerivedState(ctx context.Context, pickingID int64) inventoryV1.StockPicking_DerivedState {
 	moves := r.moveRepo.GetMovesByPicking(ctx, pickingID)
 	return r.deriveStateFromMoves(moves)
 }

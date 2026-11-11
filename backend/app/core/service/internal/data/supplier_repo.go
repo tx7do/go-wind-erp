@@ -100,7 +100,7 @@ func (r *SupplierRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	}, nil
 }
 
-func (r *SupplierRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SupplierRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Supplier.Query().
 		Where(supplier.IDEQ(id)).
 		Exist(ctx)

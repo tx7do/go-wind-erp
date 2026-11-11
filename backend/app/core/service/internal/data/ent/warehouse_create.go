@@ -65,13 +65,13 @@ func (_c *WarehouseCreate) SetNillableDeletedAt(v *time.Time) *WarehouseCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *WarehouseCreate) SetCreatedBy(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetCreatedBy(v int64) *WarehouseCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *WarehouseCreate) SetNillableCreatedBy(v *uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetNillableCreatedBy(v *int64) *WarehouseCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *WarehouseCreate) SetNillableCreatedBy(v *uint32) *WarehouseCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *WarehouseCreate) SetUpdatedBy(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetUpdatedBy(v int64) *WarehouseCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *WarehouseCreate) SetNillableUpdatedBy(v *uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetNillableUpdatedBy(v *int64) *WarehouseCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *WarehouseCreate) SetNillableUpdatedBy(v *uint32) *WarehouseCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *WarehouseCreate) SetDeletedBy(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetDeletedBy(v int64) *WarehouseCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *WarehouseCreate) SetNillableDeletedBy(v *uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetNillableDeletedBy(v *int64) *WarehouseCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *WarehouseCreate) SetNillableRemark(v *string) *WarehouseCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *WarehouseCreate) SetTenantID(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetTenantID(v int64) *WarehouseCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *WarehouseCreate) SetNillableTenantID(v *uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetNillableTenantID(v *int64) *WarehouseCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -191,13 +191,13 @@ func (_c *WarehouseCreate) SetNillableEnable(v *bool) *WarehouseCreate {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (_c *WarehouseCreate) SetReceivingLocationID(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetReceivingLocationID(v int64) *WarehouseCreate {
 	_c.mutation.SetReceivingLocationID(v)
 	return _c
 }
 
 // SetNillableReceivingLocationID sets the "receiving_location_id" field if the given value is not nil.
-func (_c *WarehouseCreate) SetNillableReceivingLocationID(v *uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetNillableReceivingLocationID(v *int64) *WarehouseCreate {
 	if v != nil {
 		_c.SetReceivingLocationID(*v)
 	}
@@ -205,7 +205,7 @@ func (_c *WarehouseCreate) SetNillableReceivingLocationID(v *uint32) *WarehouseC
 }
 
 // SetID sets the "id" field.
-func (_c *WarehouseCreate) SetID(v uint32) *WarehouseCreate {
+func (_c *WarehouseCreate) SetID(v int64) *WarehouseCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -285,7 +285,7 @@ func (_c *WarehouseCreate) sqlSave(ctx context.Context) (*Warehouse, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -295,7 +295,7 @@ func (_c *WarehouseCreate) sqlSave(ctx context.Context) (*Warehouse, error) {
 func (_c *WarehouseCreate) createSpec() (*Warehouse, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Warehouse{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(warehouse.Table, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(warehouse.Table, sqlgraph.NewFieldSpec(warehouse.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -315,15 +315,15 @@ func (_c *WarehouseCreate) createSpec() (*Warehouse, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(warehouse.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(warehouse.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -331,7 +331,7 @@ func (_c *WarehouseCreate) createSpec() (*Warehouse, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(warehouse.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Code(); ok {
@@ -351,7 +351,7 @@ func (_c *WarehouseCreate) createSpec() (*Warehouse, *sqlgraph.CreateSpec) {
 		_node.Enable = &value
 	}
 	if value, ok := _c.mutation.ReceivingLocationID(); ok {
-		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeUint32, value)
+		_spec.SetField(warehouse.FieldReceivingLocationID, field.TypeInt64, value)
 		_node.ReceivingLocationID = &value
 	}
 	return _node, _spec
@@ -443,7 +443,7 @@ func (u *WarehouseUpsert) ClearDeletedAt() *WarehouseUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WarehouseUpsert) SetCreatedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) SetCreatedBy(v int64) *WarehouseUpsert {
 	u.Set(warehouse.FieldCreatedBy, v)
 	return u
 }
@@ -455,7 +455,7 @@ func (u *WarehouseUpsert) UpdateCreatedBy() *WarehouseUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WarehouseUpsert) AddCreatedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) AddCreatedBy(v int64) *WarehouseUpsert {
 	u.Add(warehouse.FieldCreatedBy, v)
 	return u
 }
@@ -467,7 +467,7 @@ func (u *WarehouseUpsert) ClearCreatedBy() *WarehouseUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WarehouseUpsert) SetUpdatedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) SetUpdatedBy(v int64) *WarehouseUpsert {
 	u.Set(warehouse.FieldUpdatedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *WarehouseUpsert) UpdateUpdatedBy() *WarehouseUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WarehouseUpsert) AddUpdatedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) AddUpdatedBy(v int64) *WarehouseUpsert {
 	u.Add(warehouse.FieldUpdatedBy, v)
 	return u
 }
@@ -491,7 +491,7 @@ func (u *WarehouseUpsert) ClearUpdatedBy() *WarehouseUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WarehouseUpsert) SetDeletedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) SetDeletedBy(v int64) *WarehouseUpsert {
 	u.Set(warehouse.FieldDeletedBy, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *WarehouseUpsert) UpdateDeletedBy() *WarehouseUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WarehouseUpsert) AddDeletedBy(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) AddDeletedBy(v int64) *WarehouseUpsert {
 	u.Add(warehouse.FieldDeletedBy, v)
 	return u
 }
@@ -605,7 +605,7 @@ func (u *WarehouseUpsert) ClearEnable() *WarehouseUpsert {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (u *WarehouseUpsert) SetReceivingLocationID(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) SetReceivingLocationID(v int64) *WarehouseUpsert {
 	u.Set(warehouse.FieldReceivingLocationID, v)
 	return u
 }
@@ -617,7 +617,7 @@ func (u *WarehouseUpsert) UpdateReceivingLocationID() *WarehouseUpsert {
 }
 
 // AddReceivingLocationID adds v to the "receiving_location_id" field.
-func (u *WarehouseUpsert) AddReceivingLocationID(v uint32) *WarehouseUpsert {
+func (u *WarehouseUpsert) AddReceivingLocationID(v int64) *WarehouseUpsert {
 	u.Add(warehouse.FieldReceivingLocationID, v)
 	return u
 }
@@ -725,14 +725,14 @@ func (u *WarehouseUpsertOne) ClearDeletedAt() *WarehouseUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WarehouseUpsertOne) SetCreatedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) SetCreatedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WarehouseUpsertOne) AddCreatedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) AddCreatedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -753,14 +753,14 @@ func (u *WarehouseUpsertOne) ClearCreatedBy() *WarehouseUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WarehouseUpsertOne) SetUpdatedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) SetUpdatedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WarehouseUpsertOne) AddUpdatedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) AddUpdatedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -781,14 +781,14 @@ func (u *WarehouseUpsertOne) ClearUpdatedBy() *WarehouseUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WarehouseUpsertOne) SetDeletedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) SetDeletedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WarehouseUpsertOne) AddDeletedBy(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) AddDeletedBy(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -914,14 +914,14 @@ func (u *WarehouseUpsertOne) ClearEnable() *WarehouseUpsertOne {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (u *WarehouseUpsertOne) SetReceivingLocationID(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) SetReceivingLocationID(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetReceivingLocationID(v)
 	})
 }
 
 // AddReceivingLocationID adds v to the "receiving_location_id" field.
-func (u *WarehouseUpsertOne) AddReceivingLocationID(v uint32) *WarehouseUpsertOne {
+func (u *WarehouseUpsertOne) AddReceivingLocationID(v int64) *WarehouseUpsertOne {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddReceivingLocationID(v)
 	})
@@ -957,7 +957,7 @@ func (u *WarehouseUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *WarehouseUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *WarehouseUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -966,7 +966,7 @@ func (u *WarehouseUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *WarehouseUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *WarehouseUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1023,7 +1023,7 @@ func (_c *WarehouseCreateBulk) Save(ctx context.Context) ([]*Warehouse, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1204,14 +1204,14 @@ func (u *WarehouseUpsertBulk) ClearDeletedAt() *WarehouseUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WarehouseUpsertBulk) SetCreatedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) SetCreatedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WarehouseUpsertBulk) AddCreatedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) AddCreatedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1232,14 +1232,14 @@ func (u *WarehouseUpsertBulk) ClearCreatedBy() *WarehouseUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WarehouseUpsertBulk) SetUpdatedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) SetUpdatedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WarehouseUpsertBulk) AddUpdatedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) AddUpdatedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1260,14 +1260,14 @@ func (u *WarehouseUpsertBulk) ClearUpdatedBy() *WarehouseUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WarehouseUpsertBulk) SetDeletedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) SetDeletedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WarehouseUpsertBulk) AddDeletedBy(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) AddDeletedBy(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1393,14 +1393,14 @@ func (u *WarehouseUpsertBulk) ClearEnable() *WarehouseUpsertBulk {
 }
 
 // SetReceivingLocationID sets the "receiving_location_id" field.
-func (u *WarehouseUpsertBulk) SetReceivingLocationID(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) SetReceivingLocationID(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.SetReceivingLocationID(v)
 	})
 }
 
 // AddReceivingLocationID adds v to the "receiving_location_id" field.
-func (u *WarehouseUpsertBulk) AddReceivingLocationID(v uint32) *WarehouseUpsertBulk {
+func (u *WarehouseUpsertBulk) AddReceivingLocationID(v int64) *WarehouseUpsertBulk {
 	return u.Update(func(s *WarehouseUpsert) {
 		s.AddReceivingLocationID(v)
 	})

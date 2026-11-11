@@ -65,13 +65,13 @@ func (_c *SubscriptionCreate) SetNillableDeletedAt(v *time.Time) *SubscriptionCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SubscriptionCreate) SetCreatedBy(v uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetCreatedBy(v int64) *SubscriptionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SubscriptionCreate) SetNillableCreatedBy(v *uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetNillableCreatedBy(v *int64) *SubscriptionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SubscriptionCreate) SetNillableCreatedBy(v *uint32) *SubscriptionCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SubscriptionCreate) SetUpdatedBy(v uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetUpdatedBy(v int64) *SubscriptionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SubscriptionCreate) SetNillableUpdatedBy(v *uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetNillableUpdatedBy(v *int64) *SubscriptionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SubscriptionCreate) SetNillableUpdatedBy(v *uint32) *SubscriptionCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SubscriptionCreate) SetDeletedBy(v uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetDeletedBy(v int64) *SubscriptionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SubscriptionCreate) SetNillableDeletedBy(v *uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetNillableDeletedBy(v *int64) *SubscriptionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *SubscriptionCreate) SetNillableRemark(v *string) *SubscriptionCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SubscriptionCreate) SetTenantID(v uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetTenantID(v int64) *SubscriptionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SubscriptionCreate) SetNillableTenantID(v *uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetNillableTenantID(v *int64) *SubscriptionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -191,7 +191,7 @@ func (_c *SubscriptionCreate) SetNillableStatus(v *subscription.Status) *Subscri
 }
 
 // SetID sets the "id" field.
-func (_c *SubscriptionCreate) SetID(v uint32) *SubscriptionCreate {
+func (_c *SubscriptionCreate) SetID(v int64) *SubscriptionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -277,7 +277,7 @@ func (_c *SubscriptionCreate) sqlSave(ctx context.Context) (*Subscription, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -287,7 +287,7 @@ func (_c *SubscriptionCreate) sqlSave(ctx context.Context) (*Subscription, error
 func (_c *SubscriptionCreate) createSpec() (*Subscription, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Subscription{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(subscription.Table, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(subscription.Table, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -307,15 +307,15 @@ func (_c *SubscriptionCreate) createSpec() (*Subscription, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(subscription.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(subscription.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(subscription.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -323,7 +323,7 @@ func (_c *SubscriptionCreate) createSpec() (*Subscription, *sqlgraph.CreateSpec)
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(subscription.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PlanCode(); ok {
@@ -431,7 +431,7 @@ func (u *SubscriptionUpsert) ClearDeletedAt() *SubscriptionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SubscriptionUpsert) SetCreatedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) SetCreatedBy(v int64) *SubscriptionUpsert {
 	u.Set(subscription.FieldCreatedBy, v)
 	return u
 }
@@ -443,7 +443,7 @@ func (u *SubscriptionUpsert) UpdateCreatedBy() *SubscriptionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SubscriptionUpsert) AddCreatedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) AddCreatedBy(v int64) *SubscriptionUpsert {
 	u.Add(subscription.FieldCreatedBy, v)
 	return u
 }
@@ -455,7 +455,7 @@ func (u *SubscriptionUpsert) ClearCreatedBy() *SubscriptionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SubscriptionUpsert) SetUpdatedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) SetUpdatedBy(v int64) *SubscriptionUpsert {
 	u.Set(subscription.FieldUpdatedBy, v)
 	return u
 }
@@ -467,7 +467,7 @@ func (u *SubscriptionUpsert) UpdateUpdatedBy() *SubscriptionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SubscriptionUpsert) AddUpdatedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) AddUpdatedBy(v int64) *SubscriptionUpsert {
 	u.Add(subscription.FieldUpdatedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *SubscriptionUpsert) ClearUpdatedBy() *SubscriptionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SubscriptionUpsert) SetDeletedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) SetDeletedBy(v int64) *SubscriptionUpsert {
 	u.Set(subscription.FieldDeletedBy, v)
 	return u
 }
@@ -491,7 +491,7 @@ func (u *SubscriptionUpsert) UpdateDeletedBy() *SubscriptionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SubscriptionUpsert) AddDeletedBy(v uint32) *SubscriptionUpsert {
+func (u *SubscriptionUpsert) AddDeletedBy(v int64) *SubscriptionUpsert {
 	u.Add(subscription.FieldDeletedBy, v)
 	return u
 }
@@ -689,14 +689,14 @@ func (u *SubscriptionUpsertOne) ClearDeletedAt() *SubscriptionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SubscriptionUpsertOne) SetCreatedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) SetCreatedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SubscriptionUpsertOne) AddCreatedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) AddCreatedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -717,14 +717,14 @@ func (u *SubscriptionUpsertOne) ClearCreatedBy() *SubscriptionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SubscriptionUpsertOne) SetUpdatedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) SetUpdatedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SubscriptionUpsertOne) AddUpdatedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) AddUpdatedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -745,14 +745,14 @@ func (u *SubscriptionUpsertOne) ClearUpdatedBy() *SubscriptionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SubscriptionUpsertOne) SetDeletedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) SetDeletedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SubscriptionUpsertOne) AddDeletedBy(v uint32) *SubscriptionUpsertOne {
+func (u *SubscriptionUpsertOne) AddDeletedBy(v int64) *SubscriptionUpsertOne {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -893,7 +893,7 @@ func (u *SubscriptionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SubscriptionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SubscriptionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -902,7 +902,7 @@ func (u *SubscriptionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SubscriptionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SubscriptionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -959,7 +959,7 @@ func (_c *SubscriptionCreateBulk) Save(ctx context.Context) ([]*Subscription, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1140,14 +1140,14 @@ func (u *SubscriptionUpsertBulk) ClearDeletedAt() *SubscriptionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SubscriptionUpsertBulk) SetCreatedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) SetCreatedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SubscriptionUpsertBulk) AddCreatedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) AddCreatedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1168,14 +1168,14 @@ func (u *SubscriptionUpsertBulk) ClearCreatedBy() *SubscriptionUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SubscriptionUpsertBulk) SetUpdatedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) SetUpdatedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SubscriptionUpsertBulk) AddUpdatedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) AddUpdatedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1196,14 +1196,14 @@ func (u *SubscriptionUpsertBulk) ClearUpdatedBy() *SubscriptionUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SubscriptionUpsertBulk) SetDeletedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) SetDeletedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SubscriptionUpsertBulk) AddDeletedBy(v uint32) *SubscriptionUpsertBulk {
+func (u *SubscriptionUpsertBulk) AddDeletedBy(v int64) *SubscriptionUpsertBulk {
 	return u.Update(func(s *SubscriptionUpsert) {
 		s.AddDeletedBy(v)
 	})

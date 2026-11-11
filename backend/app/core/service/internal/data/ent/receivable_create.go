@@ -65,13 +65,13 @@ func (_c *ReceivableCreate) SetNillableDeletedAt(v *time.Time) *ReceivableCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ReceivableCreate) SetCreatedBy(v uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetCreatedBy(v int64) *ReceivableCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ReceivableCreate) SetNillableCreatedBy(v *uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetNillableCreatedBy(v *int64) *ReceivableCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ReceivableCreate) SetNillableCreatedBy(v *uint32) *ReceivableCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ReceivableCreate) SetUpdatedBy(v uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetUpdatedBy(v int64) *ReceivableCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ReceivableCreate) SetNillableUpdatedBy(v *uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetNillableUpdatedBy(v *int64) *ReceivableCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ReceivableCreate) SetNillableUpdatedBy(v *uint32) *ReceivableCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ReceivableCreate) SetDeletedBy(v uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetDeletedBy(v int64) *ReceivableCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ReceivableCreate) SetNillableDeletedBy(v *uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetNillableDeletedBy(v *int64) *ReceivableCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ReceivableCreate) SetNillableRemark(v *string) *ReceivableCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ReceivableCreate) SetTenantID(v uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetTenantID(v int64) *ReceivableCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ReceivableCreate) SetNillableTenantID(v *uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetNillableTenantID(v *int64) *ReceivableCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -233,7 +233,7 @@ func (_c *ReceivableCreate) SetNillableStatus(v *receivable.Status) *ReceivableC
 }
 
 // SetID sets the "id" field.
-func (_c *ReceivableCreate) SetID(v uint32) *ReceivableCreate {
+func (_c *ReceivableCreate) SetID(v int64) *ReceivableCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -322,7 +322,7 @@ func (_c *ReceivableCreate) sqlSave(ctx context.Context) (*Receivable, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -332,7 +332,7 @@ func (_c *ReceivableCreate) sqlSave(ctx context.Context) (*Receivable, error) {
 func (_c *ReceivableCreate) createSpec() (*Receivable, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Receivable{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(receivable.Table, sqlgraph.NewFieldSpec(receivable.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(receivable.Table, sqlgraph.NewFieldSpec(receivable.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -352,15 +352,15 @@ func (_c *ReceivableCreate) createSpec() (*Receivable, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(receivable.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(receivable.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(receivable.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(receivable.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(receivable.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(receivable.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -368,7 +368,7 @@ func (_c *ReceivableCreate) createSpec() (*Receivable, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(receivable.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(receivable.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ReceivableNumber(); ok {
@@ -488,7 +488,7 @@ func (u *ReceivableUpsert) ClearDeletedAt() *ReceivableUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceivableUpsert) SetCreatedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) SetCreatedBy(v int64) *ReceivableUpsert {
 	u.Set(receivable.FieldCreatedBy, v)
 	return u
 }
@@ -500,7 +500,7 @@ func (u *ReceivableUpsert) UpdateCreatedBy() *ReceivableUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceivableUpsert) AddCreatedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) AddCreatedBy(v int64) *ReceivableUpsert {
 	u.Add(receivable.FieldCreatedBy, v)
 	return u
 }
@@ -512,7 +512,7 @@ func (u *ReceivableUpsert) ClearCreatedBy() *ReceivableUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceivableUpsert) SetUpdatedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) SetUpdatedBy(v int64) *ReceivableUpsert {
 	u.Set(receivable.FieldUpdatedBy, v)
 	return u
 }
@@ -524,7 +524,7 @@ func (u *ReceivableUpsert) UpdateUpdatedBy() *ReceivableUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceivableUpsert) AddUpdatedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) AddUpdatedBy(v int64) *ReceivableUpsert {
 	u.Add(receivable.FieldUpdatedBy, v)
 	return u
 }
@@ -536,7 +536,7 @@ func (u *ReceivableUpsert) ClearUpdatedBy() *ReceivableUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceivableUpsert) SetDeletedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) SetDeletedBy(v int64) *ReceivableUpsert {
 	u.Set(receivable.FieldDeletedBy, v)
 	return u
 }
@@ -548,7 +548,7 @@ func (u *ReceivableUpsert) UpdateDeletedBy() *ReceivableUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceivableUpsert) AddDeletedBy(v uint32) *ReceivableUpsert {
+func (u *ReceivableUpsert) AddDeletedBy(v int64) *ReceivableUpsert {
 	u.Add(receivable.FieldDeletedBy, v)
 	return u
 }
@@ -812,14 +812,14 @@ func (u *ReceivableUpsertOne) ClearDeletedAt() *ReceivableUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceivableUpsertOne) SetCreatedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) SetCreatedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceivableUpsertOne) AddCreatedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) AddCreatedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -840,14 +840,14 @@ func (u *ReceivableUpsertOne) ClearCreatedBy() *ReceivableUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceivableUpsertOne) SetUpdatedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) SetUpdatedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceivableUpsertOne) AddUpdatedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) AddUpdatedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -868,14 +868,14 @@ func (u *ReceivableUpsertOne) ClearUpdatedBy() *ReceivableUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceivableUpsertOne) SetDeletedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) SetDeletedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceivableUpsertOne) AddDeletedBy(v uint32) *ReceivableUpsertOne {
+func (u *ReceivableUpsertOne) AddDeletedBy(v int64) *ReceivableUpsertOne {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1093,7 +1093,7 @@ func (u *ReceivableUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ReceivableUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ReceivableUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1102,7 +1102,7 @@ func (u *ReceivableUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ReceivableUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ReceivableUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1159,7 +1159,7 @@ func (_c *ReceivableCreateBulk) Save(ctx context.Context) ([]*Receivable, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1340,14 +1340,14 @@ func (u *ReceivableUpsertBulk) ClearDeletedAt() *ReceivableUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReceivableUpsertBulk) SetCreatedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) SetCreatedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReceivableUpsertBulk) AddCreatedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) AddCreatedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1368,14 +1368,14 @@ func (u *ReceivableUpsertBulk) ClearCreatedBy() *ReceivableUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReceivableUpsertBulk) SetUpdatedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) SetUpdatedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReceivableUpsertBulk) AddUpdatedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) AddUpdatedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1396,14 +1396,14 @@ func (u *ReceivableUpsertBulk) ClearUpdatedBy() *ReceivableUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReceivableUpsertBulk) SetDeletedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) SetDeletedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReceivableUpsertBulk) AddDeletedBy(v uint32) *ReceivableUpsertBulk {
+func (u *ReceivableUpsertBulk) AddDeletedBy(v int64) *ReceivableUpsertBulk {
 	return u.Update(func(s *ReceivableUpsert) {
 		s.AddDeletedBy(v)
 	})

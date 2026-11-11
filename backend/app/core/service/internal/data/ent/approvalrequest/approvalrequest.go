@@ -100,17 +100,17 @@ var (
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultApplicantID holds the default value on creation for the "applicant_id" field.
-	DefaultApplicantID uint32
+	DefaultApplicantID int64
 	// DefaultCurrentStep holds the default value on creation for the "current_step" field.
 	DefaultCurrentStep uint32
 	// DefaultTotalSteps holds the default value on creation for the "total_steps" field.
 	DefaultTotalSteps uint32
 	// DefaultFlowID holds the default value on creation for the "flow_id" field.
-	DefaultFlowID uint32
+	DefaultFlowID int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

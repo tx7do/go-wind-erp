@@ -70,14 +70,14 @@ func (_u *PayableUpdate) ClearDeletedAt() *PayableUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PayableUpdate) SetCreatedBy(v uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetCreatedBy(v int64) *PayableUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PayableUpdate) SetNillableCreatedBy(v *uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetNillableCreatedBy(v *int64) *PayableUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PayableUpdate) SetNillableCreatedBy(v *uint32) *PayableUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PayableUpdate) AddCreatedBy(v int32) *PayableUpdate {
+func (_u *PayableUpdate) AddCreatedBy(v int64) *PayableUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PayableUpdate) ClearCreatedBy() *PayableUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PayableUpdate) SetUpdatedBy(v uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetUpdatedBy(v int64) *PayableUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PayableUpdate) SetNillableUpdatedBy(v *uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetNillableUpdatedBy(v *int64) *PayableUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PayableUpdate) SetNillableUpdatedBy(v *uint32) *PayableUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PayableUpdate) AddUpdatedBy(v int32) *PayableUpdate {
+func (_u *PayableUpdate) AddUpdatedBy(v int64) *PayableUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PayableUpdate) ClearUpdatedBy() *PayableUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PayableUpdate) SetDeletedBy(v uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetDeletedBy(v int64) *PayableUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PayableUpdate) SetNillableDeletedBy(v *uint32) *PayableUpdate {
+func (_u *PayableUpdate) SetNillableDeletedBy(v *int64) *PayableUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PayableUpdate) SetNillableDeletedBy(v *uint32) *PayableUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PayableUpdate) AddDeletedBy(v int32) *PayableUpdate {
+func (_u *PayableUpdate) AddDeletedBy(v int64) *PayableUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -376,7 +376,7 @@ func (_u *PayableUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(payable.Table, payable.Columns, sqlgraph.NewFieldSpec(payable.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(payable.Table, payable.Columns, sqlgraph.NewFieldSpec(payable.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -400,31 +400,31 @@ func (_u *PayableUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(payable.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(payable.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(payable.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(payable.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(payable.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(payable.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(payable.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(payable.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(payable.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(payable.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(payable.FieldRemark, field.TypeString, value)
@@ -433,7 +433,7 @@ func (_u *PayableUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(payable.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(payable.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(payable.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PayableNumber(); ok {
 		_spec.SetField(payable.FieldPayableNumber, field.TypeString, value)
@@ -546,14 +546,14 @@ func (_u *PayableUpdateOne) ClearDeletedAt() *PayableUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PayableUpdateOne) SetCreatedBy(v uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetCreatedBy(v int64) *PayableUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PayableUpdateOne) SetNillableCreatedBy(v *uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetNillableCreatedBy(v *int64) *PayableUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -561,7 +561,7 @@ func (_u *PayableUpdateOne) SetNillableCreatedBy(v *uint32) *PayableUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PayableUpdateOne) AddCreatedBy(v int32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) AddCreatedBy(v int64) *PayableUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -573,14 +573,14 @@ func (_u *PayableUpdateOne) ClearCreatedBy() *PayableUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PayableUpdateOne) SetUpdatedBy(v uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetUpdatedBy(v int64) *PayableUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PayableUpdateOne) SetNillableUpdatedBy(v *uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetNillableUpdatedBy(v *int64) *PayableUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -588,7 +588,7 @@ func (_u *PayableUpdateOne) SetNillableUpdatedBy(v *uint32) *PayableUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PayableUpdateOne) AddUpdatedBy(v int32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) AddUpdatedBy(v int64) *PayableUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -600,14 +600,14 @@ func (_u *PayableUpdateOne) ClearUpdatedBy() *PayableUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PayableUpdateOne) SetDeletedBy(v uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetDeletedBy(v int64) *PayableUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PayableUpdateOne) SetNillableDeletedBy(v *uint32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) SetNillableDeletedBy(v *int64) *PayableUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -615,7 +615,7 @@ func (_u *PayableUpdateOne) SetNillableDeletedBy(v *uint32) *PayableUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PayableUpdateOne) AddDeletedBy(v int32) *PayableUpdateOne {
+func (_u *PayableUpdateOne) AddDeletedBy(v int64) *PayableUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -865,7 +865,7 @@ func (_u *PayableUpdateOne) sqlSave(ctx context.Context) (_node *Payable, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(payable.Table, payable.Columns, sqlgraph.NewFieldSpec(payable.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(payable.Table, payable.Columns, sqlgraph.NewFieldSpec(payable.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Payable.id" for update`)}
@@ -906,31 +906,31 @@ func (_u *PayableUpdateOne) sqlSave(ctx context.Context) (_node *Payable, err er
 		_spec.ClearField(payable.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(payable.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(payable.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(payable.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(payable.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(payable.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(payable.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(payable.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(payable.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(payable.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(payable.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(payable.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(payable.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(payable.FieldRemark, field.TypeString, value)
@@ -939,7 +939,7 @@ func (_u *PayableUpdateOne) sqlSave(ctx context.Context) (_node *Payable, err er
 		_spec.ClearField(payable.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(payable.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(payable.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PayableNumber(); ok {
 		_spec.SetField(payable.FieldPayableNumber, field.TypeString, value)

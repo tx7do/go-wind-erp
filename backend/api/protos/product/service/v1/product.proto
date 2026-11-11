@@ -22,7 +22,7 @@ service ProductService {
 
 // 商品（SKU）
 message Product {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {description: "商品ID"}
@@ -55,13 +55,13 @@ message Product {
     json_name = "remark",
     (gnostic.openapi.v3.property) = {description: "备注"}
   ];
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ];
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
@@ -69,12 +69,12 @@ message Product {
 
 message ListProductResponse {
   repeated Product items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetProductRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ];
@@ -87,7 +87,7 @@ message CreateProductRequest {
 }
 
 message UpdateProductRequest {
-  uint32 id = 1;
+  int64 id = 1;
   Product data = 2;
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
@@ -101,7 +101,7 @@ message UpdateProductRequest {
 
 message DeleteProductRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ];
@@ -109,5 +109,5 @@ message DeleteProductRequest {
 }
 
 message CountProductResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }

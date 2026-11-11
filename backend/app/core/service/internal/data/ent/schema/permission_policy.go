@@ -31,7 +31,7 @@ func (PermissionPolicy) Annotations() []schema.Annotation {
 // Fields of the PermissionPolicy.
 func (PermissionPolicy) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("permission_id").
+		field.Int64("permission_id").
 			Comment("权限ID（关联sys_permissions.id）").
 			Nillable(),
 
@@ -75,11 +75,11 @@ func (PermissionPolicy) Fields() []ent.Field {
 // Mixin of the PermissionPolicy.
 func (PermissionPolicy) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SwitchStatus{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

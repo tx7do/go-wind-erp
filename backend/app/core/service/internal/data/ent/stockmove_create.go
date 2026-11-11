@@ -65,13 +65,13 @@ func (_c *StockMoveCreate) SetNillableDeletedAt(v *time.Time) *StockMoveCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockMoveCreate) SetCreatedBy(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetCreatedBy(v int64) *StockMoveCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableCreatedBy(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableCreatedBy(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockMoveCreate) SetNillableCreatedBy(v *uint32) *StockMoveCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockMoveCreate) SetUpdatedBy(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetUpdatedBy(v int64) *StockMoveCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableUpdatedBy(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableUpdatedBy(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockMoveCreate) SetNillableUpdatedBy(v *uint32) *StockMoveCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockMoveCreate) SetDeletedBy(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetDeletedBy(v int64) *StockMoveCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableDeletedBy(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableDeletedBy(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *StockMoveCreate) SetNillableRemark(v *string) *StockMoveCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *StockMoveCreate) SetTenantID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetTenantID(v int64) *StockMoveCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableTenantID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableTenantID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *StockMoveCreate) SetNillableTenantID(v *uint32) *StockMoveCreate {
 }
 
 // SetPickingID sets the "picking_id" field.
-func (_c *StockMoveCreate) SetPickingID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetPickingID(v int64) *StockMoveCreate {
 	_c.mutation.SetPickingID(v)
 	return _c
 }
 
 // SetNillablePickingID sets the "picking_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillablePickingID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillablePickingID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetPickingID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *StockMoveCreate) SetNillableProductCode(v *string) *StockMoveCreate {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (_c *StockMoveCreate) SetSourceLocationID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetSourceLocationID(v int64) *StockMoveCreate {
 	_c.mutation.SetSourceLocationID(v)
 	return _c
 }
 
 // SetNillableSourceLocationID sets the "source_location_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableSourceLocationID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableSourceLocationID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetSourceLocationID(*v)
 	}
@@ -177,13 +177,13 @@ func (_c *StockMoveCreate) SetNillableSourceLocationID(v *uint32) *StockMoveCrea
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (_c *StockMoveCreate) SetDestinationLocationID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetDestinationLocationID(v int64) *StockMoveCreate {
 	_c.mutation.SetDestinationLocationID(v)
 	return _c
 }
 
 // SetNillableDestinationLocationID sets the "destination_location_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableDestinationLocationID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableDestinationLocationID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetDestinationLocationID(*v)
 	}
@@ -219,13 +219,13 @@ func (_c *StockMoveCreate) SetNillableState(v *stockmove.State) *StockMoveCreate
 }
 
 // SetPurchaseOrderItemID sets the "purchase_order_item_id" field.
-func (_c *StockMoveCreate) SetPurchaseOrderItemID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetPurchaseOrderItemID(v int64) *StockMoveCreate {
 	_c.mutation.SetPurchaseOrderItemID(v)
 	return _c
 }
 
 // SetNillablePurchaseOrderItemID sets the "purchase_order_item_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillablePurchaseOrderItemID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillablePurchaseOrderItemID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetPurchaseOrderItemID(*v)
 	}
@@ -233,13 +233,13 @@ func (_c *StockMoveCreate) SetNillablePurchaseOrderItemID(v *uint32) *StockMoveC
 }
 
 // SetSalesOrderItemID sets the "sales_order_item_id" field.
-func (_c *StockMoveCreate) SetSalesOrderItemID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetSalesOrderItemID(v int64) *StockMoveCreate {
 	_c.mutation.SetSalesOrderItemID(v)
 	return _c
 }
 
 // SetNillableSalesOrderItemID sets the "sales_order_item_id" field if the given value is not nil.
-func (_c *StockMoveCreate) SetNillableSalesOrderItemID(v *uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetNillableSalesOrderItemID(v *int64) *StockMoveCreate {
 	if v != nil {
 		_c.SetSalesOrderItemID(*v)
 	}
@@ -247,7 +247,7 @@ func (_c *StockMoveCreate) SetNillableSalesOrderItemID(v *uint32) *StockMoveCrea
 }
 
 // SetID sets the "id" field.
-func (_c *StockMoveCreate) SetID(v uint32) *StockMoveCreate {
+func (_c *StockMoveCreate) SetID(v int64) *StockMoveCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -352,7 +352,7 @@ func (_c *StockMoveCreate) sqlSave(ctx context.Context) (*StockMove, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -362,7 +362,7 @@ func (_c *StockMoveCreate) sqlSave(ctx context.Context) (*StockMove, error) {
 func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockMove{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stockmove.Table, sqlgraph.NewFieldSpec(stockmove.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stockmove.Table, sqlgraph.NewFieldSpec(stockmove.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -382,15 +382,15 @@ func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stockmove.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stockmove.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stockmove.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -398,11 +398,11 @@ func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(stockmove.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PickingID(); ok {
-		_spec.SetField(stockmove.FieldPickingID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldPickingID, field.TypeInt64, value)
 		_node.PickingID = &value
 	}
 	if value, ok := _c.mutation.ProductCode(); ok {
@@ -410,11 +410,11 @@ func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 		_node.ProductCode = &value
 	}
 	if value, ok := _c.mutation.SourceLocationID(); ok {
-		_spec.SetField(stockmove.FieldSourceLocationID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldSourceLocationID, field.TypeInt64, value)
 		_node.SourceLocationID = &value
 	}
 	if value, ok := _c.mutation.DestinationLocationID(); ok {
-		_spec.SetField(stockmove.FieldDestinationLocationID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldDestinationLocationID, field.TypeInt64, value)
 		_node.DestinationLocationID = &value
 	}
 	if value, ok := _c.mutation.PlannedQuantity(); ok {
@@ -426,11 +426,11 @@ func (_c *StockMoveCreate) createSpec() (*StockMove, *sqlgraph.CreateSpec) {
 		_node.State = &value
 	}
 	if value, ok := _c.mutation.PurchaseOrderItemID(); ok {
-		_spec.SetField(stockmove.FieldPurchaseOrderItemID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldPurchaseOrderItemID, field.TypeInt64, value)
 		_node.PurchaseOrderItemID = &value
 	}
 	if value, ok := _c.mutation.SalesOrderItemID(); ok {
-		_spec.SetField(stockmove.FieldSalesOrderItemID, field.TypeUint32, value)
+		_spec.SetField(stockmove.FieldSalesOrderItemID, field.TypeInt64, value)
 		_node.SalesOrderItemID = &value
 	}
 	return _node, _spec
@@ -522,7 +522,7 @@ func (u *StockMoveUpsert) ClearDeletedAt() *StockMoveUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockMoveUpsert) SetCreatedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetCreatedBy(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldCreatedBy, v)
 	return u
 }
@@ -534,7 +534,7 @@ func (u *StockMoveUpsert) UpdateCreatedBy() *StockMoveUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockMoveUpsert) AddCreatedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddCreatedBy(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldCreatedBy, v)
 	return u
 }
@@ -546,7 +546,7 @@ func (u *StockMoveUpsert) ClearCreatedBy() *StockMoveUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockMoveUpsert) SetUpdatedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetUpdatedBy(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldUpdatedBy, v)
 	return u
 }
@@ -558,7 +558,7 @@ func (u *StockMoveUpsert) UpdateUpdatedBy() *StockMoveUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockMoveUpsert) AddUpdatedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddUpdatedBy(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldUpdatedBy, v)
 	return u
 }
@@ -570,7 +570,7 @@ func (u *StockMoveUpsert) ClearUpdatedBy() *StockMoveUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockMoveUpsert) SetDeletedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetDeletedBy(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldDeletedBy, v)
 	return u
 }
@@ -582,7 +582,7 @@ func (u *StockMoveUpsert) UpdateDeletedBy() *StockMoveUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockMoveUpsert) AddDeletedBy(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddDeletedBy(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldDeletedBy, v)
 	return u
 }
@@ -612,7 +612,7 @@ func (u *StockMoveUpsert) ClearRemark() *StockMoveUpsert {
 }
 
 // SetPickingID sets the "picking_id" field.
-func (u *StockMoveUpsert) SetPickingID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetPickingID(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldPickingID, v)
 	return u
 }
@@ -624,7 +624,7 @@ func (u *StockMoveUpsert) UpdatePickingID() *StockMoveUpsert {
 }
 
 // AddPickingID adds v to the "picking_id" field.
-func (u *StockMoveUpsert) AddPickingID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddPickingID(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldPickingID, v)
 	return u
 }
@@ -654,7 +654,7 @@ func (u *StockMoveUpsert) ClearProductCode() *StockMoveUpsert {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockMoveUpsert) SetSourceLocationID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetSourceLocationID(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldSourceLocationID, v)
 	return u
 }
@@ -666,7 +666,7 @@ func (u *StockMoveUpsert) UpdateSourceLocationID() *StockMoveUpsert {
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockMoveUpsert) AddSourceLocationID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddSourceLocationID(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldSourceLocationID, v)
 	return u
 }
@@ -678,7 +678,7 @@ func (u *StockMoveUpsert) ClearSourceLocationID() *StockMoveUpsert {
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockMoveUpsert) SetDestinationLocationID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetDestinationLocationID(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldDestinationLocationID, v)
 	return u
 }
@@ -690,7 +690,7 @@ func (u *StockMoveUpsert) UpdateDestinationLocationID() *StockMoveUpsert {
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockMoveUpsert) AddDestinationLocationID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddDestinationLocationID(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldDestinationLocationID, v)
 	return u
 }
@@ -744,7 +744,7 @@ func (u *StockMoveUpsert) ClearState() *StockMoveUpsert {
 }
 
 // SetPurchaseOrderItemID sets the "purchase_order_item_id" field.
-func (u *StockMoveUpsert) SetPurchaseOrderItemID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetPurchaseOrderItemID(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldPurchaseOrderItemID, v)
 	return u
 }
@@ -756,7 +756,7 @@ func (u *StockMoveUpsert) UpdatePurchaseOrderItemID() *StockMoveUpsert {
 }
 
 // AddPurchaseOrderItemID adds v to the "purchase_order_item_id" field.
-func (u *StockMoveUpsert) AddPurchaseOrderItemID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddPurchaseOrderItemID(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldPurchaseOrderItemID, v)
 	return u
 }
@@ -768,7 +768,7 @@ func (u *StockMoveUpsert) ClearPurchaseOrderItemID() *StockMoveUpsert {
 }
 
 // SetSalesOrderItemID sets the "sales_order_item_id" field.
-func (u *StockMoveUpsert) SetSalesOrderItemID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) SetSalesOrderItemID(v int64) *StockMoveUpsert {
 	u.Set(stockmove.FieldSalesOrderItemID, v)
 	return u
 }
@@ -780,7 +780,7 @@ func (u *StockMoveUpsert) UpdateSalesOrderItemID() *StockMoveUpsert {
 }
 
 // AddSalesOrderItemID adds v to the "sales_order_item_id" field.
-func (u *StockMoveUpsert) AddSalesOrderItemID(v uint32) *StockMoveUpsert {
+func (u *StockMoveUpsert) AddSalesOrderItemID(v int64) *StockMoveUpsert {
 	u.Add(stockmove.FieldSalesOrderItemID, v)
 	return u
 }
@@ -888,14 +888,14 @@ func (u *StockMoveUpsertOne) ClearDeletedAt() *StockMoveUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockMoveUpsertOne) SetCreatedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetCreatedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockMoveUpsertOne) AddCreatedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddCreatedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -916,14 +916,14 @@ func (u *StockMoveUpsertOne) ClearCreatedBy() *StockMoveUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockMoveUpsertOne) SetUpdatedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetUpdatedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockMoveUpsertOne) AddUpdatedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddUpdatedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -944,14 +944,14 @@ func (u *StockMoveUpsertOne) ClearUpdatedBy() *StockMoveUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockMoveUpsertOne) SetDeletedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetDeletedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockMoveUpsertOne) AddDeletedBy(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddDeletedBy(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -993,14 +993,14 @@ func (u *StockMoveUpsertOne) ClearRemark() *StockMoveUpsertOne {
 }
 
 // SetPickingID sets the "picking_id" field.
-func (u *StockMoveUpsertOne) SetPickingID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetPickingID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetPickingID(v)
 	})
 }
 
 // AddPickingID adds v to the "picking_id" field.
-func (u *StockMoveUpsertOne) AddPickingID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddPickingID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddPickingID(v)
 	})
@@ -1042,14 +1042,14 @@ func (u *StockMoveUpsertOne) ClearProductCode() *StockMoveUpsertOne {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockMoveUpsertOne) SetSourceLocationID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetSourceLocationID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetSourceLocationID(v)
 	})
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockMoveUpsertOne) AddSourceLocationID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddSourceLocationID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddSourceLocationID(v)
 	})
@@ -1070,14 +1070,14 @@ func (u *StockMoveUpsertOne) ClearSourceLocationID() *StockMoveUpsertOne {
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockMoveUpsertOne) SetDestinationLocationID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetDestinationLocationID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetDestinationLocationID(v)
 	})
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockMoveUpsertOne) AddDestinationLocationID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddDestinationLocationID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddDestinationLocationID(v)
 	})
@@ -1147,14 +1147,14 @@ func (u *StockMoveUpsertOne) ClearState() *StockMoveUpsertOne {
 }
 
 // SetPurchaseOrderItemID sets the "purchase_order_item_id" field.
-func (u *StockMoveUpsertOne) SetPurchaseOrderItemID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetPurchaseOrderItemID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetPurchaseOrderItemID(v)
 	})
 }
 
 // AddPurchaseOrderItemID adds v to the "purchase_order_item_id" field.
-func (u *StockMoveUpsertOne) AddPurchaseOrderItemID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddPurchaseOrderItemID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddPurchaseOrderItemID(v)
 	})
@@ -1175,14 +1175,14 @@ func (u *StockMoveUpsertOne) ClearPurchaseOrderItemID() *StockMoveUpsertOne {
 }
 
 // SetSalesOrderItemID sets the "sales_order_item_id" field.
-func (u *StockMoveUpsertOne) SetSalesOrderItemID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) SetSalesOrderItemID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetSalesOrderItemID(v)
 	})
 }
 
 // AddSalesOrderItemID adds v to the "sales_order_item_id" field.
-func (u *StockMoveUpsertOne) AddSalesOrderItemID(v uint32) *StockMoveUpsertOne {
+func (u *StockMoveUpsertOne) AddSalesOrderItemID(v int64) *StockMoveUpsertOne {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddSalesOrderItemID(v)
 	})
@@ -1218,7 +1218,7 @@ func (u *StockMoveUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockMoveUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockMoveUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1227,7 +1227,7 @@ func (u *StockMoveUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockMoveUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockMoveUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1284,7 +1284,7 @@ func (_c *StockMoveCreateBulk) Save(ctx context.Context) ([]*StockMove, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1465,14 +1465,14 @@ func (u *StockMoveUpsertBulk) ClearDeletedAt() *StockMoveUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockMoveUpsertBulk) SetCreatedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetCreatedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockMoveUpsertBulk) AddCreatedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddCreatedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1493,14 +1493,14 @@ func (u *StockMoveUpsertBulk) ClearCreatedBy() *StockMoveUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockMoveUpsertBulk) SetUpdatedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetUpdatedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockMoveUpsertBulk) AddUpdatedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddUpdatedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1521,14 +1521,14 @@ func (u *StockMoveUpsertBulk) ClearUpdatedBy() *StockMoveUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockMoveUpsertBulk) SetDeletedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetDeletedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockMoveUpsertBulk) AddDeletedBy(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddDeletedBy(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1570,14 +1570,14 @@ func (u *StockMoveUpsertBulk) ClearRemark() *StockMoveUpsertBulk {
 }
 
 // SetPickingID sets the "picking_id" field.
-func (u *StockMoveUpsertBulk) SetPickingID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetPickingID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetPickingID(v)
 	})
 }
 
 // AddPickingID adds v to the "picking_id" field.
-func (u *StockMoveUpsertBulk) AddPickingID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddPickingID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddPickingID(v)
 	})
@@ -1619,14 +1619,14 @@ func (u *StockMoveUpsertBulk) ClearProductCode() *StockMoveUpsertBulk {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockMoveUpsertBulk) SetSourceLocationID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetSourceLocationID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetSourceLocationID(v)
 	})
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockMoveUpsertBulk) AddSourceLocationID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddSourceLocationID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddSourceLocationID(v)
 	})
@@ -1647,14 +1647,14 @@ func (u *StockMoveUpsertBulk) ClearSourceLocationID() *StockMoveUpsertBulk {
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockMoveUpsertBulk) SetDestinationLocationID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetDestinationLocationID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetDestinationLocationID(v)
 	})
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockMoveUpsertBulk) AddDestinationLocationID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddDestinationLocationID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddDestinationLocationID(v)
 	})
@@ -1724,14 +1724,14 @@ func (u *StockMoveUpsertBulk) ClearState() *StockMoveUpsertBulk {
 }
 
 // SetPurchaseOrderItemID sets the "purchase_order_item_id" field.
-func (u *StockMoveUpsertBulk) SetPurchaseOrderItemID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetPurchaseOrderItemID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetPurchaseOrderItemID(v)
 	})
 }
 
 // AddPurchaseOrderItemID adds v to the "purchase_order_item_id" field.
-func (u *StockMoveUpsertBulk) AddPurchaseOrderItemID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddPurchaseOrderItemID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddPurchaseOrderItemID(v)
 	})
@@ -1752,14 +1752,14 @@ func (u *StockMoveUpsertBulk) ClearPurchaseOrderItemID() *StockMoveUpsertBulk {
 }
 
 // SetSalesOrderItemID sets the "sales_order_item_id" field.
-func (u *StockMoveUpsertBulk) SetSalesOrderItemID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) SetSalesOrderItemID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.SetSalesOrderItemID(v)
 	})
 }
 
 // AddSalesOrderItemID adds v to the "sales_order_item_id" field.
-func (u *StockMoveUpsertBulk) AddSalesOrderItemID(v uint32) *StockMoveUpsertBulk {
+func (u *StockMoveUpsertBulk) AddSalesOrderItemID(v int64) *StockMoveUpsertBulk {
 	return u.Update(func(s *StockMoveUpsert) {
 		s.AddSalesOrderItemID(v)
 	})

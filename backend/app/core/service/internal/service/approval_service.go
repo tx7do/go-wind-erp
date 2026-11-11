@@ -20,7 +20,7 @@ import (
 
 // approvalViewerUserID 从 viewer context 提取调用者用户 ID（与 data 层
 // viewerUserIDFromContext 同语义；service 层直接读 viewer 包）。
-func approvalViewerUserID(ctx context.Context) (uint32, bool) {
+func approvalViewerUserID(ctx context.Context) (int64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
@@ -29,7 +29,7 @@ func approvalViewerUserID(ctx context.Context) (uint32, bool) {
 	if uid == 0 {
 		return 0, false
 	}
-	return uint32(uid), true
+	return int64(uid), true
 }
 
 // ApprovalRequestService 审批请求服务
@@ -102,7 +102,7 @@ func (s *ApprovalRequestService) Count(ctx context.Context, req *paginationV1.Pa
 	if err != nil {
 		return nil, err
 	}
-	return &approvalV1.CountApprovalRequestResponse{Count: uint64(count)}, nil
+	return &approvalV1.CountApprovalRequestResponse{Count: int64(count)}, nil
 }
 
 func (s *ApprovalRequestService) Get(ctx context.Context, req *approvalV1.GetApprovalRequestRequest) (*approvalV1.ApprovalRequest, error) {
@@ -169,7 +169,7 @@ func (s *ApprovalRequestService) Delete(ctx context.Context, req *approvalV1.Del
 // 再由 repo 做条件更新（仅 from 状态可迁移）保证并发安全。
 func (s *ApprovalRequestService) transition(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	to approvalV1.ApprovalRequest_Status,
 	comment *string,
 ) (*emptypb.Empty, error) {
@@ -345,7 +345,7 @@ func (s *ApprovalRequestService) syncPayment(
 	to approvalV1.ApprovalRequest_Status,
 ) error {
 	raw := strings.TrimPrefix(old.GetBizRef(), "PAYMENT:")
-	paymentID, err := strconv.ParseUint(raw, 10, 32)
+	paymentID, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		s.log.Errorf("parse payment ref failed: %s", old.GetBizRef())
 		return approvalV1.ErrorBadRequest("invalid biz_ref")
@@ -353,12 +353,12 @@ func (s *ApprovalRequestService) syncPayment(
 
 	switch to {
 	case approvalV1.ApprovalRequest_APPROVED:
-		if err := s.paymentService.ApplyApproved(ctx, uint32(paymentID)); err != nil {
+		if err := s.paymentService.ApplyApproved(ctx, int64(paymentID)); err != nil {
 			s.log.Errorf("apply payment %d failed: %s", paymentID, err.Error())
 			return err
 		}
 	case approvalV1.ApprovalRequest_REJECTED:
-		if err := s.paymentService.RejectApplied(ctx, uint32(paymentID)); err != nil {
+		if err := s.paymentService.RejectApplied(ctx, int64(paymentID)); err != nil {
 			s.log.Errorf("reject payment %d failed: %s", paymentID, err.Error())
 			return err
 		}
@@ -374,7 +374,7 @@ func (s *ApprovalRequestService) syncReceipt(
 	to approvalV1.ApprovalRequest_Status,
 ) error {
 	raw := strings.TrimPrefix(old.GetBizRef(), "RECEIPT:")
-	receiptID, err := strconv.ParseUint(raw, 10, 32)
+	receiptID, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		s.log.Errorf("parse receipt ref failed: %s", old.GetBizRef())
 		return approvalV1.ErrorBadRequest("invalid biz_ref")
@@ -382,12 +382,12 @@ func (s *ApprovalRequestService) syncReceipt(
 
 	switch to {
 	case approvalV1.ApprovalRequest_APPROVED:
-		if err := s.receiptService.ApplyApproved(ctx, uint32(receiptID)); err != nil {
+		if err := s.receiptService.ApplyApproved(ctx, int64(receiptID)); err != nil {
 			s.log.Errorf("apply receipt %d failed: %s", receiptID, err.Error())
 			return err
 		}
 	case approvalV1.ApprovalRequest_REJECTED:
-		if err := s.receiptService.RejectApplied(ctx, uint32(receiptID)); err != nil {
+		if err := s.receiptService.RejectApplied(ctx, int64(receiptID)); err != nil {
 			s.log.Errorf("reject receipt %d failed: %s", receiptID, err.Error())
 			return err
 		}
@@ -406,7 +406,7 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 		return nil
 	}
 	raw := strings.TrimPrefix(old.GetBizRef(), "PURCHASE_ORDER:")
-	poID, err := strconv.ParseUint(raw, 10, 32)
+	poID, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		s.log.Errorf("parse purchase order ref failed: %s", old.GetBizRef())
 		return approvalV1.ErrorBadRequest("invalid biz_ref")
@@ -416,7 +416,7 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 	// 原子迁移、获批生成应付单）。
 	if to == approvalV1.ApprovalRequest_APPROVED {
 		if _, err := s.purchaseOrderService.Approve(ctx, &procurementV1.ApprovePurchaseOrderRequest{
-			Id: uint32(poID),
+			Id: int64(poID),
 		}); err != nil {
 			s.log.Errorf("sync purchase order %d to APPROVED failed: %s", poID, err.Error())
 			return err
@@ -425,7 +425,7 @@ func (s *ApprovalRequestService) syncPurchaseOrder(
 	}
 	if to == approvalV1.ApprovalRequest_REJECTED {
 		if _, err := s.purchaseOrderService.Reject(ctx, &procurementV1.RejectPurchaseOrderRequest{
-			Id: uint32(poID),
+			Id: int64(poID),
 		}); err != nil {
 			s.log.Errorf("sync purchase order %d to REJECTED failed: %s", poID, err.Error())
 			return err
@@ -445,7 +445,7 @@ func (s *ApprovalRequestService) syncSalesOrder(
 		return nil
 	}
 	raw := strings.TrimPrefix(old.GetBizRef(), "SALES_ORDER:")
-	soID, err := strconv.ParseUint(raw, 10, 32)
+	soID, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil {
 		s.log.Errorf("parse sales order ref failed: %s", old.GetBizRef())
 		return approvalV1.ErrorBadRequest("invalid biz_ref")
@@ -455,7 +455,7 @@ func (s *ApprovalRequestService) syncSalesOrder(
 	// 原子迁移、信用额度、获批生成应收单）。
 	if to == approvalV1.ApprovalRequest_APPROVED {
 		if _, err := s.salesOrderService.Approve(ctx, &salesV1.ApproveSalesOrderRequest{
-			Id: uint32(soID),
+			Id: int64(soID),
 		}); err != nil {
 			s.log.Errorf("sync sales order %d to APPROVED failed: %s", soID, err.Error())
 			return err
@@ -464,7 +464,7 @@ func (s *ApprovalRequestService) syncSalesOrder(
 	}
 	if to == approvalV1.ApprovalRequest_REJECTED {
 		if _, err := s.salesOrderService.Reject(ctx, &salesV1.RejectSalesOrderRequest{
-			Id: uint32(soID),
+			Id: int64(soID),
 		}); err != nil {
 			s.log.Errorf("sync sales order %d to REJECTED failed: %s", soID, err.Error())
 			return err

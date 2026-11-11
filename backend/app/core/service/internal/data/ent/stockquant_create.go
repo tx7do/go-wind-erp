@@ -65,13 +65,13 @@ func (_c *StockQuantCreate) SetNillableDeletedAt(v *time.Time) *StockQuantCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockQuantCreate) SetCreatedBy(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetCreatedBy(v int64) *StockQuantCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockQuantCreate) SetNillableCreatedBy(v *uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetNillableCreatedBy(v *int64) *StockQuantCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockQuantCreate) SetNillableCreatedBy(v *uint32) *StockQuantCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockQuantCreate) SetUpdatedBy(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetUpdatedBy(v int64) *StockQuantCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockQuantCreate) SetNillableUpdatedBy(v *uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetNillableUpdatedBy(v *int64) *StockQuantCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockQuantCreate) SetNillableUpdatedBy(v *uint32) *StockQuantCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockQuantCreate) SetDeletedBy(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetDeletedBy(v int64) *StockQuantCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockQuantCreate) SetNillableDeletedBy(v *uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetNillableDeletedBy(v *int64) *StockQuantCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *StockQuantCreate) SetNillableRemark(v *string) *StockQuantCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *StockQuantCreate) SetTenantID(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetTenantID(v int64) *StockQuantCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *StockQuantCreate) SetNillableTenantID(v *uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetNillableTenantID(v *int64) *StockQuantCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *StockQuantCreate) SetNillableTenantID(v *uint32) *StockQuantCreate {
 }
 
 // SetLocationID sets the "location_id" field.
-func (_c *StockQuantCreate) SetLocationID(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetLocationID(v int64) *StockQuantCreate {
 	_c.mutation.SetLocationID(v)
 	return _c
 }
 
 // SetNillableLocationID sets the "location_id" field if the given value is not nil.
-func (_c *StockQuantCreate) SetNillableLocationID(v *uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetNillableLocationID(v *int64) *StockQuantCreate {
 	if v != nil {
 		_c.SetLocationID(*v)
 	}
@@ -191,7 +191,7 @@ func (_c *StockQuantCreate) SetNillableCostPrice(v *int64) *StockQuantCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *StockQuantCreate) SetID(v uint32) *StockQuantCreate {
+func (_c *StockQuantCreate) SetID(v int64) *StockQuantCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -275,7 +275,7 @@ func (_c *StockQuantCreate) sqlSave(ctx context.Context) (*StockQuant, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -285,7 +285,7 @@ func (_c *StockQuantCreate) sqlSave(ctx context.Context) (*StockQuant, error) {
 func (_c *StockQuantCreate) createSpec() (*StockQuant, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockQuant{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stockquant.Table, sqlgraph.NewFieldSpec(stockquant.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stockquant.Table, sqlgraph.NewFieldSpec(stockquant.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -305,15 +305,15 @@ func (_c *StockQuantCreate) createSpec() (*StockQuant, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stockquant.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stockquant.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stockquant.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stockquant.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stockquant.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stockquant.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -321,11 +321,11 @@ func (_c *StockQuantCreate) createSpec() (*StockQuant, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(stockquant.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(stockquant.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.LocationID(); ok {
-		_spec.SetField(stockquant.FieldLocationID, field.TypeUint32, value)
+		_spec.SetField(stockquant.FieldLocationID, field.TypeInt64, value)
 		_node.LocationID = &value
 	}
 	if value, ok := _c.mutation.ProductCode(); ok {
@@ -429,7 +429,7 @@ func (u *StockQuantUpsert) ClearDeletedAt() *StockQuantUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockQuantUpsert) SetCreatedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) SetCreatedBy(v int64) *StockQuantUpsert {
 	u.Set(stockquant.FieldCreatedBy, v)
 	return u
 }
@@ -441,7 +441,7 @@ func (u *StockQuantUpsert) UpdateCreatedBy() *StockQuantUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockQuantUpsert) AddCreatedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) AddCreatedBy(v int64) *StockQuantUpsert {
 	u.Add(stockquant.FieldCreatedBy, v)
 	return u
 }
@@ -453,7 +453,7 @@ func (u *StockQuantUpsert) ClearCreatedBy() *StockQuantUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockQuantUpsert) SetUpdatedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) SetUpdatedBy(v int64) *StockQuantUpsert {
 	u.Set(stockquant.FieldUpdatedBy, v)
 	return u
 }
@@ -465,7 +465,7 @@ func (u *StockQuantUpsert) UpdateUpdatedBy() *StockQuantUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockQuantUpsert) AddUpdatedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) AddUpdatedBy(v int64) *StockQuantUpsert {
 	u.Add(stockquant.FieldUpdatedBy, v)
 	return u
 }
@@ -477,7 +477,7 @@ func (u *StockQuantUpsert) ClearUpdatedBy() *StockQuantUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockQuantUpsert) SetDeletedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) SetDeletedBy(v int64) *StockQuantUpsert {
 	u.Set(stockquant.FieldDeletedBy, v)
 	return u
 }
@@ -489,7 +489,7 @@ func (u *StockQuantUpsert) UpdateDeletedBy() *StockQuantUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockQuantUpsert) AddDeletedBy(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) AddDeletedBy(v int64) *StockQuantUpsert {
 	u.Add(stockquant.FieldDeletedBy, v)
 	return u
 }
@@ -519,7 +519,7 @@ func (u *StockQuantUpsert) ClearRemark() *StockQuantUpsert {
 }
 
 // SetLocationID sets the "location_id" field.
-func (u *StockQuantUpsert) SetLocationID(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) SetLocationID(v int64) *StockQuantUpsert {
 	u.Set(stockquant.FieldLocationID, v)
 	return u
 }
@@ -531,7 +531,7 @@ func (u *StockQuantUpsert) UpdateLocationID() *StockQuantUpsert {
 }
 
 // AddLocationID adds v to the "location_id" field.
-func (u *StockQuantUpsert) AddLocationID(v uint32) *StockQuantUpsert {
+func (u *StockQuantUpsert) AddLocationID(v int64) *StockQuantUpsert {
 	u.Add(stockquant.FieldLocationID, v)
 	return u
 }
@@ -705,14 +705,14 @@ func (u *StockQuantUpsertOne) ClearDeletedAt() *StockQuantUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockQuantUpsertOne) SetCreatedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) SetCreatedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockQuantUpsertOne) AddCreatedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) AddCreatedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -733,14 +733,14 @@ func (u *StockQuantUpsertOne) ClearCreatedBy() *StockQuantUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockQuantUpsertOne) SetUpdatedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) SetUpdatedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockQuantUpsertOne) AddUpdatedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) AddUpdatedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -761,14 +761,14 @@ func (u *StockQuantUpsertOne) ClearUpdatedBy() *StockQuantUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockQuantUpsertOne) SetDeletedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) SetDeletedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockQuantUpsertOne) AddDeletedBy(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) AddDeletedBy(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -810,14 +810,14 @@ func (u *StockQuantUpsertOne) ClearRemark() *StockQuantUpsertOne {
 }
 
 // SetLocationID sets the "location_id" field.
-func (u *StockQuantUpsertOne) SetLocationID(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) SetLocationID(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetLocationID(v)
 	})
 }
 
 // AddLocationID adds v to the "location_id" field.
-func (u *StockQuantUpsertOne) AddLocationID(v uint32) *StockQuantUpsertOne {
+func (u *StockQuantUpsertOne) AddLocationID(v int64) *StockQuantUpsertOne {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddLocationID(v)
 	})
@@ -930,7 +930,7 @@ func (u *StockQuantUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockQuantUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockQuantUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -939,7 +939,7 @@ func (u *StockQuantUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockQuantUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockQuantUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -996,7 +996,7 @@ func (_c *StockQuantCreateBulk) Save(ctx context.Context) ([]*StockQuant, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1177,14 +1177,14 @@ func (u *StockQuantUpsertBulk) ClearDeletedAt() *StockQuantUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockQuantUpsertBulk) SetCreatedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) SetCreatedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockQuantUpsertBulk) AddCreatedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) AddCreatedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1205,14 +1205,14 @@ func (u *StockQuantUpsertBulk) ClearCreatedBy() *StockQuantUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockQuantUpsertBulk) SetUpdatedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) SetUpdatedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockQuantUpsertBulk) AddUpdatedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) AddUpdatedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1233,14 +1233,14 @@ func (u *StockQuantUpsertBulk) ClearUpdatedBy() *StockQuantUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockQuantUpsertBulk) SetDeletedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) SetDeletedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockQuantUpsertBulk) AddDeletedBy(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) AddDeletedBy(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1282,14 +1282,14 @@ func (u *StockQuantUpsertBulk) ClearRemark() *StockQuantUpsertBulk {
 }
 
 // SetLocationID sets the "location_id" field.
-func (u *StockQuantUpsertBulk) SetLocationID(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) SetLocationID(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.SetLocationID(v)
 	})
 }
 
 // AddLocationID adds v to the "location_id" field.
-func (u *StockQuantUpsertBulk) AddLocationID(v uint32) *StockQuantUpsertBulk {
+func (u *StockQuantUpsertBulk) AddLocationID(v int64) *StockQuantUpsertBulk {
 	return u.Update(func(s *StockQuantUpsert) {
 		s.AddLocationID(v)
 	})

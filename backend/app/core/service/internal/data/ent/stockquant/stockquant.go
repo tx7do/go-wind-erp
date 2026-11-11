@@ -77,15 +77,15 @@ var (
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultLocationID holds the default value on creation for the "location_id" field.
-	DefaultLocationID uint32
+	DefaultLocationID int64
 	// DefaultQuantity holds the default value on creation for the "quantity" field.
 	DefaultQuantity int64
 	// DefaultCostPrice holds the default value on creation for the "cost_price" field.
 	DefaultCostPrice int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the StockQuant queries.

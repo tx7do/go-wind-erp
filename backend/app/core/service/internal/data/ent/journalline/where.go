@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.JournalLine {
+func ID(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.JournalLine {
+func IDEQ(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.JournalLine {
+func IDNEQ(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.JournalLine {
+func IDIn(ids ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.JournalLine {
+func IDNotIn(ids ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.JournalLine {
+func IDGT(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.JournalLine {
+func IDGTE(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.JournalLine {
+func IDLT(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.JournalLine {
+func IDLTE(id int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,12 +60,12 @@ func CreatedAt(v time.Time) predicate.JournalLine {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.JournalLine {
+func TenantID(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldTenantID, v))
 }
 
 // EntryID applies equality check predicate on the "entry_id" field. It's identical to EntryIDEQ.
-func EntryID(v uint32) predicate.JournalLine {
+func EntryID(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldEntryID, v))
 }
 
@@ -140,42 +140,42 @@ func CreatedAtNotNil() predicate.JournalLine {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.JournalLine {
+func TenantIDEQ(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.JournalLine {
+func TenantIDNEQ(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.JournalLine {
+func TenantIDIn(vs ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.JournalLine {
+func TenantIDNotIn(vs ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.JournalLine {
+func TenantIDGT(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.JournalLine {
+func TenantIDGTE(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.JournalLine {
+func TenantIDLT(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.JournalLine {
+func TenantIDLTE(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -190,42 +190,42 @@ func TenantIDNotNil() predicate.JournalLine {
 }
 
 // EntryIDEQ applies the EQ predicate on the "entry_id" field.
-func EntryIDEQ(v uint32) predicate.JournalLine {
+func EntryIDEQ(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldEQ(FieldEntryID, v))
 }
 
 // EntryIDNEQ applies the NEQ predicate on the "entry_id" field.
-func EntryIDNEQ(v uint32) predicate.JournalLine {
+func EntryIDNEQ(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNEQ(FieldEntryID, v))
 }
 
 // EntryIDIn applies the In predicate on the "entry_id" field.
-func EntryIDIn(vs ...uint32) predicate.JournalLine {
+func EntryIDIn(vs ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldIn(FieldEntryID, vs...))
 }
 
 // EntryIDNotIn applies the NotIn predicate on the "entry_id" field.
-func EntryIDNotIn(vs ...uint32) predicate.JournalLine {
+func EntryIDNotIn(vs ...int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldNotIn(FieldEntryID, vs...))
 }
 
 // EntryIDGT applies the GT predicate on the "entry_id" field.
-func EntryIDGT(v uint32) predicate.JournalLine {
+func EntryIDGT(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGT(FieldEntryID, v))
 }
 
 // EntryIDGTE applies the GTE predicate on the "entry_id" field.
-func EntryIDGTE(v uint32) predicate.JournalLine {
+func EntryIDGTE(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldGTE(FieldEntryID, v))
 }
 
 // EntryIDLT applies the LT predicate on the "entry_id" field.
-func EntryIDLT(v uint32) predicate.JournalLine {
+func EntryIDLT(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLT(FieldEntryID, v))
 }
 
 // EntryIDLTE applies the LTE predicate on the "entry_id" field.
-func EntryIDLTE(v uint32) predicate.JournalLine {
+func EntryIDLTE(v int64) predicate.JournalLine {
 	return predicate.JournalLine(sql.FieldLTE(FieldEntryID, v))
 }
 

@@ -17,15 +17,15 @@ type SalesOrderItem struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 备注
 	Remark *string `json:"remark,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 所属销售单ID
-	SoID *uint32 `json:"so_id,omitempty"`
+	SoID *int64 `json:"so_id,omitempty"`
 	// SKU编码
 	SkuCode *string `json:"sku_code,omitempty"`
 	// 销售数量
@@ -70,7 +70,7 @@ func (_m *SalesOrderItem) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = int64(value.Int64)
 		case salesorderitem.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -89,15 +89,15 @@ func (_m *SalesOrderItem) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case salesorderitem.FieldSoID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field so_id", values[i])
 			} else if value.Valid {
-				_m.SoID = new(uint32)
-				*_m.SoID = uint32(value.Int64)
+				_m.SoID = new(int64)
+				*_m.SoID = value.Int64
 			}
 		case salesorderitem.FieldSkuCode:
 			if value, ok := values[i].(*sql.NullString); !ok {

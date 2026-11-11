@@ -36,7 +36,7 @@ func (StockMove) Annotations() []schema.Annotation {
 func (StockMove) Fields() []ent.Field {
 	return []ent.Field{
 		// picking_id：父拣货单。
-		field.Uint32("picking_id").
+		field.Int64("picking_id").
 			Comment("所属拣货单ID").
 			Default(0).
 			Optional().
@@ -48,13 +48,13 @@ func (StockMove) Fields() []ent.Field {
 			Nillable(),
 
 		// source/dest location：移动方向（Odoo location_id/location_dest_id）。
-		field.Uint32("source_location_id").
+		field.Int64("source_location_id").
 			Comment("源位置ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint32("destination_location_id").
+		field.Int64("destination_location_id").
 			Comment("目的位置ID").
 			Default(0).
 			Optional().
@@ -81,14 +81,14 @@ func (StockMove) Fields() []ent.Field {
 			Nillable(),
 
 		// purchase_order_item_id：入库 move 关联的采购明细（Odoo purchase_line_id）。
-		field.Uint32("purchase_order_item_id").
+		field.Int64("purchase_order_item_id").
 			Comment("关联采购明细ID（仅入库，Odoo purchase_line_id）").
 			Default(0).
 			Optional().
 			Nillable(),
 
 		// sales_order_item_id：出库 move 关联的销售明细（镜像 purchase_order_item_id）。
-		field.Uint32("sales_order_item_id").
+		field.Int64("sales_order_item_id").
 			Comment("关联销售明细ID（仅出库）").
 			Default(0).
 			Optional().
@@ -98,11 +98,11 @@ func (StockMove) Fields() []ent.Field {
 
 func (StockMove) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

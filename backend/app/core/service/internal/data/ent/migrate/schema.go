@@ -11,15 +11,15 @@ import (
 var (
 	// FinAccountsColumns holds the columns for the "fin_accounts" table.
 	FinAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "科目编码（如 1405 库存商品）"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "科目名称"},
 		{Name: "category", Type: field.TypeEnum, Nullable: true, Comment: "科目类别", Enums: []string{"ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"}, Default: "ASSET"},
@@ -41,15 +41,15 @@ var (
 	}
 	// SysApisColumns holds the columns for the "sys_apis" table.
 	SysApisColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "所属业务模块"},
 		{Name: "module_description", Type: field.TypeString, Nullable: true, Comment: "业务模块描述"},
@@ -99,10 +99,10 @@ var (
 	}
 	// SysAPIAuditLogsColumns holds the columns for the "sys_api_audit_logs" table.
 	SysAPIAuditLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Nullable: true, Comment: "操作者用户ID"},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
 		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
@@ -194,15 +194,15 @@ var (
 	}
 	// AprApprovalFlowsColumns holds the columns for the "apr_approval_flows" table.
 	AprApprovalFlowsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "biz_type", Type: field.TypeString, Nullable: true, Comment: "业务类型：PURCHASE_ORDER/SALES_ORDER/PAYMENT/RECEIPT"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "流程名称"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "启用状态：ON=生效（同业务类型唯一），OFF=停用", Enums: []string{"ON", "OFF"}, Default: "ON"},
@@ -223,10 +223,10 @@ var (
 	}
 	// AprApprovalFlowStepsColumns holds the columns for the "apr_approval_flow_steps" table.
 	AprApprovalFlowStepsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "flow_id", Type: field.TypeUint32, Nullable: true, Comment: "所属流程ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "flow_id", Type: field.TypeInt64, Nullable: true, Comment: "所属流程ID", Default: 0},
 		{Name: "seq", Type: field.TypeUint32, Nullable: true, Comment: "级序（1..N，从 1 起）", Default: 1},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "级名称（如：主管复核/经理终审）"},
 		{Name: "role_code", Type: field.TypeString, Nullable: true, Comment: "本级审批人角色编码"},
@@ -247,26 +247,26 @@ var (
 	}
 	// AprApprovalRequestsColumns holds the columns for the "apr_approval_requests" table.
 	AprApprovalRequestsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "审批标题"},
 		{Name: "biz_type", Type: field.TypeString, Nullable: true, Comment: "业务类型"},
 		{Name: "biz_ref", Type: field.TypeString, Nullable: true, Comment: "业务单据引用"},
 		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "事由摘要"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "审批状态", Enums: []string{"PENDING", "APPROVED", "REJECTED", "CANCELLED"}, Default: "PENDING"},
-		{Name: "applicant_id", Type: field.TypeUint32, Nullable: true, Comment: "申请人用户ID", Default: 0},
-		{Name: "approver_id", Type: field.TypeUint32, Nullable: true, Comment: "审批人用户ID"},
+		{Name: "applicant_id", Type: field.TypeInt64, Nullable: true, Comment: "申请人用户ID", Default: 0},
+		{Name: "approver_id", Type: field.TypeInt64, Nullable: true, Comment: "审批人用户ID"},
 		{Name: "comment", Type: field.TypeString, Nullable: true, Comment: "审批意见"},
 		{Name: "current_step", Type: field.TypeUint32, Nullable: true, Comment: "当前审批级（从 1 起）", Default: 1},
 		{Name: "total_steps", Type: field.TypeUint32, Nullable: true, Comment: "总级数（<=1 为单级审批）", Default: 1},
-		{Name: "flow_id", Type: field.TypeUint32, Nullable: true, Comment: "快照来源流程ID（0=无流程）", Default: 0},
+		{Name: "flow_id", Type: field.TypeInt64, Nullable: true, Comment: "快照来源流程ID（0=无流程）", Default: 0},
 	}
 	// AprApprovalRequestsTable holds the schema information for the "apr_approval_requests" table.
 	AprApprovalRequestsTable = &schema.Table{
@@ -289,15 +289,15 @@ var (
 	}
 	// SalCustomersColumns holds the columns for the "sal_customers" table.
 	SalCustomersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "客户名称"},
 		{Name: "contact", Type: field.TypeString, Nullable: true, Comment: "联系人"},
@@ -321,10 +321,10 @@ var (
 	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Nullable: true, Comment: "操作者用户ID"},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
 		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
@@ -435,19 +435,19 @@ var (
 	}
 	// SysDictEntriesColumns holds the columns for the "sys_dict_entries" table.
 	SysDictEntriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "entry_value", Type: field.TypeString, Comment: "字典项的实际值"},
 		{Name: "numeric_value", Type: field.TypeInt32, Nullable: true, Comment: "数值型值"},
-		{Name: "type_id", Type: field.TypeUint32, Nullable: true},
+		{Name: "type_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// SysDictEntriesTable holds the schema information for the "sys_dict_entries" table.
 	SysDictEntriesTable = &schema.Table{
@@ -498,19 +498,19 @@ var (
 	}
 	// SysDictEntryI18nColumns holds the columns for the "sys_dict_entry_i18n" table.
 	SysDictEntryI18nColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
 		{Name: "entry_label", Type: field.TypeString, Nullable: true, Comment: "字典项的显示标签"},
-		{Name: "entry_id", Type: field.TypeUint32, Nullable: true},
+		{Name: "entry_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// SysDictEntryI18nTable holds the schema information for the "sys_dict_entry_i18n" table.
 	SysDictEntryI18nTable = &schema.Table{
@@ -536,16 +536,16 @@ var (
 	}
 	// SysDictTypesColumns holds the columns for the "sys_dict_types" table.
 	SysDictTypesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "type_code", Type: field.TypeString, Nullable: true, Comment: "字典类型唯一编码"},
 		{Name: "type_name", Type: field.TypeString, Nullable: true, Comment: "字典类型名称（中文，仅后台用）"},
 	}
@@ -580,15 +580,15 @@ var (
 	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "provider", Type: field.TypeEnum, Nullable: true, Comment: "OSS供应商", Enums: []string{"UNKNOWN", "MINIO", "ALIYUN", "QINIU", "TENCENT", "AWS", "GOOGLE", "AZURE", "BAIDU", "HUAWEI", "LOCAL"}, Default: "MINIO"},
 		{Name: "bucket_name", Type: field.TypeString, Nullable: true, Comment: "存储桶名称"},
 		{Name: "file_directory", Type: field.TypeString, Nullable: true, Comment: "文件目录"},
@@ -657,18 +657,18 @@ var (
 	}
 	// InternalMessagesColumns holds the columns for the "internal_messages" table.
 	InternalMessagesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "消息标题"},
 		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "消息内容"},
-		{Name: "sender_id", Type: field.TypeUint32, Comment: "发送者用户ID"},
-		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "分类ID"},
+		{Name: "sender_id", Type: field.TypeInt64, Comment: "发送者用户ID"},
+		{Name: "category_id", Type: field.TypeInt64, Nullable: true, Comment: "分类ID"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "消息状态", Enums: []string{"DRAFT", "PUBLISHED", "SCHEDULED", "REVOKED", "ARCHIVED", "DELETED"}, Default: "DRAFT"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "消息类型", Enums: []string{"NOTIFICATION", "PRIVATE", "GROUP"}, Default: "NOTIFICATION"},
 	}
@@ -708,17 +708,17 @@ var (
 	}
 	// InternalMessageCategoriesColumns holds the columns for the "internal_message_categories" table.
 	InternalMessageCategoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "编码"},
 		{Name: "icon_url", Type: field.TypeString, Nullable: true, Comment: "图标URL"},
@@ -759,13 +759,13 @@ var (
 	}
 	// InternalMessageRecipientsColumns holds the columns for the "internal_message_recipients" table.
 	InternalMessageRecipientsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "message_id", Type: field.TypeUint32, Nullable: true, Comment: "站内信内容ID"},
-		{Name: "recipient_user_id", Type: field.TypeUint32, Nullable: true, Comment: "接收者用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "message_id", Type: field.TypeInt64, Nullable: true, Comment: "站内信内容ID"},
+		{Name: "recipient_user_id", Type: field.TypeInt64, Nullable: true, Comment: "接收者用户ID"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "消息状态", Enums: []string{"SENT", "RECEIVED", "READ", "REVOKED", "DELETED"}},
 		{Name: "received_at", Type: field.TypeTime, Nullable: true, Comment: "消息到达用户收件箱的时间"},
 		{Name: "read_at", Type: field.TypeTime, Nullable: true, Comment: "用户阅读消息的时间"},
@@ -811,12 +811,12 @@ var (
 	}
 	// FinJournalEntriesColumns holds the columns for the "fin_journal_entries" table.
 	FinJournalEntriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "entry_number", Type: field.TypeString, Nullable: true, Comment: "凭证号（JE-<毫秒时间戳>）"},
 		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "摘要（如：采购入库 PO123）"},
 		{Name: "biz_ref", Type: field.TypeString, Nullable: true, Comment: "业务来源引用（如 STOCK_PICKING:17 / RECEIPT:5）"},
@@ -843,10 +843,10 @@ var (
 	}
 	// FinJournalLinesColumns holds the columns for the "fin_journal_lines" table.
 	FinJournalLinesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "entry_id", Type: field.TypeUint32, Nullable: true, Comment: "所属凭证ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "entry_id", Type: field.TypeInt64, Nullable: true, Comment: "所属凭证ID", Default: 0},
 		{Name: "account_code", Type: field.TypeString, Nullable: true, Comment: "科目编码"},
 		{Name: "summary", Type: field.TypeString, Nullable: true, Comment: "行摘要"},
 		{Name: "debit", Type: field.TypeInt64, Nullable: true, Comment: "借方金额（分）", Default: 0},
@@ -873,13 +873,13 @@ var (
 	}
 	// SysLanguagesColumns holds the columns for the "sys_languages" table.
 	SysLanguagesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "标准语言代码"},
@@ -938,10 +938,10 @@ var (
 	}
 	// SysLoginAuditLogsColumns holds the columns for the "sys_login_audit_logs" table.
 	SysLoginAuditLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Nullable: true, Comment: "操作者用户ID"},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true, Comment: "IP地址"},
 		{Name: "geo_location", Type: field.TypeJSON, Nullable: true, Comment: "地理位置(来自IP库)"},
@@ -1026,15 +1026,15 @@ var (
 	}
 	// SysLoginPoliciesColumns holds the columns for the "sys_login_policies" table.
 	SysLoginPoliciesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "target_id", Type: field.TypeUint32, Nullable: true, Comment: "目标用户ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "target_id", Type: field.TypeInt64, Nullable: true, Comment: "目标用户ID"},
 		{Name: "value", Type: field.TypeString, Nullable: true, Comment: "限制值（如IP地址、MAC地址或地区代码）"},
 		{Name: "reason", Type: field.TypeString, Nullable: true, Comment: "限制原因"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "限制类型", Enums: []string{"BLACK_LIST", "WHITE_LIST"}, Default: "BLACK_LIST"},
@@ -1066,24 +1066,24 @@ var (
 	}
 	// SysMembershipsColumns holds the columns for the "sys_memberships" table.
 	SysMembershipsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
-		{Name: "org_unit_id", Type: field.TypeUint32, Nullable: true, Comment: "组织架构ID（单一，冗余/互斥）"},
-		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "职位ID（单一，冗余/互斥）"},
-		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色ID（单一，冗余/互斥）"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "org_unit_id", Type: field.TypeInt64, Nullable: true, Comment: "组织架构ID（单一，冗余/互斥）"},
+		{Name: "position_id", Type: field.TypeInt64, Nullable: true, Comment: "职位ID（单一，冗余/互斥）"},
+		{Name: "role_id", Type: field.TypeInt64, Nullable: true, Comment: "角色ID（单一，冗余/互斥）"},
 		{Name: "is_primary", Type: field.TypeBool, Comment: "是否主身份", Default: false},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户ID"},
 		{Name: "joined_at", Type: field.TypeTime, Nullable: true, Comment: "加入时间（UTC）"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"ACTIVE", "DISABLED", "PENDING", "INVITED", "EXPIRED", "REJECTED"}, Default: "ACTIVE"},
 	}
@@ -1168,23 +1168,23 @@ var (
 	}
 	// SysMembershipOrgUnitsColumns holds the columns for the "sys_membership_org_units" table.
 	SysMembershipOrgUnitsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
-		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "组织单元 ID"},
-		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
-		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色 ID（可选，冗余）"},
+		{Name: "membership_id", Type: field.TypeInt64, Comment: "membership ID"},
+		{Name: "org_unit_id", Type: field.TypeInt64, Comment: "组织单元 ID"},
+		{Name: "position_id", Type: field.TypeInt64, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
+		{Name: "role_id", Type: field.TypeInt64, Nullable: true, Comment: "角色 ID（可选，冗余）"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间（UTC）"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户 ID"},
 		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主所属", Default: false},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "关联状态", Enums: []string{"ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "EXPIRED"}, Default: "ACTIVE"},
 	}
@@ -1284,22 +1284,22 @@ var (
 	}
 	// SysMembershipPositionsColumns holds the columns for the "sys_membership_positions" table.
 	SysMembershipPositionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
-		{Name: "position_id", Type: field.TypeUint32, Comment: "岗位ID"},
+		{Name: "membership_id", Type: field.TypeInt64, Comment: "membership ID"},
+		{Name: "position_id", Type: field.TypeInt64, Comment: "岗位ID"},
 		{Name: "is_primary", Type: field.TypeBool, Nullable: true, Comment: "是否主岗位", Default: false},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "岗位分配时间"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户 ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PROBATION", "ACTIVE", "LEAVE", "TERMINATED", "EXPIRED"}, Default: "ACTIVE"},
 	}
 	// SysMembershipPositionsTable holds the schema information for the "sys_membership_positions" table.
@@ -1368,20 +1368,20 @@ var (
 	}
 	// SysMembershipRolesColumns holds the columns for the "sys_membership_roles" table.
 	SysMembershipRolesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "membership_id", Type: field.TypeUint32, Comment: "membership ID"},
-		{Name: "role_id", Type: field.TypeUint32, Comment: "角色ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "membership_id", Type: field.TypeInt64, Comment: "membership ID"},
+		{Name: "role_id", Type: field.TypeInt64, Comment: "角色ID"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间（UTC）"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户ID"},
 		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主角色", Default: false},
 		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PENDING", "ACTIVE", "DISABLED", "EXPIRED"}, Default: "ACTIVE"},
 	}
@@ -1451,16 +1451,16 @@ var (
 	}
 	// SysMenusColumns holds the columns for the "sys_menus" table.
 	SysMenusColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "菜单类型 CATALOG: 目录 MENU: 菜单 BUTTON: 按钮 EMBEDDED: 内嵌 LINK: 外链", Enums: []string{"CATALOG", "MENU", "BUTTON", "EMBEDDED", "LINK"}, Default: "MENU"},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "路径,当其类型为'按钮'的时候对应的数据操作名,例如:/identity.service.v1.UserService/Login", Default: ""},
 		{Name: "redirect", Type: field.TypeString, Nullable: true, Comment: "重定向地址"},
@@ -1468,7 +1468,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "路由命名，然后我们可以使用 name 而不是 path 来传递 to 属性给 <router-link>。"},
 		{Name: "component", Type: field.TypeString, Nullable: true, Comment: "前端页面组件", Default: ""},
 		{Name: "meta", Type: field.TypeJSON, Nullable: true, Comment: "路由元信息"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "父节点ID"},
 	}
 	// SysMenusTable holds the schema information for the "sys_menus" table.
 	SysMenusTable = &schema.Table{
@@ -1539,10 +1539,10 @@ var (
 	}
 	// SysOperationAuditLogsColumns holds the columns for the "sys_operation_audit_logs" table.
 	SysOperationAuditLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Nullable: true, Comment: "操作者用户ID"},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "操作者账号名"},
 		{Name: "resource_type", Type: field.TypeString, Nullable: true, Comment: "资源类型"},
 		{Name: "resource_id", Type: field.TypeString, Nullable: true, Comment: "资源ID"},
@@ -1651,29 +1651,29 @@ var (
 	}
 	// SysOrgUnitsColumns holds the columns for the "sys_org_units" table.
 	SysOrgUnitsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
 		{Name: "name", Type: field.TypeString, Comment: "名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "唯一编码（可用于导入/识别）"},
-		{Name: "leader_id", Type: field.TypeUint32, Nullable: true, Comment: "负责人用户ID"},
+		{Name: "leader_id", Type: field.TypeInt64, Nullable: true, Comment: "负责人用户ID"},
 		{Name: "type", Type: field.TypeEnum, Comment: "组织类型", Enums: []string{"COMPANY", "DIVISION", "DEPARTMENT", "TEAM", "PROJECT", "COMMITTEE", "REGION", "OTHER"}, Default: "DEPARTMENT"},
 		{Name: "business_scopes", Type: field.TypeJSON, Nullable: true, Comment: "组织的业务范围/服务条线"},
 		{Name: "external_id", Type: field.TypeString, Nullable: true, Comment: "外部系统ID"},
 		{Name: "is_legal_entity", Type: field.TypeBool, Nullable: true, Comment: "是否为法定主体", Default: false},
 		{Name: "registration_number", Type: field.TypeString, Nullable: true, Comment: "注册号/统一社会信用代码"},
 		{Name: "tax_id", Type: field.TypeString, Nullable: true, Comment: "税号"},
-		{Name: "legal_entity_org_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的法定主体组织ID"},
+		{Name: "legal_entity_org_id", Type: field.TypeInt64, Nullable: true, Comment: "关联的法定主体组织ID"},
 		{Name: "address", Type: field.TypeString, Nullable: true, Comment: "详细地址"},
 		{Name: "phone", Type: field.TypeString, Nullable: true, Comment: "联系电话"},
 		{Name: "email", Type: field.TypeString, Nullable: true, Comment: "联系邮箱"},
@@ -1683,9 +1683,9 @@ var (
 		{Name: "longitude", Type: field.TypeFloat64, Nullable: true, Comment: "经度"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束有效期（UTC）"},
-		{Name: "contact_user_id", Type: field.TypeUint32, Nullable: true, Comment: "业务联系人用户ID"},
+		{Name: "contact_user_id", Type: field.TypeInt64, Nullable: true, Comment: "业务联系人用户ID"},
 		{Name: "permission_tags", Type: field.TypeJSON, Nullable: true, Comment: "与权限/角色映射的标签"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "父节点ID"},
 	}
 	// SysOrgUnitsTable holds the schema information for the "sys_org_units" table.
 	SysOrgUnitsTable = &schema.Table{
@@ -1786,15 +1786,15 @@ var (
 	}
 	// FinPayablesColumns holds the columns for the "fin_payables" table.
 	FinPayablesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "payable_number", Type: field.TypeString, Nullable: true, Comment: "应付单号（服务端生成）"},
 		{Name: "po_ref", Type: field.TypeString, Nullable: true, Comment: "来源采购单引用"},
 		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
@@ -1834,17 +1834,17 @@ var (
 	}
 	// FinPaymentsColumns holds the columns for the "fin_payments" table.
 	FinPaymentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "payment_number", Type: field.TypeString, Nullable: true, Comment: "付款单号（服务端生成）"},
-		{Name: "payable_id", Type: field.TypeUint32, Nullable: true, Comment: "所属应付单ID", Default: 0},
+		{Name: "payable_id", Type: field.TypeInt64, Nullable: true, Comment: "所属应付单ID", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "付款金额（分）", Default: 0},
 		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "付款方式", Enums: []string{"BANK_TRANSFER", "CASH", "CHECK", "OTHER"}, Default: "BANK_TRANSFER"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "付款状态", Enums: []string{"PENDING", "APPLIED", "REJECTED"}, Default: "PENDING"},
@@ -1865,19 +1865,19 @@ var (
 	}
 	// SysPermissionsColumns holds the columns for the "sys_permissions" table.
 	SysPermissionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "权限名称（如：删除用户）"},
 		{Name: "code", Type: field.TypeString, Comment: "权限编码（如：opm:user:delete、order:export）"},
-		{Name: "group_id", Type: field.TypeUint32, Nullable: true, Comment: "关联权限分组 ID"},
+		{Name: "group_id", Type: field.TypeInt64, Nullable: true, Comment: "关联权限分组 ID"},
 	}
 	// SysPermissionsTable holds the schema information for the "sys_permissions" table.
 	SysPermissionsTable = &schema.Table{
@@ -1905,16 +1905,16 @@ var (
 	}
 	// SysPermissionApisColumns holds the columns for the "sys_permission_apis" table.
 	SysPermissionApisColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
-		{Name: "api_id", Type: field.TypeUint32, Comment: "API资源ID（关联sys_apis.id）"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "permission_id", Type: field.TypeInt64, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "api_id", Type: field.TypeInt64, Comment: "API资源ID（关联sys_apis.id）"},
 	}
 	// SysPermissionApisTable holds the schema information for the "sys_permission_apis" table.
 	SysPermissionApisTable = &schema.Table{
@@ -1942,10 +1942,10 @@ var (
 	}
 	// SysPermissionAuditLogsColumns holds the columns for the "sys_permission_audit_logs" table.
 	SysPermissionAuditLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "operator_id", Type: field.TypeUint32, Nullable: true, Comment: "操作者 用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "operator_id", Type: field.TypeInt64, Nullable: true, Comment: "操作者 用户ID"},
 		{Name: "target_type", Type: field.TypeString, Nullable: true, Comment: "目标类型"},
 		{Name: "target_id", Type: field.TypeString, Nullable: true, Comment: "目标ID"},
 		{Name: "action", Type: field.TypeEnum, Nullable: true, Comment: "动作", Enums: []string{"GRANT", "REVOKE", "UPDATE", "RESET", "CREATE", "DELETE", "ASSIGN", "UNASSIGN", "BULK_GRANT", "BULK_REVOKE", "EXPIRE", "SUSPEND", "RESUME", "ROLLBACK", "OTHER"}},
@@ -1998,21 +1998,21 @@ var (
 	}
 	// SysPermissionGroupsColumns holds the columns for the "sys_permission_groups" table.
 	SysPermissionGroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "分组名称（如：用户管理、订单操作）"},
 		{Name: "module", Type: field.TypeString, Nullable: true, Comment: "业务模块标识（如：opm、order、pay）"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "父节点ID"},
 	}
 	// SysPermissionGroupsTable holds the schema information for the "sys_permission_groups" table.
 	SysPermissionGroupsTable = &schema.Table{
@@ -2048,16 +2048,16 @@ var (
 	}
 	// SysPermissionMenusColumns holds the columns for the "sys_permission_menus" table.
 	SysPermissionMenusColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
-		{Name: "menu_id", Type: field.TypeUint32, Comment: "菜单ID（关联sys_menus.id）"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "permission_id", Type: field.TypeInt64, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "menu_id", Type: field.TypeInt64, Comment: "菜单ID（关联sys_menus.id）"},
 	}
 	// SysPermissionMenusTable holds the schema information for the "sys_permission_menus" table.
 	SysPermissionMenusTable = &schema.Table{
@@ -2085,16 +2085,16 @@ var (
 	}
 	// SysPermissionPoliciesColumns holds the columns for the "sys_permission_policies" table.
 	SysPermissionPoliciesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "permission_id", Type: field.TypeInt64, Comment: "权限ID（关联sys_permissions.id）"},
 		{Name: "policy_engine", Type: field.TypeEnum, Comment: "策略引擎", Enums: []string{"CEL", "CASBIN", "OPA", "SQL"}, Default: "CASBIN"},
 		{Name: "definition", Type: field.TypeString, Nullable: true, Comment: "策略定义（动态结构）", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
 		{Name: "version", Type: field.TypeUint32, Comment: "策略版本（用于灰度/回滚）", Default: 1},
@@ -2132,15 +2132,15 @@ var (
 	}
 	// SubPlansColumns holds the columns for the "sub_plans" table.
 	SubPlansColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "套餐编码：FREE/STANDARD/PRO"},
@@ -2166,13 +2166,13 @@ var (
 	}
 	// SysPolicyEvaluationLogsColumns holds the columns for the "sys_policy_evaluation_logs" table.
 	SysPolicyEvaluationLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
-		{Name: "membership_id", Type: field.TypeUint32, Comment: "成员身份ID"},
-		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限点ID"},
-		{Name: "policy_id", Type: field.TypeUint32, Nullable: true, Comment: "策略ID（可能无策略）"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "membership_id", Type: field.TypeInt64, Comment: "成员身份ID"},
+		{Name: "permission_id", Type: field.TypeInt64, Comment: "权限点ID"},
+		{Name: "policy_id", Type: field.TypeInt64, Nullable: true, Comment: "策略ID（可能无策略）"},
 		{Name: "request_path", Type: field.TypeString, Nullable: true, Comment: "请求API路径"},
 		{Name: "request_method", Type: field.TypeString, Nullable: true, Comment: "请求HTTP方法"},
 		{Name: "result", Type: field.TypeBool, Comment: "是否通过", Default: false},
@@ -2245,21 +2245,21 @@ var (
 	}
 	// SysPositionsColumns holds the columns for the "sys_positions" table.
 	SysPositionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "name", Type: field.TypeString, Comment: "职位名称"},
 		{Name: "code", Type: field.TypeString, Comment: "唯一编码"},
-		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "所属组织单元ID"},
-		{Name: "reports_to_position_id", Type: field.TypeUint32, Nullable: true, Comment: "汇报关系"},
+		{Name: "org_unit_id", Type: field.TypeInt64, Comment: "所属组织单元ID"},
+		{Name: "reports_to_position_id", Type: field.TypeInt64, Nullable: true, Comment: "汇报关系"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "职位描述"},
 		{Name: "job_family", Type: field.TypeString, Nullable: true, Comment: "职类/序列"},
 		{Name: "job_grade", Type: field.TypeString, Nullable: true, Comment: "职级"},
@@ -2381,15 +2381,15 @@ var (
 	}
 	// PrdProductsColumns holds the columns for the "prd_products" table.
 	PrdProductsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "商品名称"},
 		{Name: "spec", Type: field.TypeString, Nullable: true, Comment: "规格"},
@@ -2412,15 +2412,15 @@ var (
 	}
 	// PurPurchaseOrdersColumns holds the columns for the "pur_purchase_orders" table.
 	PurPurchaseOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "po_number", Type: field.TypeString, Nullable: true, Comment: "采购单号（服务端生成）"},
 		{Name: "supplier_code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "采购单状态", Enums: []string{"DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "COMPLETED", "CANCELLED"}, Default: "DRAFT"},
@@ -2453,11 +2453,11 @@ var (
 	}
 	// PurPurchaseOrderItemsColumns holds the columns for the "pur_purchase_order_items" table.
 	PurPurchaseOrderItemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "po_id", Type: field.TypeUint32, Nullable: true, Comment: "所属采购单ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "po_id", Type: field.TypeInt64, Nullable: true, Comment: "所属采购单ID", Default: 0},
 		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
 		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "采购数量", Default: 0},
 		{Name: "unit_price", Type: field.TypeInt64, Nullable: true, Comment: "单价（分）", Default: 0},
@@ -2480,17 +2480,17 @@ var (
 	}
 	// FinReceiptsColumns holds the columns for the "fin_receipts" table.
 	FinReceiptsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "receipt_number", Type: field.TypeString, Nullable: true, Comment: "收款单号（服务端生成）"},
-		{Name: "receivable_id", Type: field.TypeUint32, Nullable: true, Comment: "所属应收单ID", Default: 0},
+		{Name: "receivable_id", Type: field.TypeInt64, Nullable: true, Comment: "所属应收单ID", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "收款金额（分）", Default: 0},
 		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "收款方式", Enums: []string{"BANK_TRANSFER", "CASH", "CHECK", "OTHER"}, Default: "BANK_TRANSFER"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "收款状态", Enums: []string{"PENDING", "APPLIED", "REJECTED"}, Default: "PENDING"},
@@ -2511,15 +2511,15 @@ var (
 	}
 	// FinReceivablesColumns holds the columns for the "fin_receivables" table.
 	FinReceivablesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "receivable_number", Type: field.TypeString, Nullable: true, Comment: "应收单号（服务端生成）"},
 		{Name: "so_ref", Type: field.TypeString, Nullable: true, Comment: "来源销售单引用"},
 		{Name: "customer_code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
@@ -2559,23 +2559,23 @@ var (
 	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "角色名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "角色标识"},
 		{Name: "is_protected", Type: field.TypeBool, Comment: "是否受保护的角色", Default: false},
 		{Name: "type", Type: field.TypeEnum, Comment: "角色类型", Enums: []string{"SYSTEM", "TEMPLATE", "TENANT"}, Default: "TENANT"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父角色ID，0表示无父级"},
+		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "父角色ID，0表示无父级"},
 	}
 	// SysRolesTable holds the schema information for the "sys_roles" table.
 	SysRolesTable = &schema.Table{
@@ -2643,15 +2643,15 @@ var (
 	}
 	// SysRoleMetadataColumns holds the columns for the "sys_role_metadata" table.
 	SysRoleMetadataColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "role_id", Type: field.TypeUint32, Nullable: true, Comment: "角色ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "role_id", Type: field.TypeInt64, Nullable: true, Comment: "角色ID"},
 		{Name: "is_template", Type: field.TypeBool, Nullable: true, Comment: "是否是模版", Default: false},
 		{Name: "template_for", Type: field.TypeString, Nullable: true, Comment: "模板适用对象"},
 		{Name: "template_version", Type: field.TypeInt32, Nullable: true, Comment: "模板版本号", Default: 1},
@@ -2697,17 +2697,17 @@ var (
 	}
 	// SysRolePermissionsColumns holds the columns for the "sys_role_permissions" table.
 	SysRolePermissionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
-		{Name: "role_id", Type: field.TypeUint32, Comment: "API资源ID（关联sys_apis.id）"},
-		{Name: "permission_id", Type: field.TypeUint32, Comment: "权限ID（关联sys_permissions.id）"},
+		{Name: "role_id", Type: field.TypeInt64, Comment: "API资源ID（关联sys_apis.id）"},
+		{Name: "permission_id", Type: field.TypeInt64, Comment: "权限ID（关联sys_permissions.id）"},
 		{Name: "effect", Type: field.TypeEnum, Nullable: true, Comment: "生效方式", Enums: []string{"ALLOW", "DENY"}, Default: "ALLOW"},
 		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级（-100~100，值越大优先级越高）", Default: 0},
 	}
@@ -2767,15 +2767,15 @@ var (
 	}
 	// SalSalesOrdersColumns holds the columns for the "sal_sales_orders" table.
 	SalSalesOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "so_number", Type: field.TypeString, Nullable: true, Comment: "销售单号（服务端生成）"},
 		{Name: "customer_code", Type: field.TypeString, Nullable: true, Comment: "客户编码"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "销售单状态", Enums: []string{"DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "COMPLETED", "CANCELLED"}, Default: "DRAFT"},
@@ -2808,11 +2808,11 @@ var (
 	}
 	// SalSalesOrderItemsColumns holds the columns for the "sal_sales_order_items" table.
 	SalSalesOrderItemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "so_id", Type: field.TypeUint32, Nullable: true, Comment: "所属销售单ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "so_id", Type: field.TypeInt64, Nullable: true, Comment: "所属销售单ID", Default: 0},
 		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU编码"},
 		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "销售数量", Default: 0},
 		{Name: "unit_price", Type: field.TypeInt64, Nullable: true, Comment: "单价（分）", Default: 0},
@@ -2835,17 +2835,17 @@ var (
 	}
 	// InvStockLocationsColumns holds the columns for the "inv_stock_locations" table.
 	InvStockLocationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "位置名称"},
-		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父位置ID（预留层级，初始不用）", Default: 0},
+		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "父位置ID（预留层级，初始不用）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Comment: "物化路径（预留层级，初始为 /{id}/）"},
 		{Name: "usage", Type: field.TypeEnum, Nullable: true, Comment: "位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的），INVENTORY_LOSS=盘点虚拟位置（盘盈源/盘亏目的）", Enums: []string{"SUPPLIER", "INTERNAL", "CUSTOMER", "INVENTORY_LOSS"}, Default: "INTERNAL"},
 		{Name: "warehouse_code", Type: field.TypeString, Nullable: true, Comment: "归属仓库编码（仅 INTERNAL 位置有值）"},
@@ -2871,15 +2871,15 @@ var (
 	}
 	// InvStockLotsColumns holds the columns for the "inv_stock_lots" table.
 	InvStockLotsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "批次号"},
 		{Name: "expiry_date", Type: field.TypeTime, Nullable: true, Comment: "效期（可空=不限期）"},
@@ -2905,23 +2905,23 @@ var (
 	}
 	// InvStockMovesColumns holds the columns for the "inv_stock_moves" table.
 	InvStockMovesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "picking_id", Type: field.TypeUint32, Nullable: true, Comment: "所属拣货单ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "picking_id", Type: field.TypeInt64, Nullable: true, Comment: "所属拣货单ID", Default: 0},
 		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
-		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
-		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "source_location_id", Type: field.TypeInt64, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeInt64, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "planned_quantity", Type: field.TypeInt64, Nullable: true, Comment: "计划数量", Default: 0},
 		{Name: "state", Type: field.TypeEnum, Nullable: true, Comment: "移动状态", Enums: []string{"DRAFT", "CONFIRMED", "DONE", "CANCELLED"}, Default: "DRAFT"},
-		{Name: "purchase_order_item_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购明细ID（仅入库，Odoo purchase_line_id）", Default: 0},
-		{Name: "sales_order_item_id", Type: field.TypeUint32, Nullable: true, Comment: "关联销售明细ID（仅出库）", Default: 0},
+		{Name: "purchase_order_item_id", Type: field.TypeInt64, Nullable: true, Comment: "关联采购明细ID（仅入库，Odoo purchase_line_id）", Default: 0},
+		{Name: "sales_order_item_id", Type: field.TypeInt64, Nullable: true, Comment: "关联销售明细ID（仅出库）", Default: 0},
 	}
 	// InvStockMovesTable holds the schema information for the "inv_stock_moves" table.
 	InvStockMovesTable = &schema.Table{
@@ -2954,21 +2954,21 @@ var (
 	}
 	// InvStockMoveLinesColumns holds the columns for the "inv_stock_move_lines" table.
 	InvStockMoveLinesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "move_id", Type: field.TypeUint32, Nullable: true, Comment: "所属移动计划ID", Default: 0},
-		{Name: "picking_id", Type: field.TypeUint32, Nullable: true, Comment: "所属拣货单ID（反范式）", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "move_id", Type: field.TypeInt64, Nullable: true, Comment: "所属移动计划ID", Default: 0},
+		{Name: "picking_id", Type: field.TypeInt64, Nullable: true, Comment: "所属拣货单ID（反范式）", Default: 0},
 		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
-		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
-		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "source_location_id", Type: field.TypeInt64, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeInt64, Nullable: true, Comment: "目的位置ID", Default: 0},
 		{Name: "executed_quantity", Type: field.TypeInt64, Nullable: true, Comment: "已执行数量", Default: 0},
 		{Name: "unit_cost", Type: field.TypeInt64, Nullable: true, Comment: "执行时冻结的单位成本（分，用于COGS）", Default: 0},
-		{Name: "lot_id", Type: field.TypeUint32, Nullable: true, Comment: "批次ID（可空=未跟踪）", Default: 0},
+		{Name: "lot_id", Type: field.TypeInt64, Nullable: true, Comment: "批次ID（可空=未跟踪）", Default: 0},
 	}
 	// InvStockMoveLinesTable holds the schema information for the "inv_stock_move_lines" table.
 	InvStockMoveLinesTable = &schema.Table{
@@ -2996,20 +2996,20 @@ var (
 	}
 	// InvStockPickingsColumns holds the columns for the "inv_stock_pickings" table.
 	InvStockPickingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "picking_number", Type: field.TypeString, Nullable: true, Comment: "拣货单号（服务端生成）"},
 		{Name: "picking_type", Type: field.TypeEnum, Nullable: true, Comment: "拣货类型：INCOMING=入库，INTERNAL=调拨，OUTGOING=出库，INVENTORY_ADJUSTMENT=盘点", Enums: []string{"INCOMING", "INTERNAL", "OUTGOING", "INVENTORY_ADJUSTMENT"}, Default: "INCOMING"},
-		{Name: "source_location_id", Type: field.TypeUint32, Nullable: true, Comment: "源位置ID", Default: 0},
-		{Name: "destination_location_id", Type: field.TypeUint32, Nullable: true, Comment: "目的位置ID", Default: 0},
-		{Name: "purchase_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联采购单ID（仅入库）", Default: 0},
+		{Name: "source_location_id", Type: field.TypeInt64, Nullable: true, Comment: "源位置ID", Default: 0},
+		{Name: "destination_location_id", Type: field.TypeInt64, Nullable: true, Comment: "目的位置ID", Default: 0},
+		{Name: "purchase_order_id", Type: field.TypeInt64, Nullable: true, Comment: "关联采购单ID（仅入库）", Default: 0},
 		{Name: "partner_code", Type: field.TypeString, Nullable: true, Comment: "交易方编码（供应商/客户）"},
 	}
 	// InvStockPickingsTable holds the schema information for the "inv_stock_pickings" table.
@@ -3033,16 +3033,16 @@ var (
 	}
 	// InvStockQuantsColumns holds the columns for the "inv_stock_quants" table.
 	InvStockQuantsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "location_id", Type: field.TypeUint32, Nullable: true, Comment: "所在位置ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "location_id", Type: field.TypeInt64, Nullable: true, Comment: "所在位置ID", Default: 0},
 		{Name: "product_code", Type: field.TypeString, Nullable: true, Comment: "产品编码"},
 		{Name: "quantity", Type: field.TypeInt64, Nullable: true, Comment: "在手数量", Default: 0},
 		{Name: "cost_price", Type: field.TypeInt64, Nullable: true, Comment: "加权平均成本（分）", Default: 0},
@@ -3063,15 +3063,15 @@ var (
 	}
 	// SubSubscriptionsColumns holds the columns for the "sub_subscriptions" table.
 	SubSubscriptionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "plan_code", Type: field.TypeString, Nullable: true, Comment: "当前套餐编码（FREE/STANDARD/PRO）"},
 		{Name: "period_start", Type: field.TypeTime, Nullable: true, Comment: "订阅周期起点"},
 		{Name: "period_end", Type: field.TypeTime, Nullable: true, Comment: "订阅周期终点（nil=永久，FREE 无到期）"},
@@ -3098,15 +3098,15 @@ var (
 	}
 	// PurSuppliersColumns holds the columns for the "pur_suppliers" table.
 	PurSuppliersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "供应商编码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "供应商名称"},
 		{Name: "contact", Type: field.TypeString, Nullable: true, Comment: "联系人"},
@@ -3129,15 +3129,15 @@ var (
 	}
 	// SysTasksColumns holds the columns for the "sys_tasks" table.
 	SysTasksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "任务类型", Enums: []string{"PERIODIC", "DELAY", "WAIT_RESULT"}, Default: "PERIODIC"},
 		{Name: "type_name", Type: field.TypeString, Nullable: true, Comment: "任务执行类型名"},
 		{Name: "task_payload", Type: field.TypeString, Nullable: true, Comment: "任务数据", SchemaType: map[string]string{"mysql": "json", "postgres": "jsonb"}},
@@ -3181,20 +3181,20 @@ var (
 	}
 	// SysTenantsColumns holds the columns for the "sys_tenants" table.
 	SysTenantsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "租户名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "租户编号"},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true, Comment: "租户logo地址"},
 		{Name: "domain", Type: field.TypeString, Nullable: true, Comment: "租户专属域名"},
 		{Name: "industry", Type: field.TypeString, Nullable: true, Comment: "所属行业"},
-		{Name: "admin_user_id", Type: field.TypeUint32, Nullable: true, Comment: "管理员用户ID"},
+		{Name: "admin_user_id", Type: field.TypeInt64, Nullable: true, Comment: "管理员用户ID"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "租户状态", Enums: []string{"ON", "OFF", "EXPIRED", "FREEZE"}, Default: "ON"},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "租户类型", Enums: []string{"TRIAL", "PAID", "INTERNAL", "PARTNER", "CUSTOM"}, Default: "PAID"},
 		{Name: "audit_status", Type: field.TypeEnum, Nullable: true, Comment: "审核状态", Enums: []string{"PENDING", "APPROVED", "REJECTED"}},
@@ -3264,15 +3264,15 @@ var (
 	}
 	// SysUsersColumns holds the columns for the "sys_users" table.
 	SysUsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "用户名"},
 		{Name: "nickname", Type: field.TypeString, Nullable: true, Comment: "昵称"},
 		{Name: "realname", Type: field.TypeString, Nullable: true, Comment: "真实名字"},
@@ -3335,12 +3335,12 @@ var (
 	}
 	// SysUserCredentialsColumns holds the columns for the "sys_user_credentials" table.
 	SysUserCredentialsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "关联主表的用户ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Nullable: true, Comment: "关联主表的用户ID"},
 		{Name: "identity_type", Type: field.TypeEnum, Nullable: true, Comment: "认证方式类型", Enums: []string{"USERNAME", "USERID", "EMAIL", "PHONE", "SOCIAL_OAUTH", "ENTERPRISE_SSO", "IDENTITY_API_KEY", "DEVICE_ID", "CUSTOM"}, Default: "USERNAME"},
 		{Name: "identifier", Type: field.TypeString, Nullable: true, Comment: "身份唯一标识符"},
 		{Name: "credential_type", Type: field.TypeEnum, Nullable: true, Comment: "凭证类型", Enums: []string{"PASSWORD_HASH", "API_KEY", "API_SECRET", "ACCESS_TOKEN", "REFRESH_TOKEN", "JWT", "OAUTH_TOKEN", "OAUTH_AUTHORIZATION_CODE", "OAUTH_CLIENT_CREDENTIALS", "OTP", "TOTP", "SMS_OTP", "EMAIL_OTP", "HARDWARE_TOKEN", "SOFTWARE_TOKEN", "SECURITY_QUESTION", "BIOMETRIC", "BIOMETRIC_TOKEN", "SSO_TOKEN", "SAML_ASSERTION", "OPENID_CONNECT_ID_TOKEN", "SESSION_COOKIE", "TEMPORARY_CREDENTIAL", "CUSTOM", "RESERVED_FOR_FUTURE"}, Default: "PASSWORD_HASH"},
@@ -3408,22 +3408,22 @@ var (
 	}
 	// SysUserOrgUnitsColumns holds the columns for the "sys_user_org_units" table.
 	SysUserOrgUnitsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
-		{Name: "org_unit_id", Type: field.TypeUint32, Comment: "组织单元 ID"},
-		{Name: "position_id", Type: field.TypeUint32, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "org_unit_id", Type: field.TypeInt64, Comment: "组织单元 ID"},
+		{Name: "position_id", Type: field.TypeInt64, Nullable: true, Comment: "岗位 ID（可选，冗余）"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "结束时间（UTC）"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户 ID"},
 		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主所属", Default: false},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "关联状态", Enums: []string{"ACTIVE", "PENDING", "INACTIVE", "SUSPENDED", "EXPIRED"}, Default: "ACTIVE"},
 	}
@@ -3518,22 +3518,22 @@ var (
 	}
 	// SysUserPositionsColumns holds the columns for the "sys_user_positions" table.
 	SysUserPositionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
-		{Name: "position_id", Type: field.TypeUint32, Comment: "岗位ID"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "position_id", Type: field.TypeInt64, Comment: "岗位ID"},
 		{Name: "is_primary", Type: field.TypeBool, Nullable: true, Comment: "是否主岗位", Default: false},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "岗位分配时间"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户 ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户 ID"},
 		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PROBATION", "ACTIVE", "LEAVE", "TERMINATED", "EXPIRED"}, Default: "ACTIVE"},
 	}
 	// SysUserPositionsTable holds the schema information for the "sys_user_positions" table.
@@ -3602,20 +3602,20 @@ var (
 	}
 	// SysUserRolesColumns holds the columns for the "sys_user_roles" table.
 	SysUserRolesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "user_id", Type: field.TypeUint32, Comment: "用户ID"},
-		{Name: "role_id", Type: field.TypeUint32, Comment: "角色ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "role_id", Type: field.TypeInt64, Comment: "角色ID"},
 		{Name: "start_at", Type: field.TypeTime, Nullable: true, Comment: "生效时间（UTC）"},
 		{Name: "end_at", Type: field.TypeTime, Nullable: true, Comment: "失效时间（UTC）"},
 		{Name: "assigned_at", Type: field.TypeTime, Nullable: true, Comment: "分配时间（UTC）"},
-		{Name: "assigned_by", Type: field.TypeUint32, Nullable: true, Comment: "分配者用户ID"},
+		{Name: "assigned_by", Type: field.TypeInt64, Nullable: true, Comment: "分配者用户ID"},
 		{Name: "is_primary", Type: field.TypeBool, Comment: "是否为主角色", Default: false},
 		{Name: "status", Type: field.TypeEnum, Comment: "岗位状态", Enums: []string{"PENDING", "ACTIVE", "DISABLED", "EXPIRED"}, Default: "ACTIVE"},
 	}
@@ -3685,20 +3685,20 @@ var (
 	}
 	// InvWarehousesColumns holds the columns for the "inv_warehouses" table.
 	InvWarehousesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "id"},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "created_by", Type: field.TypeInt64, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeInt64, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeInt64, Nullable: true, Comment: "删除者ID"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "tenant_id", Type: field.TypeInt64, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "仓库编码"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "仓库名称"},
 		{Name: "location", Type: field.TypeString, Nullable: true, Comment: "仓库地址"},
 		{Name: "enable", Type: field.TypeBool, Nullable: true, Comment: "启用/禁用仓库", Default: false},
-		{Name: "receiving_location_id", Type: field.TypeUint32, Nullable: true, Comment: "接收位置ID（仓库创建时自动生成的内部位置）", Default: 0},
+		{Name: "receiving_location_id", Type: field.TypeInt64, Nullable: true, Comment: "接收位置ID（仓库创建时自动生成的内部位置）", Default: 0},
 	}
 	// InvWarehousesTable holds the schema information for the "inv_warehouses" table.
 	InvWarehousesTable = &schema.Table{

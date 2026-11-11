@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ApprovalFlowStep {
+func ID(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ApprovalFlowStep {
+func IDEQ(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ApprovalFlowStep {
+func IDNEQ(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ApprovalFlowStep {
+func IDIn(ids ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ApprovalFlowStep {
+func IDNotIn(ids ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ApprovalFlowStep {
+func IDGT(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ApprovalFlowStep {
+func IDGTE(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ApprovalFlowStep {
+func IDLT(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ApprovalFlowStep {
+func IDLTE(id int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,12 +60,12 @@ func CreatedAt(v time.Time) predicate.ApprovalFlowStep {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.ApprovalFlowStep {
+func TenantID(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldTenantID, v))
 }
 
 // FlowID applies equality check predicate on the "flow_id" field. It's identical to FlowIDEQ.
-func FlowID(v uint32) predicate.ApprovalFlowStep {
+func FlowID(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldFlowID, v))
 }
 
@@ -135,42 +135,42 @@ func CreatedAtNotNil() predicate.ApprovalFlowStep {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.ApprovalFlowStep {
+func TenantIDEQ(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.ApprovalFlowStep {
+func TenantIDNEQ(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.ApprovalFlowStep {
+func TenantIDIn(vs ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.ApprovalFlowStep {
+func TenantIDNotIn(vs ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.ApprovalFlowStep {
+func TenantIDGT(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.ApprovalFlowStep {
+func TenantIDGTE(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.ApprovalFlowStep {
+func TenantIDLT(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.ApprovalFlowStep {
+func TenantIDLTE(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -185,42 +185,42 @@ func TenantIDNotNil() predicate.ApprovalFlowStep {
 }
 
 // FlowIDEQ applies the EQ predicate on the "flow_id" field.
-func FlowIDEQ(v uint32) predicate.ApprovalFlowStep {
+func FlowIDEQ(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldEQ(FieldFlowID, v))
 }
 
 // FlowIDNEQ applies the NEQ predicate on the "flow_id" field.
-func FlowIDNEQ(v uint32) predicate.ApprovalFlowStep {
+func FlowIDNEQ(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNEQ(FieldFlowID, v))
 }
 
 // FlowIDIn applies the In predicate on the "flow_id" field.
-func FlowIDIn(vs ...uint32) predicate.ApprovalFlowStep {
+func FlowIDIn(vs ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldIn(FieldFlowID, vs...))
 }
 
 // FlowIDNotIn applies the NotIn predicate on the "flow_id" field.
-func FlowIDNotIn(vs ...uint32) predicate.ApprovalFlowStep {
+func FlowIDNotIn(vs ...int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldNotIn(FieldFlowID, vs...))
 }
 
 // FlowIDGT applies the GT predicate on the "flow_id" field.
-func FlowIDGT(v uint32) predicate.ApprovalFlowStep {
+func FlowIDGT(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGT(FieldFlowID, v))
 }
 
 // FlowIDGTE applies the GTE predicate on the "flow_id" field.
-func FlowIDGTE(v uint32) predicate.ApprovalFlowStep {
+func FlowIDGTE(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldGTE(FieldFlowID, v))
 }
 
 // FlowIDLT applies the LT predicate on the "flow_id" field.
-func FlowIDLT(v uint32) predicate.ApprovalFlowStep {
+func FlowIDLT(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLT(FieldFlowID, v))
 }
 
 // FlowIDLTE applies the LTE predicate on the "flow_id" field.
-func FlowIDLTE(v uint32) predicate.ApprovalFlowStep {
+func FlowIDLTE(v int64) predicate.ApprovalFlowStep {
 	return predicate.ApprovalFlowStep(sql.FieldLTE(FieldFlowID, v))
 }
 

@@ -17,7 +17,7 @@ type StockLocation struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,19 +25,19 @@ type StockLocation struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 备注
 	Remark *string `json:"remark,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 位置名称
 	Name *string `json:"name,omitempty"`
 	// 父位置ID（预留层级，初始不用）
-	ParentID *uint32 `json:"parent_id,omitempty"`
+	ParentID *int64 `json:"parent_id,omitempty"`
 	// 物化路径（预留层级，初始为 /{id}/）
 	Path *string `json:"path,omitempty"`
 	// 位置用途：SUPPLIER=供应商（入库源），INTERNAL=内部仓库位置，CUSTOMER=客户（出库目的），INVENTORY_LOSS=盘点虚拟位置（盘盈源/盘亏目的）
@@ -78,7 +78,7 @@ func (_m *StockLocation) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = int64(value.Int64)
 		case stocklocation.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -104,22 +104,22 @@ func (_m *StockLocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case stocklocation.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case stocklocation.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case stocklocation.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -132,8 +132,8 @@ func (_m *StockLocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case stocklocation.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -146,8 +146,8 @@ func (_m *StockLocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				_m.ParentID = new(uint32)
-				*_m.ParentID = uint32(value.Int64)
+				_m.ParentID = new(int64)
+				*_m.ParentID = value.Int64
 			}
 		case stocklocation.FieldPath:
 			if value, ok := values[i].(*sql.NullString); !ok {

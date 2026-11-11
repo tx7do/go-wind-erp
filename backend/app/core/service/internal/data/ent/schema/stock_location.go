@@ -41,7 +41,7 @@ func (StockLocation) Fields() []ent.Field {
 			Nillable(),
 
 		// parent_id / path：预留层级字段（初始实现扁平，值为 /{id}/）。
-		field.Uint32("parent_id").
+		field.Int64("parent_id").
 			Comment("父位置ID（预留层级，初始不用）").
 			Default(0).
 			Optional().
@@ -73,11 +73,11 @@ func (StockLocation) Fields() []ent.Field {
 
 func (StockLocation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

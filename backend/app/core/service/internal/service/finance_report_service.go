@@ -214,7 +214,7 @@ func (s *FinanceReportService) customerStatement(
 	if err != nil {
 		return nil, err
 	}
-	recByID := make(map[uint32]*financeV1.Receivable, len(recs))
+	recByID := make(map[int64]*financeV1.Receivable, len(recs))
 	for _, rec := range recs {
 		recByID[rec.GetId()] = rec
 		if inRange(rec.CreatedAt, req.FromDate, req.ToDate) {
@@ -267,7 +267,7 @@ func (s *FinanceReportService) supplierStatement(
 	if err != nil {
 		return nil, err
 	}
-	payByID := make(map[uint32]*financeV1.Payable, len(pays))
+	payByID := make(map[int64]*financeV1.Payable, len(pays))
 	for _, p := range pays {
 		payByID[p.GetId()] = p
 		if inRange(p.CreatedAt, req.FromDate, req.ToDate) {

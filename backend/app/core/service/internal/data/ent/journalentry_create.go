@@ -37,13 +37,13 @@ func (_c *JournalEntryCreate) SetNillableCreatedAt(v *time.Time) *JournalEntryCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *JournalEntryCreate) SetCreatedBy(v uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetCreatedBy(v int64) *JournalEntryCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *JournalEntryCreate) SetNillableCreatedBy(v *uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetNillableCreatedBy(v *int64) *JournalEntryCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -51,13 +51,13 @@ func (_c *JournalEntryCreate) SetNillableCreatedBy(v *uint32) *JournalEntryCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *JournalEntryCreate) SetUpdatedBy(v uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetUpdatedBy(v int64) *JournalEntryCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *JournalEntryCreate) SetNillableUpdatedBy(v *uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetNillableUpdatedBy(v *int64) *JournalEntryCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -65,13 +65,13 @@ func (_c *JournalEntryCreate) SetNillableUpdatedBy(v *uint32) *JournalEntryCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *JournalEntryCreate) SetDeletedBy(v uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetDeletedBy(v int64) *JournalEntryCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *JournalEntryCreate) SetNillableDeletedBy(v *uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetNillableDeletedBy(v *int64) *JournalEntryCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *JournalEntryCreate) SetNillableDeletedBy(v *uint32) *JournalEntryCreat
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *JournalEntryCreate) SetTenantID(v uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetTenantID(v int64) *JournalEntryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *JournalEntryCreate) SetNillableTenantID(v *uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetNillableTenantID(v *int64) *JournalEntryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *JournalEntryCreate) SetNillableEntryDate(v *time.Time) *JournalEntryCr
 }
 
 // SetID sets the "id" field.
-func (_c *JournalEntryCreate) SetID(v uint32) *JournalEntryCreate {
+func (_c *JournalEntryCreate) SetID(v int64) *JournalEntryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -226,7 +226,7 @@ func (_c *JournalEntryCreate) sqlSave(ctx context.Context) (*JournalEntry, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -236,7 +236,7 @@ func (_c *JournalEntryCreate) sqlSave(ctx context.Context) (*JournalEntry, error
 func (_c *JournalEntryCreate) createSpec() (*JournalEntry, *sqlgraph.CreateSpec) {
 	var (
 		_node = &JournalEntry{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(journalentry.Table, sqlgraph.NewFieldSpec(journalentry.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(journalentry.Table, sqlgraph.NewFieldSpec(journalentry.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -248,19 +248,19 @@ func (_c *JournalEntryCreate) createSpec() (*JournalEntry, *sqlgraph.CreateSpec)
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(journalentry.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(journalentry.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(journalentry.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(journalentry.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(journalentry.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(journalentry.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(journalentry.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(journalentry.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.EntryNumber(); ok {
@@ -332,7 +332,7 @@ type (
 )
 
 // SetCreatedBy sets the "created_by" field.
-func (u *JournalEntryUpsert) SetCreatedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) SetCreatedBy(v int64) *JournalEntryUpsert {
 	u.Set(journalentry.FieldCreatedBy, v)
 	return u
 }
@@ -344,7 +344,7 @@ func (u *JournalEntryUpsert) UpdateCreatedBy() *JournalEntryUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *JournalEntryUpsert) AddCreatedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) AddCreatedBy(v int64) *JournalEntryUpsert {
 	u.Add(journalentry.FieldCreatedBy, v)
 	return u
 }
@@ -356,7 +356,7 @@ func (u *JournalEntryUpsert) ClearCreatedBy() *JournalEntryUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *JournalEntryUpsert) SetUpdatedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) SetUpdatedBy(v int64) *JournalEntryUpsert {
 	u.Set(journalentry.FieldUpdatedBy, v)
 	return u
 }
@@ -368,7 +368,7 @@ func (u *JournalEntryUpsert) UpdateUpdatedBy() *JournalEntryUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *JournalEntryUpsert) AddUpdatedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) AddUpdatedBy(v int64) *JournalEntryUpsert {
 	u.Add(journalentry.FieldUpdatedBy, v)
 	return u
 }
@@ -380,7 +380,7 @@ func (u *JournalEntryUpsert) ClearUpdatedBy() *JournalEntryUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *JournalEntryUpsert) SetDeletedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) SetDeletedBy(v int64) *JournalEntryUpsert {
 	u.Set(journalentry.FieldDeletedBy, v)
 	return u
 }
@@ -392,7 +392,7 @@ func (u *JournalEntryUpsert) UpdateDeletedBy() *JournalEntryUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *JournalEntryUpsert) AddDeletedBy(v uint32) *JournalEntryUpsert {
+func (u *JournalEntryUpsert) AddDeletedBy(v int64) *JournalEntryUpsert {
 	u.Add(journalentry.FieldDeletedBy, v)
 	return u
 }
@@ -530,14 +530,14 @@ func (u *JournalEntryUpsertOne) Update(set func(*JournalEntryUpsert)) *JournalEn
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *JournalEntryUpsertOne) SetCreatedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) SetCreatedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *JournalEntryUpsertOne) AddCreatedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) AddCreatedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -558,14 +558,14 @@ func (u *JournalEntryUpsertOne) ClearCreatedBy() *JournalEntryUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *JournalEntryUpsertOne) SetUpdatedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) SetUpdatedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *JournalEntryUpsertOne) AddUpdatedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) AddUpdatedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -586,14 +586,14 @@ func (u *JournalEntryUpsertOne) ClearUpdatedBy() *JournalEntryUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *JournalEntryUpsertOne) SetDeletedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) SetDeletedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *JournalEntryUpsertOne) AddDeletedBy(v uint32) *JournalEntryUpsertOne {
+func (u *JournalEntryUpsertOne) AddDeletedBy(v int64) *JournalEntryUpsertOne {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -713,7 +713,7 @@ func (u *JournalEntryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *JournalEntryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *JournalEntryUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -722,7 +722,7 @@ func (u *JournalEntryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *JournalEntryUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *JournalEntryUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -779,7 +779,7 @@ func (_c *JournalEntryCreateBulk) Save(ctx context.Context) ([]*JournalEntry, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -918,14 +918,14 @@ func (u *JournalEntryUpsertBulk) Update(set func(*JournalEntryUpsert)) *JournalE
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *JournalEntryUpsertBulk) SetCreatedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) SetCreatedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *JournalEntryUpsertBulk) AddCreatedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) AddCreatedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -946,14 +946,14 @@ func (u *JournalEntryUpsertBulk) ClearCreatedBy() *JournalEntryUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *JournalEntryUpsertBulk) SetUpdatedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) SetUpdatedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *JournalEntryUpsertBulk) AddUpdatedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) AddUpdatedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -974,14 +974,14 @@ func (u *JournalEntryUpsertBulk) ClearUpdatedBy() *JournalEntryUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *JournalEntryUpsertBulk) SetDeletedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) SetDeletedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *JournalEntryUpsertBulk) AddDeletedBy(v uint32) *JournalEntryUpsertBulk {
+func (u *JournalEntryUpsertBulk) AddDeletedBy(v int64) *JournalEntryUpsertBulk {
 	return u.Update(func(s *JournalEntryUpsert) {
 		s.AddDeletedBy(v)
 	})

@@ -63,7 +63,7 @@ message Payable {
     CANCELLED = 3; // 已取消
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -120,14 +120,14 @@ message Payable {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -151,7 +151,7 @@ message Payment {
     REJECTED = 2; // 已拒绝
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -164,7 +164,7 @@ message Payment {
     (gnostic.openapi.v3.property) = {description: "付款单号（服务端生成）"}
   ]; // 付款单号
 
-  optional uint32 payable_id = 3 [
+  optional int64 payable_id = 3 [
     json_name = "payableId",
     (gnostic.openapi.v3.property) = {description: "所属应付单ID"}
   ]; // 所属应付单ID
@@ -195,12 +195,12 @@ message Payment {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];  // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "付款操作人用户ID（服务端推导）"}]; // 付款操作人
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "付款操作人用户ID（服务端推导）"}]; // 付款操作人
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "付款时间"}];// 付款时间
 }
@@ -211,12 +211,12 @@ message Payment {
 
 message ListPayableResponse {
   repeated Payable items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetPayableRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -236,7 +236,7 @@ message CreatePayableRequest {
 
 message DeletePayableRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -244,11 +244,11 @@ message DeletePayableRequest {
 }
 
 message CancelPayableRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CountPayableResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // ==============================
@@ -257,12 +257,12 @@ message CountPayableResponse {
 
 message ListPaymentResponse {
   repeated Payment items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetPaymentRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -281,7 +281,7 @@ message CreatePaymentRequest {
 }
 
 message CountPaymentResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // 账龄分桶统计
@@ -326,7 +326,7 @@ message Receivable {
     CANCELLED = 3;
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -383,14 +383,14 @@ message Receivable {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ];
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
@@ -412,7 +412,7 @@ message Receipt {
     REJECTED = 2;
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {
@@ -425,7 +425,7 @@ message Receipt {
     (gnostic.openapi.v3.property) = {description: "收款单号（服务端生成）"}
   ];
 
-  optional uint32 receivable_id = 3 [
+  optional int64 receivable_id = 3 [
     json_name = "receivableId",
     (gnostic.openapi.v3.property) = {description: "所属应收单ID"}
   ];
@@ -456,12 +456,12 @@ message Receipt {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ];
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局"}
   ];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "收款操作人用户ID（服务端推导）"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "收款操作人用户ID（服务端推导）"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "收款时间"}];
 }
@@ -472,12 +472,12 @@ message Receipt {
 
 message ListReceivableResponse {
   repeated Receivable items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetReceivableRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ];
@@ -497,7 +497,7 @@ message CreateReceivableRequest {
 
 message DeleteReceivableRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ];
@@ -505,11 +505,11 @@ message DeleteReceivableRequest {
 }
 
 message CancelReceivableRequest {
-  uint32 id = 1;
+  int64 id = 1;
 }
 
 message CountReceivableResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // ==============================
@@ -518,12 +518,12 @@ message CountReceivableResponse {
 
 message ListReceiptResponse {
   repeated Receipt items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetReceiptRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ];
@@ -542,7 +542,7 @@ message CreateReceiptRequest {
 }
 
 message CountReceiptResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // ==============================
@@ -577,7 +577,7 @@ service AccountingService {
 
 // 会计科目
 message Account {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {description: "科目ID"}
@@ -610,12 +610,12 @@ message Account {
 
 message ListAccountResponse {
   repeated Account items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 记账凭证行
 message JournalLine {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {description: "行ID"}
@@ -648,7 +648,7 @@ message JournalLine {
 
 // 记账凭证（头 + 行）
 message JournalEntry {
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (google.api.field_behavior) = OPTIONAL,
     (gnostic.openapi.v3.property) = {description: "凭证ID"}
@@ -682,7 +682,7 @@ message JournalEntry {
     (gnostic.openapi.v3.property) = {description: "分录行"}
   ]; // 分录行
 
-  optional uint32 tenant_id = 20 [
+  optional int64 tenant_id = 20 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
@@ -710,7 +710,7 @@ message ListJournalEntryRequest {
 
 message ListJournalEntryResponse {
   repeated JournalEntry items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 message GetTrialBalanceRequest {

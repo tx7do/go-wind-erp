@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SalesOrderItem {
+func ID(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SalesOrderItem {
+func IDEQ(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SalesOrderItem {
+func IDNEQ(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SalesOrderItem {
+func IDIn(ids ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SalesOrderItem {
+func IDNotIn(ids ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SalesOrderItem {
+func IDGT(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SalesOrderItem {
+func IDGTE(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SalesOrderItem {
+func IDLT(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SalesOrderItem {
+func IDLTE(id int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLTE(FieldID, id))
 }
 
@@ -65,12 +65,12 @@ func Remark(v string) predicate.SalesOrderItem {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.SalesOrderItem {
+func TenantID(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // SoID applies equality check predicate on the "so_id" field. It's identical to SoIDEQ.
-func SoID(v uint32) predicate.SalesOrderItem {
+func SoID(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldSoID, v))
 }
 
@@ -225,42 +225,42 @@ func RemarkContainsFold(v string) predicate.SalesOrderItem {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.SalesOrderItem {
+func TenantIDEQ(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.SalesOrderItem {
+func TenantIDNEQ(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.SalesOrderItem {
+func TenantIDIn(vs ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.SalesOrderItem {
+func TenantIDNotIn(vs ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.SalesOrderItem {
+func TenantIDGT(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.SalesOrderItem {
+func TenantIDGTE(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.SalesOrderItem {
+func TenantIDLT(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.SalesOrderItem {
+func TenantIDLTE(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -275,42 +275,42 @@ func TenantIDNotNil() predicate.SalesOrderItem {
 }
 
 // SoIDEQ applies the EQ predicate on the "so_id" field.
-func SoIDEQ(v uint32) predicate.SalesOrderItem {
+func SoIDEQ(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldEQ(FieldSoID, v))
 }
 
 // SoIDNEQ applies the NEQ predicate on the "so_id" field.
-func SoIDNEQ(v uint32) predicate.SalesOrderItem {
+func SoIDNEQ(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNEQ(FieldSoID, v))
 }
 
 // SoIDIn applies the In predicate on the "so_id" field.
-func SoIDIn(vs ...uint32) predicate.SalesOrderItem {
+func SoIDIn(vs ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldIn(FieldSoID, vs...))
 }
 
 // SoIDNotIn applies the NotIn predicate on the "so_id" field.
-func SoIDNotIn(vs ...uint32) predicate.SalesOrderItem {
+func SoIDNotIn(vs ...int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldNotIn(FieldSoID, vs...))
 }
 
 // SoIDGT applies the GT predicate on the "so_id" field.
-func SoIDGT(v uint32) predicate.SalesOrderItem {
+func SoIDGT(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGT(FieldSoID, v))
 }
 
 // SoIDGTE applies the GTE predicate on the "so_id" field.
-func SoIDGTE(v uint32) predicate.SalesOrderItem {
+func SoIDGTE(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldGTE(FieldSoID, v))
 }
 
 // SoIDLT applies the LT predicate on the "so_id" field.
-func SoIDLT(v uint32) predicate.SalesOrderItem {
+func SoIDLT(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLT(FieldSoID, v))
 }
 
 // SoIDLTE applies the LTE predicate on the "so_id" field.
-func SoIDLTE(v uint32) predicate.SalesOrderItem {
+func SoIDLTE(v int64) predicate.SalesOrderItem {
 	return predicate.SalesOrderItem(sql.FieldLTE(FieldSoID, v))
 }
 

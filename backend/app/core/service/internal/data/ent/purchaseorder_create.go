@@ -65,13 +65,13 @@ func (_c *PurchaseOrderCreate) SetNillableDeletedAt(v *time.Time) *PurchaseOrder
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PurchaseOrderCreate) SetCreatedBy(v uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetCreatedBy(v int64) *PurchaseOrderCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PurchaseOrderCreate) SetNillableCreatedBy(v *uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetNillableCreatedBy(v *int64) *PurchaseOrderCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PurchaseOrderCreate) SetNillableCreatedBy(v *uint32) *PurchaseOrderCre
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PurchaseOrderCreate) SetUpdatedBy(v uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetUpdatedBy(v int64) *PurchaseOrderCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PurchaseOrderCreate) SetNillableUpdatedBy(v *uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetNillableUpdatedBy(v *int64) *PurchaseOrderCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PurchaseOrderCreate) SetNillableUpdatedBy(v *uint32) *PurchaseOrderCre
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PurchaseOrderCreate) SetDeletedBy(v uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetDeletedBy(v int64) *PurchaseOrderCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PurchaseOrderCreate) SetNillableDeletedBy(v *uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetNillableDeletedBy(v *int64) *PurchaseOrderCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *PurchaseOrderCreate) SetNillableRemark(v *string) *PurchaseOrderCreate
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PurchaseOrderCreate) SetTenantID(v uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetTenantID(v int64) *PurchaseOrderCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PurchaseOrderCreate) SetNillableTenantID(v *uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetNillableTenantID(v *int64) *PurchaseOrderCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -205,7 +205,7 @@ func (_c *PurchaseOrderCreate) SetNillableWarehouseCode(v *string) *PurchaseOrde
 }
 
 // SetID sets the "id" field.
-func (_c *PurchaseOrderCreate) SetID(v uint32) *PurchaseOrderCreate {
+func (_c *PurchaseOrderCreate) SetID(v int64) *PurchaseOrderCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -290,7 +290,7 @@ func (_c *PurchaseOrderCreate) sqlSave(ctx context.Context) (*PurchaseOrder, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -300,7 +300,7 @@ func (_c *PurchaseOrderCreate) sqlSave(ctx context.Context) (*PurchaseOrder, err
 func (_c *PurchaseOrderCreate) createSpec() (*PurchaseOrder, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PurchaseOrder{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(purchaseorder.Table, sqlgraph.NewFieldSpec(purchaseorder.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(purchaseorder.Table, sqlgraph.NewFieldSpec(purchaseorder.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -320,15 +320,15 @@ func (_c *PurchaseOrderCreate) createSpec() (*PurchaseOrder, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(purchaseorder.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(purchaseorder.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(purchaseorder.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(purchaseorder.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(purchaseorder.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(purchaseorder.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -336,7 +336,7 @@ func (_c *PurchaseOrderCreate) createSpec() (*PurchaseOrder, *sqlgraph.CreateSpe
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(purchaseorder.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(purchaseorder.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PoNumber(); ok {
@@ -448,7 +448,7 @@ func (u *PurchaseOrderUpsert) ClearDeletedAt() *PurchaseOrderUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PurchaseOrderUpsert) SetCreatedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) SetCreatedBy(v int64) *PurchaseOrderUpsert {
 	u.Set(purchaseorder.FieldCreatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *PurchaseOrderUpsert) UpdateCreatedBy() *PurchaseOrderUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PurchaseOrderUpsert) AddCreatedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) AddCreatedBy(v int64) *PurchaseOrderUpsert {
 	u.Add(purchaseorder.FieldCreatedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *PurchaseOrderUpsert) ClearCreatedBy() *PurchaseOrderUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PurchaseOrderUpsert) SetUpdatedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) SetUpdatedBy(v int64) *PurchaseOrderUpsert {
 	u.Set(purchaseorder.FieldUpdatedBy, v)
 	return u
 }
@@ -484,7 +484,7 @@ func (u *PurchaseOrderUpsert) UpdateUpdatedBy() *PurchaseOrderUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PurchaseOrderUpsert) AddUpdatedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) AddUpdatedBy(v int64) *PurchaseOrderUpsert {
 	u.Add(purchaseorder.FieldUpdatedBy, v)
 	return u
 }
@@ -496,7 +496,7 @@ func (u *PurchaseOrderUpsert) ClearUpdatedBy() *PurchaseOrderUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PurchaseOrderUpsert) SetDeletedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) SetDeletedBy(v int64) *PurchaseOrderUpsert {
 	u.Set(purchaseorder.FieldDeletedBy, v)
 	return u
 }
@@ -508,7 +508,7 @@ func (u *PurchaseOrderUpsert) UpdateDeletedBy() *PurchaseOrderUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PurchaseOrderUpsert) AddDeletedBy(v uint32) *PurchaseOrderUpsert {
+func (u *PurchaseOrderUpsert) AddDeletedBy(v int64) *PurchaseOrderUpsert {
 	u.Add(purchaseorder.FieldDeletedBy, v)
 	return u
 }
@@ -730,14 +730,14 @@ func (u *PurchaseOrderUpsertOne) ClearDeletedAt() *PurchaseOrderUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PurchaseOrderUpsertOne) SetCreatedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) SetCreatedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PurchaseOrderUpsertOne) AddCreatedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) AddCreatedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -758,14 +758,14 @@ func (u *PurchaseOrderUpsertOne) ClearCreatedBy() *PurchaseOrderUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PurchaseOrderUpsertOne) SetUpdatedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) SetUpdatedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PurchaseOrderUpsertOne) AddUpdatedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) AddUpdatedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -786,14 +786,14 @@ func (u *PurchaseOrderUpsertOne) ClearUpdatedBy() *PurchaseOrderUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PurchaseOrderUpsertOne) SetDeletedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) SetDeletedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PurchaseOrderUpsertOne) AddDeletedBy(v uint32) *PurchaseOrderUpsertOne {
+func (u *PurchaseOrderUpsertOne) AddDeletedBy(v int64) *PurchaseOrderUpsertOne {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -962,7 +962,7 @@ func (u *PurchaseOrderUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PurchaseOrderUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PurchaseOrderUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -971,7 +971,7 @@ func (u *PurchaseOrderUpsertOne) ID(ctx context.Context) (id uint32, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PurchaseOrderUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PurchaseOrderUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1028,7 +1028,7 @@ func (_c *PurchaseOrderCreateBulk) Save(ctx context.Context) ([]*PurchaseOrder, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1209,14 +1209,14 @@ func (u *PurchaseOrderUpsertBulk) ClearDeletedAt() *PurchaseOrderUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PurchaseOrderUpsertBulk) SetCreatedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) SetCreatedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PurchaseOrderUpsertBulk) AddCreatedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) AddCreatedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1237,14 +1237,14 @@ func (u *PurchaseOrderUpsertBulk) ClearCreatedBy() *PurchaseOrderUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PurchaseOrderUpsertBulk) SetUpdatedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) SetUpdatedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PurchaseOrderUpsertBulk) AddUpdatedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) AddUpdatedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1265,14 +1265,14 @@ func (u *PurchaseOrderUpsertBulk) ClearUpdatedBy() *PurchaseOrderUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PurchaseOrderUpsertBulk) SetDeletedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) SetDeletedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PurchaseOrderUpsertBulk) AddDeletedBy(v uint32) *PurchaseOrderUpsertBulk {
+func (u *PurchaseOrderUpsertBulk) AddDeletedBy(v int64) *PurchaseOrderUpsertBulk {
 	return u.Update(func(s *PurchaseOrderUpsert) {
 		s.AddDeletedBy(v)
 	})

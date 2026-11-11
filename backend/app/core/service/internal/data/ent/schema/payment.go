@@ -36,7 +36,7 @@ func (Payment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("payable_id").
+		field.Int64("payable_id").
 			Comment("所属应付单ID").
 			Default(0).
 			Optional().
@@ -76,11 +76,11 @@ func (Payment) Fields() []ent.Field {
 // Mixin of the Payment.
 func (Payment) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

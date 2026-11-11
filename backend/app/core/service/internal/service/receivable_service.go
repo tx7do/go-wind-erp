@@ -43,7 +43,7 @@ func (s *ReceivableService) Count(ctx context.Context, req *paginationV1.PagingR
 	if err != nil {
 		return nil, err
 	}
-	return &financeV1.CountReceivableResponse{Count: uint64(count)}, nil
+	return &financeV1.CountReceivableResponse{Count: int64(count)}, nil
 }
 
 func (s *ReceivableService) Get(ctx context.Context, req *financeV1.GetReceivableRequest) (*financeV1.Receivable, error) {

@@ -43,7 +43,7 @@ func (s *LocationService) Count(ctx context.Context, req *paginationV1.PagingReq
 	if err != nil {
 		return nil, err
 	}
-	return &inventoryV1.CountLocationResponse{Count: uint64(count)}, nil
+	return &inventoryV1.CountLocationResponse{Count: int64(count)}, nil
 }
 
 func (s *LocationService) Get(ctx context.Context, req *inventoryV1.GetLocationRequest) (*inventoryV1.StockLocation, error) {

@@ -79,11 +79,11 @@ var (
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultPriority holds the default value on creation for the "priority" field.
 	DefaultPriority int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

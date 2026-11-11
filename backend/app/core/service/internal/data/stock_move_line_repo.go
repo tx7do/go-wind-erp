@@ -52,14 +52,14 @@ func (r *StockMoveLineRepo) CountAll(ctx context.Context) (int64, error) {
 func (r *StockMoveLineRepo) CreateTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	moveID uint32,
-	pickingID uint32,
+	moveID int64,
+	pickingID int64,
 	productCode string,
-	sourceLocationID uint32,
-	destinationLocationID uint32,
+	sourceLocationID int64,
+	destinationLocationID int64,
 	executedQuantity int64,
 	unitCost int64,
-	lotID uint32,
+	lotID int64,
 ) error {
 	builder := tx.StockMoveLine.Create().
 		SetMoveID(moveID).
@@ -139,7 +139,7 @@ type CogsRow struct {
 	Total int64
 }
 
-func (r *StockMoveLineRepo) CogsByMonth(ctx context.Context, pickingIDs []uint32) ([]CogsRow, error) {
+func (r *StockMoveLineRepo) CogsByMonth(ctx context.Context, pickingIDs []int64) ([]CogsRow, error) {
 	if len(pickingIDs) == 0 {
 		return nil, nil
 	}

@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.StockMove {
+func ID(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.StockMove {
+func IDEQ(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.StockMove {
+func IDNEQ(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.StockMove {
+func IDIn(ids ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.StockMove {
+func IDNotIn(ids ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.StockMove {
+func IDGT(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.StockMove {
+func IDGTE(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.StockMove {
+func IDLT(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.StockMove {
+func IDLTE(id int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.StockMove {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.StockMove {
+func CreatedBy(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.StockMove {
+func UpdatedBy(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.StockMove {
+func DeletedBy(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -90,12 +90,12 @@ func Remark(v string) predicate.StockMove {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.StockMove {
+func TenantID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PickingID applies equality check predicate on the "picking_id" field. It's identical to PickingIDEQ.
-func PickingID(v uint32) predicate.StockMove {
+func PickingID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldPickingID, v))
 }
 
@@ -105,12 +105,12 @@ func ProductCode(v string) predicate.StockMove {
 }
 
 // SourceLocationID applies equality check predicate on the "source_location_id" field. It's identical to SourceLocationIDEQ.
-func SourceLocationID(v uint32) predicate.StockMove {
+func SourceLocationID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldSourceLocationID, v))
 }
 
 // DestinationLocationID applies equality check predicate on the "destination_location_id" field. It's identical to DestinationLocationIDEQ.
-func DestinationLocationID(v uint32) predicate.StockMove {
+func DestinationLocationID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldDestinationLocationID, v))
 }
 
@@ -120,12 +120,12 @@ func PlannedQuantity(v int64) predicate.StockMove {
 }
 
 // PurchaseOrderItemID applies equality check predicate on the "purchase_order_item_id" field. It's identical to PurchaseOrderItemIDEQ.
-func PurchaseOrderItemID(v uint32) predicate.StockMove {
+func PurchaseOrderItemID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldPurchaseOrderItemID, v))
 }
 
 // SalesOrderItemID applies equality check predicate on the "sales_order_item_id" field. It's identical to SalesOrderItemIDEQ.
-func SalesOrderItemID(v uint32) predicate.StockMove {
+func SalesOrderItemID(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldSalesOrderItemID, v))
 }
 
@@ -280,42 +280,42 @@ func DeletedAtNotNil() predicate.StockMove {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.StockMove {
+func CreatedByEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.StockMove {
+func CreatedByNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.StockMove {
+func CreatedByIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.StockMove {
+func CreatedByNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.StockMove {
+func CreatedByGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.StockMove {
+func CreatedByGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.StockMove {
+func CreatedByLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.StockMove {
+func CreatedByLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -330,42 +330,42 @@ func CreatedByNotNil() predicate.StockMove {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.StockMove {
+func UpdatedByEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.StockMove {
+func UpdatedByNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.StockMove {
+func UpdatedByIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.StockMove {
+func UpdatedByNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.StockMove {
+func UpdatedByGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.StockMove {
+func UpdatedByGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.StockMove {
+func UpdatedByLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.StockMove {
+func UpdatedByLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -380,42 +380,42 @@ func UpdatedByNotNil() predicate.StockMove {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.StockMove {
+func DeletedByEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.StockMove {
+func DeletedByNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.StockMove {
+func DeletedByIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.StockMove {
+func DeletedByNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.StockMove {
+func DeletedByGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.StockMove {
+func DeletedByGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.StockMove {
+func DeletedByLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.StockMove {
+func DeletedByLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -505,42 +505,42 @@ func RemarkContainsFold(v string) predicate.StockMove {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.StockMove {
+func TenantIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.StockMove {
+func TenantIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.StockMove {
+func TenantIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.StockMove {
+func TenantIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.StockMove {
+func TenantIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.StockMove {
+func TenantIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.StockMove {
+func TenantIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.StockMove {
+func TenantIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -555,42 +555,42 @@ func TenantIDNotNil() predicate.StockMove {
 }
 
 // PickingIDEQ applies the EQ predicate on the "picking_id" field.
-func PickingIDEQ(v uint32) predicate.StockMove {
+func PickingIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldPickingID, v))
 }
 
 // PickingIDNEQ applies the NEQ predicate on the "picking_id" field.
-func PickingIDNEQ(v uint32) predicate.StockMove {
+func PickingIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldPickingID, v))
 }
 
 // PickingIDIn applies the In predicate on the "picking_id" field.
-func PickingIDIn(vs ...uint32) predicate.StockMove {
+func PickingIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldPickingID, vs...))
 }
 
 // PickingIDNotIn applies the NotIn predicate on the "picking_id" field.
-func PickingIDNotIn(vs ...uint32) predicate.StockMove {
+func PickingIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldPickingID, vs...))
 }
 
 // PickingIDGT applies the GT predicate on the "picking_id" field.
-func PickingIDGT(v uint32) predicate.StockMove {
+func PickingIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldPickingID, v))
 }
 
 // PickingIDGTE applies the GTE predicate on the "picking_id" field.
-func PickingIDGTE(v uint32) predicate.StockMove {
+func PickingIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldPickingID, v))
 }
 
 // PickingIDLT applies the LT predicate on the "picking_id" field.
-func PickingIDLT(v uint32) predicate.StockMove {
+func PickingIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldPickingID, v))
 }
 
 // PickingIDLTE applies the LTE predicate on the "picking_id" field.
-func PickingIDLTE(v uint32) predicate.StockMove {
+func PickingIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldPickingID, v))
 }
 
@@ -680,42 +680,42 @@ func ProductCodeContainsFold(v string) predicate.StockMove {
 }
 
 // SourceLocationIDEQ applies the EQ predicate on the "source_location_id" field.
-func SourceLocationIDEQ(v uint32) predicate.StockMove {
+func SourceLocationIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDNEQ applies the NEQ predicate on the "source_location_id" field.
-func SourceLocationIDNEQ(v uint32) predicate.StockMove {
+func SourceLocationIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDIn applies the In predicate on the "source_location_id" field.
-func SourceLocationIDIn(vs ...uint32) predicate.StockMove {
+func SourceLocationIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldSourceLocationID, vs...))
 }
 
 // SourceLocationIDNotIn applies the NotIn predicate on the "source_location_id" field.
-func SourceLocationIDNotIn(vs ...uint32) predicate.StockMove {
+func SourceLocationIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldSourceLocationID, vs...))
 }
 
 // SourceLocationIDGT applies the GT predicate on the "source_location_id" field.
-func SourceLocationIDGT(v uint32) predicate.StockMove {
+func SourceLocationIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDGTE applies the GTE predicate on the "source_location_id" field.
-func SourceLocationIDGTE(v uint32) predicate.StockMove {
+func SourceLocationIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDLT applies the LT predicate on the "source_location_id" field.
-func SourceLocationIDLT(v uint32) predicate.StockMove {
+func SourceLocationIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDLTE applies the LTE predicate on the "source_location_id" field.
-func SourceLocationIDLTE(v uint32) predicate.StockMove {
+func SourceLocationIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldSourceLocationID, v))
 }
 
@@ -730,42 +730,42 @@ func SourceLocationIDNotNil() predicate.StockMove {
 }
 
 // DestinationLocationIDEQ applies the EQ predicate on the "destination_location_id" field.
-func DestinationLocationIDEQ(v uint32) predicate.StockMove {
+func DestinationLocationIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDNEQ applies the NEQ predicate on the "destination_location_id" field.
-func DestinationLocationIDNEQ(v uint32) predicate.StockMove {
+func DestinationLocationIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDIn applies the In predicate on the "destination_location_id" field.
-func DestinationLocationIDIn(vs ...uint32) predicate.StockMove {
+func DestinationLocationIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldDestinationLocationID, vs...))
 }
 
 // DestinationLocationIDNotIn applies the NotIn predicate on the "destination_location_id" field.
-func DestinationLocationIDNotIn(vs ...uint32) predicate.StockMove {
+func DestinationLocationIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldDestinationLocationID, vs...))
 }
 
 // DestinationLocationIDGT applies the GT predicate on the "destination_location_id" field.
-func DestinationLocationIDGT(v uint32) predicate.StockMove {
+func DestinationLocationIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDGTE applies the GTE predicate on the "destination_location_id" field.
-func DestinationLocationIDGTE(v uint32) predicate.StockMove {
+func DestinationLocationIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDLT applies the LT predicate on the "destination_location_id" field.
-func DestinationLocationIDLT(v uint32) predicate.StockMove {
+func DestinationLocationIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDLTE applies the LTE predicate on the "destination_location_id" field.
-func DestinationLocationIDLTE(v uint32) predicate.StockMove {
+func DestinationLocationIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldDestinationLocationID, v))
 }
 
@@ -860,42 +860,42 @@ func StateNotNil() predicate.StockMove {
 }
 
 // PurchaseOrderItemIDEQ applies the EQ predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDEQ(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldPurchaseOrderItemID, v))
 }
 
 // PurchaseOrderItemIDNEQ applies the NEQ predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDNEQ(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldPurchaseOrderItemID, v))
 }
 
 // PurchaseOrderItemIDIn applies the In predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDIn(vs ...uint32) predicate.StockMove {
+func PurchaseOrderItemIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldPurchaseOrderItemID, vs...))
 }
 
 // PurchaseOrderItemIDNotIn applies the NotIn predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDNotIn(vs ...uint32) predicate.StockMove {
+func PurchaseOrderItemIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldPurchaseOrderItemID, vs...))
 }
 
 // PurchaseOrderItemIDGT applies the GT predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDGT(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldPurchaseOrderItemID, v))
 }
 
 // PurchaseOrderItemIDGTE applies the GTE predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDGTE(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldPurchaseOrderItemID, v))
 }
 
 // PurchaseOrderItemIDLT applies the LT predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDLT(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldPurchaseOrderItemID, v))
 }
 
 // PurchaseOrderItemIDLTE applies the LTE predicate on the "purchase_order_item_id" field.
-func PurchaseOrderItemIDLTE(v uint32) predicate.StockMove {
+func PurchaseOrderItemIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldPurchaseOrderItemID, v))
 }
 
@@ -910,42 +910,42 @@ func PurchaseOrderItemIDNotNil() predicate.StockMove {
 }
 
 // SalesOrderItemIDEQ applies the EQ predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDEQ(v uint32) predicate.StockMove {
+func SalesOrderItemIDEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldEQ(FieldSalesOrderItemID, v))
 }
 
 // SalesOrderItemIDNEQ applies the NEQ predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDNEQ(v uint32) predicate.StockMove {
+func SalesOrderItemIDNEQ(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNEQ(FieldSalesOrderItemID, v))
 }
 
 // SalesOrderItemIDIn applies the In predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDIn(vs ...uint32) predicate.StockMove {
+func SalesOrderItemIDIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldIn(FieldSalesOrderItemID, vs...))
 }
 
 // SalesOrderItemIDNotIn applies the NotIn predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDNotIn(vs ...uint32) predicate.StockMove {
+func SalesOrderItemIDNotIn(vs ...int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldNotIn(FieldSalesOrderItemID, vs...))
 }
 
 // SalesOrderItemIDGT applies the GT predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDGT(v uint32) predicate.StockMove {
+func SalesOrderItemIDGT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGT(FieldSalesOrderItemID, v))
 }
 
 // SalesOrderItemIDGTE applies the GTE predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDGTE(v uint32) predicate.StockMove {
+func SalesOrderItemIDGTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldGTE(FieldSalesOrderItemID, v))
 }
 
 // SalesOrderItemIDLT applies the LT predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDLT(v uint32) predicate.StockMove {
+func SalesOrderItemIDLT(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLT(FieldSalesOrderItemID, v))
 }
 
 // SalesOrderItemIDLTE applies the LTE predicate on the "sales_order_item_id" field.
-func SalesOrderItemIDLTE(v uint32) predicate.StockMove {
+func SalesOrderItemIDLTE(v int64) predicate.StockMove {
 	return predicate.StockMove(sql.FieldLTE(FieldSalesOrderItemID, v))
 }
 

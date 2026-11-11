@@ -70,14 +70,14 @@ func (_u *ReceiptUpdate) ClearDeletedAt() *ReceiptUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ReceiptUpdate) SetCreatedBy(v uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetCreatedBy(v int64) *ReceiptUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ReceiptUpdate) SetNillableCreatedBy(v *uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetNillableCreatedBy(v *int64) *ReceiptUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ReceiptUpdate) SetNillableCreatedBy(v *uint32) *ReceiptUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ReceiptUpdate) AddCreatedBy(v int32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) AddCreatedBy(v int64) *ReceiptUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ReceiptUpdate) ClearCreatedBy() *ReceiptUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ReceiptUpdate) SetUpdatedBy(v uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetUpdatedBy(v int64) *ReceiptUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ReceiptUpdate) SetNillableUpdatedBy(v *uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetNillableUpdatedBy(v *int64) *ReceiptUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ReceiptUpdate) SetNillableUpdatedBy(v *uint32) *ReceiptUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ReceiptUpdate) AddUpdatedBy(v int32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) AddUpdatedBy(v int64) *ReceiptUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ReceiptUpdate) ClearUpdatedBy() *ReceiptUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ReceiptUpdate) SetDeletedBy(v uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetDeletedBy(v int64) *ReceiptUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ReceiptUpdate) SetNillableDeletedBy(v *uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetNillableDeletedBy(v *int64) *ReceiptUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ReceiptUpdate) SetNillableDeletedBy(v *uint32) *ReceiptUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ReceiptUpdate) AddDeletedBy(v int32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) AddDeletedBy(v int64) *ReceiptUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -191,14 +191,14 @@ func (_u *ReceiptUpdate) ClearReceiptNumber() *ReceiptUpdate {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (_u *ReceiptUpdate) SetReceivableID(v uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetReceivableID(v int64) *ReceiptUpdate {
 	_u.mutation.ResetReceivableID()
 	_u.mutation.SetReceivableID(v)
 	return _u
 }
 
 // SetNillableReceivableID sets the "receivable_id" field if the given value is not nil.
-func (_u *ReceiptUpdate) SetNillableReceivableID(v *uint32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) SetNillableReceivableID(v *int64) *ReceiptUpdate {
 	if v != nil {
 		_u.SetReceivableID(*v)
 	}
@@ -206,7 +206,7 @@ func (_u *ReceiptUpdate) SetNillableReceivableID(v *uint32) *ReceiptUpdate {
 }
 
 // AddReceivableID adds value to the "receivable_id" field.
-func (_u *ReceiptUpdate) AddReceivableID(v int32) *ReceiptUpdate {
+func (_u *ReceiptUpdate) AddReceivableID(v int64) *ReceiptUpdate {
 	_u.mutation.AddReceivableID(v)
 	return _u
 }
@@ -341,7 +341,7 @@ func (_u *ReceiptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(receipt.Table, receipt.Columns, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(receipt.Table, receipt.Columns, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -365,31 +365,31 @@ func (_u *ReceiptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(receipt.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(receipt.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(receipt.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(receipt.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(receipt.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(receipt.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(receipt.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(receipt.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(receipt.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(receipt.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(receipt.FieldRemark, field.TypeString, value)
@@ -398,7 +398,7 @@ func (_u *ReceiptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(receipt.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(receipt.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(receipt.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ReceiptNumber(); ok {
 		_spec.SetField(receipt.FieldReceiptNumber, field.TypeString, value)
@@ -407,13 +407,13 @@ func (_u *ReceiptUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(receipt.FieldReceiptNumber, field.TypeString)
 	}
 	if value, ok := _u.mutation.ReceivableID(); ok {
-		_spec.SetField(receipt.FieldReceivableID, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldReceivableID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedReceivableID(); ok {
-		_spec.AddField(receipt.FieldReceivableID, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldReceivableID, field.TypeInt64, value)
 	}
 	if _u.mutation.ReceivableIDCleared() {
-		_spec.ClearField(receipt.FieldReceivableID, field.TypeUint32)
+		_spec.ClearField(receipt.FieldReceivableID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(receipt.FieldAmount, field.TypeInt64, value)
@@ -499,14 +499,14 @@ func (_u *ReceiptUpdateOne) ClearDeletedAt() *ReceiptUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ReceiptUpdateOne) SetCreatedBy(v uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetCreatedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ReceiptUpdateOne) SetNillableCreatedBy(v *uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetNillableCreatedBy(v *int64) *ReceiptUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -514,7 +514,7 @@ func (_u *ReceiptUpdateOne) SetNillableCreatedBy(v *uint32) *ReceiptUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ReceiptUpdateOne) AddCreatedBy(v int32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) AddCreatedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -526,14 +526,14 @@ func (_u *ReceiptUpdateOne) ClearCreatedBy() *ReceiptUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ReceiptUpdateOne) SetUpdatedBy(v uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetUpdatedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ReceiptUpdateOne) SetNillableUpdatedBy(v *uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetNillableUpdatedBy(v *int64) *ReceiptUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -541,7 +541,7 @@ func (_u *ReceiptUpdateOne) SetNillableUpdatedBy(v *uint32) *ReceiptUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ReceiptUpdateOne) AddUpdatedBy(v int32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) AddUpdatedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -553,14 +553,14 @@ func (_u *ReceiptUpdateOne) ClearUpdatedBy() *ReceiptUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ReceiptUpdateOne) SetDeletedBy(v uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetDeletedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ReceiptUpdateOne) SetNillableDeletedBy(v *uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetNillableDeletedBy(v *int64) *ReceiptUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -568,7 +568,7 @@ func (_u *ReceiptUpdateOne) SetNillableDeletedBy(v *uint32) *ReceiptUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ReceiptUpdateOne) AddDeletedBy(v int32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) AddDeletedBy(v int64) *ReceiptUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -620,14 +620,14 @@ func (_u *ReceiptUpdateOne) ClearReceiptNumber() *ReceiptUpdateOne {
 }
 
 // SetReceivableID sets the "receivable_id" field.
-func (_u *ReceiptUpdateOne) SetReceivableID(v uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetReceivableID(v int64) *ReceiptUpdateOne {
 	_u.mutation.ResetReceivableID()
 	_u.mutation.SetReceivableID(v)
 	return _u
 }
 
 // SetNillableReceivableID sets the "receivable_id" field if the given value is not nil.
-func (_u *ReceiptUpdateOne) SetNillableReceivableID(v *uint32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) SetNillableReceivableID(v *int64) *ReceiptUpdateOne {
 	if v != nil {
 		_u.SetReceivableID(*v)
 	}
@@ -635,7 +635,7 @@ func (_u *ReceiptUpdateOne) SetNillableReceivableID(v *uint32) *ReceiptUpdateOne
 }
 
 // AddReceivableID adds value to the "receivable_id" field.
-func (_u *ReceiptUpdateOne) AddReceivableID(v int32) *ReceiptUpdateOne {
+func (_u *ReceiptUpdateOne) AddReceivableID(v int64) *ReceiptUpdateOne {
 	_u.mutation.AddReceivableID(v)
 	return _u
 }
@@ -783,7 +783,7 @@ func (_u *ReceiptUpdateOne) sqlSave(ctx context.Context) (_node *Receipt, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(receipt.Table, receipt.Columns, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(receipt.Table, receipt.Columns, sqlgraph.NewFieldSpec(receipt.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Receipt.id" for update`)}
@@ -824,31 +824,31 @@ func (_u *ReceiptUpdateOne) sqlSave(ctx context.Context) (_node *Receipt, err er
 		_spec.ClearField(receipt.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(receipt.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(receipt.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(receipt.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(receipt.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(receipt.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(receipt.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(receipt.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(receipt.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(receipt.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(receipt.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(receipt.FieldRemark, field.TypeString, value)
@@ -857,7 +857,7 @@ func (_u *ReceiptUpdateOne) sqlSave(ctx context.Context) (_node *Receipt, err er
 		_spec.ClearField(receipt.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(receipt.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(receipt.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ReceiptNumber(); ok {
 		_spec.SetField(receipt.FieldReceiptNumber, field.TypeString, value)
@@ -866,13 +866,13 @@ func (_u *ReceiptUpdateOne) sqlSave(ctx context.Context) (_node *Receipt, err er
 		_spec.ClearField(receipt.FieldReceiptNumber, field.TypeString)
 	}
 	if value, ok := _u.mutation.ReceivableID(); ok {
-		_spec.SetField(receipt.FieldReceivableID, field.TypeUint32, value)
+		_spec.SetField(receipt.FieldReceivableID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedReceivableID(); ok {
-		_spec.AddField(receipt.FieldReceivableID, field.TypeUint32, value)
+		_spec.AddField(receipt.FieldReceivableID, field.TypeInt64, value)
 	}
 	if _u.mutation.ReceivableIDCleared() {
-		_spec.ClearField(receipt.FieldReceivableID, field.TypeUint32)
+		_spec.ClearField(receipt.FieldReceivableID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(receipt.FieldAmount, field.TypeInt64, value)

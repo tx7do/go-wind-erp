@@ -49,7 +49,7 @@ func (s *StockQuantService) Count(ctx context.Context, req *paginationV1.PagingR
 	if err != nil {
 		return nil, err
 	}
-	return &inventoryV1.CountStockQuantResponse{Count: uint64(count)}, nil
+	return &inventoryV1.CountStockQuantResponse{Count: int64(count)}, nil
 }
 
 func (s *StockQuantService) Get(ctx context.Context, req *inventoryV1.GetStockQuantRequest) (*inventoryV1.StockQuant, error) {

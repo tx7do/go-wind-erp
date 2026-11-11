@@ -20,34 +20,34 @@ import (
 // 解析失败（Host 未配 domain 等）不回退此 viewer，而由中间件注入 viewer.NewNoopContext
 // fail-closed。
 type AnonymousTenantViewer struct {
-	tid     uint64
+	tid     int64
 	traceID string
 }
 
 // NewAnonymousTenantViewer 构造一个绑定指定 tenant 的只读匿名 viewer。
-func NewAnonymousTenantViewer(tid uint64, traceID string) viewer.Context {
+func NewAnonymousTenantViewer(tid int64, traceID string) viewer.Context {
 	return AnonymousTenantViewer{tid: tid, traceID: traceID}
 }
 
 // NewAnonymousTenantViewerContext 构造一个绑定指定 tenant 的匿名 viewer 并
 // 注入到 context 中，用于系统后台任务中需要按某 tenant 隔离写入/读取的场景
 // （如演示数据灌入：先用 SystemViewer 建租户，再切换为该租户作用域灌入域数据）。
-func NewAnonymousTenantViewerContext(ctx context.Context, tid uint32, traceID string) context.Context {
-	return viewer.WithContext(ctx, NewAnonymousTenantViewer(uint64(tid), traceID))
+func NewAnonymousTenantViewerContext(ctx context.Context, tid int64, traceID string) context.Context {
+	return viewer.WithContext(ctx, NewAnonymousTenantViewer(int64(tid), traceID))
 }
 
 // UserID 返回当前用户ID（匿名访问者无用户身份）
-func (v AnonymousTenantViewer) UserID() uint64 {
+func (v AnonymousTenantViewer) UserID() int64 {
 	return 0
 }
 
 // TenantID 返回解析到的租户ID
-func (v AnonymousTenantViewer) TenantID() uint64 {
+func (v AnonymousTenantViewer) TenantID() int64 {
 	return v.tid
 }
 
 // OrgUnitID 返回当前身份挂载的组织单元 ID（匿名无）
-func (v AnonymousTenantViewer) OrgUnitID() uint64 {
+func (v AnonymousTenantViewer) OrgUnitID() int64 {
 	return 0
 }
 

@@ -50,7 +50,7 @@ func TestStockQuantQuantityAtomicity(t *testing.T) {
 	}
 
 	created, err := client.StockQuant.Create().
-		SetNillableLocationID(trans.Ptr(uint32(1))).
+		SetNillableLocationID(trans.Ptr(int64(1))).
 		SetNillableProductCode(trans.Ptr("SKU-TEST")).
 		SetNillableQuantity(trans.Ptr(int64(0))).
 		Save(ctx)

@@ -221,7 +221,7 @@ func (s *DemoDataService) seedDomain(ctx context.Context) error {
 	return nil
 }
 
-func (s *DemoDataService) resolveDemoTenantID(ctx context.Context) (uint32, error) {
+func (s *DemoDataService) resolveDemoTenantID(ctx context.Context) (int64, error) {
 	// 创建刚返回 emptypb.Empty，拿不到 id；以 NoPaging 列出租户后按 code 匹配
 	// 取回新建演示租户的 id，用于切换租户作用域 viewer。
 	noPaging := true
@@ -237,7 +237,7 @@ func (s *DemoDataService) resolveDemoTenantID(ctx context.Context) (uint32, erro
 	return 0, fmt.Errorf("demo tenant %q not found after creation", demoTenantCode)
 }
 
-func demoU32Ptr(v uint32) *uint32 { return &v }
+func demoU32Ptr(v int64) *int64 { return &v }
 
 const (
 	demoTenantCode     = "demo"

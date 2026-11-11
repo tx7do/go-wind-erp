@@ -37,13 +37,13 @@ func (_c *JournalLineCreate) SetNillableCreatedAt(v *time.Time) *JournalLineCrea
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *JournalLineCreate) SetTenantID(v uint32) *JournalLineCreate {
+func (_c *JournalLineCreate) SetTenantID(v int64) *JournalLineCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *JournalLineCreate) SetNillableTenantID(v *uint32) *JournalLineCreate {
+func (_c *JournalLineCreate) SetNillableTenantID(v *int64) *JournalLineCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -51,13 +51,13 @@ func (_c *JournalLineCreate) SetNillableTenantID(v *uint32) *JournalLineCreate {
 }
 
 // SetEntryID sets the "entry_id" field.
-func (_c *JournalLineCreate) SetEntryID(v uint32) *JournalLineCreate {
+func (_c *JournalLineCreate) SetEntryID(v int64) *JournalLineCreate {
 	_c.mutation.SetEntryID(v)
 	return _c
 }
 
 // SetNillableEntryID sets the "entry_id" field if the given value is not nil.
-func (_c *JournalLineCreate) SetNillableEntryID(v *uint32) *JournalLineCreate {
+func (_c *JournalLineCreate) SetNillableEntryID(v *int64) *JournalLineCreate {
 	if v != nil {
 		_c.SetEntryID(*v)
 	}
@@ -121,7 +121,7 @@ func (_c *JournalLineCreate) SetNillableCredit(v *int64) *JournalLineCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *JournalLineCreate) SetID(v uint32) *JournalLineCreate {
+func (_c *JournalLineCreate) SetID(v int64) *JournalLineCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -210,7 +210,7 @@ func (_c *JournalLineCreate) sqlSave(ctx context.Context) (*JournalLine, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -220,7 +220,7 @@ func (_c *JournalLineCreate) sqlSave(ctx context.Context) (*JournalLine, error) 
 func (_c *JournalLineCreate) createSpec() (*JournalLine, *sqlgraph.CreateSpec) {
 	var (
 		_node = &JournalLine{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(journalline.Table, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(journalline.Table, sqlgraph.NewFieldSpec(journalline.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -232,11 +232,11 @@ func (_c *JournalLineCreate) createSpec() (*JournalLine, *sqlgraph.CreateSpec) {
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(journalline.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(journalline.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.EntryID(); ok {
-		_spec.SetField(journalline.FieldEntryID, field.TypeUint32, value)
+		_spec.SetField(journalline.FieldEntryID, field.TypeInt64, value)
 		_node.EntryID = &value
 	}
 	if value, ok := _c.mutation.AccountCode(); ok {
@@ -308,7 +308,7 @@ type (
 )
 
 // SetEntryID sets the "entry_id" field.
-func (u *JournalLineUpsert) SetEntryID(v uint32) *JournalLineUpsert {
+func (u *JournalLineUpsert) SetEntryID(v int64) *JournalLineUpsert {
 	u.Set(journalline.FieldEntryID, v)
 	return u
 }
@@ -320,7 +320,7 @@ func (u *JournalLineUpsert) UpdateEntryID() *JournalLineUpsert {
 }
 
 // AddEntryID adds v to the "entry_id" field.
-func (u *JournalLineUpsert) AddEntryID(v uint32) *JournalLineUpsert {
+func (u *JournalLineUpsert) AddEntryID(v int64) *JournalLineUpsert {
 	u.Add(journalline.FieldEntryID, v)
 	return u
 }
@@ -470,14 +470,14 @@ func (u *JournalLineUpsertOne) Update(set func(*JournalLineUpsert)) *JournalLine
 }
 
 // SetEntryID sets the "entry_id" field.
-func (u *JournalLineUpsertOne) SetEntryID(v uint32) *JournalLineUpsertOne {
+func (u *JournalLineUpsertOne) SetEntryID(v int64) *JournalLineUpsertOne {
 	return u.Update(func(s *JournalLineUpsert) {
 		s.SetEntryID(v)
 	})
 }
 
 // AddEntryID adds v to the "entry_id" field.
-func (u *JournalLineUpsertOne) AddEntryID(v uint32) *JournalLineUpsertOne {
+func (u *JournalLineUpsertOne) AddEntryID(v int64) *JournalLineUpsertOne {
 	return u.Update(func(s *JournalLineUpsert) {
 		s.AddEntryID(v)
 	})
@@ -611,7 +611,7 @@ func (u *JournalLineUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *JournalLineUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *JournalLineUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -620,7 +620,7 @@ func (u *JournalLineUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *JournalLineUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *JournalLineUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -677,7 +677,7 @@ func (_c *JournalLineCreateBulk) Save(ctx context.Context) ([]*JournalLine, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -816,14 +816,14 @@ func (u *JournalLineUpsertBulk) Update(set func(*JournalLineUpsert)) *JournalLin
 }
 
 // SetEntryID sets the "entry_id" field.
-func (u *JournalLineUpsertBulk) SetEntryID(v uint32) *JournalLineUpsertBulk {
+func (u *JournalLineUpsertBulk) SetEntryID(v int64) *JournalLineUpsertBulk {
 	return u.Update(func(s *JournalLineUpsert) {
 		s.SetEntryID(v)
 	})
 }
 
 // AddEntryID adds v to the "entry_id" field.
-func (u *JournalLineUpsertBulk) AddEntryID(v uint32) *JournalLineUpsertBulk {
+func (u *JournalLineUpsertBulk) AddEntryID(v int64) *JournalLineUpsertBulk {
 	return u.Update(func(s *JournalLineUpsert) {
 		s.AddEntryID(v)
 	})

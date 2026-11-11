@@ -35,7 +35,7 @@ func (StockQuant) Annotations() []schema.Annotation {
 func (StockQuant) Fields() []ent.Field {
 	return []ent.Field{
 		// location_id：该量所在的位置（仅 INTERNAL）。
-		field.Uint32("location_id").
+		field.Int64("location_id").
 			Comment("所在位置ID").
 			Default(0).
 			Optional().
@@ -64,11 +64,11 @@ func (StockQuant) Fields() []ent.Field {
 
 func (StockQuant) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, appmixin.SoftDeleteQuery{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

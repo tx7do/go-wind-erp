@@ -30,7 +30,7 @@ func (PurchaseOrderItem) Annotations() []schema.Annotation {
 // Fields of the PurchaseOrderItem.
 func (PurchaseOrderItem) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("po_id").
+		field.Int64("po_id").
 			Comment("所属采购单ID").
 			Default(0).
 			Optional().
@@ -70,10 +70,10 @@ func (PurchaseOrderItem) Fields() []ent.Field {
 // Mixin of the PurchaseOrderItem.
 func (PurchaseOrderItem) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
 		mixin.Remark{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

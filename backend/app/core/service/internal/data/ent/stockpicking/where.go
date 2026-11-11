@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.StockPicking {
+func ID(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.StockPicking {
+func IDEQ(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.StockPicking {
+func IDNEQ(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.StockPicking {
+func IDIn(ids ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.StockPicking {
+func IDNotIn(ids ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.StockPicking {
+func IDGT(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.StockPicking {
+func IDGTE(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.StockPicking {
+func IDLT(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.StockPicking {
+func IDLTE(id int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.StockPicking {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.StockPicking {
+func CreatedBy(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.StockPicking {
+func UpdatedBy(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.StockPicking {
+func DeletedBy(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -90,7 +90,7 @@ func Remark(v string) predicate.StockPicking {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.StockPicking {
+func TenantID(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -100,17 +100,17 @@ func PickingNumber(v string) predicate.StockPicking {
 }
 
 // SourceLocationID applies equality check predicate on the "source_location_id" field. It's identical to SourceLocationIDEQ.
-func SourceLocationID(v uint32) predicate.StockPicking {
+func SourceLocationID(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldSourceLocationID, v))
 }
 
 // DestinationLocationID applies equality check predicate on the "destination_location_id" field. It's identical to DestinationLocationIDEQ.
-func DestinationLocationID(v uint32) predicate.StockPicking {
+func DestinationLocationID(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldDestinationLocationID, v))
 }
 
 // PurchaseOrderID applies equality check predicate on the "purchase_order_id" field. It's identical to PurchaseOrderIDEQ.
-func PurchaseOrderID(v uint32) predicate.StockPicking {
+func PurchaseOrderID(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldPurchaseOrderID, v))
 }
 
@@ -270,42 +270,42 @@ func DeletedAtNotNil() predicate.StockPicking {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.StockPicking {
+func CreatedByEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.StockPicking {
+func CreatedByNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.StockPicking {
+func CreatedByIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.StockPicking {
+func CreatedByNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.StockPicking {
+func CreatedByGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.StockPicking {
+func CreatedByGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.StockPicking {
+func CreatedByLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.StockPicking {
+func CreatedByLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -320,42 +320,42 @@ func CreatedByNotNil() predicate.StockPicking {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.StockPicking {
+func UpdatedByEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.StockPicking {
+func UpdatedByNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.StockPicking {
+func UpdatedByIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.StockPicking {
+func UpdatedByNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.StockPicking {
+func UpdatedByGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.StockPicking {
+func UpdatedByGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.StockPicking {
+func UpdatedByLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.StockPicking {
+func UpdatedByLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -370,42 +370,42 @@ func UpdatedByNotNil() predicate.StockPicking {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.StockPicking {
+func DeletedByEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.StockPicking {
+func DeletedByNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.StockPicking {
+func DeletedByIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.StockPicking {
+func DeletedByNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.StockPicking {
+func DeletedByGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.StockPicking {
+func DeletedByGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.StockPicking {
+func DeletedByLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.StockPicking {
+func DeletedByLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -495,42 +495,42 @@ func RemarkContainsFold(v string) predicate.StockPicking {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.StockPicking {
+func TenantIDEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.StockPicking {
+func TenantIDNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.StockPicking {
+func TenantIDIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.StockPicking {
+func TenantIDNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.StockPicking {
+func TenantIDGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.StockPicking {
+func TenantIDGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.StockPicking {
+func TenantIDLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.StockPicking {
+func TenantIDLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -650,42 +650,42 @@ func PickingTypeNotNil() predicate.StockPicking {
 }
 
 // SourceLocationIDEQ applies the EQ predicate on the "source_location_id" field.
-func SourceLocationIDEQ(v uint32) predicate.StockPicking {
+func SourceLocationIDEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDNEQ applies the NEQ predicate on the "source_location_id" field.
-func SourceLocationIDNEQ(v uint32) predicate.StockPicking {
+func SourceLocationIDNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDIn applies the In predicate on the "source_location_id" field.
-func SourceLocationIDIn(vs ...uint32) predicate.StockPicking {
+func SourceLocationIDIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldSourceLocationID, vs...))
 }
 
 // SourceLocationIDNotIn applies the NotIn predicate on the "source_location_id" field.
-func SourceLocationIDNotIn(vs ...uint32) predicate.StockPicking {
+func SourceLocationIDNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldSourceLocationID, vs...))
 }
 
 // SourceLocationIDGT applies the GT predicate on the "source_location_id" field.
-func SourceLocationIDGT(v uint32) predicate.StockPicking {
+func SourceLocationIDGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDGTE applies the GTE predicate on the "source_location_id" field.
-func SourceLocationIDGTE(v uint32) predicate.StockPicking {
+func SourceLocationIDGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDLT applies the LT predicate on the "source_location_id" field.
-func SourceLocationIDLT(v uint32) predicate.StockPicking {
+func SourceLocationIDLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldSourceLocationID, v))
 }
 
 // SourceLocationIDLTE applies the LTE predicate on the "source_location_id" field.
-func SourceLocationIDLTE(v uint32) predicate.StockPicking {
+func SourceLocationIDLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldSourceLocationID, v))
 }
 
@@ -700,42 +700,42 @@ func SourceLocationIDNotNil() predicate.StockPicking {
 }
 
 // DestinationLocationIDEQ applies the EQ predicate on the "destination_location_id" field.
-func DestinationLocationIDEQ(v uint32) predicate.StockPicking {
+func DestinationLocationIDEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDNEQ applies the NEQ predicate on the "destination_location_id" field.
-func DestinationLocationIDNEQ(v uint32) predicate.StockPicking {
+func DestinationLocationIDNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDIn applies the In predicate on the "destination_location_id" field.
-func DestinationLocationIDIn(vs ...uint32) predicate.StockPicking {
+func DestinationLocationIDIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldDestinationLocationID, vs...))
 }
 
 // DestinationLocationIDNotIn applies the NotIn predicate on the "destination_location_id" field.
-func DestinationLocationIDNotIn(vs ...uint32) predicate.StockPicking {
+func DestinationLocationIDNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldDestinationLocationID, vs...))
 }
 
 // DestinationLocationIDGT applies the GT predicate on the "destination_location_id" field.
-func DestinationLocationIDGT(v uint32) predicate.StockPicking {
+func DestinationLocationIDGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDGTE applies the GTE predicate on the "destination_location_id" field.
-func DestinationLocationIDGTE(v uint32) predicate.StockPicking {
+func DestinationLocationIDGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDLT applies the LT predicate on the "destination_location_id" field.
-func DestinationLocationIDLT(v uint32) predicate.StockPicking {
+func DestinationLocationIDLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldDestinationLocationID, v))
 }
 
 // DestinationLocationIDLTE applies the LTE predicate on the "destination_location_id" field.
-func DestinationLocationIDLTE(v uint32) predicate.StockPicking {
+func DestinationLocationIDLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldDestinationLocationID, v))
 }
 
@@ -750,42 +750,42 @@ func DestinationLocationIDNotNil() predicate.StockPicking {
 }
 
 // PurchaseOrderIDEQ applies the EQ predicate on the "purchase_order_id" field.
-func PurchaseOrderIDEQ(v uint32) predicate.StockPicking {
+func PurchaseOrderIDEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldEQ(FieldPurchaseOrderID, v))
 }
 
 // PurchaseOrderIDNEQ applies the NEQ predicate on the "purchase_order_id" field.
-func PurchaseOrderIDNEQ(v uint32) predicate.StockPicking {
+func PurchaseOrderIDNEQ(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNEQ(FieldPurchaseOrderID, v))
 }
 
 // PurchaseOrderIDIn applies the In predicate on the "purchase_order_id" field.
-func PurchaseOrderIDIn(vs ...uint32) predicate.StockPicking {
+func PurchaseOrderIDIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldIn(FieldPurchaseOrderID, vs...))
 }
 
 // PurchaseOrderIDNotIn applies the NotIn predicate on the "purchase_order_id" field.
-func PurchaseOrderIDNotIn(vs ...uint32) predicate.StockPicking {
+func PurchaseOrderIDNotIn(vs ...int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldNotIn(FieldPurchaseOrderID, vs...))
 }
 
 // PurchaseOrderIDGT applies the GT predicate on the "purchase_order_id" field.
-func PurchaseOrderIDGT(v uint32) predicate.StockPicking {
+func PurchaseOrderIDGT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGT(FieldPurchaseOrderID, v))
 }
 
 // PurchaseOrderIDGTE applies the GTE predicate on the "purchase_order_id" field.
-func PurchaseOrderIDGTE(v uint32) predicate.StockPicking {
+func PurchaseOrderIDGTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldGTE(FieldPurchaseOrderID, v))
 }
 
 // PurchaseOrderIDLT applies the LT predicate on the "purchase_order_id" field.
-func PurchaseOrderIDLT(v uint32) predicate.StockPicking {
+func PurchaseOrderIDLT(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLT(FieldPurchaseOrderID, v))
 }
 
 // PurchaseOrderIDLTE applies the LTE predicate on the "purchase_order_id" field.
-func PurchaseOrderIDLTE(v uint32) predicate.StockPicking {
+func PurchaseOrderIDLTE(v int64) predicate.StockPicking {
 	return predicate.StockPicking(sql.FieldLTE(FieldPurchaseOrderID, v))
 }
 

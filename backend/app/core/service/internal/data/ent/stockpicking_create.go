@@ -65,13 +65,13 @@ func (_c *StockPickingCreate) SetNillableDeletedAt(v *time.Time) *StockPickingCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockPickingCreate) SetCreatedBy(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetCreatedBy(v int64) *StockPickingCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableCreatedBy(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableCreatedBy(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockPickingCreate) SetNillableCreatedBy(v *uint32) *StockPickingCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockPickingCreate) SetUpdatedBy(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetUpdatedBy(v int64) *StockPickingCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableUpdatedBy(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableUpdatedBy(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockPickingCreate) SetNillableUpdatedBy(v *uint32) *StockPickingCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockPickingCreate) SetDeletedBy(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetDeletedBy(v int64) *StockPickingCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableDeletedBy(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableDeletedBy(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *StockPickingCreate) SetNillableRemark(v *string) *StockPickingCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *StockPickingCreate) SetTenantID(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetTenantID(v int64) *StockPickingCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableTenantID(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableTenantID(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *StockPickingCreate) SetNillablePickingType(v *stockpicking.PickingType
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (_c *StockPickingCreate) SetSourceLocationID(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetSourceLocationID(v int64) *StockPickingCreate {
 	_c.mutation.SetSourceLocationID(v)
 	return _c
 }
 
 // SetNillableSourceLocationID sets the "source_location_id" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableSourceLocationID(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableSourceLocationID(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetSourceLocationID(*v)
 	}
@@ -177,13 +177,13 @@ func (_c *StockPickingCreate) SetNillableSourceLocationID(v *uint32) *StockPicki
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (_c *StockPickingCreate) SetDestinationLocationID(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetDestinationLocationID(v int64) *StockPickingCreate {
 	_c.mutation.SetDestinationLocationID(v)
 	return _c
 }
 
 // SetNillableDestinationLocationID sets the "destination_location_id" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillableDestinationLocationID(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillableDestinationLocationID(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetDestinationLocationID(*v)
 	}
@@ -191,13 +191,13 @@ func (_c *StockPickingCreate) SetNillableDestinationLocationID(v *uint32) *Stock
 }
 
 // SetPurchaseOrderID sets the "purchase_order_id" field.
-func (_c *StockPickingCreate) SetPurchaseOrderID(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetPurchaseOrderID(v int64) *StockPickingCreate {
 	_c.mutation.SetPurchaseOrderID(v)
 	return _c
 }
 
 // SetNillablePurchaseOrderID sets the "purchase_order_id" field if the given value is not nil.
-func (_c *StockPickingCreate) SetNillablePurchaseOrderID(v *uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetNillablePurchaseOrderID(v *int64) *StockPickingCreate {
 	if v != nil {
 		_c.SetPurchaseOrderID(*v)
 	}
@@ -219,7 +219,7 @@ func (_c *StockPickingCreate) SetNillablePartnerCode(v *string) *StockPickingCre
 }
 
 // SetID sets the "id" field.
-func (_c *StockPickingCreate) SetID(v uint32) *StockPickingCreate {
+func (_c *StockPickingCreate) SetID(v int64) *StockPickingCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -312,7 +312,7 @@ func (_c *StockPickingCreate) sqlSave(ctx context.Context) (*StockPicking, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -322,7 +322,7 @@ func (_c *StockPickingCreate) sqlSave(ctx context.Context) (*StockPicking, error
 func (_c *StockPickingCreate) createSpec() (*StockPicking, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockPicking{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stockpicking.Table, sqlgraph.NewFieldSpec(stockpicking.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stockpicking.Table, sqlgraph.NewFieldSpec(stockpicking.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -342,15 +342,15 @@ func (_c *StockPickingCreate) createSpec() (*StockPicking, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stockpicking.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stockpicking.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stockpicking.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -358,7 +358,7 @@ func (_c *StockPickingCreate) createSpec() (*StockPicking, *sqlgraph.CreateSpec)
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(stockpicking.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PickingNumber(); ok {
@@ -370,15 +370,15 @@ func (_c *StockPickingCreate) createSpec() (*StockPicking, *sqlgraph.CreateSpec)
 		_node.PickingType = &value
 	}
 	if value, ok := _c.mutation.SourceLocationID(); ok {
-		_spec.SetField(stockpicking.FieldSourceLocationID, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldSourceLocationID, field.TypeInt64, value)
 		_node.SourceLocationID = &value
 	}
 	if value, ok := _c.mutation.DestinationLocationID(); ok {
-		_spec.SetField(stockpicking.FieldDestinationLocationID, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldDestinationLocationID, field.TypeInt64, value)
 		_node.DestinationLocationID = &value
 	}
 	if value, ok := _c.mutation.PurchaseOrderID(); ok {
-		_spec.SetField(stockpicking.FieldPurchaseOrderID, field.TypeUint32, value)
+		_spec.SetField(stockpicking.FieldPurchaseOrderID, field.TypeInt64, value)
 		_node.PurchaseOrderID = &value
 	}
 	if value, ok := _c.mutation.PartnerCode(); ok {
@@ -474,7 +474,7 @@ func (u *StockPickingUpsert) ClearDeletedAt() *StockPickingUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockPickingUpsert) SetCreatedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetCreatedBy(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldCreatedBy, v)
 	return u
 }
@@ -486,7 +486,7 @@ func (u *StockPickingUpsert) UpdateCreatedBy() *StockPickingUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockPickingUpsert) AddCreatedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddCreatedBy(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldCreatedBy, v)
 	return u
 }
@@ -498,7 +498,7 @@ func (u *StockPickingUpsert) ClearCreatedBy() *StockPickingUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockPickingUpsert) SetUpdatedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetUpdatedBy(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldUpdatedBy, v)
 	return u
 }
@@ -510,7 +510,7 @@ func (u *StockPickingUpsert) UpdateUpdatedBy() *StockPickingUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockPickingUpsert) AddUpdatedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddUpdatedBy(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldUpdatedBy, v)
 	return u
 }
@@ -522,7 +522,7 @@ func (u *StockPickingUpsert) ClearUpdatedBy() *StockPickingUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockPickingUpsert) SetDeletedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetDeletedBy(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldDeletedBy, v)
 	return u
 }
@@ -534,7 +534,7 @@ func (u *StockPickingUpsert) UpdateDeletedBy() *StockPickingUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockPickingUpsert) AddDeletedBy(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddDeletedBy(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldDeletedBy, v)
 	return u
 }
@@ -600,7 +600,7 @@ func (u *StockPickingUpsert) ClearPickingType() *StockPickingUpsert {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockPickingUpsert) SetSourceLocationID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetSourceLocationID(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldSourceLocationID, v)
 	return u
 }
@@ -612,7 +612,7 @@ func (u *StockPickingUpsert) UpdateSourceLocationID() *StockPickingUpsert {
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockPickingUpsert) AddSourceLocationID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddSourceLocationID(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldSourceLocationID, v)
 	return u
 }
@@ -624,7 +624,7 @@ func (u *StockPickingUpsert) ClearSourceLocationID() *StockPickingUpsert {
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockPickingUpsert) SetDestinationLocationID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetDestinationLocationID(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldDestinationLocationID, v)
 	return u
 }
@@ -636,7 +636,7 @@ func (u *StockPickingUpsert) UpdateDestinationLocationID() *StockPickingUpsert {
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockPickingUpsert) AddDestinationLocationID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddDestinationLocationID(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldDestinationLocationID, v)
 	return u
 }
@@ -648,7 +648,7 @@ func (u *StockPickingUpsert) ClearDestinationLocationID() *StockPickingUpsert {
 }
 
 // SetPurchaseOrderID sets the "purchase_order_id" field.
-func (u *StockPickingUpsert) SetPurchaseOrderID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) SetPurchaseOrderID(v int64) *StockPickingUpsert {
 	u.Set(stockpicking.FieldPurchaseOrderID, v)
 	return u
 }
@@ -660,7 +660,7 @@ func (u *StockPickingUpsert) UpdatePurchaseOrderID() *StockPickingUpsert {
 }
 
 // AddPurchaseOrderID adds v to the "purchase_order_id" field.
-func (u *StockPickingUpsert) AddPurchaseOrderID(v uint32) *StockPickingUpsert {
+func (u *StockPickingUpsert) AddPurchaseOrderID(v int64) *StockPickingUpsert {
 	u.Add(stockpicking.FieldPurchaseOrderID, v)
 	return u
 }
@@ -786,14 +786,14 @@ func (u *StockPickingUpsertOne) ClearDeletedAt() *StockPickingUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockPickingUpsertOne) SetCreatedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetCreatedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockPickingUpsertOne) AddCreatedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddCreatedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -814,14 +814,14 @@ func (u *StockPickingUpsertOne) ClearCreatedBy() *StockPickingUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockPickingUpsertOne) SetUpdatedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetUpdatedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockPickingUpsertOne) AddUpdatedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddUpdatedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -842,14 +842,14 @@ func (u *StockPickingUpsertOne) ClearUpdatedBy() *StockPickingUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockPickingUpsertOne) SetDeletedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetDeletedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockPickingUpsertOne) AddDeletedBy(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddDeletedBy(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -933,14 +933,14 @@ func (u *StockPickingUpsertOne) ClearPickingType() *StockPickingUpsertOne {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockPickingUpsertOne) SetSourceLocationID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetSourceLocationID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetSourceLocationID(v)
 	})
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockPickingUpsertOne) AddSourceLocationID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddSourceLocationID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddSourceLocationID(v)
 	})
@@ -961,14 +961,14 @@ func (u *StockPickingUpsertOne) ClearSourceLocationID() *StockPickingUpsertOne {
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockPickingUpsertOne) SetDestinationLocationID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetDestinationLocationID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetDestinationLocationID(v)
 	})
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockPickingUpsertOne) AddDestinationLocationID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddDestinationLocationID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddDestinationLocationID(v)
 	})
@@ -989,14 +989,14 @@ func (u *StockPickingUpsertOne) ClearDestinationLocationID() *StockPickingUpsert
 }
 
 // SetPurchaseOrderID sets the "purchase_order_id" field.
-func (u *StockPickingUpsertOne) SetPurchaseOrderID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) SetPurchaseOrderID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetPurchaseOrderID(v)
 	})
 }
 
 // AddPurchaseOrderID adds v to the "purchase_order_id" field.
-func (u *StockPickingUpsertOne) AddPurchaseOrderID(v uint32) *StockPickingUpsertOne {
+func (u *StockPickingUpsertOne) AddPurchaseOrderID(v int64) *StockPickingUpsertOne {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddPurchaseOrderID(v)
 	})
@@ -1053,7 +1053,7 @@ func (u *StockPickingUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockPickingUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockPickingUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1062,7 +1062,7 @@ func (u *StockPickingUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockPickingUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockPickingUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1119,7 +1119,7 @@ func (_c *StockPickingCreateBulk) Save(ctx context.Context) ([]*StockPicking, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1300,14 +1300,14 @@ func (u *StockPickingUpsertBulk) ClearDeletedAt() *StockPickingUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockPickingUpsertBulk) SetCreatedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetCreatedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockPickingUpsertBulk) AddCreatedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddCreatedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1328,14 +1328,14 @@ func (u *StockPickingUpsertBulk) ClearCreatedBy() *StockPickingUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockPickingUpsertBulk) SetUpdatedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetUpdatedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockPickingUpsertBulk) AddUpdatedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddUpdatedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1356,14 +1356,14 @@ func (u *StockPickingUpsertBulk) ClearUpdatedBy() *StockPickingUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockPickingUpsertBulk) SetDeletedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetDeletedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockPickingUpsertBulk) AddDeletedBy(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddDeletedBy(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1447,14 +1447,14 @@ func (u *StockPickingUpsertBulk) ClearPickingType() *StockPickingUpsertBulk {
 }
 
 // SetSourceLocationID sets the "source_location_id" field.
-func (u *StockPickingUpsertBulk) SetSourceLocationID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetSourceLocationID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetSourceLocationID(v)
 	})
 }
 
 // AddSourceLocationID adds v to the "source_location_id" field.
-func (u *StockPickingUpsertBulk) AddSourceLocationID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddSourceLocationID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddSourceLocationID(v)
 	})
@@ -1475,14 +1475,14 @@ func (u *StockPickingUpsertBulk) ClearSourceLocationID() *StockPickingUpsertBulk
 }
 
 // SetDestinationLocationID sets the "destination_location_id" field.
-func (u *StockPickingUpsertBulk) SetDestinationLocationID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetDestinationLocationID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetDestinationLocationID(v)
 	})
 }
 
 // AddDestinationLocationID adds v to the "destination_location_id" field.
-func (u *StockPickingUpsertBulk) AddDestinationLocationID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddDestinationLocationID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddDestinationLocationID(v)
 	})
@@ -1503,14 +1503,14 @@ func (u *StockPickingUpsertBulk) ClearDestinationLocationID() *StockPickingUpser
 }
 
 // SetPurchaseOrderID sets the "purchase_order_id" field.
-func (u *StockPickingUpsertBulk) SetPurchaseOrderID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) SetPurchaseOrderID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.SetPurchaseOrderID(v)
 	})
 }
 
 // AddPurchaseOrderID adds v to the "purchase_order_id" field.
-func (u *StockPickingUpsertBulk) AddPurchaseOrderID(v uint32) *StockPickingUpsertBulk {
+func (u *StockPickingUpsertBulk) AddPurchaseOrderID(v int64) *StockPickingUpsertBulk {
 	return u.Update(func(s *StockPickingUpsert) {
 		s.AddPurchaseOrderID(v)
 	})

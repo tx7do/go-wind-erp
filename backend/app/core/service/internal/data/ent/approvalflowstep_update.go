@@ -29,14 +29,14 @@ func (_u *ApprovalFlowStepUpdate) Where(ps ...predicate.ApprovalFlowStep) *Appro
 }
 
 // SetFlowID sets the "flow_id" field.
-func (_u *ApprovalFlowStepUpdate) SetFlowID(v uint32) *ApprovalFlowStepUpdate {
+func (_u *ApprovalFlowStepUpdate) SetFlowID(v int64) *ApprovalFlowStepUpdate {
 	_u.mutation.ResetFlowID()
 	_u.mutation.SetFlowID(v)
 	return _u
 }
 
 // SetNillableFlowID sets the "flow_id" field if the given value is not nil.
-func (_u *ApprovalFlowStepUpdate) SetNillableFlowID(v *uint32) *ApprovalFlowStepUpdate {
+func (_u *ApprovalFlowStepUpdate) SetNillableFlowID(v *int64) *ApprovalFlowStepUpdate {
 	if v != nil {
 		_u.SetFlowID(*v)
 	}
@@ -44,7 +44,7 @@ func (_u *ApprovalFlowStepUpdate) SetNillableFlowID(v *uint32) *ApprovalFlowStep
 }
 
 // AddFlowID adds value to the "flow_id" field.
-func (_u *ApprovalFlowStepUpdate) AddFlowID(v int32) *ApprovalFlowStepUpdate {
+func (_u *ApprovalFlowStepUpdate) AddFlowID(v int64) *ApprovalFlowStepUpdate {
 	_u.mutation.AddFlowID(v)
 	return _u
 }
@@ -179,7 +179,7 @@ func (_u *ApprovalFlowStepUpdate) sqlSave(ctx context.Context) (_node int, err e
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approvalflowstep.Table, approvalflowstep.Columns, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approvalflowstep.Table, approvalflowstep.Columns, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -191,16 +191,16 @@ func (_u *ApprovalFlowStepUpdate) sqlSave(ctx context.Context) (_node int, err e
 		_spec.ClearField(approvalflowstep.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approvalflowstep.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approvalflowstep.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FlowID(); ok {
-		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeUint32, value)
+		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFlowID(); ok {
-		_spec.AddField(approvalflowstep.FieldFlowID, field.TypeUint32, value)
+		_spec.AddField(approvalflowstep.FieldFlowID, field.TypeInt64, value)
 	}
 	if _u.mutation.FlowIDCleared() {
-		_spec.ClearField(approvalflowstep.FieldFlowID, field.TypeUint32)
+		_spec.ClearField(approvalflowstep.FieldFlowID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seq(); ok {
 		_spec.SetField(approvalflowstep.FieldSeq, field.TypeUint32, value)
@@ -246,14 +246,14 @@ type ApprovalFlowStepUpdateOne struct {
 }
 
 // SetFlowID sets the "flow_id" field.
-func (_u *ApprovalFlowStepUpdateOne) SetFlowID(v uint32) *ApprovalFlowStepUpdateOne {
+func (_u *ApprovalFlowStepUpdateOne) SetFlowID(v int64) *ApprovalFlowStepUpdateOne {
 	_u.mutation.ResetFlowID()
 	_u.mutation.SetFlowID(v)
 	return _u
 }
 
 // SetNillableFlowID sets the "flow_id" field if the given value is not nil.
-func (_u *ApprovalFlowStepUpdateOne) SetNillableFlowID(v *uint32) *ApprovalFlowStepUpdateOne {
+func (_u *ApprovalFlowStepUpdateOne) SetNillableFlowID(v *int64) *ApprovalFlowStepUpdateOne {
 	if v != nil {
 		_u.SetFlowID(*v)
 	}
@@ -261,7 +261,7 @@ func (_u *ApprovalFlowStepUpdateOne) SetNillableFlowID(v *uint32) *ApprovalFlowS
 }
 
 // AddFlowID adds value to the "flow_id" field.
-func (_u *ApprovalFlowStepUpdateOne) AddFlowID(v int32) *ApprovalFlowStepUpdateOne {
+func (_u *ApprovalFlowStepUpdateOne) AddFlowID(v int64) *ApprovalFlowStepUpdateOne {
 	_u.mutation.AddFlowID(v)
 	return _u
 }
@@ -409,7 +409,7 @@ func (_u *ApprovalFlowStepUpdateOne) sqlSave(ctx context.Context) (_node *Approv
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(approvalflowstep.Table, approvalflowstep.Columns, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(approvalflowstep.Table, approvalflowstep.Columns, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApprovalFlowStep.id" for update`)}
@@ -438,16 +438,16 @@ func (_u *ApprovalFlowStepUpdateOne) sqlSave(ctx context.Context) (_node *Approv
 		_spec.ClearField(approvalflowstep.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(approvalflowstep.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(approvalflowstep.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FlowID(); ok {
-		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeUint32, value)
+		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFlowID(); ok {
-		_spec.AddField(approvalflowstep.FieldFlowID, field.TypeUint32, value)
+		_spec.AddField(approvalflowstep.FieldFlowID, field.TypeInt64, value)
 	}
 	if _u.mutation.FlowIDCleared() {
-		_spec.ClearField(approvalflowstep.FieldFlowID, field.TypeUint32)
+		_spec.ClearField(approvalflowstep.FieldFlowID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seq(); ok {
 		_spec.SetField(approvalflowstep.FieldSeq, field.TypeUint32, value)

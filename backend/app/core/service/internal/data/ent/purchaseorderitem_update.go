@@ -49,14 +49,14 @@ func (_u *PurchaseOrderItemUpdate) ClearRemark() *PurchaseOrderItemUpdate {
 }
 
 // SetPoID sets the "po_id" field.
-func (_u *PurchaseOrderItemUpdate) SetPoID(v uint32) *PurchaseOrderItemUpdate {
+func (_u *PurchaseOrderItemUpdate) SetPoID(v int64) *PurchaseOrderItemUpdate {
 	_u.mutation.ResetPoID()
 	_u.mutation.SetPoID(v)
 	return _u
 }
 
 // SetNillablePoID sets the "po_id" field if the given value is not nil.
-func (_u *PurchaseOrderItemUpdate) SetNillablePoID(v *uint32) *PurchaseOrderItemUpdate {
+func (_u *PurchaseOrderItemUpdate) SetNillablePoID(v *int64) *PurchaseOrderItemUpdate {
 	if v != nil {
 		_u.SetPoID(*v)
 	}
@@ -64,7 +64,7 @@ func (_u *PurchaseOrderItemUpdate) SetNillablePoID(v *uint32) *PurchaseOrderItem
 }
 
 // AddPoID adds value to the "po_id" field.
-func (_u *PurchaseOrderItemUpdate) AddPoID(v int32) *PurchaseOrderItemUpdate {
+func (_u *PurchaseOrderItemUpdate) AddPoID(v int64) *PurchaseOrderItemUpdate {
 	_u.mutation.AddPoID(v)
 	return _u
 }
@@ -242,7 +242,7 @@ func (_u *PurchaseOrderItemUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder
 }
 
 func (_u *PurchaseOrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(purchaseorderitem.Table, purchaseorderitem.Columns, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(purchaseorderitem.Table, purchaseorderitem.Columns, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -260,16 +260,16 @@ func (_u *PurchaseOrderItemUpdate) sqlSave(ctx context.Context) (_node int, err 
 		_spec.ClearField(purchaseorderitem.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(purchaseorderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(purchaseorderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PoID(); ok {
-		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeUint32, value)
+		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPoID(); ok {
-		_spec.AddField(purchaseorderitem.FieldPoID, field.TypeUint32, value)
+		_spec.AddField(purchaseorderitem.FieldPoID, field.TypeInt64, value)
 	}
 	if _u.mutation.PoIDCleared() {
-		_spec.ClearField(purchaseorderitem.FieldPoID, field.TypeUint32)
+		_spec.ClearField(purchaseorderitem.FieldPoID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(purchaseorderitem.FieldSkuCode, field.TypeString, value)
@@ -356,14 +356,14 @@ func (_u *PurchaseOrderItemUpdateOne) ClearRemark() *PurchaseOrderItemUpdateOne 
 }
 
 // SetPoID sets the "po_id" field.
-func (_u *PurchaseOrderItemUpdateOne) SetPoID(v uint32) *PurchaseOrderItemUpdateOne {
+func (_u *PurchaseOrderItemUpdateOne) SetPoID(v int64) *PurchaseOrderItemUpdateOne {
 	_u.mutation.ResetPoID()
 	_u.mutation.SetPoID(v)
 	return _u
 }
 
 // SetNillablePoID sets the "po_id" field if the given value is not nil.
-func (_u *PurchaseOrderItemUpdateOne) SetNillablePoID(v *uint32) *PurchaseOrderItemUpdateOne {
+func (_u *PurchaseOrderItemUpdateOne) SetNillablePoID(v *int64) *PurchaseOrderItemUpdateOne {
 	if v != nil {
 		_u.SetPoID(*v)
 	}
@@ -371,7 +371,7 @@ func (_u *PurchaseOrderItemUpdateOne) SetNillablePoID(v *uint32) *PurchaseOrderI
 }
 
 // AddPoID adds value to the "po_id" field.
-func (_u *PurchaseOrderItemUpdateOne) AddPoID(v int32) *PurchaseOrderItemUpdateOne {
+func (_u *PurchaseOrderItemUpdateOne) AddPoID(v int64) *PurchaseOrderItemUpdateOne {
 	_u.mutation.AddPoID(v)
 	return _u
 }
@@ -562,7 +562,7 @@ func (_u *PurchaseOrderItemUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuil
 }
 
 func (_u *PurchaseOrderItemUpdateOne) sqlSave(ctx context.Context) (_node *PurchaseOrderItem, err error) {
-	_spec := sqlgraph.NewUpdateSpec(purchaseorderitem.Table, purchaseorderitem.Columns, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(purchaseorderitem.Table, purchaseorderitem.Columns, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PurchaseOrderItem.id" for update`)}
@@ -597,16 +597,16 @@ func (_u *PurchaseOrderItemUpdateOne) sqlSave(ctx context.Context) (_node *Purch
 		_spec.ClearField(purchaseorderitem.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(purchaseorderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(purchaseorderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PoID(); ok {
-		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeUint32, value)
+		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPoID(); ok {
-		_spec.AddField(purchaseorderitem.FieldPoID, field.TypeUint32, value)
+		_spec.AddField(purchaseorderitem.FieldPoID, field.TypeInt64, value)
 	}
 	if _u.mutation.PoIDCleared() {
-		_spec.ClearField(purchaseorderitem.FieldPoID, field.TypeUint32)
+		_spec.ClearField(purchaseorderitem.FieldPoID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(purchaseorderitem.FieldSkuCode, field.TypeString, value)

@@ -61,7 +61,7 @@ func (s *ReceiptService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	if err != nil {
 		return nil, err
 	}
-	return &financeV1.CountReceiptResponse{Count: uint64(count)}, nil
+	return &financeV1.CountReceiptResponse{Count: int64(count)}, nil
 }
 
 func (s *ReceiptService) Get(ctx context.Context, req *financeV1.GetReceiptRequest) (*financeV1.Receipt, error) {
@@ -128,7 +128,7 @@ func (s *ReceiptService) Create(ctx context.Context, req *financeV1.CreateReceip
 // ApplyApproved 审批通过后入账：PENDING→APPLIED（条件迁移）后原子累计
 // 应收单（ApplyReceipt 的 SQL 条件防超收竞态）。累计失败仅记录
 // （收款已批，经审计对账处理），不回滚审批。
-func (s *ReceiptService) ApplyApproved(ctx context.Context, receiptID uint32) error {
+func (s *ReceiptService) ApplyApproved(ctx context.Context, receiptID int64) error {
 	receipt, err := s.receiptRepo.Get(ctx, &financeV1.GetReceiptRequest{
 		QueryBy: &financeV1.GetReceiptRequest_Id{Id: receiptID},
 	})
@@ -156,7 +156,7 @@ func (s *ReceiptService) ApplyApproved(ctx context.Context, receiptID uint32) er
 }
 
 // RejectApproved 审批拒绝：PENDING→REJECTED，不影响应收单。
-func (s *ReceiptService) RejectApplied(ctx context.Context, receiptID uint32) error {
+func (s *ReceiptService) RejectApplied(ctx context.Context, receiptID int64) error {
 	return s.receiptRepo.TransitionStatus(ctx, receiptID,
 		financeV1.Receipt_PENDING, financeV1.Receipt_REJECTED)
 }

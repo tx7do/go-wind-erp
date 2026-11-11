@@ -51,13 +51,13 @@ func (_c *PurchaseOrderItemCreate) SetNillableRemark(v *string) *PurchaseOrderIt
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PurchaseOrderItemCreate) SetTenantID(v uint32) *PurchaseOrderItemCreate {
+func (_c *PurchaseOrderItemCreate) SetTenantID(v int64) *PurchaseOrderItemCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PurchaseOrderItemCreate) SetNillableTenantID(v *uint32) *PurchaseOrderItemCreate {
+func (_c *PurchaseOrderItemCreate) SetNillableTenantID(v *int64) *PurchaseOrderItemCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -65,13 +65,13 @@ func (_c *PurchaseOrderItemCreate) SetNillableTenantID(v *uint32) *PurchaseOrder
 }
 
 // SetPoID sets the "po_id" field.
-func (_c *PurchaseOrderItemCreate) SetPoID(v uint32) *PurchaseOrderItemCreate {
+func (_c *PurchaseOrderItemCreate) SetPoID(v int64) *PurchaseOrderItemCreate {
 	_c.mutation.SetPoID(v)
 	return _c
 }
 
 // SetNillablePoID sets the "po_id" field if the given value is not nil.
-func (_c *PurchaseOrderItemCreate) SetNillablePoID(v *uint32) *PurchaseOrderItemCreate {
+func (_c *PurchaseOrderItemCreate) SetNillablePoID(v *int64) *PurchaseOrderItemCreate {
 	if v != nil {
 		_c.SetPoID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *PurchaseOrderItemCreate) SetNillableReceivedQuantity(v *int64) *Purcha
 }
 
 // SetID sets the "id" field.
-func (_c *PurchaseOrderItemCreate) SetID(v uint32) *PurchaseOrderItemCreate {
+func (_c *PurchaseOrderItemCreate) SetID(v int64) *PurchaseOrderItemCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -241,7 +241,7 @@ func (_c *PurchaseOrderItemCreate) sqlSave(ctx context.Context) (*PurchaseOrderI
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -251,7 +251,7 @@ func (_c *PurchaseOrderItemCreate) sqlSave(ctx context.Context) (*PurchaseOrderI
 func (_c *PurchaseOrderItemCreate) createSpec() (*PurchaseOrderItem, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PurchaseOrderItem{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(purchaseorderitem.Table, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(purchaseorderitem.Table, sqlgraph.NewFieldSpec(purchaseorderitem.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -267,11 +267,11 @@ func (_c *PurchaseOrderItemCreate) createSpec() (*PurchaseOrderItem, *sqlgraph.C
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(purchaseorderitem.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(purchaseorderitem.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PoID(); ok {
-		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeUint32, value)
+		_spec.SetField(purchaseorderitem.FieldPoID, field.TypeInt64, value)
 		_node.PoID = &value
 	}
 	if value, ok := _c.mutation.SkuCode(); ok {
@@ -365,7 +365,7 @@ func (u *PurchaseOrderItemUpsert) ClearRemark() *PurchaseOrderItemUpsert {
 }
 
 // SetPoID sets the "po_id" field.
-func (u *PurchaseOrderItemUpsert) SetPoID(v uint32) *PurchaseOrderItemUpsert {
+func (u *PurchaseOrderItemUpsert) SetPoID(v int64) *PurchaseOrderItemUpsert {
 	u.Set(purchaseorderitem.FieldPoID, v)
 	return u
 }
@@ -377,7 +377,7 @@ func (u *PurchaseOrderItemUpsert) UpdatePoID() *PurchaseOrderItemUpsert {
 }
 
 // AddPoID adds v to the "po_id" field.
-func (u *PurchaseOrderItemUpsert) AddPoID(v uint32) *PurchaseOrderItemUpsert {
+func (u *PurchaseOrderItemUpsert) AddPoID(v int64) *PurchaseOrderItemUpsert {
 	u.Add(purchaseorderitem.FieldPoID, v)
 	return u
 }
@@ -578,14 +578,14 @@ func (u *PurchaseOrderItemUpsertOne) ClearRemark() *PurchaseOrderItemUpsertOne {
 }
 
 // SetPoID sets the "po_id" field.
-func (u *PurchaseOrderItemUpsertOne) SetPoID(v uint32) *PurchaseOrderItemUpsertOne {
+func (u *PurchaseOrderItemUpsertOne) SetPoID(v int64) *PurchaseOrderItemUpsertOne {
 	return u.Update(func(s *PurchaseOrderItemUpsert) {
 		s.SetPoID(v)
 	})
 }
 
 // AddPoID adds v to the "po_id" field.
-func (u *PurchaseOrderItemUpsertOne) AddPoID(v uint32) *PurchaseOrderItemUpsertOne {
+func (u *PurchaseOrderItemUpsertOne) AddPoID(v int64) *PurchaseOrderItemUpsertOne {
 	return u.Update(func(s *PurchaseOrderItemUpsert) {
 		s.AddPoID(v)
 	})
@@ -754,7 +754,7 @@ func (u *PurchaseOrderItemUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PurchaseOrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PurchaseOrderItemUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -763,7 +763,7 @@ func (u *PurchaseOrderItemUpsertOne) ID(ctx context.Context) (id uint32, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PurchaseOrderItemUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PurchaseOrderItemUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -820,7 +820,7 @@ func (_c *PurchaseOrderItemCreateBulk) Save(ctx context.Context) ([]*PurchaseOrd
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -980,14 +980,14 @@ func (u *PurchaseOrderItemUpsertBulk) ClearRemark() *PurchaseOrderItemUpsertBulk
 }
 
 // SetPoID sets the "po_id" field.
-func (u *PurchaseOrderItemUpsertBulk) SetPoID(v uint32) *PurchaseOrderItemUpsertBulk {
+func (u *PurchaseOrderItemUpsertBulk) SetPoID(v int64) *PurchaseOrderItemUpsertBulk {
 	return u.Update(func(s *PurchaseOrderItemUpsert) {
 		s.SetPoID(v)
 	})
 }
 
 // AddPoID adds v to the "po_id" field.
-func (u *PurchaseOrderItemUpsertBulk) AddPoID(v uint32) *PurchaseOrderItemUpsertBulk {
+func (u *PurchaseOrderItemUpsertBulk) AddPoID(v int64) *PurchaseOrderItemUpsertBulk {
 	return u.Update(func(s *PurchaseOrderItemUpsert) {
 		s.AddPoID(v)
 	})

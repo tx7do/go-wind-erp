@@ -223,7 +223,7 @@ func (r *PurchaseOrderRepo) Update(ctx context.Context, req *procurementV1.Updat
 	if len(req.Data.Items) > 0 {
 		poID := req.GetId()
 		tid, _ := maybeTenantFromViewer(ctx)
-		var tenantPtr *uint32
+		var tenantPtr *int64
 		if tid > 0 {
 			tenantPtr = trans.Ptr(tid)
 		} else if req.Data.TenantId != nil {
@@ -240,7 +240,7 @@ func (r *PurchaseOrderRepo) Update(ctx context.Context, req *procurementV1.Updat
 	return result, nil
 }
 
-func (r *PurchaseOrderRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PurchaseOrderRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().PurchaseOrder.Query().
 		Where(purchaseorder.IDEQ(id)).
 		Exist(ctx)
@@ -255,7 +255,7 @@ func (r *PurchaseOrderRepo) IsExist(ctx context.Context, id uint32) (bool, error
 // 0 行受影响说明已被并发变更，返回 Conflict（与审批/库存同模式）。
 func (r *PurchaseOrderRepo) TransitionStatus(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	from, to procurementV1.PurchaseOrder_Status,
 ) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
@@ -290,7 +290,7 @@ func (r *PurchaseOrderRepo) TransitionStatus(
 // autoCompleted 供调用方在整体成功后发下游通知。
 func (r *PurchaseOrderRepo) ApplyReceipt(
 	ctx context.Context,
-	poID uint32,
+	poID int64,
 	skuCode string,
 	qty int64,
 ) (received int64, ordered int64, autoCompleted bool, err error) {
@@ -375,7 +375,7 @@ func (r *PurchaseOrderRepo) ApplyReceipt(
 // HasInFlightReplenishment 该 SKU 是否有在途补货：存在未收满的明细，
 // 且其采购单处于 SUBMITTED/APPROVED。
 func (r *PurchaseOrderRepo) HasInFlightReplenishment(ctx context.Context, skuCode string) (bool, error) {
-	var ids []uint32
+	var ids []int64
 	if err := r.entClient.Client().PurchaseOrderItem.Query().
 		Where(purchaseorderitem.SkuCodeEQ(skuCode)).
 		Where(purchaseorderitem.PoIDNotNil()).
@@ -402,7 +402,7 @@ func (r *PurchaseOrderRepo) HasInFlightReplenishment(ctx context.Context, skuCod
 
 // LastSupplierForSku 该 SKU 最近一次采购的供应商（无历史返回空串）。
 func (r *PurchaseOrderRepo) LastSupplierForSku(ctx context.Context, skuCode string) (string, error) {
-	var ids []uint32
+	var ids []int64
 	if err := r.entClient.Client().PurchaseOrderItem.Query().
 		Where(purchaseorderitem.SkuCodeEQ(skuCode)).
 		Where(purchaseorderitem.PoIDNotNil()).
@@ -429,7 +429,7 @@ func (r *PurchaseOrderRepo) LastSupplierForSku(ctx context.Context, skuCode stri
 
 // GetWarehouseCode 取采购单的收货仓库编码（PO 获批后据此确定 receiving location，
 // 创建入库拣货单——Odoo PO→_create_picking 桥接的必要字段）。
-func (r *PurchaseOrderRepo) GetWarehouseCode(ctx context.Context, poID uint32) (string, error) {
+func (r *PurchaseOrderRepo) GetWarehouseCode(ctx context.Context, poID int64) (string, error) {
 	po, err := r.entClient.Client().PurchaseOrder.Query().
 		Where(purchaseorder.IDEQ(poID)).
 		Only(ctx)
@@ -450,7 +450,7 @@ func (r *PurchaseOrderRepo) GetWarehouseCode(ctx context.Context, poID uint32) (
 func (r *PurchaseOrderRepo) GetItemsTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	poID uint32,
+	poID int64,
 ) ([]*procurementV1.PurchaseOrderItem, error) {
 	rows, err := tx.PurchaseOrderItem.Query().
 		Where(purchaseorderitem.PoIDEQ(poID)).
@@ -481,7 +481,7 @@ func (r *PurchaseOrderRepo) GetItemsTx(
 func (r *PurchaseOrderRepo) GetUnitPriceTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	poItemID uint32,
+	poItemID int64,
 ) int64 {
 	item, err := tx.PurchaseOrderItem.Query().
 		Where(purchaseorderitem.IDEQ(poItemID)).
@@ -500,7 +500,7 @@ func (r *PurchaseOrderRepo) GetUnitPriceTx(
 func (r *PurchaseOrderRepo) ApplyReceiptTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	poItemID uint32,
+	poItemID int64,
 	qty int64,
 ) (autoCompleted bool, err error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
@@ -593,9 +593,9 @@ func (r *PurchaseOrderRepo) ApplyReceiptTx(
 func (r *PurchaseOrderRepo) ApplyReceiptReturnTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	poItemID uint32,
+	poItemID int64,
 	qty int64,
-) (uint32, int64, error) {
+) (int64, int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	item, err := tx.PurchaseOrderItem.Query().
@@ -680,7 +680,7 @@ func (r *PurchaseOrderRepo) ApplyReceiptReturnTx(
 }
 
 // CountTenantSince 计租户自某时刻起创建的单据数（计费守卫的月配额计量）。
-func (r *PurchaseOrderRepo) CountTenantSince(ctx context.Context, tenantID uint32, since time.Time) (int, error) {
+func (r *PurchaseOrderRepo) CountTenantSince(ctx context.Context, tenantID int64, since time.Time) (int, error) {
 	return r.entClient.Client().PurchaseOrder.Query().
 		Where(purchaseorder.TenantIDEQ(tenantID)).
 		Where(purchaseorder.CreatedAtGTE(since)).
@@ -724,8 +724,8 @@ func (r *PurchaseOrderRepo) Delete(ctx context.Context, req *procurementV1.Delet
 // replaceItems 整体替换明细（删旧插新）。金额字段由服务层预计算后传入。
 func (r *PurchaseOrderRepo) replaceItems(
 	ctx context.Context,
-	tenantID *uint32,
-	poID uint32,
+	tenantID *int64,
+	poID int64,
 	items []*procurementV1.PurchaseOrderItem,
 ) error {
 	if poID == 0 {
@@ -770,7 +770,7 @@ func (r *PurchaseOrderRepo) replaceItems(
 }
 
 // listItemDTOs 查询并映射某采购单的明细。
-func (r *PurchaseOrderRepo) listItemDTOs(ctx context.Context, poID uint32) []*procurementV1.PurchaseOrderItem {
+func (r *PurchaseOrderRepo) listItemDTOs(ctx context.Context, poID int64) []*procurementV1.PurchaseOrderItem {
 	rows, err := r.entClient.Client().PurchaseOrderItem.Query().
 		Where(purchaseorderitem.PoIDEQ(poID)).
 		Order(ent.Asc(purchaseorder.FieldID)).

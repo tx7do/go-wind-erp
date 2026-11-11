@@ -17,35 +17,35 @@ type StockMoveLine struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 备注
 	Remark *string `json:"remark,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 所属移动计划ID
-	MoveID *uint32 `json:"move_id,omitempty"`
+	MoveID *int64 `json:"move_id,omitempty"`
 	// 所属拣货单ID（反范式）
-	PickingID *uint32 `json:"picking_id,omitempty"`
+	PickingID *int64 `json:"picking_id,omitempty"`
 	// 产品编码
 	ProductCode *string `json:"product_code,omitempty"`
 	// 源位置ID
-	SourceLocationID *uint32 `json:"source_location_id,omitempty"`
+	SourceLocationID *int64 `json:"source_location_id,omitempty"`
 	// 目的位置ID
-	DestinationLocationID *uint32 `json:"destination_location_id,omitempty"`
+	DestinationLocationID *int64 `json:"destination_location_id,omitempty"`
 	// 已执行数量
 	ExecutedQuantity *int64 `json:"executed_quantity,omitempty"`
 	// 执行时冻结的单位成本（分，用于COGS）
 	UnitCost *int64 `json:"unit_cost,omitempty"`
 	// 批次ID（可空=未跟踪）
-	LotID        *uint32 `json:"lot_id,omitempty"`
+	LotID        *int64 `json:"lot_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -80,7 +80,7 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = int64(value.Int64)
 		case stockmoveline.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -92,22 +92,22 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case stockmoveline.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case stockmoveline.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case stockmoveline.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -120,22 +120,22 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case stockmoveline.FieldMoveID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field move_id", values[i])
 			} else if value.Valid {
-				_m.MoveID = new(uint32)
-				*_m.MoveID = uint32(value.Int64)
+				_m.MoveID = new(int64)
+				*_m.MoveID = value.Int64
 			}
 		case stockmoveline.FieldPickingID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field picking_id", values[i])
 			} else if value.Valid {
-				_m.PickingID = new(uint32)
-				*_m.PickingID = uint32(value.Int64)
+				_m.PickingID = new(int64)
+				*_m.PickingID = value.Int64
 			}
 		case stockmoveline.FieldProductCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -148,15 +148,15 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field source_location_id", values[i])
 			} else if value.Valid {
-				_m.SourceLocationID = new(uint32)
-				*_m.SourceLocationID = uint32(value.Int64)
+				_m.SourceLocationID = new(int64)
+				*_m.SourceLocationID = value.Int64
 			}
 		case stockmoveline.FieldDestinationLocationID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field destination_location_id", values[i])
 			} else if value.Valid {
-				_m.DestinationLocationID = new(uint32)
-				*_m.DestinationLocationID = uint32(value.Int64)
+				_m.DestinationLocationID = new(int64)
+				*_m.DestinationLocationID = value.Int64
 			}
 		case stockmoveline.FieldExecutedQuantity:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -176,8 +176,8 @@ func (_m *StockMoveLine) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field lot_id", values[i])
 			} else if value.Valid {
-				_m.LotID = new(uint32)
-				*_m.LotID = uint32(value.Int64)
+				_m.LotID = new(int64)
+				*_m.LotID = value.Int64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

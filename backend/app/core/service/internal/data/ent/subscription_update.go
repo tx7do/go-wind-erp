@@ -70,14 +70,14 @@ func (_u *SubscriptionUpdate) ClearDeletedAt() *SubscriptionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SubscriptionUpdate) SetCreatedBy(v uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetCreatedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SubscriptionUpdate) SetNillableCreatedBy(v *uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetNillableCreatedBy(v *int64) *SubscriptionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *SubscriptionUpdate) SetNillableCreatedBy(v *uint32) *SubscriptionUpdat
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SubscriptionUpdate) AddCreatedBy(v int32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) AddCreatedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *SubscriptionUpdate) ClearCreatedBy() *SubscriptionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SubscriptionUpdate) SetUpdatedBy(v uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetUpdatedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SubscriptionUpdate) SetNillableUpdatedBy(v *uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetNillableUpdatedBy(v *int64) *SubscriptionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *SubscriptionUpdate) SetNillableUpdatedBy(v *uint32) *SubscriptionUpdat
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SubscriptionUpdate) AddUpdatedBy(v int32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) AddUpdatedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *SubscriptionUpdate) ClearUpdatedBy() *SubscriptionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SubscriptionUpdate) SetDeletedBy(v uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetDeletedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SubscriptionUpdate) SetNillableDeletedBy(v *uint32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) SetNillableDeletedBy(v *int64) *SubscriptionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *SubscriptionUpdate) SetNillableDeletedBy(v *uint32) *SubscriptionUpdat
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SubscriptionUpdate) AddDeletedBy(v int32) *SubscriptionUpdate {
+func (_u *SubscriptionUpdate) AddDeletedBy(v int64) *SubscriptionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -307,7 +307,7 @@ func (_u *SubscriptionUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(subscription.Table, subscription.Columns, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(subscription.Table, subscription.Columns, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -331,31 +331,31 @@ func (_u *SubscriptionUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(subscription.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(subscription.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(subscription.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(subscription.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(subscription.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(subscription.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(subscription.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(subscription.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(subscription.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(subscription.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(subscription.FieldRemark, field.TypeString, value)
@@ -364,7 +364,7 @@ func (_u *SubscriptionUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(subscription.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(subscription.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(subscription.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PlanCode(); ok {
 		_spec.SetField(subscription.FieldPlanCode, field.TypeString, value)
@@ -453,14 +453,14 @@ func (_u *SubscriptionUpdateOne) ClearDeletedAt() *SubscriptionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SubscriptionUpdateOne) SetCreatedBy(v uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetCreatedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SubscriptionUpdateOne) SetNillableCreatedBy(v *uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetNillableCreatedBy(v *int64) *SubscriptionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -468,7 +468,7 @@ func (_u *SubscriptionUpdateOne) SetNillableCreatedBy(v *uint32) *SubscriptionUp
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SubscriptionUpdateOne) AddCreatedBy(v int32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) AddCreatedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -480,14 +480,14 @@ func (_u *SubscriptionUpdateOne) ClearCreatedBy() *SubscriptionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SubscriptionUpdateOne) SetUpdatedBy(v uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetUpdatedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SubscriptionUpdateOne) SetNillableUpdatedBy(v *uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetNillableUpdatedBy(v *int64) *SubscriptionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -495,7 +495,7 @@ func (_u *SubscriptionUpdateOne) SetNillableUpdatedBy(v *uint32) *SubscriptionUp
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SubscriptionUpdateOne) AddUpdatedBy(v int32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) AddUpdatedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -507,14 +507,14 @@ func (_u *SubscriptionUpdateOne) ClearUpdatedBy() *SubscriptionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SubscriptionUpdateOne) SetDeletedBy(v uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetDeletedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SubscriptionUpdateOne) SetNillableDeletedBy(v *uint32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) SetNillableDeletedBy(v *int64) *SubscriptionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -522,7 +522,7 @@ func (_u *SubscriptionUpdateOne) SetNillableDeletedBy(v *uint32) *SubscriptionUp
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SubscriptionUpdateOne) AddDeletedBy(v int32) *SubscriptionUpdateOne {
+func (_u *SubscriptionUpdateOne) AddDeletedBy(v int64) *SubscriptionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -703,7 +703,7 @@ func (_u *SubscriptionUpdateOne) sqlSave(ctx context.Context) (_node *Subscripti
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(subscription.Table, subscription.Columns, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(subscription.Table, subscription.Columns, sqlgraph.NewFieldSpec(subscription.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Subscription.id" for update`)}
@@ -744,31 +744,31 @@ func (_u *SubscriptionUpdateOne) sqlSave(ctx context.Context) (_node *Subscripti
 		_spec.ClearField(subscription.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(subscription.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(subscription.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(subscription.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(subscription.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(subscription.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(subscription.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(subscription.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(subscription.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(subscription.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(subscription.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(subscription.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(subscription.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Remark(); ok {
 		_spec.SetField(subscription.FieldRemark, field.TypeString, value)
@@ -777,7 +777,7 @@ func (_u *SubscriptionUpdateOne) sqlSave(ctx context.Context) (_node *Subscripti
 		_spec.ClearField(subscription.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(subscription.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(subscription.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PlanCode(); ok {
 		_spec.SetField(subscription.FieldPlanCode, field.TypeString, value)

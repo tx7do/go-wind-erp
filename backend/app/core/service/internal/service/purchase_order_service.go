@@ -73,7 +73,7 @@ func (s *PurchaseOrderService) Count(ctx context.Context, req *paginationV1.Pagi
 	if err != nil {
 		return nil, err
 	}
-	return &procurementV1.CountPurchaseOrderResponse{Count: uint64(count)}, nil
+	return &procurementV1.CountPurchaseOrderResponse{Count: int64(count)}, nil
 }
 
 func (s *PurchaseOrderService) Get(ctx context.Context, req *procurementV1.GetPurchaseOrderRequest) (*procurementV1.PurchaseOrder, error) {
@@ -225,7 +225,7 @@ func (s *PurchaseOrderService) Cancel(ctx context.Context, req *procurementV1.Ca
 // 审批生成失败不影响提交结果，仅记录（审批单可人工补建）。
 func (s *PurchaseOrderService) transition(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	to procurementV1.PurchaseOrder_Status,
 	createApproval bool,
 ) (*emptypb.Empty, error) {
@@ -306,7 +306,7 @@ func (s *PurchaseOrderService) transition(
 func (s *PurchaseOrderService) createInboundPicking(
 	ctx context.Context,
 	po *procurementV1.PurchaseOrder,
-	poID uint32,
+	poID int64,
 ) {
 	warehouseCode := po.GetWarehouseCode()
 	if warehouseCode == "" {

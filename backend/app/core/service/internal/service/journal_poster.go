@@ -28,7 +28,7 @@ func newJournalPoster(journalRepo *data.JournalRepo, log *log.Helper) *journalPo
 
 // PostReceivingTx 采购入库：借 库存商品 / 贷 应付账款（数量×采购单价）。
 func (p *journalPoster) PostReceivingTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, qty int64, unitCost int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, qty int64, unitCost int64,
 ) error {
 	amount := qty * unitCost
 	if amount == 0 {
@@ -46,7 +46,7 @@ func (p *journalPoster) PostReceivingTx(
 // PostDeliveryTx 销售出库（COGS）：借 主营业务成本 / 贷 库存商品
 // （数量×冻结加权成本）。
 func (p *journalPoster) PostDeliveryTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, qty, unitCost int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, qty, unitCost int64,
 ) error {
 	amount := qty * unitCost
 	if amount == 0 {
@@ -63,7 +63,7 @@ func (p *journalPoster) PostDeliveryTx(
 
 // PostSalesReturnStockTx 销退库存腿：借 库存 / 贷 成本（按回货均价）。
 func (p *journalPoster) PostSalesReturnStockTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, qty, avgCost int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, qty, avgCost int64,
 ) error {
 	amount := qty * avgCost
 	if amount == 0 {
@@ -81,7 +81,7 @@ func (p *journalPoster) PostSalesReturnStockTx(
 // PostSalesReturnRevenueTx 销退收入腿：借 收入 / 贷 应收（数量×销售单价）。
 // 与库存腿分开过账（收入腿在 so_item 回写分支，能取到明细单价）。
 func (p *journalPoster) PostSalesReturnRevenueTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, qty, salePrice int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, qty, salePrice int64,
 ) error {
 	amount := qty * salePrice
 	if amount == 0 {
@@ -98,7 +98,7 @@ func (p *journalPoster) PostSalesReturnRevenueTx(
 
 // PostPurchaseReturnTx 采购退货：借 应付账款 / 贷 库存商品。
 func (p *journalPoster) PostPurchaseReturnTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, qty, avgCost int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, qty, avgCost int64,
 ) error {
 	amount := qty * avgCost
 	if amount == 0 {
@@ -116,7 +116,7 @@ func (p *journalPoster) PostPurchaseReturnTx(
 // PostStockGainLossTx 盘点损益：盘盈 借 库存 / 贷 待处理财产损溢；
 // 盘亏反向。
 func (p *journalPoster) PostStockGainLossTx(
-	ctx context.Context, tx *ent.Tx, pickingID uint32, skuCode string, gain bool, qty, avgCost int64,
+	ctx context.Context, tx *ent.Tx, pickingID int64, skuCode string, gain bool, qty, avgCost int64,
 ) error {
 	amount := qty * avgCost
 	if amount == 0 {
@@ -140,7 +140,7 @@ func (p *journalPoster) PostStockGainLossTx(
 
 // PostRevenueRecognition 销售单获批（收入确认）：借 应收账款 / 贷 主营业务收入。
 // 独立事务软失败（与应收单生成同模式）。
-func (p *journalPoster) PostRevenueRecognition(ctx context.Context, soID uint32, soNumber string, totalAmount int64) {
+func (p *journalPoster) PostRevenueRecognition(ctx context.Context, soID int64, soNumber string, totalAmount int64) {
 	if totalAmount == 0 {
 		return
 	}
@@ -156,7 +156,7 @@ func (p *journalPoster) PostRevenueRecognition(ctx context.Context, soID uint32,
 }
 
 // PostReceiptApplied 收款入账：借 资金（现金/银行） / 贷 应收账款。
-func (p *journalPoster) PostReceiptApplied(ctx context.Context, receiptID uint32, amount int64, cash bool) {
+func (p *journalPoster) PostReceiptApplied(ctx context.Context, receiptID int64, amount int64, cash bool) {
 	if amount == 0 {
 		return
 	}
@@ -178,7 +178,7 @@ func (p *journalPoster) PostReceiptApplied(ctx context.Context, receiptID uint32
 }
 
 // PostPaymentApplied 付款入账：借 应付账款 / 贷 资金。
-func (p *journalPoster) PostPaymentApplied(ctx context.Context, paymentID uint32, amount int64, cash bool) {
+func (p *journalPoster) PostPaymentApplied(ctx context.Context, paymentID int64, amount int64, cash bool) {
 	if amount == 0 {
 		return
 	}

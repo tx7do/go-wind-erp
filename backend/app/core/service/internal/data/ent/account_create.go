@@ -65,13 +65,13 @@ func (_c *AccountCreate) SetNillableDeletedAt(v *time.Time) *AccountCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *AccountCreate) SetCreatedBy(v uint32) *AccountCreate {
+func (_c *AccountCreate) SetCreatedBy(v int64) *AccountCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableCreatedBy(v *uint32) *AccountCreate {
+func (_c *AccountCreate) SetNillableCreatedBy(v *int64) *AccountCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *AccountCreate) SetNillableCreatedBy(v *uint32) *AccountCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *AccountCreate) SetUpdatedBy(v uint32) *AccountCreate {
+func (_c *AccountCreate) SetUpdatedBy(v int64) *AccountCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableUpdatedBy(v *uint32) *AccountCreate {
+func (_c *AccountCreate) SetNillableUpdatedBy(v *int64) *AccountCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *AccountCreate) SetNillableUpdatedBy(v *uint32) *AccountCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *AccountCreate) SetDeletedBy(v uint32) *AccountCreate {
+func (_c *AccountCreate) SetDeletedBy(v int64) *AccountCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableDeletedBy(v *uint32) *AccountCreate {
+func (_c *AccountCreate) SetNillableDeletedBy(v *int64) *AccountCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *AccountCreate) SetNillableRemark(v *string) *AccountCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *AccountCreate) SetTenantID(v uint32) *AccountCreate {
+func (_c *AccountCreate) SetTenantID(v int64) *AccountCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableTenantID(v *uint32) *AccountCreate {
+func (_c *AccountCreate) SetNillableTenantID(v *int64) *AccountCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -191,7 +191,7 @@ func (_c *AccountCreate) SetNillableBalanceDirection(v *account.BalanceDirection
 }
 
 // SetID sets the "id" field.
-func (_c *AccountCreate) SetID(v uint32) *AccountCreate {
+func (_c *AccountCreate) SetID(v int64) *AccountCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -291,7 +291,7 @@ func (_c *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -301,7 +301,7 @@ func (_c *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
 func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Account{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -321,15 +321,15 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(account.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(account.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(account.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(account.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(account.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(account.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -337,7 +337,7 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_node.Remark = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(account.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(account.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Code(); ok {
@@ -445,7 +445,7 @@ func (u *AccountUpsert) ClearDeletedAt() *AccountUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AccountUpsert) SetCreatedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) SetCreatedBy(v int64) *AccountUpsert {
 	u.Set(account.FieldCreatedBy, v)
 	return u
 }
@@ -457,7 +457,7 @@ func (u *AccountUpsert) UpdateCreatedBy() *AccountUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AccountUpsert) AddCreatedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) AddCreatedBy(v int64) *AccountUpsert {
 	u.Add(account.FieldCreatedBy, v)
 	return u
 }
@@ -469,7 +469,7 @@ func (u *AccountUpsert) ClearCreatedBy() *AccountUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AccountUpsert) SetUpdatedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) SetUpdatedBy(v int64) *AccountUpsert {
 	u.Set(account.FieldUpdatedBy, v)
 	return u
 }
@@ -481,7 +481,7 @@ func (u *AccountUpsert) UpdateUpdatedBy() *AccountUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AccountUpsert) AddUpdatedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) AddUpdatedBy(v int64) *AccountUpsert {
 	u.Add(account.FieldUpdatedBy, v)
 	return u
 }
@@ -493,7 +493,7 @@ func (u *AccountUpsert) ClearUpdatedBy() *AccountUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AccountUpsert) SetDeletedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) SetDeletedBy(v int64) *AccountUpsert {
 	u.Set(account.FieldDeletedBy, v)
 	return u
 }
@@ -505,7 +505,7 @@ func (u *AccountUpsert) UpdateDeletedBy() *AccountUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AccountUpsert) AddDeletedBy(v uint32) *AccountUpsert {
+func (u *AccountUpsert) AddDeletedBy(v int64) *AccountUpsert {
 	u.Add(account.FieldDeletedBy, v)
 	return u
 }
@@ -703,14 +703,14 @@ func (u *AccountUpsertOne) ClearDeletedAt() *AccountUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AccountUpsertOne) SetCreatedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) SetCreatedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AccountUpsertOne) AddCreatedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) AddCreatedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -731,14 +731,14 @@ func (u *AccountUpsertOne) ClearCreatedBy() *AccountUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AccountUpsertOne) SetUpdatedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) SetUpdatedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AccountUpsertOne) AddUpdatedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) AddUpdatedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -759,14 +759,14 @@ func (u *AccountUpsertOne) ClearUpdatedBy() *AccountUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AccountUpsertOne) SetDeletedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) SetDeletedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AccountUpsertOne) AddDeletedBy(v uint32) *AccountUpsertOne {
+func (u *AccountUpsertOne) AddDeletedBy(v int64) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -907,7 +907,7 @@ func (u *AccountUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AccountUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *AccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -916,7 +916,7 @@ func (u *AccountUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AccountUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *AccountUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -973,7 +973,7 @@ func (_c *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1154,14 +1154,14 @@ func (u *AccountUpsertBulk) ClearDeletedAt() *AccountUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *AccountUpsertBulk) SetCreatedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) SetCreatedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *AccountUpsertBulk) AddCreatedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) AddCreatedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1182,14 +1182,14 @@ func (u *AccountUpsertBulk) ClearCreatedBy() *AccountUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *AccountUpsertBulk) SetUpdatedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) SetUpdatedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *AccountUpsertBulk) AddUpdatedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) AddUpdatedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1210,14 +1210,14 @@ func (u *AccountUpsertBulk) ClearUpdatedBy() *AccountUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *AccountUpsertBulk) SetDeletedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) SetDeletedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *AccountUpsertBulk) AddDeletedBy(v uint32) *AccountUpsertBulk {
+func (u *AccountUpsertBulk) AddDeletedBy(v int64) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.AddDeletedBy(v)
 	})

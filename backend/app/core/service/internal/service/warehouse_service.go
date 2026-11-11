@@ -48,7 +48,7 @@ func (s *WarehouseService) Count(ctx context.Context, req *paginationV1.PagingRe
 	if err != nil {
 		return nil, err
 	}
-	return &inventoryV1.CountWarehouseResponse{Count: uint64(count)}, nil
+	return &inventoryV1.CountWarehouseResponse{Count: int64(count)}, nil
 }
 
 func (s *WarehouseService) Get(ctx context.Context, req *inventoryV1.GetWarehouseRequest) (*inventoryV1.Warehouse, error) {

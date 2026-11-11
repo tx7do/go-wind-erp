@@ -37,13 +37,13 @@ func (_c *ApprovalFlowStepCreate) SetNillableCreatedAt(v *time.Time) *ApprovalFl
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ApprovalFlowStepCreate) SetTenantID(v uint32) *ApprovalFlowStepCreate {
+func (_c *ApprovalFlowStepCreate) SetTenantID(v int64) *ApprovalFlowStepCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ApprovalFlowStepCreate) SetNillableTenantID(v *uint32) *ApprovalFlowStepCreate {
+func (_c *ApprovalFlowStepCreate) SetNillableTenantID(v *int64) *ApprovalFlowStepCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -51,13 +51,13 @@ func (_c *ApprovalFlowStepCreate) SetNillableTenantID(v *uint32) *ApprovalFlowSt
 }
 
 // SetFlowID sets the "flow_id" field.
-func (_c *ApprovalFlowStepCreate) SetFlowID(v uint32) *ApprovalFlowStepCreate {
+func (_c *ApprovalFlowStepCreate) SetFlowID(v int64) *ApprovalFlowStepCreate {
 	_c.mutation.SetFlowID(v)
 	return _c
 }
 
 // SetNillableFlowID sets the "flow_id" field if the given value is not nil.
-func (_c *ApprovalFlowStepCreate) SetNillableFlowID(v *uint32) *ApprovalFlowStepCreate {
+func (_c *ApprovalFlowStepCreate) SetNillableFlowID(v *int64) *ApprovalFlowStepCreate {
 	if v != nil {
 		_c.SetFlowID(*v)
 	}
@@ -107,7 +107,7 @@ func (_c *ApprovalFlowStepCreate) SetNillableRoleCode(v *string) *ApprovalFlowSt
 }
 
 // SetID sets the "id" field.
-func (_c *ApprovalFlowStepCreate) SetID(v uint32) *ApprovalFlowStepCreate {
+func (_c *ApprovalFlowStepCreate) SetID(v int64) *ApprovalFlowStepCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -197,7 +197,7 @@ func (_c *ApprovalFlowStepCreate) sqlSave(ctx context.Context) (*ApprovalFlowSte
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -207,7 +207,7 @@ func (_c *ApprovalFlowStepCreate) sqlSave(ctx context.Context) (*ApprovalFlowSte
 func (_c *ApprovalFlowStepCreate) createSpec() (*ApprovalFlowStep, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ApprovalFlowStep{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(approvalflowstep.Table, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(approvalflowstep.Table, sqlgraph.NewFieldSpec(approvalflowstep.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -219,11 +219,11 @@ func (_c *ApprovalFlowStepCreate) createSpec() (*ApprovalFlowStep, *sqlgraph.Cre
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(approvalflowstep.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(approvalflowstep.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.FlowID(); ok {
-		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeUint32, value)
+		_spec.SetField(approvalflowstep.FieldFlowID, field.TypeInt64, value)
 		_node.FlowID = &value
 	}
 	if value, ok := _c.mutation.Seq(); ok {
@@ -291,7 +291,7 @@ type (
 )
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalFlowStepUpsert) SetFlowID(v uint32) *ApprovalFlowStepUpsert {
+func (u *ApprovalFlowStepUpsert) SetFlowID(v int64) *ApprovalFlowStepUpsert {
 	u.Set(approvalflowstep.FieldFlowID, v)
 	return u
 }
@@ -303,7 +303,7 @@ func (u *ApprovalFlowStepUpsert) UpdateFlowID() *ApprovalFlowStepUpsert {
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalFlowStepUpsert) AddFlowID(v uint32) *ApprovalFlowStepUpsert {
+func (u *ApprovalFlowStepUpsert) AddFlowID(v int64) *ApprovalFlowStepUpsert {
 	u.Add(approvalflowstep.FieldFlowID, v)
 	return u
 }
@@ -429,14 +429,14 @@ func (u *ApprovalFlowStepUpsertOne) Update(set func(*ApprovalFlowStepUpsert)) *A
 }
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalFlowStepUpsertOne) SetFlowID(v uint32) *ApprovalFlowStepUpsertOne {
+func (u *ApprovalFlowStepUpsertOne) SetFlowID(v int64) *ApprovalFlowStepUpsertOne {
 	return u.Update(func(s *ApprovalFlowStepUpsert) {
 		s.SetFlowID(v)
 	})
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalFlowStepUpsertOne) AddFlowID(v uint32) *ApprovalFlowStepUpsertOne {
+func (u *ApprovalFlowStepUpsertOne) AddFlowID(v int64) *ApprovalFlowStepUpsertOne {
 	return u.Update(func(s *ApprovalFlowStepUpsert) {
 		s.AddFlowID(v)
 	})
@@ -542,7 +542,7 @@ func (u *ApprovalFlowStepUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ApprovalFlowStepUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ApprovalFlowStepUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -551,7 +551,7 @@ func (u *ApprovalFlowStepUpsertOne) ID(ctx context.Context) (id uint32, err erro
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ApprovalFlowStepUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ApprovalFlowStepUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -608,7 +608,7 @@ func (_c *ApprovalFlowStepCreateBulk) Save(ctx context.Context) ([]*ApprovalFlow
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -747,14 +747,14 @@ func (u *ApprovalFlowStepUpsertBulk) Update(set func(*ApprovalFlowStepUpsert)) *
 }
 
 // SetFlowID sets the "flow_id" field.
-func (u *ApprovalFlowStepUpsertBulk) SetFlowID(v uint32) *ApprovalFlowStepUpsertBulk {
+func (u *ApprovalFlowStepUpsertBulk) SetFlowID(v int64) *ApprovalFlowStepUpsertBulk {
 	return u.Update(func(s *ApprovalFlowStepUpsert) {
 		s.SetFlowID(v)
 	})
 }
 
 // AddFlowID adds v to the "flow_id" field.
-func (u *ApprovalFlowStepUpsertBulk) AddFlowID(v uint32) *ApprovalFlowStepUpsertBulk {
+func (u *ApprovalFlowStepUpsertBulk) AddFlowID(v int64) *ApprovalFlowStepUpsertBulk {
 	return u.Update(func(s *ApprovalFlowStepUpsert) {
 		s.AddFlowID(v)
 	})

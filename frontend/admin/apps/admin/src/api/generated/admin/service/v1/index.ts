@@ -15,6 +15,10 @@ export interface ClientTransport {
     meta: TransportMeta,
   ): Promise<unknown>;
   serverStream<T>(path: string, meta: TransportMeta): ServerStream<T>;
+  // Raw byte chunks for google.api.HttpBody server streams: the first
+  // chunk's content type rides the HTTP response Content-Type header,
+  // every chunk is raw payload bytes (no JSON framing).
+  byteStream(path: string, meta: TransportMeta): ServerStream<Uint8Array>;
   duplexStream<TIn, TOut>(path: string, meta: TransportMeta): DuplexStream<TIn, TOut>;
 }
 
@@ -257,7 +261,7 @@ export function createAdminPortalServiceClient(
 ): AdminPortalService {
   return {
     GetNavigation(_request) {
-      const path = `admin/v1/routes`;
+      const path = `/admin/v1/routes`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'AdminPortalService',
@@ -265,7 +269,7 @@ export function createAdminPortalServiceClient(
       }) as Promise<ListRouteResponse>;
     },
     GetMyPermissionCode(_request) {
-      const path = `admin/v1/perm-codes`;
+      const path = `/admin/v1/perm-codes`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'AdminPortalService',
@@ -273,7 +277,7 @@ export function createAdminPortalServiceClient(
       }) as Promise<ListPermissionCodeResponse>;
     },
     GetInitialContext(_request) {
-      const path = `admin/v1/initial-context`;
+      const path = `/admin/v1/initial-context`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'AdminPortalService',
@@ -322,7 +326,7 @@ export function createApiServiceClient(
 ): ApiService {
   return {
     List(request) {
-      const path = `admin/v1/apis`;
+      const path = `/admin/v1/apis`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -370,56 +374,9 @@ export function createApiServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -440,7 +397,7 @@ export function createApiServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/apis/${request.id}`;
+      const path = `/admin/v1/apis/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -458,7 +415,7 @@ export function createApiServiceClient(
       }) as Promise<permissionservicev1_Api>;
     },
     Create(request) {
-      const path = `admin/v1/apis`;
+      const path = `/admin/v1/apis`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApiService',
@@ -469,8 +426,10 @@ export function createApiServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/apis/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/apis/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'ApiService',
         method: 'Update',
@@ -480,7 +439,7 @@ export function createApiServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/apis/${request.id}`;
+      const path = `/admin/v1/apis/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'ApiService',
@@ -488,7 +447,7 @@ export function createApiServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     SyncApis(request) {
-      const path = `admin/v1/apis/sync`;
+      const path = `/admin/v1/apis/sync`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApiService',
@@ -496,7 +455,7 @@ export function createApiServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     GetWalkRouteData(_request) {
-      const path = `admin/v1/apis/walk-route`;
+      const path = `/admin/v1/apis/walk-route`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'ApiService',
@@ -520,7 +479,7 @@ export type pagination_PagingRequest = {
   // 是否不分页，如果为true，则page和pageSize参数无效。
   noPaging?: boolean;
   // 跳过的记录数（从0开始，默认0）
-  offset?: number;
+  offset?: string;
   // 排序条件
   orderBy?: string;
   // 当前页码（从1开始，默认1）
@@ -671,17 +630,17 @@ type wellKnownFieldMask = string;
 // 查询列表 - 回应
 export type permissionservicev1_ListApiResponse = {
   items: permissionservicev1_Api[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // API资源
 export type permissionservicev1_Api = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   method?: string;
   module?: string;
   moduleDescription?: string;
@@ -690,7 +649,7 @@ export type permissionservicev1_Api = {
   scope?: permissionservicev1_Api_Scope;
   status?: permissionservicev1_Api_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // API作用域
@@ -709,7 +668,7 @@ type wellKnownTimestamp = string;
 
 // 查询 - 请求
 export type permissionservicev1_GetApiRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -722,13 +681,13 @@ export type permissionservicev1_CreateApiRequest = {
 export type permissionservicev1_UpdateApiRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Api | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeleteApiRequest = {
-  id?: number;
+  id?: string;
 };
 
 // API审计日志管理服务
@@ -748,7 +707,7 @@ export function createApiAuditLogServiceClient(
 ): ApiAuditLogService {
   return {
     List(request) {
-      const path = `admin/v1/api-audit-logs`;
+      const path = `/admin/v1/api-audit-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -796,56 +755,9 @@ export function createApiAuditLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -866,7 +778,7 @@ export function createApiAuditLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/api-audit-logs/${request.id}`;
+      const path = `/admin/v1/api-audit-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -888,7 +800,7 @@ export function createApiAuditLogServiceClient(
 // 查询API审计日志列表 - 回应
 export type auditservicev1_ListApiAuditLogResponse = {
   items: auditservicev1_ApiAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 接口审计日志
@@ -901,7 +813,7 @@ export type auditservicev1_ApiAuditLog = {
   deviceInfo?: auditservicev1_DeviceInfo;
   geoLocation?: auditservicev1_GeoLocation;
   httpMethod?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   latencyMs?: number;
   logHash?: string;
@@ -917,10 +829,10 @@ export type auditservicev1_ApiAuditLog = {
   spanId?: string;
   statusCode?: number;
   success?: boolean;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -930,8 +842,8 @@ export type auditservicev1_GeoLocation = {
   city?: string;
   countryCode?: string;
   isp?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: string;
+  longitude?: string;
   province?: string;
 };
 
@@ -973,7 +885,7 @@ export type auditservicev1_DeviceInfo_DeviceType =
   | 'TABLET';
 // 查询API审计日志详情 - 请求
 export type auditservicev1_GetApiAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1014,7 +926,7 @@ export function createApprovalRequestServiceClient(
 ): ApprovalRequestService {
   return {
     List(request) {
-      const path = `admin/v1/approvals`;
+      const path = `/admin/v1/approvals`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -1062,56 +974,9 @@ export function createApprovalRequestServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -1132,7 +997,7 @@ export function createApprovalRequestServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/approvals/${request.id}`;
+      const path = `/admin/v1/approvals/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -1150,7 +1015,7 @@ export function createApprovalRequestServiceClient(
       }) as Promise<approvalservicev1_ApprovalRequest>;
     },
     Create(request) {
-      const path = `admin/v1/approvals`;
+      const path = `/admin/v1/approvals`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApprovalRequestService',
@@ -1161,7 +1026,7 @@ export function createApprovalRequestServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/approvals/${request.id}`;
+      const path = `/admin/v1/approvals/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'ApprovalRequestService',
@@ -1169,7 +1034,7 @@ export function createApprovalRequestServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Approve(request) {
-      const path = `admin/v1/approvals:approve`;
+      const path = `/admin/v1/approvals:approve`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApprovalRequestService',
@@ -1177,7 +1042,7 @@ export function createApprovalRequestServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Reject(request) {
-      const path = `admin/v1/approvals:reject`;
+      const path = `/admin/v1/approvals:reject`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApprovalRequestService',
@@ -1185,7 +1050,7 @@ export function createApprovalRequestServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Cancel(request) {
-      const path = `admin/v1/approvals:cancel`;
+      const path = `/admin/v1/approvals:cancel`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApprovalRequestService',
@@ -1197,13 +1062,13 @@ export function createApprovalRequestServiceClient(
 // 查询审批请求列表 - 回应
 export type approvalservicev1_ListApprovalRequestResponse = {
   items: approvalservicev1_ApprovalRequest[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 审批请求
 export type approvalservicev1_ApprovalRequest = {
-  applicantId?: number;
-  approverId?: number;
+  applicantId?: string;
+  approverId?: string;
   //
   // Behaviors: OPTIONAL
   bizRef?: string;
@@ -1214,15 +1079,15 @@ export type approvalservicev1_ApprovalRequest = {
   // Behaviors: OPTIONAL
   comment?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   // 多级审批：创建时从生效流程快照（<=1 为传统单级审批）
   currentStep?: number;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  flowId?: number;
+  deletedBy?: string;
+  flowId?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
@@ -1230,13 +1095,13 @@ export type approvalservicev1_ApprovalRequest = {
   //
   // Behaviors: OPTIONAL
   summary?: string;
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OPTIONAL
   title?: string;
   totalSteps?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 审批状态
@@ -1247,7 +1112,7 @@ export type approvalservicev1_ApprovalRequest_Status =
   | 'REJECTED';
 // 查询审批请求详情 - 请求
 export type approvalservicev1_GetApprovalRequestRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1258,24 +1123,24 @@ export type approvalservicev1_CreateApprovalRequestRequest = {
 
 // 删除审批请求 - 请求
 export type approvalservicev1_DeleteApprovalRequestRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 通过审批 - 请求
 export type approvalservicev1_ApproveApprovalRequestRequest = {
   comment?: string;
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 驳回审批 - 请求
 export type approvalservicev1_RejectApprovalRequestRequest = {
   comment?: string;
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 撤销审批 - 请求
 export type approvalservicev1_CancelApprovalRequestRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 审批流模板服务（多级审批配置）
@@ -1307,7 +1172,7 @@ export function createApprovalFlowServiceClient(
 ): ApprovalFlowService {
   return {
     List(request) {
-      const path = `admin/v1/approval-flows`;
+      const path = `/admin/v1/approval-flows`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -1355,56 +1220,9 @@ export function createApprovalFlowServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -1425,7 +1243,7 @@ export function createApprovalFlowServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/approval-flows/${request.id}`;
+      const path = `/admin/v1/approval-flows/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -1443,7 +1261,7 @@ export function createApprovalFlowServiceClient(
       }) as Promise<approvalservicev1_ApprovalFlow>;
     },
     Create(request) {
-      const path = `admin/v1/approval-flows`;
+      const path = `/admin/v1/approval-flows`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ApprovalFlowService',
@@ -1454,8 +1272,11 @@ export function createApprovalFlowServiceClient(
       if (request.data?.id === undefined || request.data?.id === null) {
         throw new Error('missing required field request.data.id');
       }
-      const path = `admin/v1/approval-flows/${request.data.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/approval-flows/${request.data.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      bodyMap["data"] = { ...bodyMap["data"] };
+      delete bodyMap["data"]["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'ApprovalFlowService',
         method: 'Update',
@@ -1465,7 +1286,7 @@ export function createApprovalFlowServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/approval-flows/${request.id}`;
+      const path = `/admin/v1/approval-flows/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'ApprovalFlowService',
@@ -1476,7 +1297,7 @@ export function createApprovalFlowServiceClient(
 }
 export type approvalservicev1_ListApprovalFlowResponse = {
   items: approvalservicev1_ApprovalFlow[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 审批流模板：每租户每业务类型至多一条生效流程；steps 为级定义（seq 1..N）。
@@ -1485,10 +1306,10 @@ export type approvalservicev1_ApprovalFlow = {
   // Behaviors: OPTIONAL
   bizType?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -1497,13 +1318,13 @@ export type approvalservicev1_ApprovalFlow = {
   // Behaviors: OPTIONAL
   status?: string;
   steps: approvalservicev1_ApprovalFlowStep[] | undefined;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 审批级定义：持有 role_code 角色的用户即本级候选审批人（申请人除外）。
 export type approvalservicev1_ApprovalFlowStep = {
-  flowId?: number;
-  id?: number;
+  flowId?: string;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -1514,7 +1335,7 @@ export type approvalservicev1_ApprovalFlowStep = {
 };
 
 export type approvalservicev1_GetApprovalFlowRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1529,7 +1350,7 @@ export type approvalservicev1_UpdateApprovalFlowRequest = {
 };
 
 export type approvalservicev1_DeleteApprovalFlowRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 用户后台登录认证服务
@@ -1561,7 +1382,7 @@ export function createAuthenticationServiceClient(
 ): AuthenticationService {
   return {
     Login(request) {
-      const path = `admin/v1/login`;
+      const path = `/admin/v1/login`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -1569,7 +1390,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     Logout(request) {
-      const path = `admin/v1/logout`;
+      const path = `/admin/v1/logout`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -1577,7 +1398,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     RefreshToken(request) {
-      const path = `admin/v1/refresh-token`;
+      const path = `/admin/v1/refresh-token`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -1585,7 +1406,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     GenerateCaptcha(_request) {
-      const path = `admin/v1/captcha`;
+      const path = `/admin/v1/captcha`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'AuthenticationService',
@@ -1593,7 +1414,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_GenerateCaptchaResponse>;
     },
     VerifyCaptcha(request) {
-      const path = `admin/v1/captcha/verify`;
+      const path = `/admin/v1/captcha/verify`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -1620,7 +1441,7 @@ export type authenticationservicev1_LoginRequest = {
   refresh_token?: string;
   scope?: string;
   tenant_code?: string;
-  user_id?: number;
+  user_id?: string;
   username?: string;
 };
 
@@ -1638,9 +1459,9 @@ export type authenticationservicev1_ClientType =
 // 用户登录 - 回应
 export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
-  expires_in: number | undefined;
+  expires_in: string | undefined;
   id_token?: string;
-  refresh_expires_in?: number;
+  refresh_expires_in?: string;
   refresh_token?: string;
   scope?: string;
   token_type: authenticationservicev1_TokenType | undefined;
@@ -1689,7 +1510,7 @@ export function createBillingServiceClient(
 ): BillingService {
   return {
     GetMySubscription(_request) {
-      const path = `admin/v1/billing/my-subscription`;
+      const path = `/admin/v1/billing/my-subscription`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'BillingService',
@@ -1697,7 +1518,7 @@ export function createBillingServiceClient(
       }) as Promise<billingservicev1_SubscriptionUsage>;
     },
     ListPlans(request) {
-      const path = `admin/v1/billing/plans`;
+      const path = `/admin/v1/billing/plans`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -1745,56 +1566,9 @@ export function createBillingServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -1812,7 +1586,7 @@ export function createBillingServiceClient(
       }) as Promise<billingservicev1_ListPlanResponse>;
     },
     ChangePlan(request) {
-      const path = `admin/v1/billing:change-plan`;
+      const path = `/admin/v1/billing:change-plan`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'BillingService',
@@ -1820,7 +1594,7 @@ export function createBillingServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Renew(request) {
-      const path = `admin/v1/billing:renew`;
+      const path = `/admin/v1/billing:renew`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'BillingService',
@@ -1832,10 +1606,10 @@ export function createBillingServiceClient(
 // 订阅用量视图（当前套餐 + 实时计量 + 限额，前端进度条数据源）
 export type billingservicev1_SubscriptionUsage = {
   expired?: boolean;
-  orderCountMonth?: number;
+  orderCountMonth?: string;
   plan?: billingservicev1_Plan;
   subscription?: billingservicev1_Subscription;
-  userCount?: number;
+  userCount?: string;
 };
 
 // 租户订阅（每租户一条当前订阅）
@@ -1845,10 +1619,10 @@ export type billingservicev1_Subscription = {
   createdAt?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL, OUTPUT_ONLY
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   periodEnd?: wellKnownTimestamp;
@@ -1866,13 +1640,13 @@ export type billingservicev1_Subscription = {
   status?: billingservicev1_Subscription_Status;
   //
   // Behaviors: OPTIONAL
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OUTPUT_ONLY
   updatedAt?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL, OUTPUT_ONLY
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 订阅状态（过期由守卫按 period_end 动态判断，status 仅记录）
@@ -1890,7 +1664,7 @@ export type billingservicev1_Plan = {
   createdAt?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL, OUTPUT_ONLY
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OUTPUT_ONLY
   deletedAt?: wellKnownTimestamp;
@@ -1899,19 +1673,19 @@ export type billingservicev1_Plan = {
   description?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
-  maxOrdersMonthly?: number;
+  maxOrdersMonthly?: string;
   //
   // Behaviors: OPTIONAL
-  maxUsers?: number;
+  maxUsers?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
   //
   // Behaviors: OPTIONAL
-  priceCents?: number;
+  priceCents?: string;
   //
   // Behaviors: OPTIONAL
   remark?: string;
@@ -1923,13 +1697,13 @@ export type billingservicev1_Plan = {
   status?: billingservicev1_Plan_Status;
   //
   // Behaviors: OPTIONAL
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OUTPUT_ONLY
   updatedAt?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL, OUTPUT_ONLY
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 套餐状态
@@ -1938,7 +1712,7 @@ export type billingservicev1_Plan_Status =
   | 'ON';
 export type billingservicev1_ListPlanResponse = {
   items: billingservicev1_Plan[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type billingservicev1_ChangePlanRequest = {
@@ -1972,7 +1746,7 @@ export function createPlanAdminServiceClient(
 ): PlanAdminService {
   return {
     List(request) {
-      const path = `admin/v1/plans`;
+      const path = `/admin/v1/plans`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2020,56 +1794,9 @@ export function createPlanAdminServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2087,7 +1814,7 @@ export function createPlanAdminServiceClient(
       }) as Promise<billingservicev1_ListPlanResponse>;
     },
     Count(request) {
-      const path = `admin/v1/plans:count`;
+      const path = `/admin/v1/plans:count`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2135,56 +1862,9 @@ export function createPlanAdminServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2205,7 +1885,7 @@ export function createPlanAdminServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/plans/${request.id}`;
+      const path = `/admin/v1/plans/${request.id}`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'PlanAdminService',
@@ -2213,7 +1893,7 @@ export function createPlanAdminServiceClient(
       }) as Promise<billingservicev1_Plan>;
     },
     Create(request) {
-      const path = `admin/v1/plans`;
+      const path = `/admin/v1/plans`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PlanAdminService',
@@ -2224,8 +1904,11 @@ export function createPlanAdminServiceClient(
       if (request.data?.id === undefined || request.data?.id === null) {
         throw new Error('missing required field request.data.id');
       }
-      const path = `admin/v1/plans/${request.data.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/plans/${request.data.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      bodyMap["data"] = { ...bodyMap["data"] };
+      delete bodyMap["data"]["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PlanAdminService',
         method: 'Update',
@@ -2235,7 +1918,7 @@ export function createPlanAdminServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/plans/${request.id}`;
+      const path = `/admin/v1/plans/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PlanAdminService',
@@ -2245,11 +1928,11 @@ export function createPlanAdminServiceClient(
   };
 }
 export type billingservicev1_CountPlanResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type billingservicev1_GetPlanRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type billingservicev1_CreatePlanRequest = {
@@ -2262,7 +1945,7 @@ export type billingservicev1_UpdatePlanRequest = {
 };
 
 export type billingservicev1_DeletePlanRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 数据访问审计日志管理服务
@@ -2282,7 +1965,7 @@ export function createDataAccessAuditLogServiceClient(
 ): DataAccessAuditLogService {
   return {
     List(request) {
-      const path = `admin/v1/data-access-audit-logs`;
+      const path = `/admin/v1/data-access-audit-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2330,56 +2013,9 @@ export function createDataAccessAuditLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2400,7 +2036,7 @@ export function createDataAccessAuditLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/data-access-audit-logs/${request.id}`;
+      const path = `/admin/v1/data-access-audit-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -2422,7 +2058,7 @@ export function createDataAccessAuditLogServiceClient(
 // 查询数据访问审计日志列表 - 回应
 export type auditservicev1_ListDataAccessAuditLogResponse = {
   items: auditservicev1_DataAccessAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 数据访问审计日志
@@ -2436,7 +2072,7 @@ export type auditservicev1_DataAccessAuditLog = {
   dataMasked?: boolean;
   dataSource?: string;
   dbUser?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   latencyMs?: number;
   logHash?: string;
@@ -2448,9 +2084,9 @@ export type auditservicev1_DataAccessAuditLog = {
   sqlText?: string;
   success?: boolean;
   tableName?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -2484,7 +2120,7 @@ export type auditservicev1_SensitiveLevel =
   | 'SENSITIVE_LEVEL_UNSPECIFIED';
 // 查询数据访问审计日志详情 - 请求
 export type auditservicev1_GetDataAccessAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -2517,7 +2153,7 @@ export function createDictEntryServiceClient(
 ): DictEntryService {
   return {
     List(request) {
-      const path = `admin/v1/dict/entries`;
+      const path = `/admin/v1/dict/entries`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2565,56 +2201,9 @@ export function createDictEntryServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2632,7 +2221,7 @@ export function createDictEntryServiceClient(
       }) as Promise<dictservicev1_ListDictEntryResponse>;
     },
     Create(request) {
-      const path = `admin/v1/dict/entries`;
+      const path = `/admin/v1/dict/entries`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'DictEntryService',
@@ -2643,15 +2232,17 @@ export function createDictEntryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/dict/entries/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/dict/entries/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'DictEntryService',
         method: 'Update',
       }) as Promise<wellKnownEmpty>;
     },
     Delete(request) {
-      const path = `admin/v1/dict/entries`;
+      const path = `/admin/v1/dict/entries`;
       const body = null;
       const queryParams: string[] = [];
       if (request.ids) {
@@ -2671,7 +2262,7 @@ export function createDictEntryServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ListByTypeCode(request) {
-      const path = `admin/v1/dict/entries/by-type-code`;
+      const path = `/admin/v1/dict/entries/by-type-code`;
       const body = null;
       const queryParams: string[] = [];
       if (request.typeCode) {
@@ -2698,27 +2289,27 @@ export function createDictEntryServiceClient(
 // 查询字典项列表 - 回应
 export type dictservicev1_ListDictEntryResponse = {
   items: dictservicev1_DictEntry[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 字典项
 export type dictservicev1_DictEntry = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currentI18n?: dictservicev1_DictEntryI18n;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   entryValue?: string;
   i18n: { [key: string]: dictservicev1_DictEntryI18n } | undefined;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   numericValue?: number;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
-  typeId?: number;
+  typeId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 字典项多语言信息
@@ -2738,13 +2329,13 @@ export type dictservicev1_CreateDictEntryRequest = {
 export type dictservicev1_UpdateDictEntryRequest = {
   allowMissing?: boolean;
   data: dictservicev1_DictEntry | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 批量删除字典 - 请求
 export type dictservicev1_DeleteDictEntryRequest = {
-  ids: number[] | undefined;
+  ids: string[] | undefined;
 };
 
 export type dictservicev1_ListDictEntryByTypeCodeRequest = {
@@ -2766,6 +2357,10 @@ export interface DictTypeService {
   Get(
     request: dictservicev1_GetDictTypeRequest,
   ): Promise<dictservicev1_DictType>;
+  /** Alternate HTTP binding #1 of Get: GET /admin/v1/dict/types/code/{code} */
+  GetAlt1(
+    request: dictservicev1_GetDictTypeRequest,
+  ): Promise<dictservicev1_DictType>;
   // 创建字典类型
   Create(
     request: dictservicev1_CreateDictTypeRequest,
@@ -2785,7 +2380,7 @@ export function createDictTypeServiceClient(
 ): DictTypeService {
   return {
     List(request) {
-      const path = `admin/v1/dict/types`;
+      const path = `/admin/v1/dict/types`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2833,56 +2428,9 @@ export function createDictTypeServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2903,7 +2451,7 @@ export function createDictTypeServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/dict/types/${request.id}`;
+      const path = `/admin/v1/dict/types/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -2925,8 +2473,36 @@ export function createDictTypeServiceClient(
         method: 'Get',
       }) as Promise<dictservicev1_DictType>;
     },
+
+    // Alternate HTTP binding #1 of Get: GET /admin/v1/dict/types/code/{code}
+    GetAlt1(request) {
+      if (request.code === undefined || request.code === null) {
+        throw new Error('missing required field request.code');
+      }
+      const path = `/admin/v1/dict/types/code/${request.code}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictTypeService',
+        method: 'Get',
+      }) as Promise<dictservicev1_DictType>;
+    },
     Create(request) {
-      const path = `admin/v1/dict/types`;
+      const path = `/admin/v1/dict/types`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'DictTypeService',
@@ -2937,15 +2513,17 @@ export function createDictTypeServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/dict/types/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/dict/types/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'DictTypeService',
         method: 'Update',
       }) as Promise<wellKnownEmpty>;
     },
     Delete(request) {
-      const path = `admin/v1/dict/types`;
+      const path = `/admin/v1/dict/types`;
       const body = null;
       const queryParams: string[] = [];
       if (request.ids) {
@@ -2969,30 +2547,30 @@ export function createDictTypeServiceClient(
 // 查询字典类型列表 - 回应
 export type dictservicev1_ListDictTypeResponse = {
   items: dictservicev1_DictType[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 字典类型
 export type dictservicev1_DictType = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isEnabled?: boolean;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   typeCode?: string;
   typeName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询字典类型详情 - 请求
 export type dictservicev1_GetDictTypeRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -3005,13 +2583,13 @@ export type dictservicev1_CreateDictTypeRequest = {
 export type dictservicev1_UpdateDictTypeRequest = {
   allowMissing?: boolean;
   data: dictservicev1_DictType | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 批量删除字典 - 请求
 export type dictservicev1_DeleteDictTypeRequest = {
-  ids: number[] | undefined;
+  ids: string[] | undefined;
 };
 
 // 文件管理服务
@@ -3043,7 +2621,7 @@ export function createFileServiceClient(
 ): FileService {
   return {
     List(request) {
-      const path = `admin/v1/files`;
+      const path = `/admin/v1/files`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3091,56 +2669,9 @@ export function createFileServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -3161,7 +2692,7 @@ export function createFileServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/files/${request.id}`;
+      const path = `/admin/v1/files/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -3179,7 +2710,7 @@ export function createFileServiceClient(
       }) as Promise<storageservicev1_File>;
     },
     Create(request) {
-      const path = `admin/v1/files`;
+      const path = `/admin/v1/files`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'FileService',
@@ -3190,8 +2721,10 @@ export function createFileServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/files/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/files/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'FileService',
         method: 'Update',
@@ -3201,7 +2734,7 @@ export function createFileServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/files/${request.id}`;
+      const path = `/admin/v1/files/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'FileService',
@@ -3213,7 +2746,7 @@ export function createFileServiceClient(
 // 查询列表 - 回应
 export type storageservicev1_ListFileResponse = {
   items: storageservicev1_File[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 文件
@@ -3221,25 +2754,25 @@ export type storageservicev1_File = {
   bucketName?: string;
   contentHash?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   extension?: string;
   fileDirectory?: string;
   fileGuid?: string;
   fileName?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   linkUrl?: string;
   provider?: storageservicev1_OSSProvider;
   saveFileName?: string;
-  size?: number;
+  size?: string;
   sizeFormat?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // OSS供应商
@@ -3256,7 +2789,7 @@ export type storageservicev1_OSSProvider =
   | 'TENCENT';
 // 查询 - 请求
 export type storageservicev1_GetFileRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -3269,13 +2802,13 @@ export type storageservicev1_CreateFileRequest = {
 export type storageservicev1_UpdateFileRequest = {
   allowMissing?: boolean;
   data: storageservicev1_File | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type storageservicev1_DeleteFileRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 文件传输服务
@@ -3299,7 +2832,7 @@ export function createFileTransferServiceClient(
 ): FileTransferService {
   return {
     DownloadFile(request) {
-      const path = `admin/v1/file/download`;
+      const path = `/admin/v1/file/download`;
       const body = null;
       const queryParams: string[] = [];
       if (request.fileId) {
@@ -3367,7 +2900,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_DownloadFileResponse>;
     },
     PutUploadFile(request) {
-      const path = `admin/v1/file/upload`;
+      const path = `/admin/v1/file/upload`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'PUT', body, {
         service: 'FileTransferService',
@@ -3375,7 +2908,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_UploadFileResponse>;
     },
     PostUploadFile(request) {
-      const path = `admin/v1/file/upload`;
+      const path = `/admin/v1/file/upload`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'FileTransferService',
@@ -3389,12 +2922,12 @@ export type storageservicev1_DownloadFileRequest = {
   acceptMime?: string;
   disposition?: string;
   downloadUrl?: string;
-  fileId?: number;
+  fileId?: string;
   preferPresignedUrl?: boolean;
   presignExpireSeconds?: number;
-  rangeEnd?: number;
+  rangeEnd?: string;
   // 可选的分段下载范围（闭区间 start，开区间 end；为 0/0 表示全量）
-  rangeStart?: number;
+  rangeStart?: string;
   storageObject?: storageservicev1_StorageObject;
 };
 
@@ -3411,7 +2944,7 @@ export type storageservicev1_DownloadFileResponse = {
   downloadUrl?: string;
   file?: string;
   mime: string | undefined;
-  size: number | undefined;
+  size: string | undefined;
   sourceFileName: string | undefined;
   storagePath: string | undefined;
   updatedAt?: wellKnownTimestamp;
@@ -3421,11 +2954,11 @@ export type storageservicev1_UploadFileRequest = {
   file?: string;
   mime?: string;
   presign?: storageservicev1_PresignOption;
-  size?: number;
+  size?: string;
   sourceFileName?: string;
   storageObject: storageservicev1_StorageObject | undefined;
-  tenantId?: number;
-  userId?: number;
+  tenantId?: string;
+  userId?: string;
 };
 
 // 预签名选项
@@ -3473,7 +3006,7 @@ export function createPayableServiceClient(
 ): PayableService {
   return {
     List(request) {
-      const path = `admin/v1/payables`;
+      const path = `/admin/v1/payables`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3521,56 +3054,9 @@ export function createPayableServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -3591,7 +3077,7 @@ export function createPayableServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/payables/${request.id}`;
+      const path = `/admin/v1/payables/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -3609,7 +3095,7 @@ export function createPayableServiceClient(
       }) as Promise<financeservicev1_Payable>;
     },
     Create(request) {
-      const path = `admin/v1/payables`;
+      const path = `/admin/v1/payables`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PayableService',
@@ -3620,7 +3106,7 @@ export function createPayableServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/payables/${request.id}`;
+      const path = `/admin/v1/payables/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PayableService',
@@ -3628,7 +3114,7 @@ export function createPayableServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Cancel(request) {
-      const path = `admin/v1/payables:cancel`;
+      const path = `/admin/v1/payables:cancel`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PayableService',
@@ -3636,7 +3122,7 @@ export function createPayableServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     AgingReport(_request) {
-      const path = `admin/v1/payables:aging-report`;
+      const path = `/admin/v1/payables:aging-report`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'PayableService',
@@ -3647,21 +3133,21 @@ export function createPayableServiceClient(
 }
 export type financeservicev1_ListPayableResponse = {
   items: financeservicev1_Payable[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 应付单
 export type financeservicev1_Payable = {
-  amount?: number;
+  amount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   dueDate?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  paidAmount?: number;
+  id?: string;
+  paidAmount?: string;
   payableNumber?: string;
   //
   // Behaviors: OPTIONAL
@@ -3673,9 +3159,9 @@ export type financeservicev1_Payable = {
   //
   // Behaviors: OPTIONAL
   supplierCode?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 应付状态
@@ -3685,7 +3171,7 @@ export type financeservicev1_Payable_Status =
   | 'PENDING'
   | 'SETTLED';
 export type financeservicev1_GetPayableRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -3694,11 +3180,11 @@ export type financeservicev1_CreatePayableRequest = {
 };
 
 export type financeservicev1_DeletePayableRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type financeservicev1_CancelPayableRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 账龄报表回应
@@ -3709,8 +3195,8 @@ export type financeservicev1_AgingReportResponse = {
 // 账龄分桶统计
 export type financeservicev1_AgingBucket = {
   bucket?: string;
-  count?: number;
-  totalAmount?: number;
+  count?: string;
+  totalAmount?: string;
 };
 
 // 付款管理服务（append-only 台账）
@@ -3734,7 +3220,7 @@ export function createPaymentServiceClient(
 ): PaymentService {
   return {
     List(request) {
-      const path = `admin/v1/payments`;
+      const path = `/admin/v1/payments`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3782,56 +3268,9 @@ export function createPaymentServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -3852,7 +3291,7 @@ export function createPaymentServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/payments/${request.id}`;
+      const path = `/admin/v1/payments/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -3870,7 +3309,7 @@ export function createPaymentServiceClient(
       }) as Promise<financeservicev1_Payment>;
     },
     Create(request) {
-      const path = `admin/v1/payments`;
+      const path = `/admin/v1/payments`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PaymentService',
@@ -3881,27 +3320,27 @@ export function createPaymentServiceClient(
 }
 export type financeservicev1_ListPaymentResponse = {
   items: financeservicev1_Payment[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 付款
 export type financeservicev1_Payment = {
-  amount?: number;
+  amount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   method?: financeservicev1_Payment_Method;
-  payableId?: number;
+  payableId?: string;
   paymentNumber?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
   status?: financeservicev1_Payment_Status;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 付款方式
@@ -3916,7 +3355,7 @@ export type financeservicev1_Payment_Status =
   | 'PENDING'
   | 'REJECTED';
 export type financeservicev1_GetPaymentRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -3951,7 +3390,7 @@ export function createReceivableServiceClient(
 ): ReceivableService {
   return {
     List(request) {
-      const path = `admin/v1/receivables`;
+      const path = `/admin/v1/receivables`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3999,56 +3438,9 @@ export function createReceivableServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -4069,7 +3461,7 @@ export function createReceivableServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/receivables/${request.id}`;
+      const path = `/admin/v1/receivables/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -4087,7 +3479,7 @@ export function createReceivableServiceClient(
       }) as Promise<financeservicev1_Receivable>;
     },
     Create(request) {
-      const path = `admin/v1/receivables`;
+      const path = `/admin/v1/receivables`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ReceivableService',
@@ -4098,7 +3490,7 @@ export function createReceivableServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/receivables/${request.id}`;
+      const path = `/admin/v1/receivables/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'ReceivableService',
@@ -4106,7 +3498,7 @@ export function createReceivableServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Cancel(request) {
-      const path = `admin/v1/receivables:cancel`;
+      const path = `/admin/v1/receivables:cancel`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ReceivableService',
@@ -4114,7 +3506,7 @@ export function createReceivableServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     AgingReport(_request) {
-      const path = `admin/v1/receivables:aging-report`;
+      const path = `/admin/v1/receivables:aging-report`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'ReceivableService',
@@ -4125,24 +3517,24 @@ export function createReceivableServiceClient(
 }
 export type financeservicev1_ListReceivableResponse = {
   items: financeservicev1_Receivable[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 应收单（镜像 Payable）
 export type financeservicev1_Receivable = {
-  amount?: number;
+  amount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
   customerCode?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   dueDate?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  paidAmount?: number;
+  id?: string;
+  paidAmount?: string;
   receivableNumber?: string;
   remark?: string;
   //
@@ -4151,9 +3543,9 @@ export type financeservicev1_Receivable = {
   //
   // Behaviors: OPTIONAL
   status?: financeservicev1_Receivable_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type financeservicev1_Receivable_Status =
@@ -4162,7 +3554,7 @@ export type financeservicev1_Receivable_Status =
   | 'PENDING'
   | 'SETTLED';
 export type financeservicev1_GetReceivableRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4171,11 +3563,11 @@ export type financeservicev1_CreateReceivableRequest = {
 };
 
 export type financeservicev1_DeleteReceivableRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type financeservicev1_CancelReceivableRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 收款管理服务（append-only 台账，镜像 PaymentService）
@@ -4196,7 +3588,7 @@ export function createReceiptServiceClient(
 ): ReceiptService {
   return {
     List(request) {
-      const path = `admin/v1/receipts`;
+      const path = `/admin/v1/receipts`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -4244,56 +3636,9 @@ export function createReceiptServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -4314,7 +3659,7 @@ export function createReceiptServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/receipts/${request.id}`;
+      const path = `/admin/v1/receipts/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -4332,7 +3677,7 @@ export function createReceiptServiceClient(
       }) as Promise<financeservicev1_Receipt>;
     },
     Create(request) {
-      const path = `admin/v1/receipts`;
+      const path = `/admin/v1/receipts`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ReceiptService',
@@ -4343,27 +3688,27 @@ export function createReceiptServiceClient(
 }
 export type financeservicev1_ListReceiptResponse = {
   items: financeservicev1_Receipt[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 收款（镜像 Payment）
 export type financeservicev1_Receipt = {
-  amount?: number;
+  amount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   method?: financeservicev1_Receipt_Method;
   receiptNumber?: string;
-  receivableId?: number;
+  receivableId?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
   status?: financeservicev1_Receipt_Status;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 export type financeservicev1_Receipt_Method =
@@ -4376,7 +3721,7 @@ export type financeservicev1_Receipt_Status =
   | 'PENDING'
   | 'REJECTED';
 export type financeservicev1_GetReceiptRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4408,7 +3753,7 @@ export function createFinanceReportServiceClient(
 ): FinanceReportService {
   return {
     ProfitReport(_request) {
-      const path = `admin/v1/finance/profit-report`;
+      const path = `/admin/v1/finance/profit-report`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'FinanceReportService',
@@ -4416,7 +3761,7 @@ export function createFinanceReportServiceClient(
       }) as Promise<financeservicev1_ProfitReportResponse>;
     },
     GetFinanceSummary(_request) {
-      const path = `admin/v1/finance/summary`;
+      const path = `/admin/v1/finance/summary`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'FinanceReportService',
@@ -4424,7 +3769,7 @@ export function createFinanceReportServiceClient(
       }) as Promise<financeservicev1_FinanceSummaryResponse>;
     },
     GetSalesRanking(request) {
-      const path = `admin/v1/finance/sales-ranking`;
+      const path = `/admin/v1/finance/sales-ranking`;
       const body = null;
       const queryParams: string[] = [];
       if (request.dimension) {
@@ -4457,7 +3802,7 @@ export function createFinanceReportServiceClient(
       }) as Promise<financeservicev1_SalesRankingResponse>;
     },
     GetPartnerStatement(request) {
-      const path = `admin/v1/finance/partner-statement`;
+      const path = `/admin/v1/finance/partner-statement`;
       const body = null;
       const queryParams: string[] = [];
       if (request.partnerType) {
@@ -4496,20 +3841,20 @@ export type financeservicev1_ProfitReportResponse = {
 };
 
 export type financeservicev1_MonthlyProfit = {
-  cogs?: number;
+  cogs?: string;
   month?: string;
-  profit?: number;
-  revenue?: number;
+  profit?: string;
+  revenue?: string;
 };
 
 // 经营汇总（驾驶舱）：本月收入/成本/利润（总账 6001/6401 当月净额）+
 // 应收/应付未清余额。金额单位分。
 export type financeservicev1_FinanceSummaryResponse = {
-  apBalance?: number;
-  arBalance?: number;
-  cogsMonth?: number;
-  profitMonth?: number;
-  revenueMonth?: number;
+  apBalance?: string;
+  arBalance?: string;
+  cogsMonth?: string;
+  profitMonth?: string;
+  revenueMonth?: string;
 };
 
 export type financeservicev1_GetSalesRankingRequest = {
@@ -4525,10 +3870,10 @@ export type financeservicev1_SalesRankingResponse = {
 };
 
 export type financeservicev1_SalesRankingItem = {
-  amount?: number;
+  amount?: string;
   key?: string;
   label?: string;
-  quantity?: number;
+  quantity?: string;
 };
 
 export type financeservicev1_GetPartnerStatementRequest = {
@@ -4539,19 +3884,19 @@ export type financeservicev1_GetPartnerStatementRequest = {
 };
 
 export type financeservicev1_PartnerStatementResponse = {
-  balance?: number;
+  balance?: string;
   partnerCode?: string;
   partnerType?: string;
   rows: financeservicev1_PartnerStatementRow[] | undefined;
-  totalCredit?: number;
-  totalDebit?: number;
+  totalCredit?: string;
+  totalDebit?: string;
 };
 
 // 对账单明细行：debit=应收/应付发生额，credit=收款/付款核销额。
 export type financeservicev1_PartnerStatementRow = {
-  credit?: number;
+  credit?: string;
   date?: wellKnownTimestamp;
-  debit?: number;
+  debit?: string;
   docRef?: string;
   docType?: string;
   summary?: string;
@@ -4578,7 +3923,7 @@ export function createAccountingServiceClient(
 ): AccountingService {
   return {
     ListAccounts(request) {
-      const path = `admin/v1/accounts`;
+      const path = `/admin/v1/accounts`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -4626,56 +3971,9 @@ export function createAccountingServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -4693,7 +3991,7 @@ export function createAccountingServiceClient(
       }) as Promise<financeservicev1_ListAccountResponse>;
     },
     ListJournalEntries(request) {
-      const path = `admin/v1/journal-entries`;
+      const path = `/admin/v1/journal-entries`;
       const body = null;
       const queryParams: string[] = [];
       if (request.fromDate) {
@@ -4731,7 +4029,7 @@ export function createAccountingServiceClient(
       }) as Promise<financeservicev1_ListJournalEntryResponse>;
     },
     GetTrialBalance(request) {
-      const path = `admin/v1/trial-balance`;
+      const path = `/admin/v1/trial-balance`;
       const body = null;
       const queryParams: string[] = [];
       if (request.fromDate) {
@@ -4757,7 +4055,7 @@ export function createAccountingServiceClient(
 }
 export type financeservicev1_ListAccountResponse = {
   items: financeservicev1_Account[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 会计科目
@@ -4773,7 +4071,7 @@ export type financeservicev1_Account = {
   code?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -4789,7 +4087,7 @@ export type financeservicev1_ListJournalEntryRequest = {
 
 export type financeservicev1_ListJournalEntryResponse = {
   items: financeservicev1_JournalEntry[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 记账凭证（头 + 行）
@@ -4805,12 +4103,12 @@ export type financeservicev1_JournalEntry = {
   entryNumber?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   lines: financeservicev1_JournalLine[] | undefined;
   //
   // Behaviors: OPTIONAL
   summary?: string;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 记账凭证行
@@ -4820,13 +4118,13 @@ export type financeservicev1_JournalLine = {
   accountCode?: string;
   //
   // Behaviors: OPTIONAL
-  credit?: number;
+  credit?: string;
   //
   // Behaviors: OPTIONAL
-  debit?: number;
+  debit?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   summary?: string;
@@ -4839,19 +4137,19 @@ export type financeservicev1_GetTrialBalanceRequest = {
 
 export type financeservicev1_TrialBalanceResponse = {
   items: financeservicev1_TrialBalanceItem[] | undefined;
-  totalCredit?: number;
-  totalDebit?: number;
+  totalCredit?: string;
+  totalDebit?: string;
 };
 
 // 科目余额行：余额 = direction 下（借方累计 − 贷方累计）
 export type financeservicev1_TrialBalanceItem = {
   accountCode?: string;
   accountName?: string;
-  balance?: number;
+  balance?: string;
   balanceDirection?: string;
   category?: string;
-  creditTotal?: number;
-  debitTotal?: number;
+  creditTotal?: string;
+  debitTotal?: string;
 };
 
 // 站内信消息管理服务
@@ -4887,7 +4185,7 @@ export function createInternalMessageServiceClient(
 ): InternalMessageService {
   return {
     ListMessage(request) {
-      const path = `admin/v1/internal-message/messages`;
+      const path = `/admin/v1/internal-message/messages`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -4935,56 +4233,9 @@ export function createInternalMessageServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -5005,7 +4256,7 @@ export function createInternalMessageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/messages/${request.id}`;
+      const path = `/admin/v1/internal-message/messages/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -5026,8 +4277,10 @@ export function createInternalMessageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/messages/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/internal-message/messages/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'InternalMessageService',
         method: 'UpdateMessage',
@@ -5037,7 +4290,7 @@ export function createInternalMessageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/messages/${request.id}`;
+      const path = `/admin/v1/internal-message/messages/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'InternalMessageService',
@@ -5045,7 +4298,7 @@ export function createInternalMessageServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     SendMessage(request) {
-      const path = `admin/v1/internal-message/send`;
+      const path = `/admin/v1/internal-message/send`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InternalMessageService',
@@ -5053,7 +4306,7 @@ export function createInternalMessageServiceClient(
       }) as Promise<internal_messageservicev1_SendMessageResponse>;
     },
     RevokeMessage(request) {
-      const path = `admin/v1/internal-message/revoke`;
+      const path = `/admin/v1/internal-message/revoke`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InternalMessageService',
@@ -5065,30 +4318,30 @@ export function createInternalMessageServiceClient(
 // 查询站内信消息列表 - 回应
 export type internal_messageservicev1_ListInternalMessageResponse = {
   items: internal_messageservicev1_InternalMessage[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息
 export type internal_messageservicev1_InternalMessage = {
-  categoryId?: number;
+  categoryId?: string;
   categoryName?: string;
   content?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  senderId?: number;
+  id?: string;
+  senderId?: string;
   senderName?: string;
   status?: internal_messageservicev1_InternalMessage_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   title?: string;
   type?: internal_messageservicev1_InternalMessage_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 消息状态
@@ -5106,7 +4359,7 @@ export type internal_messageservicev1_InternalMessage_Type =
   | 'PRIVATE';
 // 查询站内信消息详情 - 请求
 export type internal_messageservicev1_GetInternalMessageRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5114,34 +4367,34 @@ export type internal_messageservicev1_GetInternalMessageRequest = {
 export type internal_messageservicev1_UpdateInternalMessageRequest = {
   allowMissing?: boolean;
   data: internal_messageservicev1_InternalMessage | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除站内信消息 - 请求
 export type internal_messageservicev1_DeleteInternalMessageRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type internal_messageservicev1_SendMessageRequest = {
-  categoryId?: number;
+  categoryId?: string;
   content: string | undefined;
-  conversationId?: number;
-  recipientUserId?: number;
-  sendUserId?: number;
+  conversationId?: string;
+  recipientUserId?: string;
+  sendUserId?: string;
   targetAll?: boolean;
-  targetUserIds: number[] | undefined;
+  targetUserIds: string[] | undefined;
   title?: string;
   type: internal_messageservicev1_InternalMessage_Type | undefined;
 };
 
 export type internal_messageservicev1_SendMessageResponse = {
-  messageId: number | undefined;
+  messageId: string | undefined;
 };
 
 export type internal_messageservicev1_RevokeMessageRequest = {
-  messageId: number | undefined;
-  userId: number | undefined;
+  messageId: string | undefined;
+  userId: string | undefined;
 };
 
 // 站内信消息分类管理服务
@@ -5173,7 +4426,7 @@ export function createInternalMessageCategoryServiceClient(
 ): InternalMessageCategoryService {
   return {
     List(request) {
-      const path = `admin/v1/internal-message/categories`;
+      const path = `/admin/v1/internal-message/categories`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -5221,56 +4474,9 @@ export function createInternalMessageCategoryServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -5291,7 +4497,7 @@ export function createInternalMessageCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/categories/${request.id}`;
+      const path = `/admin/v1/internal-message/categories/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -5309,7 +4515,7 @@ export function createInternalMessageCategoryServiceClient(
       }) as Promise<internal_messageservicev1_InternalMessageCategory>;
     },
     Create(request) {
-      const path = `admin/v1/internal-message/categories`;
+      const path = `/admin/v1/internal-message/categories`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InternalMessageCategoryService',
@@ -5320,8 +4526,10 @@ export function createInternalMessageCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/categories/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/internal-message/categories/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'InternalMessageCategoryService',
         method: 'Update',
@@ -5331,7 +4539,7 @@ export function createInternalMessageCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/internal-message/categories/${request.id}`;
+      const path = `/admin/v1/internal-message/categories/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'InternalMessageCategoryService',
@@ -5343,30 +4551,30 @@ export function createInternalMessageCategoryServiceClient(
 // 查询站内信消息分类列表 - 回应
 export type internal_messageservicev1_ListInternalMessageCategoryResponse = {
   items: internal_messageservicev1_InternalMessageCategory[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息分类
 export type internal_messageservicev1_InternalMessageCategory = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   iconUrl?: string;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   name?: string;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询站内信消息分类详情 - 请求
 export type internal_messageservicev1_GetInternalMessageCategoryRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5379,13 +4587,13 @@ export type internal_messageservicev1_CreateInternalMessageCategoryRequest = {
 export type internal_messageservicev1_UpdateInternalMessageCategoryRequest = {
   allowMissing?: boolean;
   data: internal_messageservicev1_InternalMessageCategory | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除站内信消息分类 - 请求
 export type internal_messageservicev1_DeleteInternalMessageCategoryRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 站内信消息管理服务
@@ -5409,7 +4617,7 @@ export function createInternalMessageRecipientServiceClient(
 ): InternalMessageRecipientService {
   return {
     ListUserInbox(request) {
-      const path = `admin/v1/internal-message/inbox`;
+      const path = `/admin/v1/internal-message/inbox`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -5457,56 +4665,9 @@ export function createInternalMessageRecipientServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -5524,7 +4685,7 @@ export function createInternalMessageRecipientServiceClient(
       }) as Promise<internal_messageservicev1_ListUserInboxResponse>;
     },
     DeleteNotificationFromInbox(request) {
-      const path = `admin/v1/internal-message/inbox/delete`;
+      const path = `/admin/v1/internal-message/inbox/delete`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InternalMessageRecipientService',
@@ -5532,7 +4693,7 @@ export function createInternalMessageRecipientServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     MarkNotificationAsRead(request) {
-      const path = `admin/v1/internal-message/read`;
+      const path = `/admin/v1/internal-message/read`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InternalMessageRecipientService',
@@ -5543,27 +4704,27 @@ export function createInternalMessageRecipientServiceClient(
 }
 export type internal_messageservicev1_ListUserInboxResponse = {
   items: internal_messageservicev1_InternalMessageRecipient[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息用户接收信息
 export type internal_messageservicev1_InternalMessageRecipient = {
   content?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  messageId?: number;
+  deletedBy?: string;
+  id?: string;
+  messageId?: string;
   readAt?: wellKnownTimestamp;
   receivedAt?: wellKnownTimestamp;
-  recipientUserId?: number;
+  recipientUserId?: string;
   status?: internal_messageservicev1_InternalMessageRecipient_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 消息状态
@@ -5574,13 +4735,13 @@ export type internal_messageservicev1_InternalMessageRecipient_Status =
   | 'REVOKED'
   | 'SENT';
 export type internal_messageservicev1_DeleteNotificationFromInboxRequest = {
-  recipientIds: number[] | undefined;
-  userId: number | undefined;
+  recipientIds: string[] | undefined;
+  userId: string | undefined;
 };
 
 export type internal_messageservicev1_MarkNotificationAsReadRequest = {
-  recipientIds: number[] | undefined;
-  userId: number | undefined;
+  recipientIds: string[] | undefined;
+  userId: string | undefined;
 };
 
 // 仓库管理服务
@@ -5612,7 +4773,7 @@ export function createWarehouseServiceClient(
 ): WarehouseService {
   return {
     List(request) {
-      const path = `admin/v1/warehouses`;
+      const path = `/admin/v1/warehouses`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -5660,56 +4821,9 @@ export function createWarehouseServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -5730,7 +4844,7 @@ export function createWarehouseServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/warehouses/${request.id}`;
+      const path = `/admin/v1/warehouses/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -5748,7 +4862,7 @@ export function createWarehouseServiceClient(
       }) as Promise<inventoryservicev1_Warehouse>;
     },
     Create(request) {
-      const path = `admin/v1/warehouses`;
+      const path = `/admin/v1/warehouses`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'WarehouseService',
@@ -5759,8 +4873,10 @@ export function createWarehouseServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/warehouses/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/warehouses/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'WarehouseService',
         method: 'Update',
@@ -5770,7 +4886,7 @@ export function createWarehouseServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/warehouses/${request.id}`;
+      const path = `/admin/v1/warehouses/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'WarehouseService',
@@ -5782,7 +4898,7 @@ export function createWarehouseServiceClient(
 // 查询仓库列表 - 回应
 export type inventoryservicev1_ListWarehouseResponse = {
   items: inventoryservicev1_Warehouse[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 仓库
@@ -5791,13 +4907,13 @@ export type inventoryservicev1_Warehouse = {
   // Behaviors: OPTIONAL
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   location?: string;
@@ -5806,16 +4922,16 @@ export type inventoryservicev1_Warehouse = {
   name?: string;
   // receiving_location_id：该仓库的内部接收位置（仓库创建时自动生成的
   // INTERNAL StockLocation）。入库拣货单的目的位置即取自此字段。
-  receivingLocationId?: number;
+  receivingLocationId?: string;
   remark?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询仓库详情 - 请求
 export type inventoryservicev1_GetWarehouseRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5828,13 +4944,13 @@ export type inventoryservicev1_CreateWarehouseRequest = {
 export type inventoryservicev1_UpdateWarehouseRequest = {
   allowMissing?: boolean;
   data: inventoryservicev1_Warehouse | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除仓库 - 请求
 export type inventoryservicev1_DeleteWarehouseRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 库存位置服务
@@ -5866,7 +4982,7 @@ export function createLocationServiceClient(
 ): LocationService {
   return {
     List(request) {
-      const path = `admin/v1/stock-locations`;
+      const path = `/admin/v1/stock-locations`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -5914,56 +5030,9 @@ export function createLocationServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -5984,7 +5053,7 @@ export function createLocationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-locations/${request.id}`;
+      const path = `/admin/v1/stock-locations/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -6002,7 +5071,7 @@ export function createLocationServiceClient(
       }) as Promise<inventoryservicev1_StockLocation>;
     },
     Create(request) {
-      const path = `admin/v1/stock-locations`;
+      const path = `/admin/v1/stock-locations`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'LocationService',
@@ -6013,8 +5082,10 @@ export function createLocationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-locations/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/stock-locations/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'LocationService',
         method: 'Update',
@@ -6024,7 +5095,7 @@ export function createLocationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-locations/${request.id}`;
+      const path = `/admin/v1/stock-locations/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'LocationService',
@@ -6035,25 +5106,25 @@ export function createLocationServiceClient(
 }
 export type inventoryservicev1_ListLocationResponse = {
   items: inventoryservicev1_StockLocation[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 库存位置（借鉴 Odoo stock.location，简化为扁平结构）
 export type inventoryservicev1_StockLocation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
   remark?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   //
   // Behaviors: OPTIONAL
   usage?: inventoryservicev1_StockLocation_Usage;
@@ -6069,7 +5140,7 @@ export type inventoryservicev1_StockLocation_Usage =
   | 'INVENTORY_LOSS'
   | 'SUPPLIER';
 export type inventoryservicev1_GetLocationRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6080,12 +5151,12 @@ export type inventoryservicev1_CreateLocationRequest = {
 export type inventoryservicev1_UpdateLocationRequest = {
   allowMissing?: boolean;
   data: inventoryservicev1_StockLocation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type inventoryservicev1_DeleteLocationRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 库存量服务（只读）
@@ -6113,7 +5184,7 @@ export function createStockQuantServiceClient(
 ): StockQuantService {
   return {
     List(request) {
-      const path = `admin/v1/stock-quants`;
+      const path = `/admin/v1/stock-quants`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -6161,56 +5232,9 @@ export function createStockQuantServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -6231,7 +5255,7 @@ export function createStockQuantServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-quants/${request.id}`;
+      const path = `/admin/v1/stock-quants/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -6249,7 +5273,7 @@ export function createStockQuantServiceClient(
       }) as Promise<inventoryservicev1_StockQuant>;
     },
     GetOverview(request) {
-      const path = `admin/v1/stock-quants:overview`;
+      const path = `/admin/v1/stock-quants:overview`;
       const body = null;
       const queryParams: string[] = [];
       if (request.lowStockThreshold) {
@@ -6272,7 +5296,7 @@ export function createStockQuantServiceClient(
       }) as Promise<inventoryservicev1_StockQuantOverview>;
     },
     GetMovementTrend(_request) {
-      const path = `admin/v1/stock-quants:movement-trend`;
+      const path = `/admin/v1/stock-quants:movement-trend`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'StockQuantService',
@@ -6283,54 +5307,54 @@ export function createStockQuantServiceClient(
 }
 export type inventoryservicev1_ListStockQuantResponse = {
   items: inventoryservicev1_StockQuant[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 库存量（借鉴 Odoo stock.quant，只读——quantity 仅由拣货校验变更）
 export type inventoryservicev1_StockQuant = {
   //
   // Behaviors: OPTIONAL
-  costPrice?: number;
+  costPrice?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
-  locationId?: number;
+  locationId?: string;
   //
   // Behaviors: OPTIONAL
   productCode?: string;
   //
   // Behaviors: OPTIONAL
-  quantity?: number;
+  quantity?: string;
   remark?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type inventoryservicev1_GetStockQuantRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
 // 库存经营总览 - 请求
 export type inventoryservicev1_GetStockQuantOverviewRequest = {
   lowStockLimit?: number;
-  lowStockThreshold?: number;
+  lowStockThreshold?: string;
 };
 
 // 库存经营总览 - 回应
 export type inventoryservicev1_StockQuantOverview = {
   lowStockItems: inventoryservicev1_StockQuant[] | undefined;
-  movementCount: number | undefined;
-  skuCount: number | undefined;
-  totalQuantity: number | undefined;
-  warehouseCount: number | undefined;
+  movementCount: string | undefined;
+  skuCount: string | undefined;
+  totalQuantity: string | undefined;
+  warehouseCount: string | undefined;
 };
 
 // 库存流水趋势 - 请求
@@ -6344,7 +5368,7 @@ export type inventoryservicev1_MovementTrendResponse = {
 
 // 库存流水趋势 - 单日数据点
 export type inventoryservicev1_MovementTrendPoint = {
-  count: number | undefined;
+  count: string | undefined;
   date: string | undefined;
 };
 
@@ -6393,7 +5417,7 @@ export function createStockPickingServiceClient(
 ): StockPickingService {
   return {
     List(request) {
-      const path = `admin/v1/stock-pickings`;
+      const path = `/admin/v1/stock-pickings`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -6441,56 +5465,9 @@ export function createStockPickingServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -6511,7 +5488,7 @@ export function createStockPickingServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-pickings/${request.id}`;
+      const path = `/admin/v1/stock-pickings/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -6529,7 +5506,7 @@ export function createStockPickingServiceClient(
       }) as Promise<inventoryservicev1_StockPicking>;
     },
     Create(request) {
-      const path = `admin/v1/stock-pickings`;
+      const path = `/admin/v1/stock-pickings`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
@@ -6537,7 +5514,7 @@ export function createStockPickingServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     CreateSalesReturn(request) {
-      const path = `admin/v1/stock-pickings:sales-return`;
+      const path = `/admin/v1/stock-pickings:sales-return`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
@@ -6545,7 +5522,7 @@ export function createStockPickingServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     CreatePurchaseReturn(request) {
-      const path = `admin/v1/stock-pickings:purchase-return`;
+      const path = `/admin/v1/stock-pickings:purchase-return`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
@@ -6556,8 +5533,10 @@ export function createStockPickingServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-pickings/${request.id}:confirm`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/stock-pickings/${request.id}:confirm`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
         method: 'Confirm',
@@ -6567,8 +5546,10 @@ export function createStockPickingServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-pickings/${request.id}:validate`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/stock-pickings/${request.id}:validate`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
         method: 'Validate',
@@ -6578,8 +5559,10 @@ export function createStockPickingServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-pickings/${request.id}:cancel`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/stock-pickings/${request.id}:cancel`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'POST', body, {
         service: 'StockPickingService',
         method: 'Cancel',
@@ -6589,7 +5572,7 @@ export function createStockPickingServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/stock-pickings/${request.id}`;
+      const path = `/admin/v1/stock-pickings/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'StockPickingService',
@@ -6600,18 +5583,18 @@ export function createStockPickingServiceClient(
 }
 export type inventoryservicev1_ListStockPickingResponse = {
   items: inventoryservicev1_StockPicking[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 拣货单（借鉴 Odoo stock.picking：一等文档，生命周期从子 moves 派生）
 export type inventoryservicev1_StockPicking = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   // derived_state：从子 moves 聚合计算，不存储（借鉴 Odoo _compute_state）。
   derivedState?: inventoryservicev1_StockPicking_DerivedState;
-  destinationLocationId?: number;
+  destinationLocationId?: string;
   // 调拨源/目的仓库编码（仅 INTERNAL 类型使用；服务层据此推导 source/dest
   // location）。入库类型不使用这两个字段（source 固定为供应商位置）。
   //
@@ -6619,7 +5602,7 @@ export type inventoryservicev1_StockPicking = {
   fromWarehouseCode?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   // moves：子移动计划（Get 返回；Create 时客户端提供）。
   moves: inventoryservicev1_StockMove[] | undefined;
   //
@@ -6633,16 +5616,16 @@ export type inventoryservicev1_StockPicking = {
   pickingType?: inventoryservicev1_StockPicking_PickingType;
   //
   // Behaviors: OPTIONAL
-  purchaseOrderId?: number;
+  purchaseOrderId?: string;
   remark?: string;
   // source/dest location：由服务层按 picking_type + 仓库推导落库（客户端不提供）。
-  sourceLocationId?: number;
-  tenantId?: number;
+  sourceLocationId?: string;
+  tenantId?: string;
   //
   // Behaviors: OPTIONAL
   toWarehouseCode?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 拣货类型（借鉴 Odoo picking_type.code，简化为枚举）
@@ -6660,40 +5643,40 @@ export type inventoryservicev1_StockPicking_DerivedState =
 // 库存移动计划（借鉴 Odoo stock.move 的计划角色）
 export type inventoryservicev1_StockMove = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  destinationLocationId?: number;
+  destinationLocationId?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
-  pickingId?: number;
+  pickingId?: string;
   //
   // Behaviors: OPTIONAL
-  plannedQuantity?: number;
+  plannedQuantity?: string;
   //
   // Behaviors: OPTIONAL
   productCode?: string;
   //
   // Behaviors: OPTIONAL
-  purchaseOrderItemId?: number;
+  purchaseOrderItemId?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
-  salesOrderItemId?: number;
+  salesOrderItemId?: string;
   //
   // Behaviors: OPTIONAL
-  sourceLocationId?: number;
+  sourceLocationId?: string;
   //
   // Behaviors: OPTIONAL
   state?: inventoryservicev1_StockMove_State;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 移动状态机（DRAFT→CONFIRMED→DONE/CANCELLED）
@@ -6703,7 +5686,7 @@ export type inventoryservicev1_StockMove_State =
   | 'DONE'
   | 'DRAFT';
 export type inventoryservicev1_GetStockPickingRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6715,34 +5698,34 @@ export type inventoryservicev1_CreateStockPickingRequest = {
 export type inventoryservicev1_CreateSalesReturnRequest = {
   items: inventoryservicev1_SalesReturnItem[] | undefined;
   remark?: string;
-  salesOrderId: number | undefined;
+  salesOrderId: string | undefined;
 };
 
 // 销售退货明细项
 export type inventoryservicev1_SalesReturnItem = {
-  quantity: number | undefined;
-  salesOrderItemId: number | undefined;
+  quantity: string | undefined;
+  salesOrderItemId: string | undefined;
 };
 
 // 创建采购退货 - 请求
 export type inventoryservicev1_CreatePurchaseReturnRequest = {
   items: inventoryservicev1_PurchaseReturnItem[] | undefined;
-  purchaseOrderId: number | undefined;
+  purchaseOrderId: string | undefined;
   remark?: string;
 };
 
 // 采购退货明细项
 export type inventoryservicev1_PurchaseReturnItem = {
-  purchaseOrderItemId: number | undefined;
-  quantity: number | undefined;
+  purchaseOrderItemId: string | undefined;
+  quantity: string | undefined;
 };
 
 export type inventoryservicev1_ConfirmStockPickingRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type inventoryservicev1_ValidateStockPickingRequest = {
-  id: number | undefined;
+  id: string | undefined;
   // 批次指派：入库腿登记/复用批次（expiry_date 供新建批次）；出库腿指定
   // 批次（余量校验）。出库未指派时自动按 FEFO（效期升序）拆分扣减。
   lotAssignments: inventoryservicev1_LotAssignment[] | undefined;
@@ -6756,11 +5739,11 @@ export type inventoryservicev1_LotAssignment = {
 };
 
 export type inventoryservicev1_CancelStockPickingRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type inventoryservicev1_DeleteStockPickingRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 批次服务（只读；批次在收货 Validate 时登记）
@@ -6776,7 +5759,7 @@ export function createStockLotServiceClient(
 ): StockLotService {
   return {
     List(request) {
-      const path = `admin/v1/stock-lots`;
+      const path = `/admin/v1/stock-lots`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -6824,56 +5807,9 @@ export function createStockLotServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -6894,20 +5830,20 @@ export function createStockLotServiceClient(
 }
 export type inventoryservicev1_ListStockLotResponse = {
   items: inventoryservicev1_StockLot[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 批次（借鉴 Odoo stock.production.lot 的登记角色。记录式方案：批次表只
 // 登记批号与效期，剩余数量由 move lines 聚合推导，不动 quant 引擎）
 export type inventoryservicev1_StockLot = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
   expiryDate?: wellKnownTimestamp;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   lotStatus?: inventoryservicev1_LotStatus;
@@ -6916,12 +5852,12 @@ export type inventoryservicev1_StockLot = {
   name?: string;
   //
   // Behaviors: OPTIONAL
-  remainingQuantity?: number;
+  remainingQuantity?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
   skuCode?: string;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 批次效期状态（按 expiry_date 与当前时间推导；无效期为 NORMAL）
@@ -6962,7 +5898,7 @@ export function createLanguageServiceClient(
 ): LanguageService {
   return {
     List(request) {
-      const path = `admin/v1/dict/langs`;
+      const path = `/admin/v1/dict/langs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -7010,56 +5946,9 @@ export function createLanguageServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -7080,7 +5969,7 @@ export function createLanguageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/dict/langs/${request.id}`;
+      const path = `/admin/v1/dict/langs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -7103,7 +5992,7 @@ export function createLanguageServiceClient(
       }) as Promise<dictservicev1_Language>;
     },
     Create(request) {
-      const path = `admin/v1/dict/langs`;
+      const path = `/admin/v1/dict/langs`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'LanguageService',
@@ -7114,15 +6003,17 @@ export function createLanguageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/dict/langs/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/dict/langs/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'LanguageService',
         method: 'Update',
       }) as Promise<wellKnownEmpty>;
     },
     Delete(request) {
-      const path = `admin/v1/dict/langs`;
+      const path = `/admin/v1/dict/langs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.id) {
@@ -7140,7 +6031,7 @@ export function createLanguageServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     BatchCreate(request) {
-      const path = `admin/v1/dict/langs/batch`;
+      const path = `/admin/v1/dict/langs/batch`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'LanguageService',
@@ -7152,16 +6043,16 @@ export function createLanguageServiceClient(
 // 语言列表 - 答复
 export type dictservicev1_ListLanguageResponse = {
   items: dictservicev1_Language[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 语言
 export type dictservicev1_Language = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isDefault?: boolean;
   isEnabled?: boolean;
   languageCode?: string;
@@ -7169,13 +6060,13 @@ export type dictservicev1_Language = {
   nativeName?: string;
   sortOrder?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 语言数据 - 请求
 export type dictservicev1_GetLanguageRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7188,13 +6079,13 @@ export type dictservicev1_CreateLanguageRequest = {
 export type dictservicev1_UpdateLanguageRequest = {
   allowMissing?: boolean;
   data: dictservicev1_Language | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除语言 - 请求
 export type dictservicev1_DeleteLanguageRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type dictservicev1_BatchCreateLanguagesRequest = {
@@ -7218,7 +6109,7 @@ export function createLoginAuditLogServiceClient(
 ): LoginAuditLogService {
   return {
     List(request) {
-      const path = `admin/v1/login-audit-logs`;
+      const path = `/admin/v1/login-audit-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -7266,56 +6157,9 @@ export function createLoginAuditLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -7336,7 +6180,7 @@ export function createLoginAuditLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/login-audit-logs/${request.id}`;
+      const path = `/admin/v1/login-audit-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -7358,7 +6202,7 @@ export function createLoginAuditLogServiceClient(
 // 查询登录审计日志列表 - 回应
 export type auditservicev1_ListLoginAuditLogResponse = {
   items: auditservicev1_LoginAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 登录审计日志
@@ -7368,7 +6212,7 @@ export type auditservicev1_LoginAuditLog = {
   deviceInfo?: auditservicev1_DeviceInfo;
   failureReason?: string;
   geoLocation?: auditservicev1_GeoLocation;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   loginMethod?: auditservicev1_LoginAuditLog_LoginMethod;
@@ -7380,10 +6224,10 @@ export type auditservicev1_LoginAuditLog = {
   sessionId?: string;
   signature?: string;
   status?: auditservicev1_LoginAuditLog_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -7419,7 +6263,7 @@ export type auditservicev1_LoginAuditLog_RiskLevel =
   | 'RISK_LEVEL_UNSPECIFIED';
 // 查询登录审计日志详情 - 请求
 export type auditservicev1_GetLoginAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7452,7 +6296,7 @@ export function createLoginPolicyServiceClient(
 ): LoginPolicyService {
   return {
     List(request) {
-      const path = `admin/v1/login-policies`;
+      const path = `/admin/v1/login-policies`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -7500,56 +6344,9 @@ export function createLoginPolicyServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -7570,7 +6367,7 @@ export function createLoginPolicyServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/login-policies/${request.id}`;
+      const path = `/admin/v1/login-policies/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -7588,7 +6385,7 @@ export function createLoginPolicyServiceClient(
       }) as Promise<authenticationservicev1_LoginPolicy>;
     },
     Create(request) {
-      const path = `admin/v1/login-policies`;
+      const path = `/admin/v1/login-policies`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'LoginPolicyService',
@@ -7599,8 +6396,10 @@ export function createLoginPolicyServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/login-policies/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/login-policies/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'LoginPolicyService',
         method: 'Update',
@@ -7610,7 +6409,7 @@ export function createLoginPolicyServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/login-policies/${request.id}`;
+      const path = `/admin/v1/login-policies/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'LoginPolicyService',
@@ -7622,26 +6421,26 @@ export function createLoginPolicyServiceClient(
 // 查询登录策略列表 - 回应
 export type authenticationservicev1_ListLoginPolicyResponse = {
   items: authenticationservicev1_LoginPolicy[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 登录策略
 export type authenticationservicev1_LoginPolicy = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   method?: authenticationservicev1_LoginPolicy_Method;
   reason?: string;
-  targetId?: number;
-  tenantId?: number;
+  targetId?: string;
+  tenantId?: string;
   tenantName?: string;
   type?: authenticationservicev1_LoginPolicy_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   value?: string;
 };
 
@@ -7660,7 +6459,7 @@ export type authenticationservicev1_LoginPolicy_Method =
   | 'TIME';
 // 查询登录策略详情 - 请求
 export type authenticationservicev1_GetLoginPolicyRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7673,13 +6472,13 @@ export type authenticationservicev1_CreateLoginPolicyRequest = {
 export type authenticationservicev1_UpdateLoginPolicyRequest = {
   allowMissing?: boolean;
   data: authenticationservicev1_LoginPolicy | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除登录策略 - 请求
 export type authenticationservicev1_DeleteLoginPolicyRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 后台菜单管理服务
@@ -7711,7 +6510,7 @@ export function createMenuServiceClient(
 ): MenuService {
   return {
     List(request) {
-      const path = `admin/v1/menus`;
+      const path = `/admin/v1/menus`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -7759,56 +6558,9 @@ export function createMenuServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -7829,7 +6581,7 @@ export function createMenuServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/menus/${request.id}`;
+      const path = `/admin/v1/menus/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -7847,7 +6599,7 @@ export function createMenuServiceClient(
       }) as Promise<permissionservicev1_Menu>;
     },
     Create(request) {
-      const path = `admin/v1/menus`;
+      const path = `/admin/v1/menus`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'MenuService',
@@ -7858,8 +6610,10 @@ export function createMenuServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/menus/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/menus/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'MenuService',
         method: 'Update',
@@ -7869,7 +6623,7 @@ export function createMenuServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/menus/${request.id}`;
+      const path = `/admin/v1/menus/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.operatorId) {
@@ -7891,7 +6645,7 @@ export function createMenuServiceClient(
 // 查询菜单列表 - 回应
 export type permissionservicev1_ListMenuResponse = {
   items: permissionservicev1_Menu[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 菜单
@@ -7904,19 +6658,19 @@ export type permissionservicev1_Menu = {
   // Behaviors: OPTIONAL
   component?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   meta?: permissionservicev1_MenuMeta;
   //
   // Behaviors: OPTIONAL
   name?: string;
-  parentId?: number;
+  parentId?: string;
   //
   // Behaviors: OPTIONAL
   path?: string;
@@ -7926,7 +6680,7 @@ export type permissionservicev1_Menu = {
   status?: permissionservicev1_Menu_Status;
   type?: permissionservicev1_Menu_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 菜单状态
@@ -7942,7 +6696,7 @@ export type permissionservicev1_Menu_Type =
   | 'MENU';
 // 查询菜单详情 - 请求
 export type permissionservicev1_GetMenuRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7955,14 +6709,14 @@ export type permissionservicev1_CreateMenuRequest = {
 export type permissionservicev1_UpdateMenuRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Menu | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除菜单 - 请求
 export type permissionservicev1_DeleteMenuRequest = {
-  id?: number;
-  operatorId?: number;
+  id?: string;
+  operatorId?: string;
 };
 
 // 操作审计日志管理服务
@@ -7982,7 +6736,7 @@ export function createOperationAuditLogServiceClient(
 ): OperationAuditLogService {
   return {
     List(request) {
-      const path = `admin/v1/operation-audit-logs`;
+      const path = `/admin/v1/operation-audit-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -8030,56 +6784,9 @@ export function createOperationAuditLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -8100,7 +6807,7 @@ export function createOperationAuditLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/operation-audit-logs/${request.id}`;
+      const path = `/admin/v1/operation-audit-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -8122,7 +6829,7 @@ export function createOperationAuditLogServiceClient(
 // 查询操作审计日志列表 - 回应
 export type auditservicev1_ListOperationAuditLogResponse = {
   items: auditservicev1_OperationAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 操作审计日志
@@ -8133,7 +6840,7 @@ export type auditservicev1_OperationAuditLog = {
   createdAt?: wellKnownTimestamp;
   failureReason?: string;
   geoLocation?: auditservicev1_GeoLocation;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   requestId?: string;
@@ -8142,10 +6849,10 @@ export type auditservicev1_OperationAuditLog = {
   sensitiveLevel?: auditservicev1_SensitiveLevel;
   signature?: string;
   success?: boolean;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -8163,7 +6870,7 @@ export type auditservicev1_OperationAuditLog_ActionType =
   | 'UPDATE';
 // 查询操作审计日志详情 - 请求
 export type auditservicev1_GetOperationAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8196,7 +6903,7 @@ export function createOrgUnitServiceClient(
 ): OrgUnitService {
   return {
     List(request) {
-      const path = `admin/v1/org-units`;
+      const path = `/admin/v1/org-units`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -8244,56 +6951,9 @@ export function createOrgUnitServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -8314,7 +6974,7 @@ export function createOrgUnitServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/org-units/${request.id}`;
+      const path = `/admin/v1/org-units/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -8332,7 +6992,7 @@ export function createOrgUnitServiceClient(
       }) as Promise<identityservicev1_OrgUnit>;
     },
     Create(request) {
-      const path = `admin/v1/org-units`;
+      const path = `/admin/v1/org-units`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'OrgUnitService',
@@ -8343,8 +7003,10 @@ export function createOrgUnitServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/org-units/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/org-units/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'OrgUnitService',
         method: 'Update',
@@ -8354,7 +7016,7 @@ export function createOrgUnitServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/org-units/${request.id}`;
+      const path = `/admin/v1/org-units/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'OrgUnitService',
@@ -8366,7 +7028,7 @@ export function createOrgUnitServiceClient(
 // 获取组织单元列表 - 答复
 export type identityservicev1_ListOrgUnitResponse = {
   items: identityservicev1_OrgUnit[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 组织单元
@@ -8376,26 +7038,26 @@ export type identityservicev1_OrgUnit = {
   businessScopes: string[] | undefined;
   children: identityservicev1_OrgUnit[] | undefined;
   code?: string;
-  contactUserId?: number;
+  contactUserId?: string;
   contactUserName?: string;
   country?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   email?: string;
   endAt?: wellKnownTimestamp;
   externalId?: string;
-  id?: number;
+  id?: string;
   isLegalEntity?: boolean;
   latitude?: number;
-  leaderId?: number;
+  leaderId?: string;
   leaderName?: string;
-  legalEntityOrgId?: number;
+  legalEntityOrgId?: string;
   longitude?: number;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   permissionTags: string[] | undefined;
   phone?: string;
@@ -8405,12 +7067,12 @@ export type identityservicev1_OrgUnit = {
   startAt?: wellKnownTimestamp;
   status?: identityservicev1_OrgUnit_Status;
   taxId?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   timezone?: string;
   type?: identityservicev1_OrgUnit_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 组织单元类型
@@ -8431,7 +7093,7 @@ export type identityservicev1_OrgUnit_Status =
   | 'ON';
 // 获取组织单元数据 - 请求
 export type identityservicev1_GetOrgUnitRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8444,13 +7106,13 @@ export type identityservicev1_CreateOrgUnitRequest = {
 export type identityservicev1_UpdateOrgUnitRequest = {
   allowMissing?: boolean;
   data: identityservicev1_OrgUnit | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除组织单元 - 请求
 export type identityservicev1_DeleteOrgUnitRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 权限点管理服务
@@ -8486,7 +7148,7 @@ export function createPermissionServiceClient(
 ): PermissionService {
   return {
     List(request) {
-      const path = `admin/v1/permissions`;
+      const path = `/admin/v1/permissions`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -8534,56 +7196,9 @@ export function createPermissionServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -8604,7 +7219,7 @@ export function createPermissionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permissions/${request.id}`;
+      const path = `/admin/v1/permissions/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -8627,7 +7242,7 @@ export function createPermissionServiceClient(
       }) as Promise<permissionservicev1_Permission>;
     },
     Create(request) {
-      const path = `admin/v1/permissions`;
+      const path = `/admin/v1/permissions`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PermissionService',
@@ -8638,8 +7253,10 @@ export function createPermissionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permissions/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/permissions/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PermissionService',
         method: 'Update',
@@ -8649,7 +7266,7 @@ export function createPermissionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permissions/${request.id}`;
+      const path = `/admin/v1/permissions/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -8672,7 +7289,7 @@ export function createPermissionServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     SyncPermissions(request) {
-      const path = `admin/v1/permissions/sync:perms`;
+      const path = `/admin/v1/permissions/sync:perms`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PermissionService',
@@ -8684,26 +7301,26 @@ export function createPermissionServiceClient(
 // 查询列表 - 回应
 export type permissionservicev1_ListPermissionResponse = {
   items: permissionservicev1_Permission[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限点
 export type permissionservicev1_Permission = {
-  apiIds: number[] | undefined;
+  apiIds: string[] | undefined;
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  groupId?: number;
+  groupId?: string;
   groupName?: string;
-  id?: number;
-  menuIds: number[] | undefined;
+  id?: string;
+  menuIds: string[] | undefined;
   name?: string;
   status?: permissionservicev1_Permission_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 权限点状态
@@ -8713,7 +7330,7 @@ export type permissionservicev1_Permission_Status =
 // 查询 - 请求
 export type permissionservicev1_GetPermissionRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8726,15 +7343,15 @@ export type permissionservicev1_CreatePermissionRequest = {
 export type permissionservicev1_UpdatePermissionRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Permission | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeletePermissionRequest = {
   code?: string;
-  groupId?: number;
-  id?: number;
+  groupId?: string;
+  id?: string;
 };
 
 // 权限变更审计日志服务
@@ -8754,7 +7371,7 @@ export function createPermissionAuditLogServiceClient(
 ): PermissionAuditLogService {
   return {
     List(request) {
-      const path = `admin/v1/permission-audit-logs`;
+      const path = `/admin/v1/permission-audit-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -8802,56 +7419,9 @@ export function createPermissionAuditLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -8872,7 +7442,7 @@ export function createPermissionAuditLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permission-audit-logs/${request.id}`;
+      const path = `/admin/v1/permission-audit-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -8894,19 +7464,19 @@ export function createPermissionAuditLogServiceClient(
 // 查询权限变更审计日志列表 - 回应
 export type auditservicev1_ListPermissionAuditLogResponse = {
   items: auditservicev1_PermissionAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限变更审计日志
 export type auditservicev1_PermissionAuditLog = {
   action?: auditservicev1_PermissionAuditLog_ActionType;
   createdAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   newValue?: string;
   oldValue?: string;
-  operatorId?: number;
+  operatorId?: string;
   operatorName?: string;
   reason?: string;
   requestId?: string;
@@ -8914,7 +7484,7 @@ export type auditservicev1_PermissionAuditLog = {
   targetId?: string;
   targetName?: string;
   targetType?: string;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 变更动作
@@ -8937,7 +7507,7 @@ export type auditservicev1_PermissionAuditLog_ActionType =
   | 'UPDATE';
 // 查询权限变更审计日志详情 - 请求
 export type auditservicev1_GetPermissionAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8970,7 +7540,7 @@ export function createPermissionGroupServiceClient(
 ): PermissionGroupService {
   return {
     List(request) {
-      const path = `admin/v1/permission-groups`;
+      const path = `/admin/v1/permission-groups`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -9018,56 +7588,9 @@ export function createPermissionGroupServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -9088,7 +7611,7 @@ export function createPermissionGroupServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permission-groups/${request.id}`;
+      const path = `/admin/v1/permission-groups/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -9106,7 +7629,7 @@ export function createPermissionGroupServiceClient(
       }) as Promise<permissionservicev1_PermissionGroup>;
     },
     Create(request) {
-      const path = `admin/v1/permission-groups`;
+      const path = `/admin/v1/permission-groups`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PermissionGroupService',
@@ -9117,8 +7640,10 @@ export function createPermissionGroupServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permission-groups/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/permission-groups/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PermissionGroupService',
         method: 'Update',
@@ -9128,7 +7653,7 @@ export function createPermissionGroupServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/permission-groups/${request.id}`;
+      const path = `/admin/v1/permission-groups/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PermissionGroupService',
@@ -9140,26 +7665,26 @@ export function createPermissionGroupServiceClient(
 // 查询列表 - 回应
 export type permissionservicev1_ListPermissionGroupResponse = {
   items: permissionservicev1_PermissionGroup[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限组
 export type permissionservicev1_PermissionGroup = {
   children: permissionservicev1_PermissionGroup[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   module?: string;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   sortOrder?: number;
   status?: permissionservicev1_PermissionGroup_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 状态
@@ -9168,7 +7693,7 @@ export type permissionservicev1_PermissionGroup_Status =
   | 'ON';
 // 查询 - 请求
 export type permissionservicev1_GetPermissionGroupRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -9181,13 +7706,13 @@ export type permissionservicev1_CreatePermissionGroupRequest = {
 export type permissionservicev1_UpdatePermissionGroupRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_PermissionGroup | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeletePermissionGroupRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 策略评估日志服务
@@ -9207,7 +7732,7 @@ export function createPolicyEvaluationLogServiceClient(
 ): PolicyEvaluationLogService {
   return {
     List(request) {
-      const path = `admin/v1/policy-evaluation-logs`;
+      const path = `/admin/v1/policy-evaluation-logs`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -9255,56 +7780,9 @@ export function createPolicyEvaluationLogServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -9325,7 +7803,7 @@ export function createPolicyEvaluationLogServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/policy-evaluation-logs/${request.id}`;
+      const path = `/admin/v1/policy-evaluation-logs/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -9347,7 +7825,7 @@ export function createPolicyEvaluationLogServiceClient(
 // 查询策略评估日志列表 - 回应
 export type permissionservicev1_ListPolicyEvaluationLogResponse = {
   items: permissionservicev1_PolicyEvaluationLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 策略评估日志
@@ -9355,25 +7833,25 @@ export type permissionservicev1_PolicyEvaluationLog = {
   createdAt?: wellKnownTimestamp;
   effectDetails?: string;
   evaluationContext?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
-  membershipId?: number;
-  permissionId?: number;
-  policyId?: number;
+  membershipId?: string;
+  permissionId?: string;
+  policyId?: string;
   requestMethod?: string;
   requestPath?: string;
   result?: boolean;
   scopeSql?: string;
   signature?: string;
-  tenantId?: number;
+  tenantId?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
 };
 
 // 查询策略评估日志详情 - 请求
 export type permissionservicev1_GetPolicyEvaluationLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -9406,7 +7884,7 @@ export function createPositionServiceClient(
 ): PositionService {
   return {
     List(request) {
-      const path = `admin/v1/positions`;
+      const path = `/admin/v1/positions`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -9454,56 +7932,9 @@ export function createPositionServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -9524,7 +7955,7 @@ export function createPositionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/positions/${request.id}`;
+      const path = `/admin/v1/positions/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.name) {
@@ -9552,7 +7983,7 @@ export function createPositionServiceClient(
       }) as Promise<identityservicev1_Position>;
     },
     Create(request) {
-      const path = `admin/v1/positions`;
+      const path = `/admin/v1/positions`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PositionService',
@@ -9563,8 +7994,10 @@ export function createPositionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/positions/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/positions/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PositionService',
         method: 'Update',
@@ -9574,7 +8007,7 @@ export function createPositionServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/positions/${request.id}`;
+      const path = `/admin/v1/positions/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PositionService',
@@ -9586,38 +8019,38 @@ export function createPositionServiceClient(
 // 获取职位列表 - 答复
 export type identityservicev1_ListPositionResponse = {
   items: identityservicev1_Position[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 职位
 export type identityservicev1_Position = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   endAt?: wellKnownTimestamp;
   headcount?: number;
-  id?: number;
+  id?: string;
   isKeyPosition?: boolean;
   jobFamily?: string;
   jobGrade?: string;
   level?: number;
   name?: string;
-  orgUnitId?: number;
+  orgUnitId?: string;
   orgUnitName?: string;
   remark?: string;
-  reportsToPositionId?: number;
+  reportsToPositionId?: string;
   reportsToPositionName?: string;
   sortOrder?: number;
   startAt?: wellKnownTimestamp;
   status?: identityservicev1_Position_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   type?: identityservicev1_Position_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 职位状态
@@ -9635,7 +8068,7 @@ export type identityservicev1_Position_Type =
 // 获取职位数据 - 请求
 export type identityservicev1_GetPositionRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -9649,13 +8082,13 @@ export type identityservicev1_CreatePositionRequest = {
 export type identityservicev1_UpdatePositionRequest = {
   allowMissing?: boolean;
   data: identityservicev1_Position | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除职位 - 请求
 export type identityservicev1_DeletePositionRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 供应商管理服务
@@ -9687,7 +8120,7 @@ export function createSupplierServiceClient(
 ): SupplierService {
   return {
     List(request) {
-      const path = `admin/v1/suppliers`;
+      const path = `/admin/v1/suppliers`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -9735,56 +8168,9 @@ export function createSupplierServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -9805,7 +8191,7 @@ export function createSupplierServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/suppliers/${request.id}`;
+      const path = `/admin/v1/suppliers/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -9823,7 +8209,7 @@ export function createSupplierServiceClient(
       }) as Promise<procurementservicev1_Supplier>;
     },
     Create(request) {
-      const path = `admin/v1/suppliers`;
+      const path = `/admin/v1/suppliers`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SupplierService',
@@ -9834,8 +8220,10 @@ export function createSupplierServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/suppliers/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/suppliers/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'SupplierService',
         method: 'Update',
@@ -9845,7 +8233,7 @@ export function createSupplierServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/suppliers/${request.id}`;
+      const path = `/admin/v1/suppliers/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'SupplierService',
@@ -9856,7 +8244,7 @@ export function createSupplierServiceClient(
 }
 export type procurementservicev1_ListSupplierResponse = {
   items: procurementservicev1_Supplier[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 供应商
@@ -9868,13 +8256,13 @@ export type procurementservicev1_Supplier = {
   // Behaviors: OPTIONAL
   contact?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -9882,13 +8270,13 @@ export type procurementservicev1_Supplier = {
   // Behaviors: OPTIONAL
   phone?: string;
   remark?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type procurementservicev1_GetSupplierRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -9899,12 +8287,12 @@ export type procurementservicev1_CreateSupplierRequest = {
 export type procurementservicev1_UpdateSupplierRequest = {
   allowMissing?: boolean;
   data: procurementservicev1_Supplier | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type procurementservicev1_DeleteSupplierRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 采购单管理服务
@@ -9956,7 +8344,7 @@ export function createPurchaseOrderServiceClient(
 ): PurchaseOrderService {
   return {
     List(request) {
-      const path = `admin/v1/purchase-orders`;
+      const path = `/admin/v1/purchase-orders`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -10004,56 +8392,9 @@ export function createPurchaseOrderServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -10074,7 +8415,7 @@ export function createPurchaseOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/purchase-orders/${request.id}`;
+      const path = `/admin/v1/purchase-orders/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -10092,7 +8433,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<procurementservicev1_PurchaseOrder>;
     },
     Create(request) {
-      const path = `admin/v1/purchase-orders`;
+      const path = `/admin/v1/purchase-orders`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10103,8 +8444,10 @@ export function createPurchaseOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/purchase-orders/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/purchase-orders/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PurchaseOrderService',
         method: 'Update',
@@ -10114,7 +8457,7 @@ export function createPurchaseOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/purchase-orders/${request.id}`;
+      const path = `/admin/v1/purchase-orders/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PurchaseOrderService',
@@ -10122,7 +8465,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Submit(request) {
-      const path = `admin/v1/purchase-orders:submit`;
+      const path = `/admin/v1/purchase-orders:submit`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10130,7 +8473,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Approve(request) {
-      const path = `admin/v1/purchase-orders:approve`;
+      const path = `/admin/v1/purchase-orders:approve`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10138,7 +8481,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Reject(request) {
-      const path = `admin/v1/purchase-orders:reject`;
+      const path = `/admin/v1/purchase-orders:reject`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10146,7 +8489,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Cancel(request) {
-      const path = `admin/v1/purchase-orders:cancel`;
+      const path = `/admin/v1/purchase-orders:cancel`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10154,7 +8497,7 @@ export function createPurchaseOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Complete(request) {
-      const path = `admin/v1/purchase-orders:complete`;
+      const path = `/admin/v1/purchase-orders:complete`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PurchaseOrderService',
@@ -10165,18 +8508,18 @@ export function createPurchaseOrderServiceClient(
 }
 export type procurementservicev1_ListPurchaseOrderResponse = {
   items: procurementservicev1_PurchaseOrder[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 采购单
 export type procurementservicev1_PurchaseOrder = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   items: procurementservicev1_PurchaseOrderItem[] | undefined;
   poNumber?: string;
   remark?: string;
@@ -10186,10 +8529,10 @@ export type procurementservicev1_PurchaseOrder = {
   //
   // Behaviors: OPTIONAL
   supplierCode?: string;
-  tenantId?: number;
-  totalAmount?: number;
+  tenantId?: string;
+  totalAmount?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   // warehouse_code：收货仓库。PO 获批后据此确定 receiving location，
   // 创建入库拣货单（Odoo PO→_create_picking 桥接的必要字段）。
   //
@@ -10207,21 +8550,21 @@ export type procurementservicev1_PurchaseOrder_Status =
   | 'SUBMITTED';
 // 采购单明细
 export type procurementservicev1_PurchaseOrderItem = {
-  amount?: number;
+  amount?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  poId?: number;
-  quantity?: number;
-  receivedQuantity?: number;
+  id?: string;
+  poId?: string;
+  quantity?: string;
+  receivedQuantity?: string;
   //
   // Behaviors: OPTIONAL
   skuCode?: string;
-  unitPrice?: number;
+  unitPrice?: string;
 };
 
 export type procurementservicev1_GetPurchaseOrderRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -10232,32 +8575,32 @@ export type procurementservicev1_CreatePurchaseOrderRequest = {
 export type procurementservicev1_UpdatePurchaseOrderRequest = {
   allowMissing?: boolean;
   data: procurementservicev1_PurchaseOrder | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type procurementservicev1_DeletePurchaseOrderRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type procurementservicev1_SubmitPurchaseOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type procurementservicev1_ApprovePurchaseOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type procurementservicev1_RejectPurchaseOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type procurementservicev1_CancelPurchaseOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type procurementservicev1_CompletePurchaseOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 商品（SKU）主数据管理服务
@@ -10284,7 +8627,7 @@ export function createProductServiceClient(
 ): ProductService {
   return {
     List(request) {
-      const path = `admin/v1/products`;
+      const path = `/admin/v1/products`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -10332,56 +8675,9 @@ export function createProductServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -10402,7 +8698,7 @@ export function createProductServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/products/${request.id}`;
+      const path = `/admin/v1/products/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -10420,7 +8716,7 @@ export function createProductServiceClient(
       }) as Promise<productservicev1_Product>;
     },
     Create(request) {
-      const path = `admin/v1/products`;
+      const path = `/admin/v1/products`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'ProductService',
@@ -10431,8 +8727,10 @@ export function createProductServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/products/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/products/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'ProductService',
         method: 'Update',
@@ -10442,7 +8740,7 @@ export function createProductServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/products/${request.id}`;
+      const path = `/admin/v1/products/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'ProductService',
@@ -10453,7 +8751,7 @@ export function createProductServiceClient(
 }
 export type productservicev1_ListProductResponse = {
   items: productservicev1_Product[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 商品（SKU）
@@ -10462,13 +8760,13 @@ export type productservicev1_Product = {
   // Behaviors: OPTIONAL
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -10476,16 +8774,16 @@ export type productservicev1_Product = {
   //
   // Behaviors: OPTIONAL
   spec?: string;
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OPTIONAL
   unit?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type productservicev1_GetProductRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -10496,12 +8794,12 @@ export type productservicev1_CreateProductRequest = {
 export type productservicev1_UpdateProductRequest = {
   allowMissing?: boolean;
   data: productservicev1_Product | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type productservicev1_DeleteProductRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 角色管理服务
@@ -10533,7 +8831,7 @@ export function createRoleServiceClient(
 ): RoleService {
   return {
     List(request) {
-      const path = `admin/v1/roles`;
+      const path = `/admin/v1/roles`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -10581,56 +8879,9 @@ export function createRoleServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -10651,7 +8902,7 @@ export function createRoleServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/roles/${request.id}`;
+      const path = `/admin/v1/roles/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.name) {
@@ -10679,7 +8930,7 @@ export function createRoleServiceClient(
       }) as Promise<permissionservicev1_Role>;
     },
     Create(request) {
-      const path = `admin/v1/roles`;
+      const path = `/admin/v1/roles`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'RoleService',
@@ -10690,8 +8941,10 @@ export function createRoleServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/roles/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/roles/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'RoleService',
         method: 'Update',
@@ -10701,7 +8954,7 @@ export function createRoleServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/roles/${request.id}`;
+      const path = `/admin/v1/roles/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -10728,30 +8981,30 @@ export function createRoleServiceClient(
 // 角色列表 - 答复
 export type permissionservicev1_ListRoleResponse = {
   items: permissionservicev1_Role[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 角色
 export type permissionservicev1_Role = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   isProtected?: boolean;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   parentName?: string;
-  permissions: number[] | undefined;
+  permissions: string[] | undefined;
   sortOrder?: number;
   status?: permissionservicev1_Role_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   type?: permissionservicev1_Role_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 角色状态
@@ -10766,7 +9019,7 @@ export type permissionservicev1_Role_Type =
 // 角色数据 - 请求
 export type permissionservicev1_GetRoleRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -10780,15 +9033,15 @@ export type permissionservicev1_CreateRoleRequest = {
 export type permissionservicev1_UpdateRoleRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Role | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除角色 - 请求
 export type permissionservicev1_DeleteRoleRequest = {
   code?: string;
-  id?: number;
-  tenantId?: number;
+  id?: string;
+  tenantId?: string;
 };
 
 // 客户管理服务
@@ -10815,7 +9068,7 @@ export function createCustomerServiceClient(
 ): CustomerService {
   return {
     List(request) {
-      const path = `admin/v1/customers`;
+      const path = `/admin/v1/customers`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -10863,56 +9116,9 @@ export function createCustomerServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -10933,7 +9139,7 @@ export function createCustomerServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/customers/${request.id}`;
+      const path = `/admin/v1/customers/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -10951,7 +9157,7 @@ export function createCustomerServiceClient(
       }) as Promise<salesservicev1_Customer>;
     },
     Create(request) {
-      const path = `admin/v1/customers`;
+      const path = `/admin/v1/customers`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'CustomerService',
@@ -10962,8 +9168,10 @@ export function createCustomerServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/customers/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/customers/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'CustomerService',
         method: 'Update',
@@ -10973,7 +9181,7 @@ export function createCustomerServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/customers/${request.id}`;
+      const path = `/admin/v1/customers/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'CustomerService',
@@ -10984,7 +9192,7 @@ export function createCustomerServiceClient(
 }
 export type salesservicev1_ListCustomerResponse = {
   items: salesservicev1_Customer[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 客户
@@ -10996,16 +9204,16 @@ export type salesservicev1_Customer = {
   // Behaviors: OPTIONAL
   contact?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
-  creditLimit?: number;
+  creditLimit?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   name?: string;
@@ -11013,13 +9221,13 @@ export type salesservicev1_Customer = {
   // Behaviors: OPTIONAL
   phone?: string;
   remark?: string;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type salesservicev1_GetCustomerRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11030,12 +9238,12 @@ export type salesservicev1_CreateCustomerRequest = {
 export type salesservicev1_UpdateCustomerRequest = {
   allowMissing?: boolean;
   data: salesservicev1_Customer | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type salesservicev1_DeleteCustomerRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 销售单管理服务
@@ -11077,7 +9285,7 @@ export function createSalesOrderServiceClient(
 ): SalesOrderService {
   return {
     List(request) {
-      const path = `admin/v1/sales-orders`;
+      const path = `/admin/v1/sales-orders`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -11125,56 +9333,9 @@ export function createSalesOrderServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -11195,7 +9356,7 @@ export function createSalesOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/sales-orders/${request.id}`;
+      const path = `/admin/v1/sales-orders/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -11213,7 +9374,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<salesservicev1_SalesOrder>;
     },
     Create(request) {
-      const path = `admin/v1/sales-orders`;
+      const path = `/admin/v1/sales-orders`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11224,8 +9385,10 @@ export function createSalesOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/sales-orders/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/sales-orders/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'SalesOrderService',
         method: 'Update',
@@ -11235,7 +9398,7 @@ export function createSalesOrderServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/sales-orders/${request.id}`;
+      const path = `/admin/v1/sales-orders/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'SalesOrderService',
@@ -11243,7 +9406,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Submit(request) {
-      const path = `admin/v1/sales-orders:submit`;
+      const path = `/admin/v1/sales-orders:submit`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11251,7 +9414,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Approve(request) {
-      const path = `admin/v1/sales-orders:approve`;
+      const path = `/admin/v1/sales-orders:approve`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11259,7 +9422,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Reject(request) {
-      const path = `admin/v1/sales-orders:reject`;
+      const path = `/admin/v1/sales-orders:reject`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11267,7 +9430,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Cancel(request) {
-      const path = `admin/v1/sales-orders:cancel`;
+      const path = `/admin/v1/sales-orders:cancel`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11275,7 +9438,7 @@ export function createSalesOrderServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     Complete(request) {
-      const path = `admin/v1/sales-orders:complete`;
+      const path = `/admin/v1/sales-orders:complete`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SalesOrderService',
@@ -11286,31 +9449,31 @@ export function createSalesOrderServiceClient(
 }
 export type salesservicev1_ListSalesOrderResponse = {
   items: salesservicev1_SalesOrder[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 销售单
 export type salesservicev1_SalesOrder = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
   customerCode?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   items: salesservicev1_SalesOrderItem[] | undefined;
   remark?: string;
   soNumber?: string;
   //
   // Behaviors: OPTIONAL
   status?: salesservicev1_SalesOrder_Status;
-  tenantId?: number;
-  totalAmount?: number;
+  tenantId?: string;
+  totalAmount?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   //
   // Behaviors: OPTIONAL
   warehouseCode?: string;
@@ -11325,21 +9488,21 @@ export type salesservicev1_SalesOrder_Status =
   | 'SUBMITTED';
 // 销售单明细
 export type salesservicev1_SalesOrderItem = {
-  amount?: number;
-  fulfilledQuantity?: number;
+  amount?: string;
+  fulfilledQuantity?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  quantity?: number;
+  id?: string;
+  quantity?: string;
   //
   // Behaviors: OPTIONAL
   skuCode?: string;
-  soId?: number;
-  unitPrice?: number;
+  soId?: string;
+  unitPrice?: string;
 };
 
 export type salesservicev1_GetSalesOrderRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11350,32 +9513,32 @@ export type salesservicev1_CreateSalesOrderRequest = {
 export type salesservicev1_UpdateSalesOrderRequest = {
   allowMissing?: boolean;
   data: salesservicev1_SalesOrder | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type salesservicev1_DeleteSalesOrderRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type salesservicev1_SubmitSalesOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type salesservicev1_ApproveSalesOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type salesservicev1_RejectSalesOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type salesservicev1_CancelSalesOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type salesservicev1_CompleteSalesOrderRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 调度任务管理服务
@@ -11386,6 +9549,10 @@ export interface TaskService {
   ): Promise<taskservicev1_ListTaskResponse>;
   // 查询调度任务详情
   Get(
+    request: taskservicev1_GetTaskRequest,
+  ): Promise<taskservicev1_Task>;
+  /** Alternate HTTP binding #1 of Get: GET /admin/v1/tasks/type-name/{type_name} */
+  GetAlt1(
     request: taskservicev1_GetTaskRequest,
   ): Promise<taskservicev1_Task>;
   // 创建调度任务
@@ -11427,7 +9594,7 @@ export function createTaskServiceClient(
 ): TaskService {
   return {
     List(request) {
-      const path = `admin/v1/tasks`;
+      const path = `/admin/v1/tasks`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -11475,56 +9642,9 @@ export function createTaskServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -11545,7 +9665,7 @@ export function createTaskServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tasks/${request.id}`;
+      const path = `/admin/v1/tasks/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.typeName) {
@@ -11567,8 +9687,36 @@ export function createTaskServiceClient(
         method: 'Get',
       }) as Promise<taskservicev1_Task>;
     },
+
+    // Alternate HTTP binding #1 of Get: GET /admin/v1/tasks/type-name/{type_name}
+    GetAlt1(request) {
+      if (request.typeName === undefined || request.typeName === null) {
+        throw new Error('missing required field request.type_name');
+      }
+      const path = `/admin/v1/tasks/type-name/${request.typeName}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'TaskService',
+        method: 'Get',
+      }) as Promise<taskservicev1_Task>;
+    },
     Create(request) {
-      const path = `admin/v1/tasks`;
+      const path = `/admin/v1/tasks`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TaskService',
@@ -11579,8 +9727,10 @@ export function createTaskServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tasks/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/tasks/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'TaskService',
         method: 'Update',
@@ -11590,7 +9740,7 @@ export function createTaskServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tasks/${request.id}`;
+      const path = `/admin/v1/tasks/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'TaskService',
@@ -11598,7 +9748,7 @@ export function createTaskServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ListTaskTypeName(_request) {
-      const path = `admin/v1/tasks:type-names`;
+      const path = `/admin/v1/tasks:type-names`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'TaskService',
@@ -11606,7 +9756,7 @@ export function createTaskServiceClient(
       }) as Promise<taskservicev1_ListTaskTypeNameResponse>;
     },
     RestartAllTask(request) {
-      const path = `admin/v1/tasks:restart`;
+      const path = `/admin/v1/tasks:restart`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TaskService',
@@ -11614,7 +9764,7 @@ export function createTaskServiceClient(
       }) as Promise<taskservicev1_RestartAllTaskResponse>;
     },
     StartAllTask(request) {
-      const path = `admin/v1/tasks:start`;
+      const path = `/admin/v1/tasks:start`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TaskService',
@@ -11622,7 +9772,7 @@ export function createTaskServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     StopAllTask(request) {
-      const path = `admin/v1/tasks:stop`;
+      const path = `/admin/v1/tasks:stop`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TaskService',
@@ -11630,7 +9780,7 @@ export function createTaskServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ControlTask(request) {
-      const path = `admin/v1/tasks:control`;
+      const path = `/admin/v1/tasks:control`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TaskService',
@@ -11642,22 +9792,22 @@ export function createTaskServiceClient(
 // 查询调度任务列表 - 回应
 export type taskservicev1_ListTaskResponse = {
   items: taskservicev1_Task[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 调度任务
 export type taskservicev1_Task = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
   cronSpec?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
@@ -11665,7 +9815,7 @@ export type taskservicev1_Task = {
   //
   // Behaviors: OPTIONAL
   taskPayload?: string;
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OPTIONAL
   type?: taskservicev1_Task_Type;
@@ -11673,7 +9823,7 @@ export type taskservicev1_Task = {
   // Behaviors: OPTIONAL
   typeName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 调度任务类型
@@ -11720,7 +9870,7 @@ type wellKnownDuration = string;
 
 // 查询调度任务详情 - 请求
 export type taskservicev1_GetTaskRequest = {
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   typeName?: string;
@@ -11736,13 +9886,13 @@ export type taskservicev1_CreateTaskRequest = {
 export type taskservicev1_UpdateTaskRequest = {
   allowMissing?: boolean;
   data: taskservicev1_Task | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除调度任务 - 请求
 export type taskservicev1_DeleteTaskRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 任务类型名称列表 - 回应
@@ -11809,7 +9959,7 @@ export function createTenantServiceClient(
 ): TenantService {
   return {
     List(request) {
-      const path = `admin/v1/tenants`;
+      const path = `/admin/v1/tenants`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -11857,56 +10007,9 @@ export function createTenantServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -11927,7 +10030,7 @@ export function createTenantServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tenants/${request.id}`;
+      const path = `/admin/v1/tenants/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -11955,7 +10058,7 @@ export function createTenantServiceClient(
       }) as Promise<identityservicev1_Tenant>;
     },
     Create(request) {
-      const path = `admin/v1/tenants`;
+      const path = `/admin/v1/tenants`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TenantService',
@@ -11966,8 +10069,10 @@ export function createTenantServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tenants/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/tenants/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'TenantService',
         method: 'Update',
@@ -11977,7 +10082,7 @@ export function createTenantServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/tenants/${request.id}`;
+      const path = `/admin/v1/tenants/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -11995,7 +10100,7 @@ export function createTenantServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     CreateTenantWithAdminUser(request) {
-      const path = `admin/v1/tenants:with-admin`;
+      const path = `/admin/v1/tenants:with-admin`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TenantService',
@@ -12003,7 +10108,7 @@ export function createTenantServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     SelfRegisterTenant(request) {
-      const path = `admin/v1/tenant-registration`;
+      const path = `/admin/v1/tenant-registration`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TenantService',
@@ -12011,7 +10116,7 @@ export function createTenantServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     TenantExists(request) {
-      const path = `admin/v1/tenants:exists`;
+      const path = `/admin/v1/tenants:exists`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -12038,22 +10143,22 @@ export function createTenantServiceClient(
 // 租户列表 - 答复
 export type identityservicev1_ListTenantResponse = {
   items: identityservicev1_Tenant[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 租户
 export type identityservicev1_Tenant = {
-  adminUserId?: number;
+  adminUserId?: string;
   adminUserName?: string;
   auditStatus?: identityservicev1_Tenant_AuditStatus;
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   domain?: string;
   expiredAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   industry?: string;
   logoUrl?: string;
   memberCount?: number;
@@ -12065,7 +10170,7 @@ export type identityservicev1_Tenant = {
   type?: identityservicev1_Tenant_Type;
   unsubscribeAt?: wellKnownTimestamp;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 租户类型
@@ -12091,7 +10196,7 @@ export type identityservicev1_Tenant_AuditStatus =
 // 租户数据 - 请求
 export type identityservicev1_GetTenantRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -12105,19 +10210,19 @@ export type identityservicev1_CreateTenantRequest = {
 export type identityservicev1_UpdateTenantRequest = {
   allowMissing?: boolean;
   data: identityservicev1_Tenant | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除租户 - 请求
 export type identityservicev1_DeleteTenantRequest = {
   code?: string;
-  id?: number;
+  id?: string;
 };
 
 // 创建租户及管理员用户 - 请求
 export type identityservicev1_CreateTenantWithAdminUserRequest = {
-  operatorUserId?: number;
+  operatorUserId?: string;
   password: string | undefined;
   tenant: identityservicev1_Tenant | undefined;
   user: identityservicev1_User | undefined;
@@ -12127,45 +10232,45 @@ export type identityservicev1_CreateTenantWithAdminUserRequest = {
 export type identityservicev1_User = {
   address?: string;
   avatar?: string;
-  commentCount?: number;
+  commentCount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   email?: string;
-  followers?: number;
-  following?: number;
+  followers?: string;
+  following?: string;
   gender?: identityservicev1_User_Gender;
-  id?: number;
+  id?: string;
   lastLoginAt?: wellKnownTimestamp;
   lastLoginIp?: string;
-  likeCount?: number;
+  likeCount?: string;
   lockedUntil?: wellKnownTimestamp;
   mobile?: string;
   nickname?: string;
-  orgUnitId?: number;
-  orgUnitIds: number[] | undefined;
+  orgUnitId?: string;
+  orgUnitIds: string[] | undefined;
   orgUnitName?: string;
   orgUnitNames: string[] | undefined;
-  positionId?: number;
-  positionIds: number[] | undefined;
+  positionId?: string;
+  positionIds: string[] | undefined;
   positionName?: string;
   positionNames: string[] | undefined;
-  postCount?: number;
+  postCount?: string;
   realname?: string;
   region?: string;
   remark?: string;
-  roleId?: number;
-  roleIds: number[] | undefined;
+  roleId?: string;
+  roleIds: string[] | undefined;
   roleNames: string[] | undefined;
   roles: string[] | undefined;
   status?: identityservicev1_User_Status;
   telephone?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   username?: string;
 };
 
@@ -12211,6 +10316,10 @@ export interface UserService {
   Get(
     request: identityservicev1_GetUserRequest,
   ): Promise<identityservicev1_User>;
+  /** Alternate HTTP binding #1 of Get: GET /admin/v1/users/username/{username} */
+  GetAlt1(
+    request: identityservicev1_GetUserRequest,
+  ): Promise<identityservicev1_User>;
   // 创建用户
   Create(
     request: identityservicev1_CreateUserRequest,
@@ -12221,6 +10330,10 @@ export interface UserService {
   ): Promise<wellKnownEmpty>;
   // 删除用户
   Delete(
+    request: identityservicev1_DeleteUserRequest,
+  ): Promise<wellKnownEmpty>;
+  /** Alternate HTTP binding #1 of Delete: DELETE /admin/v1/users/username/{username} */
+  DeleteAlt1(
     request: identityservicev1_DeleteUserRequest,
   ): Promise<wellKnownEmpty>;
   // 用户是否存在
@@ -12238,7 +10351,7 @@ export function createUserServiceClient(
 ): UserService {
   return {
     List(request) {
-      const path = `admin/v1/users`;
+      const path = `/admin/v1/users`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -12286,56 +10399,9 @@ export function createUserServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -12356,7 +10422,7 @@ export function createUserServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/users/${request.id}`;
+      const path = `/admin/v1/users/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.username) {
@@ -12378,8 +10444,36 @@ export function createUserServiceClient(
         method: 'Get',
       }) as Promise<identityservicev1_User>;
     },
+
+    // Alternate HTTP binding #1 of Get: GET /admin/v1/users/username/{username}
+    GetAlt1(request) {
+      if (request.username === undefined || request.username === null) {
+        throw new Error('missing required field request.username');
+      }
+      const path = `/admin/v1/users/username/${request.username}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserService',
+        method: 'Get',
+      }) as Promise<identityservicev1_User>;
+    },
     Create(request) {
-      const path = `admin/v1/users`;
+      const path = `/admin/v1/users`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserService',
@@ -12390,8 +10484,10 @@ export function createUserServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/users/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/users/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'UserService',
         method: 'Update',
@@ -12401,7 +10497,7 @@ export function createUserServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `admin/v1/users/${request.id}`;
+      const path = `/admin/v1/users/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.username) {
@@ -12423,8 +10519,36 @@ export function createUserServiceClient(
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
+
+    // Alternate HTTP binding #1 of Delete: DELETE /admin/v1/users/username/{username}
+    DeleteAlt1(request) {
+      if (request.username === undefined || request.username === null) {
+        throw new Error('missing required field request.username');
+      }
+      const path = `/admin/v1/users/username/${request.username}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.deletedBy) {
+        queryParams.push(
+          `deletedBy=${encodeURIComponent(request.deletedBy.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'UserService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
     UserExists(request) {
-      const path = `admin/v1/users:exists`;
+      const path = `/admin/v1/users:exists`;
       const body = null;
       const queryParams: string[] = [];
       if (request.id) {
@@ -12450,8 +10574,10 @@ export function createUserServiceClient(
       if (request.userId === undefined || request.userId === null) {
         throw new Error('missing required field request.user_id');
       }
-      const path = `admin/v1/users/${request.userId}/password`;
-      const body = JSON.stringify(request);
+      const path = `/admin/v1/users/${request.userId}/password`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["userId"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'POST', body, {
         service: 'UserService',
         method: 'EditUserPassword',
@@ -12462,12 +10588,12 @@ export function createUserServiceClient(
 // 获取用户列表 - 答复
 export type identityservicev1_ListUserResponse = {
   items: identityservicev1_User[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 获取用户数据 - 请求
 export type identityservicev1_GetUserRequest = {
-  id?: number;
+  id?: string;
   username?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -12484,21 +10610,21 @@ export type identityservicev1_UpdateUserRequest = {
   //
   // Behaviors: REQUIRED
   data: identityservicev1_User | undefined;
-  id: number | undefined;
+  id: string | undefined;
   password?: string;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除用户 - 请求
 export type identityservicev1_DeleteUserRequest = {
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   username?: string;
 };
 
 // 用户是否存在 - 请求
 export type identityservicev1_UserExistsRequest = {
-  id?: number;
+  id?: string;
   username?: string;
 };
 
@@ -12510,7 +10636,7 @@ export type identityservicev1_UserExistsResponse = {
 // 强制修改用户密码（不验证） - 请求
 export type identityservicev1_EditUserPasswordRequest = {
   newPassword: string | undefined;
-  userId: number | undefined;
+  userId: string | undefined;
 };
 
 // 用户个人资料服务
@@ -12550,7 +10676,7 @@ export function createUserProfileServiceClient(
 ): UserProfileService {
   return {
     GetUser(_request) {
-      const path = `admin/v1/me`;
+      const path = `/admin/v1/me`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'UserProfileService',
@@ -12558,7 +10684,7 @@ export function createUserProfileServiceClient(
       }) as Promise<identityservicev1_User>;
     },
     UpdateUser(request) {
-      const path = `admin/v1/me`;
+      const path = `/admin/v1/me`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'PUT', body, {
         service: 'UserProfileService',
@@ -12566,7 +10692,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ChangePassword(request) {
-      const path = `admin/v1/me/password`;
+      const path = `/admin/v1/me/password`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -12574,7 +10700,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     UploadAvatar(request) {
-      const path = `admin/v1/me/avatar`;
+      const path = `/admin/v1/me/avatar`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -12582,7 +10708,7 @@ export function createUserProfileServiceClient(
       }) as Promise<identityservicev1_UploadAvatarResponse>;
     },
     DeleteAvatar(_request) {
-      const path = `admin/v1/me/avatar`;
+      const path = `/admin/v1/me/avatar`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'UserProfileService',
@@ -12590,7 +10716,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     BindContact(request) {
-      const path = `admin/v1/me/contact`;
+      const path = `/admin/v1/me/contact`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -12598,7 +10724,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     VerifyContact(request) {
-      const path = `admin/v1/me/contact/verify`;
+      const path = `/admin/v1/me/contact/verify`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',

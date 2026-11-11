@@ -106,13 +106,13 @@ func (r *ApprovalFlowRepo) FindActiveSteps(
 // GetStepRole 取流程某级的审批角色编码；越级或流程缺失返回空串。
 func (r *ApprovalFlowRepo) GetStepRole(
 	ctx context.Context,
-	flowID uint32,
+	flowID int64,
 	step uint32,
 ) (string, error) {
 	st, err := r.entClient.Client().ApprovalFlowStep.Query().
 		Where(
 			approvalflowstep.FlowIDEQ(flowID),
-			approvalflowstep.SeqEQ(step),
+			approvalflowstep.SeqEQ(uint32(step)),
 		).
 		Only(ctx)
 	if err != nil {
@@ -145,7 +145,7 @@ func (r *ApprovalFlowRepo) List(ctx context.Context, req *paginationV1.PagingReq
 		return nil, approvalV1.ErrorInternalServerError("list approval flows failed")
 	}
 
-	flowIDs := make([]uint32, 0, len(flows))
+	flowIDs := make([]int64, 0, len(flows))
 	for _, f := range flows {
 		flowIDs = append(flowIDs, f.ID)
 	}
@@ -157,7 +157,7 @@ func (r *ApprovalFlowRepo) List(ctx context.Context, req *paginationV1.PagingReq
 		r.log.Errorf("list approval flow steps failed: %s", err.Error())
 		return nil, approvalV1.ErrorInternalServerError("list approval flow steps failed")
 	}
-	stepsByFlow := map[uint32][]*ent.ApprovalFlowStep{}
+	stepsByFlow := map[int64][]*ent.ApprovalFlowStep{}
 	for _, st := range stepRows {
 		if st.FlowID == nil {
 			continue
@@ -169,11 +169,11 @@ func (r *ApprovalFlowRepo) List(ctx context.Context, req *paginationV1.PagingReq
 	for _, f := range flows {
 		items = append(items, r.toFlowDTO(f, stepsByFlow[f.ID]))
 	}
-	return &approvalV1.ListApprovalFlowResponse{Total: uint64(len(items)), Items: items}, nil
+	return &approvalV1.ListApprovalFlowResponse{Total: int64(len(items)), Items: items}, nil
 }
 
 // Get 流程详情（含级定义）。
-func (r *ApprovalFlowRepo) Get(ctx context.Context, id uint32) (*approvalV1.ApprovalFlow, error) {
+func (r *ApprovalFlowRepo) Get(ctx context.Context, id int64) (*approvalV1.ApprovalFlow, error) {
 	flow, err := r.entClient.Client().ApprovalFlow.Query().
 		Where(approvalflow.IDEQ(id)).
 		Only(ctx)
@@ -198,7 +198,7 @@ func (r *ApprovalFlowRepo) Get(ctx context.Context, id uint32) (*approvalV1.Appr
 func (r *ApprovalFlowRepo) ExistsActiveByBizType(
 	ctx context.Context,
 	bizType string,
-	excludeFlowID uint32,
+	excludeFlowID int64,
 ) (bool, error) {
 	tid, _ := maybeTenantFromViewer(ctx)
 	q := r.entClient.Client().ApprovalFlow.Query().
@@ -302,8 +302,8 @@ func (r *ApprovalFlowRepo) flowStatusToEntity(s string) *approvalflow.Status {
 func (r *ApprovalFlowRepo) replaceStepsTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	tenantID uint32,
-	flowID uint32,
+	tenantID int64,
+	flowID int64,
 	steps []*approvalV1.ApprovalFlowStep,
 ) error {
 	if len(steps) == 0 {
@@ -333,7 +333,7 @@ func (r *ApprovalFlowRepo) replaceStepsTx(
 }
 
 // UserIDsByRole 取持有指定角色编码的全部用户 ID（下一级审批通知用）。
-func (r *ApprovalFlowRepo) UserIDsByRole(ctx context.Context, roleCode string) ([]uint32, error) {
+func (r *ApprovalFlowRepo) UserIDsByRole(ctx context.Context, roleCode string) ([]int64, error) {
 	// 同 UserHoldsRole：角色目录走系统视图。
 	roleIDs, err := r.entClient.Client().Role.Query().
 		Where(role.CodeEQ(roleCode)).
@@ -352,7 +352,7 @@ func (r *ApprovalFlowRepo) UserIDsByRole(ctx context.Context, roleCode string) (
 }
 
 // Delete 删除流程 + 级（硬删，连带）。
-func (r *ApprovalFlowRepo) Delete(ctx context.Context, id uint32) error {
+func (r *ApprovalFlowRepo) Delete(ctx context.Context, id int64) error {
 	tx, err := r.entClient.Client().Tx(ctx)
 	if err != nil {
 		return approvalV1.ErrorInternalServerError("start transaction failed")
@@ -379,7 +379,7 @@ func (r *ApprovalFlowRepo) Delete(ctx context.Context, id uint32) error {
 
 // UserHoldsRole 用户是否持有指定角色编码（sys_roles.code 全局目录 ×
 // sys_user_roles 用户分配）。审批级角色校验用。
-func (r *ApprovalFlowRepo) UserHoldsRole(ctx context.Context, userID uint32, roleCode string) (bool, error) {
+func (r *ApprovalFlowRepo) UserHoldsRole(ctx context.Context, userID int64, roleCode string) (bool, error) {
 	// 角色目录是平台级全局表（tenant_id=0），租户上下文直查会被
 	// TenantPrivacy 过滤成空集——切系统视图（镜像 permission_repo）。
 	roleIDs, err := r.entClient.Client().Role.Query().

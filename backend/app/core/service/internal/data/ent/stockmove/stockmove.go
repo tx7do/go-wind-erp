@@ -91,21 +91,21 @@ var (
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultPickingID holds the default value on creation for the "picking_id" field.
-	DefaultPickingID uint32
+	DefaultPickingID int64
 	// DefaultSourceLocationID holds the default value on creation for the "source_location_id" field.
-	DefaultSourceLocationID uint32
+	DefaultSourceLocationID int64
 	// DefaultDestinationLocationID holds the default value on creation for the "destination_location_id" field.
-	DefaultDestinationLocationID uint32
+	DefaultDestinationLocationID int64
 	// DefaultPlannedQuantity holds the default value on creation for the "planned_quantity" field.
 	DefaultPlannedQuantity int64
 	// DefaultPurchaseOrderItemID holds the default value on creation for the "purchase_order_item_id" field.
-	DefaultPurchaseOrderItemID uint32
+	DefaultPurchaseOrderItemID int64
 	// DefaultSalesOrderItemID holds the default value on creation for the "sales_order_item_id" field.
-	DefaultSalesOrderItemID uint32
+	DefaultSalesOrderItemID int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // State defines the type for the "state" enum field.
