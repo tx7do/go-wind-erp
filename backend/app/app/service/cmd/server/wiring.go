@@ -96,6 +96,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, tenantResolver)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
+		accessTokenChecker,
 		authenticationService,
 		fileTransferService,
 		userProfileService,

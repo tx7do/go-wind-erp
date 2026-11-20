@@ -25,8 +25,8 @@ import (
 
 	"go-wind-erp/pkg/metadata"
 	"go-wind-erp/pkg/middleware/auth"
-	applogging "go-wind-erp/pkg/middleware/logging"
 	entmiddleware "go-wind-erp/pkg/middleware/ent"
+	applogging "go-wind-erp/pkg/middleware/logging"
 )
 
 // NewRestMiddleware 创建中间件
@@ -90,6 +90,7 @@ func NewRestServer(
 	ctx *bootstrap.Context,
 
 	middlewares []middleware.Middleware,
+	accessTokenChecker auth.AccessTokenChecker,
 
 	userService *service.UserService,
 	userProfileService *service.UserProfileService,
@@ -109,11 +110,11 @@ func NewRestServer(
 	warehouseService *service.WarehouseService,
 	locationService *service.LocationService,
 	stockQuantService *service.StockQuantService,
-	stockLotService   *service.StockLotService,
+	stockLotService *service.StockLotService,
 	stockPickingService *service.StockPickingService,
 
 	approvalRequestService *service.ApprovalRequestService,
-	approvalFlowService   *service.ApprovalFlowService,
+	approvalFlowService *service.ApprovalFlowService,
 
 	supplierService *service.SupplierService,
 	productService *service.ProductService,
@@ -127,7 +128,7 @@ func NewRestServer(
 	receivableService *service.ReceivableService,
 	receiptService *service.ReceiptService,
 	financeReportService *service.FinanceReportService,
-	accountingService    *service.AccountingService,
+	accountingService *service.AccountingService,
 
 	billingService *service.BillingService,
 	planAdminService *service.PlanAdminService,
@@ -165,6 +166,10 @@ func NewRestServer(
 	if err != nil {
 		panic(err)
 	}
+
+	// 全站请求体护栏包在最外层（CORS/pprof 过滤器与路由都在其内层），
+	// 使 401/413 的判定发生在任何 body 读取之前。
+	srv.Handler = requestBodyGuard(accessTokenChecker)(srv.Handler)
 
 	adminV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
 	adminV1.RegisterLoginPolicyServiceHTTPServer(srv, loginPolicyService)
