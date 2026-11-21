@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart' show GoRouter;
 import 'package:provider/provider.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,9 +25,19 @@ class ERPApp extends StatefulWidget {
 }
 
 class _ERPAppState extends State<ERPApp> {
+  // GoRouter 必须整 app 生命周期只建一次：build 里新建会换掉 MaterialApp 的
+  // routerConfig（go_router 每次 new 一个 root navigatorKey GlobalKey），
+  // 整棵导航树被迫重挂载。移动端 web 键盘弹起/浏览器缩放等任何 metrics
+  // 变化都会经 ScreenUtilInit 重建到这里——焦点丢失、软键盘弹起即收、
+  // 页面输入内容清空（go-wind-trade 2026-11 手机软键盘闪现即收的根因）。
+  late final GoRouter _router = pages.createAppRouter();
+
   @override
   void initState() {
     super.initState();
+    // 主题 cubit 初始化是副作用，只在挂载时执行一次；不放 build
+    //（build 会在每次 metrics 变化时重跑）。
+    context.read<theme.AppThemeCubit>().init();
   }
 
   @override
@@ -57,8 +68,6 @@ class _ERPAppState extends State<ERPApp> {
 
   Widget _buildMaterialApp(BuildContext context) {
     final delegate = l10n.S.delegate;
-    final cubit = context.read<theme.AppThemeCubit>();
-    cubit.init();
 
     // 监听 Cubit 变化，获取最新的 seedColor
     final state = context.watch<theme.AppThemeCubit>().state;
@@ -72,7 +81,7 @@ class _ERPAppState extends State<ERPApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => context.loc.appName,
-      routerConfig: pages.createAppRouter(),
+      routerConfig: _router,
       theme: theme.getLightTheme(seedColor: seedColor),
       darkTheme: theme.getDarkTheme(seedColor: seedColor),
       themeMode: context.watch<theme.AppThemeCubit>().themeMode,
